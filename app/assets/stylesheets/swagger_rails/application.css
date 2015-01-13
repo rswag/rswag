@@ -12,4 +12,6 @@
  *
  *= require_tree .
  *= require_self
+ *= require swagger-ui/reset.css
+ *= require swagger-ui/screen.css
  */

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+%html
+  %head
+    %title SwaggerRails
+    %link{ href: '//fonts.googleapis.com/css?family=Droid+Sans:400,700', rel: 'stylesheet', type: 'text/css' }
+    =stylesheet_link_tag "swagger_rails/application"
+    =javascript_include_tag "swagger_rails/application"
+    =csrf_meta_tags
+  %body.swagger-section
+    =yield

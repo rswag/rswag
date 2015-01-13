@@ -9,12 +9,14 @@ Gem::Specification.new do |s|
   s.version     = SwaggerRails::VERSION
   s.authors     = ["domaindrivendev"]
   s.email       = ["domaindrivendev@gmail.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of SwaggerRails."
-  s.description = "TODO: Description of SwaggerRails."
+  s.homepage    = "https://github.com/domaindrivendev/swagger-rails"
+  s.summary     = "Seamlessly adds a Swagger to Rails-based API's"
+  s.description = "Seamlessly adds a Swagger to Rails-based API's"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
   s.add_dependency "rails", "~> 4.2.0"
+  s.add_dependency 'haml-rails'
+  s.add_dependency 'coffee-rails'
 end

@@ -1,0 +1,98 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.0",
+        "title": "Dummy app for testing swagger_rails"
+    },
+    "paths": {
+        "/events": {
+            "post": {
+                "tags": [
+                  "events"
+                ],
+                "description": "Create a new Event",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/CreateEventBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "CreateEventBody": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "date_time": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "repeat": {
+                    "$ref": "#/definitions/EventRepeatOptions"
+                },
+                "notification": {
+                    "$ref": "#/definitions/EventNotificationOptions"
+                }
+            }
+        },
+        "EventRepeatOptions": {
+            "properties": {
+                "frequency": {
+                    "type": "string",
+                    "enum": [
+                        "daily"
+                    ]
+                },
+                "ending_on": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "EventNotificationOptions": {
+            "properties": {
+                "intervals": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "targets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NotificationTarget"
+                    }
+                }
+            }
+        },
+        "NotificationTarget": {
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "sms",
+                        "email"
+                    ]
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

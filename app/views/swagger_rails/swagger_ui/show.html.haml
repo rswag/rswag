@@ -1,0 +1,30 @@
+#header
+  .swagger-ui-wrap
+    %a#logo{ href: 'http://swagger.io'} swagger
+    %form#api_selector
+      .input
+        %input#input_baseUrl{ name: 'baseUrl' }
+      .input
+        %input#input_apiKey{ name: 'apiKey' }
+      .input
+        %a#input_apiKey{ name: 'apiKey' }
+
+#message-bar.swagger-ui-wrap
+
+#swagger-ui-container.swagger-ui-wrap{ data: { discovery_url: @discovery_url } }
+
+:coffeescript
+  window.swaggerUi = new SwaggerUi(
+    url: $('#swagger-ui-container').data('discoveryUrl')
+    dom_id: 'swagger-ui-container'
+    onComplete: (swaggerApi, swaggerUi) ->
+      log('Loaded SwaggerUi')
+      $('pre code').each (i, e) ->
+        hljs.highlighBlock(e)
+    onFailure: (data) ->
+      log('Unable to load Swagger UI')
+    docExpansion: 'none'
+    sorter: 'alpha'
+  )
+
+  window.swaggerUi.load()
