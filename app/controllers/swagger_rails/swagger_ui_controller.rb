@@ -2,7 +2,8 @@ module SwaggerRails
   class SwaggerUiController < ApplicationController
 
     def show
-      @discovery_url = request.path.gsub('/ui', '/docs/v1')
+      @discovery_path = swagger_path('v1')
+      render :index
     end
   end
 end

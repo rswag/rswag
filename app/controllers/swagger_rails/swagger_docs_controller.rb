@@ -8,7 +8,7 @@ module SwaggerRails
     private
 
     def swagger_file_path_for(api_version)
-      File.join(Rails.root, 'config', 'swagger', "#{api_version}.json")
+      File.join(Rails.root, 'config', 'swagger', api_version, 'swagger.json')
     end
   end
 end

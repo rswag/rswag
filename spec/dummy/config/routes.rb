@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
 
-  mount SwaggerRails::Engine => "/swagger_rails"
+  mount SwaggerRails::Engine => '/swagger'
 end
