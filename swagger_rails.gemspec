@@ -14,9 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Seamlessly adds a Swagger to Rails-based API's"
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,bower_components/swagger-ui/dist,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  s.add_dependency "rails", "~> 4.2.0"
-  s.add_dependency 'haml-rails'
-  s.add_dependency 'coffee-rails'
+  s.add_dependency "rails", "~> 4.2"
 end

@@ -6,3 +6,7 @@ spec/dummy/db/*.sqlite3-journal
 spec/dummy/log/*.log
 spec/dummy/tmp/
 spec/dummy/.sass-cache
+bower_components/*
+!bower_components/swagger-ui
+bower_components/swagger-ui/*
+!bower_components/swagger-ui/dist

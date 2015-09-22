@@ -1,9 +1,9 @@
 module SwaggerRails
   class SwaggerUiController < ApplicationController
 
-    def show
+    def index
       @discovery_path = swagger_path('v1')
-      render :index
+      render :index, layout: false
     end
   end
 end
