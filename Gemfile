@@ -15,3 +15,4 @@ gemspec
 
 gem 'pry'
 gem 'rspec-rails'
+gem 'generator_spec'

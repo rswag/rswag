@@ -2,13 +2,14 @@ module SwaggerRails
   class SwaggerDocsController < ApplicationController
 
     def show
-      render file: swagger_file_path_for(params[:api_version]), layout: false
+      render json: swagger_json_for(params[:api_version]), layout: false
     end
 
     private
 
-    def swagger_file_path_for(api_version)
-      File.join(Rails.root, 'config', 'swagger', api_version, 'swagger.json')
+    def swagger_json_for(api_version)
+      path = File.join(Rails.root, 'config', 'swagger', api_version, 'swagger.json')
+      File.read(path)
     end
   end
 end

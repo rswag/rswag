@@ -30,7 +30,16 @@
         }
     },
     "definitions": {
-        "CreateSampleResource": {
+        "ClinicPatientLink": {
+            "properties": {
+                "clinic_patient_link": {
+                    "schema": {
+                      "$ref": "#/definitions/ClinicPatientLink"
+                    }
+                }
+            }
+        }
+        "ClinicPatientLink": {
             "properties": {
                 "name": {
                     "type": "string"

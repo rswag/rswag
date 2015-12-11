@@ -1,0 +1,9 @@
+Description:
+  Adds default files required to use swagger_rails
+
+Example:
+    rails generate swagger_rails:install
+
+    This will create:
+        config/swagger/v1/swagger.json
+        config/initializers/swagger_rails.rb
