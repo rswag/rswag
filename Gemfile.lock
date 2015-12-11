@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     swagger_rails (0.0.1)
-      rails (>= 3.1, < 4)
+      rails (>= 3.1, < 5)
 
 GEM
   remote: https://rubygems.org/
