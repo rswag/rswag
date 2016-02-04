@@ -1,6 +1,8 @@
 SwaggerRails.configure do |c|
 
-  # Specify the API version and hence discovery_url (e.g. swagger/v1/swagger.json)
-  # that will be used to power the embedded swagger-ui
-  c.target_api_version = 'v1'
+  # List the names and paths of Swagger
+  # documents you'd like to expose in your swagger-ui
+  c.swagger_docs = {
+    'API V1' => '/swagger/v1/swagger.json'
+  }
 end

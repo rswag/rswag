@@ -33,7 +33,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-      url = "<%= @discovery_path %>";
+      url = "<%= SwaggerRails.swagger_docs.values.first %>";
       }
 
       // Pre load translate...
@@ -106,9 +106,35 @@
   <div class="swagger-ui-wrap">
     <a id="logo" href="http://swagger.io">swagger</a>
     <form id='api_selector'>
-      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
+      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text" disabled="disabled"/></div>
       <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-      <div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
+      <div class='input'>
+        <select id="select_version">
+          <% SwaggerRails.swagger_docs.each do |name, path| %>
+            <option value="<%= path %>"><%= name %></option>
+          <% end %>
+        </select>
+        <script type="text/javascript">
+          $('#select_version').change(function () {
+            $('#input_baseUrl').val($(this).val());
+              window.swaggerUi.headerView.showCustom();
+          });
+        </script>
+        <style>
+          #select_version {
+            border: none;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            -o-border-radius: 4px;
+            -ms-border-radius: 4px;
+            -khtml-border-radius: 4px;
+            border-radius: 4px;
+            color: white;
+            background-color: #547f00;
+            font-size: 0.9em;
+          }
+        </style>
+      </div>
     </form>
   </div>
 </div>

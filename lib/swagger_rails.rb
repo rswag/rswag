@@ -7,9 +7,11 @@ module SwaggerRails
   end
 
   class << self
-    attr_accessor :target_api_version
+    attr_accessor :swagger_docs
 
     #Defaults
-    @@target_api_version = 'v1'
+    @@swagger_docs = {
+      'V1' => '/swagger/v1/swagger.json'
+    }
   end
 end
