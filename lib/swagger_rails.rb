@@ -9,9 +9,8 @@ module SwaggerRails
   class << self
     attr_accessor :swagger_docs
 
-    #Defaults
     @@swagger_docs = {
-      'V1' => '/swagger/v1/swagger.json'
+      'V1' => 'v1/swagger.json'
     }
   end
 end

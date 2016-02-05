@@ -3,7 +3,7 @@
     "info": {
         "version": "0.0.0",
         "title": "[Enter a description for your API here]",
-        "description": "The docs below are powered by the default swagger.json installed with swagger_rails. Please update it to describe your API. See here for the complete swagger spec - https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md"
+        "description": "The docs below are powered by the default swagger.json that gets installed with swagger_rails. You'll need to update it to describe your API. See here for the complete swagger spec - https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md"
     },
     "paths": {
         "/a/sample/resource": {

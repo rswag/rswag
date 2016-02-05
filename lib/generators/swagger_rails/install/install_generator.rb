@@ -12,5 +12,9 @@ module SwaggerRails
     def add_initializer
       template('swagger_rails.rb', 'config/initializers/swagger_rails.rb')
     end
+
+    def add_routes
+      route("mount SwaggerRails::Engine => '/api-docs'")
+    end
   end
 end
