@@ -65,14 +65,14 @@ This will expose each of those descriptions as JSON endpoints. Next, you'll need
   SwaggerRails.configure do |c|
 
   c.swagger_docs = {
-  'API V1' => 'v1/swagger.json',
-  'API V2' => 'v2/swagger.json',
-  'API V3' => 'v3/swagger.json'
+    'API V1' => 'v1/swagger.json',
+    'API V2' => 'v2/swagger.json',
+    'API V3' => 'v3/swagger.json'
   }
   end
   ```
 
-Now, if you view the swagger-ui, you'll notice that each of these are available in the select box at the top right of the page, allowing you to navigate between the documentations for each version.
+Now, if you view the swagger-ui, you'll notice that each of these are available in the select box at the top right of the page, allowing users to easily navigate between different versions of your API.
 
 ## Customizing the UI ##
 
