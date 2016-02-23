@@ -13,6 +13,7 @@ gemspec
 # To use a debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'sqlite3'
 gem 'pry'
 gem 'rspec-rails'
 gem 'generator_spec'

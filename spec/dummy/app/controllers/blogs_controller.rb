@@ -1,14 +1,22 @@
 class BlogsController < ApplicationController
+  wrap_parameters Blog
+  respond_to :json
 
+  # POST /blogs
   def create
-    render json: {}
+    @blog = Blog.create(params[:blog])
+    respond_with @blog
   end
 
+  # GET /blogs
   def index
-    render json: {}
+    @blogs = Blog.all
+    respond_with @blogs
   end
 
+  # GET /blogs/1
   def show
-    render json: {}
+    @blog = Blog.find(params[:id])
+    respond_with @blog
   end
 end

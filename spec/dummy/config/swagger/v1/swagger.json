@@ -24,8 +24,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Ok",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/Blog"
                         }
@@ -58,7 +58,10 @@
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "$ref": "#/definitions/Blog"
+                            "type": "array",
+                            "item": {
+                              "$ref": "#/definitions/Blog"
+                            }
                         }
                     }
                 }

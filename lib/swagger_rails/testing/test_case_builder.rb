@@ -1,13 +1,12 @@
 module SwaggerRails
-  
-  class TestDataBuilder
+
+  class TestCaseBuilder
 
     def initialize(path_template, http_method, swagger)
       @path_template = path_template
       @http_method = http_method
       @swagger = swagger
       @param_values = {}
-      @expected_status = nil
     end
 
     def set(param_values)
@@ -15,7 +14,7 @@ module SwaggerRails
     end
 
     def expect(status)
-      @expected_status = status
+      @expected_status = status.to_s
     end
 
     def test_data
@@ -33,7 +32,7 @@ module SwaggerRails
     private
 
     def find_operation!
-      keys = [ 'paths', @path_template, @http_method ] 
+      keys = [ 'paths', @path_template, @http_method ]
       operation = find_hash_item!(@swagger, keys)
       operation || (raise MetadataError.new(keys))
     end
@@ -52,34 +51,58 @@ module SwaggerRails
     end
 
     def build_params(parameters)
-      {}.tap do |params|
-        params.merge!(param_values_for(parameters, 'query'))
-        body_param_values = param_values_for(parameters, 'body')
-        params.merge!(body_param_values.values.first) if body_param_values.any?
-      end
+      body_param_values = param_values_for(parameters, 'body')
+      return body_param_values.values.first.to_json if body_param_values.any?
+      param_values_for(parameters, 'query')
     end
 
     def build_headers(parameters)
       param_values_for(parameters, 'header')
+        .merge({
+          'CONTENT_TYPE' => 'application/json',
+          'ACCEPT' => 'application/json'
+        })
     end
 
     def build_expected_response(responses)
+      status = @expected_status || responses.keys.find { |k| k.start_with?('2') }
+      response = responses[status] || (raise MetadataError.new('paths', @path_template, @http_method, 'responses', status))
+      {
+        status: status.to_i,
+        body: response_body_for(response)
+      }
     end
 
     def param_values_for(parameters, location)
       applicable_parameters = parameters.select { |p| p['in'] == location }
-      Hash[applicable_parameters.map { |p| [ p['name'], value_for(p) ] }]
+      Hash[applicable_parameters.map { |p| [ p['name'], param_value_for(p) ] }]
     end
 
-    def value_for(param)
-      return @param_values[param['name']] if @param_values.has_key?(param['name'])
-      return param['default'] unless param['in'] == 'body'
-      schema_for(param['schema'])['example']
+    def param_value_for(parameter)
+      return @param_values[parameter['name']] if @param_values.has_key?(parameter['name'])
+      return parameter['default'] unless parameter['in'] == 'body'
+      schema = schema_for(parameter['schema'])
+      schema_example_for(schema)
+    end
+
+    def response_body_for(response)
+      return nil if response['schema'].nil?
+      schema = schema_for(response['schema'])
+      schema_example_for(schema)
     end
 
     def schema_for(schema_or_ref)
       return schema_or_ref if schema_or_ref['$ref'].nil?
       @swagger['definitions'][schema_or_ref['$ref'].sub('#/definitions/', '')]
+    end
+
+    def schema_example_for(schema)
+      return schema['example'] if schema['example'].present?
+      # If an array, try construct from the item example
+      if schema['type'] == 'array' && schema['item'].present?
+        item_schema = schema_for(schema['item'])
+        return [ schema_example_for(item_schema) ]
+      end
     end
   end
 

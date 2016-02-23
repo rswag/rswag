@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount SwaggerRails::Engine => '/api-docs'
+  resources :blogs, defaults: { :format => :json }
 
-  resources :blogs, only: [ :create, :index, :show ]
+  mount SwaggerRails::Engine => '/api-docs'
 end
