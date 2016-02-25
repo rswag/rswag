@@ -46,7 +46,7 @@ module SwaggerRails
       param_values = param_values_for(parameters, 'path')
       @path_template.dup.tap do |template|
         template.prepend(@swagger['basePath'].presence || '')
-        param_values.each { |name, value| template.sub!("\{#{name}\}", value) }
+        param_values.each { |name, value| template.sub!("\{#{name}\}", value.to_s) }
       end
     end
 

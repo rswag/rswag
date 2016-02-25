@@ -27,8 +27,8 @@ module SwaggerRails
       end
     end
 
-    def swagger_test(path, method)
-      self.class.test_visitor.run_test(path, method, self)
+    def swagger_test(path, method, &block)
+      self.class.test_visitor.run_test(path, method, self, &block)
     end
   end
 end
