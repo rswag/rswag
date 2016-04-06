@@ -33,7 +33,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-      url = "<%= @discovery_paths.values.first %>";
+      url = "<%= @discovery_paths.keys.first %>";
       }
 
       // Pre load translate...
@@ -110,8 +110,8 @@
       <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
       <div class='input'>
         <select id="select_version">
-          <% @discovery_paths.each do |name, path| %>
-            <option value="<%= path %>"><%= name %></option>
+          <% @discovery_paths.each do |path, title| %>
+            <option value="<%= path %>"><%= title %></option>
           <% end %>
         </select>
         <script type="text/javascript">

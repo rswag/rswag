@@ -50,4 +50,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  require 'swagger_rails/rspec/adapter'
+  config.extend SwaggerRails::RSpec::Adapter
 end

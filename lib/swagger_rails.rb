@@ -7,10 +7,19 @@ module SwaggerRails
   end
 
   class << self
-    attr_accessor :swagger_docs
+    attr_accessor :doc_factories
+    @@doc_factories = {}
 
-    @@swagger_docs = {
-      'V1' => 'v1/swagger.json'
-    }
+    def swagger_doc(path, &block)
+      @@doc_factories[path] = block 
+    end
+
+    def swagger_docs
+      Hash[
+        @@doc_factories.map do |path, factory|
+          [ path, { swagger: '2.0' }.merge(factory.call) ]
+        end
+      ]
+    end
   end
 end

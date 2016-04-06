@@ -5,6 +5,7 @@ class Blog < ActiveRecord::Base
 
   def as_json(options)
     {
+      id: id,
       title: title,
       content: content
     }

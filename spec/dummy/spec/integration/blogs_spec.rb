@@ -1,13 +1,19 @@
 require 'rails_helper'
 
-describe 'Blogs API', doc: 'blogs/v1' do
+describe 'Blogs API', docs_path: 'blogs/v1/swagger.json' do
 
   path '/blogs' do
 
-    operation 'post', 'creates a new blog' do
+    post 'creates a new blog' do
       consumes 'application/json'
       produces 'application/json'
-      body :blog 
+      parameter :blog, :in => :body, schema: {
+        :type => :object,
+        :properties => {
+          title: { type: 'string' },
+          content: { type: 'string' }
+        }
+      }
 
       let(:blog) { { title: 'foo', content: 'bar' } }
 
@@ -21,7 +27,7 @@ describe 'Blogs API', doc: 'blogs/v1' do
       end
     end
 
-    operation 'get', 'searches existing blogs' do
+    get 'searches existing blogs' do
       produces 'application/json'
 
       response '200', 'valid request' do
@@ -31,9 +37,9 @@ describe 'Blogs API', doc: 'blogs/v1' do
   end
 
   path '/blogs/{id}' do
-    operation 'get', 'retreives a specific blog' do
+    get 'retreives a specific blog' do
       produces 'application/json'
-      parameter :id, 'path'
+      parameter :id, :in => :path, :type => :string
 
       response '200', 'blog found' do
         let(:blog) { Blog.create(title: 'foo', content: 'bar') }

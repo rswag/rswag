@@ -1,8 +1,12 @@
 SwaggerRails.configure do |c|
 
-  # List the names and paths (relative to config/swagger) of Swagger
-  # documents you'd like to expose in your swagger-ui
-  c.swagger_docs = {
-    'API V1' => 'v1/swagger.json'
-  }
+  # Define the swagger documents you'd like to expose and provide global metadata
+  c.swagger_doc 'v1/swagger.json' do
+    {
+      info: {
+        title: 'API V1',
+        version: 'v1'
+      }
+    }
+  end
 end
