@@ -15,9 +15,8 @@ describe 'Blogs API', docs_path: 'blogs/v1/swagger.json' do
         }
       }
 
-      let(:blog) { { title: 'foo', content: 'bar' } }
-
       response '201', 'valid request' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
         run_test!
       end
 
