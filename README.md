@@ -74,9 +74,9 @@ There's two separate parts to swagger rails:
 1. Tooling to easily generate swagger descriptions directly from your API tests/specs  
 2. Rails middleware to auto-magically serve a swagger-ui that's powered by those descriptions
 
-The tooling is designed to fit seamlessly into your development workflow, with the swagger docs and UI being a by-product that you get for free ... well almost free :) You'll need to use the provided rspec DSL, but it's an intuitive syntax (based on the swagger-spec) and, IMO, a very succint and expressive way to write api/integration tests.
+The tooling is designed to fit seamlessly into your development workflow, with the swagger docs and UI being a by-product that you get for free ... well almost free :) You'll need to use the provided rspec DSL. But, it's an intuitive syntax (based on the [swagger-spec](http://swagger.io/specification/)) and, IMO, a very succint and expressive way to write api/integration tests.
 
-Once you've generated the swagger files, the functionality to serve up them up, along with the swagger-ui, is provided as a Rails Engine. After running the install generator, you'll see the following line added to _routes.rb_
+Once you've generated the swagger files, the functionality to serve them up, along with the swagger-ui, is provided as a Rails Engine. After running the install generator, you'll see the following line added to _routes.rb_
 
   ```ruby
   mount SwaggerRails::Engine => '/api-docs'
@@ -107,18 +107,18 @@ By default, the generator will create all operation descriptions in a single swa
 
 And then tagging your spec's with the target swagger_doc:
 
-    ```ruby
-    require 'rails_helper'
-    require 'swagger_rails/rspec/adapter'
+  ```ruby
+  require 'rails_helper'
+  require 'swagger_rails/rspec/adapter'
 
-    describe 'Blogs API V2', swagger_doc: 'v2/swagger.json' do
-      extend SwaggerRails::RSpec::Adapter 
+  describe 'Blogs API V2', swagger_doc: 'v2/swagger.json' do
+    extend SwaggerRails::RSpec::Adapter 
 
-      path '/blogs' do
-        ...
-      end
+    path '/blogs' do
+      ...
     end
-    ```
+  end
+  ```
 
 Then, when you run the generator and spin up the swagger-ui, you'll see a select box in the top right allowing your audience to switch between the different API versions.
 
