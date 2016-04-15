@@ -1,13 +1,13 @@
 swagger-rails
 =========
 
-Leverage your api/integration test specs to generate [Swagger](http://swagger.io/) descriptions for Rails-based API's! Use the provided DSL to accurately test and describe API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
+Leverage your api/integration test specs to generate [swagger](http://swagger.io/) descriptions for Rails-based API's. Use the provided DSL to accurately test and describe API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
 
 And that's not all ...
 
 Once you have a Web API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
 
-_NOTE_: It's early days so please be gentle when reporting issues :) As author of a similar project in the .NET space - [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle), that's become relatively popular, I think there's real potential here. Please feel free to contribute. I'll be more than happy to consider PR's ... so long as they include tests :)
+__NOTE__: It's early days so please be gentle when reporting issues :) As author of a similar project in the .NET space - [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle), that's become very popular, I think there's real potential here. Please feel free to contribute. I'll be more than happy to consider PR's ... so long as they include tests.
 
 ## Getting Started ##
 
@@ -57,26 +57,26 @@ _NOTE_: It's early days so please be gentle when reporting issues :) As author o
         end
       end
     end
-    ```ruby
+    ```
 
 4. Generate the swagger.json file(s)
 
     ```ruby
     rake swaggerize
-    ```ruby
+    ```
 
-5. Spin up your app and check out the auto-generated docs at _/api-docs_!
+5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
 ## How does it Work? ##
 
 There's two separate parts to swagger rails:
 
-1. Tooling to easily generate Swagger descriptions directly from your API tests/specs  
+1. Tooling to easily generate swagger descriptions directly from your API tests/specs  
 2. Rails middleware to auto-magically serve a swagger-ui that's powered by those descriptions
 
-The tooling is designed to fit seamlessly into your development workflow, with the Swagger docs and UI being a by-product that you get for free ... well almost free :). You do need to use the provided rspec DSL, but it's an intuitive syntax and, IMO, a very succint and expressive way to write api/integration tests. You'll also need to re-run the "swaggerize" rake task whenever you want to update your docs.
+The tooling is designed to fit seamlessly into your development workflow, with the swagger docs and UI being a by-product that you get for free ... well almost free :) You'll need to use the provided rspec DSL, but it's an intuitive syntax (based on the swagger-spec) and, IMO, a very succint and expressive way to write api/integration tests.
 
-At runtime, the functionality to serve up the generated docs and swagger-ui is encapsulated in a Rails Engine. After running the install generator, you'll see the following line added to _routes.rb_
+Once you've generated the swagger files, the functionality to serve up them up, along with the swagger-ui, is provided as a Rails Engine. After running the install generator, you'll see the following line added to _routes.rb_
 
   ```ruby
   mount SwaggerRails::Engine => '/api-docs'
@@ -84,7 +84,7 @@ At runtime, the functionality to serve up the generated docs and swagger-ui is e
   
 This will wire up routes for the swagger docs and swagger-ui assets, all prefixed with "/api-docs". For example, if you navigate to "/api-docs/index.html" you'll get the swagger-ui. If you navigate to "/api-docs/v1/swagger.json", you'll get the swagger.json file under your app root at "config/swagger/v1/swagger.json" - assuming it was generated.
 
-If you'd like your Swagger resources to appear under a different base path, you can change the Engine mount point from "/api-docs" to something else.
+If you'd like your swagger resources to appear under a different base path, you can change the Engine mount point from "/api-docs" to something else.
 
 By default, the generator will create all operation descriptions in a single swagger.json file. You can customize this by defining additional documents in the swagger_rails initializer (also created by the install generator) ...
 
@@ -103,7 +103,7 @@ By default, the generator will create all operation descriptions in a single swa
       }
     end
   end
-  ```ruby
+  ```
 
 And then tagging your spec's with the target swagger_doc:
 
@@ -118,8 +118,9 @@ And then tagging your spec's with the target swagger_doc:
         ...
       end
     end
+    ```
 
-Then, when you run the generator and spin up the swagger-ui, you'll see a select box in the top right that allows the user switch between the different API versions.
+Then, when you run the generator and spin up the swagger-ui, you'll see a select box in the top right allowing your audience to switch between the different API versions.
 
 ## Customizing the UI ##
 
