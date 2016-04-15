@@ -1,11 +1,13 @@
 swagger-rails
 =========
 
-Seamlessly adds a [Swagger](http://swagger.io/) to Rails-based API's! You create one or more swagger.json files to describe your API and swagger-rails will serve it up along with an embedded version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
+Leverage your api/integration test specs to generate [Swagger](http://swagger.io/) descriptions for Rails-based API's! Use the provided DSL to accurately test and describe API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
 
 And that's not all ...
 
 Once you have a Web API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
+
+_NOTE_: It's early days so please be gentle when reporting issues :) As author of a similar project in the .NET space - [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle), that's become relatively popular, I think there's real potential here. Please feel free to contribute. I'll be more than happy to consider PR's ... so long as they include tests :)
 
 ## Getting Started ##
 
@@ -21,58 +23,103 @@ Once you have a Web API that can describe itself in Swagger, you've opened the t
     rails g swagger_rails:install
     ```
 
-3. Spin up your app and navigate to '/api-docs'
+3. Create an integration spec to describe and test your API
 
-    _This is where your awesome API docs and playground can be viewed_
+    ```ruby
+    require 'rails_helper'
+    require 'swagger_rails/rspec/adapter'
 
-4. Update the sample swagger.json (under config/swagger/v1)  to describe your API
+    describe 'Blogs API' do
+      extend SwaggerRails::RSpec::Adapter 
 
-  _Swagger is a well thought-out and intuitive format so referring to samples will help in getting started. For some of the finer details, you shoud refer to the spec_
+      path '/blogs' do
 
-    * _The Demo JSON: http://petstore.swagger.io/v2/swagger.json_
-    * _The Demo UI: http://petstore.swagger.io/_
-    * _The Spec.: http://swagger.io/specification/_
+        post 'creates a new blog' do
+          consumes 'application/json'
+          parameter :blog, in: :body, schema: {
+            type: :object,
+            properties: {
+              title: { :type => :string },
+              content: { :type => :string }
+            },
+            required: [ 'title', 'content' ]
+          }
+
+          response '200', 'success' do
+            let(:blog) { { title: 'foo', content: 'bar' } }
+            run_test!
+          end
+
+          response '422', 'invalid request' do
+            let(:blog) { { title: 'foo' } }
+            run_test!
+          end
+        end
+      end
+    end
+    ```ruby
+
+4. Generate the swagger.json file(s)
+
+    ```ruby
+    rake swaggerize
+    ```ruby
+
+5. Spin up your app and check out the auto-generated docs at _/api-docs_!
 
 ## How does it Work? ##
 
-The install generator will add the following entry to your applications _routes.rb_
+There's two separate parts to swagger rails:
+
+1. Tooling to easily generate Swagger descriptions directly from your API tests/specs  
+2. Rails middleware to auto-magically serve a swagger-ui that's powered by those descriptions
+
+The tooling is designed to fit seamlessly into your development workflow, with the Swagger docs and UI being a by-product that you get for free ... well almost free :). You do need to use the provided rspec DSL, but it's an intuitive syntax and, IMO, a very succint and expressive way to write api/integration tests. You'll also need to re-run the "swaggerize" rake task whenever you want to update your docs.
+
+At runtime, the functionality to serve up the generated docs and swagger-ui is encapsulated in a Rails Engine. After running the install generator, you'll see the following line added to _routes.rb_
 
   ```ruby
   mount SwaggerRails::Engine => '/api-docs'
   ```
   
-This will wire up routes for the swagger-ui assets and the raw JSON descriptions, all prefixed with "/api-docs". For example, if you navigate to "/api-docs/index.html" you'll get the swagger-ui. If you navigate to "/api-docs/v1/swagger.json", you'll get the sample swagger.json that's installed into your app directory at "config/swagger/v1/swagger.json".
+This will wire up routes for the swagger docs and swagger-ui assets, all prefixed with "/api-docs". For example, if you navigate to "/api-docs/index.html" you'll get the swagger-ui. If you navigate to "/api-docs/v1/swagger.json", you'll get the swagger.json file under your app root at "config/swagger/v1/swagger.json" - assuming it was generated.
 
 If you'd like your Swagger resources to appear under a different base path, you can change the Engine mount point from "/api-docs" to something else.
 
-By default, the swagger-ui will request a service description at "&lt;mount-point&gt;/v1/swagger.json" and then use that to generate the slick documentation and playground UI. If you'd like to change the path to your JSON descriptions or create multiple descriptions, you can change the folder structure and files under "config/swagger". For example, you could describe different versions of your API as follows
-
-  ```
-  |-- app
-  |-- config
-    |-- swagger
-      |-- v1
-        |-- swagger.json
-      |-- v2
-        |-- swagger.json
-      |-- v3
-        |-- swagger.json
-  ```
-
-This will expose each of those descriptions as JSON endpoints. Next, you'll need to tell swagger-ui which of these endpoints you want to provide documentation for. This can be configured in the initializer that's installed at "config/initializers/swagger_rails":
+By default, the generator will create all operation descriptions in a single swagger.json file. You can customize this by defining additional documents in the swagger_rails initializer (also created by the install generator) ...
 
   ```ruby
   SwaggerRails.configure do |c|
 
-  c.swagger_docs = {
-    'API V1' => 'v1/swagger.json',
-    'API V2' => 'v2/swagger.json',
-    'API V3' => 'v3/swagger.json'
-  }
-  end
-  ```
+    c.swagger_doc 'v1/swagger.json' do
+      {
+        info: { title: 'API V1', version: 'v1' }
+      }
+    end
 
-Now, if you view the swagger-ui, you'll notice that each of these are available in the select box at the top right of the page, allowing users to easily navigate between different versions of your API.
+    c.swagger_doc 'v2/swagger.json' do
+      {
+        info: { title: 'API V2', version: 'v2' }
+      }
+    end
+  end
+  ```ruby
+
+And then tagging your spec's with the target swagger_doc:
+
+    ```ruby
+    require 'rails_helper'
+    require 'swagger_rails/rspec/adapter'
+
+    describe 'Blogs API V2', swagger_doc: 'v2/swagger.json' do
+      extend SwaggerRails::RSpec::Adapter 
+
+      path '/blogs' do
+        ...
+      end
+    end
+
+Then, when you run the generator and spin up the swagger-ui, you'll see a select box in the top right that allows the user switch between the different API versions.
 
 ## Customizing the UI ##
 
