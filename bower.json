@@ -1,7 +1,7 @@
 {
-  "name": "swagger-rails",
+  "name": "swagger_rails",
   "version": "0.0.0",
-  "homepage": "https://github.com/domaindrivendev/swagger-rails",
+  "homepage": "https://github.com/domaindrivendev/swagger_rails",
   "authors": [
     "domaindrivendev <domaindrivendev@gmail.com>"
   ],
