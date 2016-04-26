@@ -7,17 +7,16 @@ module SwaggerRails
   end
 
   class << self
-    attr_accessor :doc_factories
-    @@doc_factories = {}
+    @@swagger_docs = {}
 
     def swagger_doc(path, &block)
-      @@doc_factories[path] = block 
+      @@swagger_docs[path] = block
     end
 
     def swagger_docs
       Hash[
-        @@doc_factories.map do |path, factory|
-          [ path, { swagger: '2.0' }.merge(factory.call) ]
+        @@swagger_docs.map do |path, factory|
+          [ path, factory.call.merge(swagger: '2.0') ]
         end
       ]
     end

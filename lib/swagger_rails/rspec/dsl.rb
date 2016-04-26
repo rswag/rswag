@@ -2,7 +2,7 @@ require 'swagger_rails/test_visitor'
 
 module SwaggerRails
   module RSpec
-    module Adapter
+    module DSL
 
       def path(path_template, &block)
         metadata = {

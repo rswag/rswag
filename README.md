@@ -27,10 +27,10 @@ __NOTE__: It's early days so please be gentle when reporting issues :) As author
 
     ```ruby
     require 'rails_helper'
-    require 'swagger_rails/rspec/adapter'
+    require 'swagger_rails/rspec/dsl'
 
     describe 'Blogs API' do
-      extend SwaggerRails::RSpec::Adapter 
+      extend SwaggerRails::RSpec::DSL
 
       path '/blogs' do
 
@@ -109,13 +109,14 @@ And then tagging your spec's with the target swagger_doc:
 
   ```ruby
   require 'rails_helper'
-  require 'swagger_rails/rspec/adapter'
+  require 'swagger_rails/rspec/dsl'
 
   describe 'Blogs API V2', swagger_doc: 'v2/swagger.json' do
-    extend SwaggerRails::RSpec::Adapter 
+    extend SwaggerRails::RSpec::DSL
 
-    path '/blogs' do
-      ...
+      path '/blogs' do
+        ...
+      end
     end
   end
   ```

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Blogs API', docs_path: 'blogs/v1/swagger.json' do
+describe 'Blogs API', swagger_doc: 'blogs/v1/swagger.json' do
 
   path '/blogs' do
 

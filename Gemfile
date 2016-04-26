@@ -15,5 +15,4 @@ gemspec
 
 gem 'sqlite3'
 gem 'pry'
-gem 'rspec-rails'
 gem 'generator_spec'

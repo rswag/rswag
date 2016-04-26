@@ -89,7 +89,7 @@ module SwaggerRails
           expect(test).to have_received(:get).with(
             '/resource',
             {},
-            { 'DATE' => '2000-01-01', 'ACCEPT' => 'application/json' }
+            { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
           )
         end
       end

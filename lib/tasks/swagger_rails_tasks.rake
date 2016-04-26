@@ -6,7 +6,7 @@
 require 'rspec/core/rake_task'
 
 desc 'Generate Swagger JSON files from integration specs'
-RSpec::Core::RakeTask.new('swagger_rails:gen') do |t|
+RSpec::Core::RakeTask.new('swaggerize') do |t|
   t.pattern = 'spec/integration/**/*_spec.rb'
   t.rspec_opts = [ '--format SwaggerRails::RSpec::Formatter', '--dry-run' ]
 end

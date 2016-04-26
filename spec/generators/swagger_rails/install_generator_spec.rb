@@ -13,16 +13,14 @@ describe SwaggerRails::InstallGenerator do
     run_generator
   end
 
-  it 'creates a default swagger.json file' do
-    assert_file('config/swagger/v1/swagger.json')
+  it 'creates a default swagger directory' do
+    assert_directory('config/swagger/v1')
   end
 
   it 'creates a swagger_rails initializer' do
     assert_file('config/initializers/swagger_rails.rb')
   end
 
-  it 'wires up the swagger routes' do
-    pending('not sure how to test this')
-    this_should_not_get_executed
-  end
+  it 'wires up the swagger routes'
+  # Not sure how to test this
 end

@@ -90,6 +90,6 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 
-  require 'swagger_rails/rspec/adapter'
-  config.extend SwaggerRails::RSpec::Adapter
+  require 'swagger_rails/rspec/dsl'
+  config.extend SwaggerRails::RSpec::DSL
 end

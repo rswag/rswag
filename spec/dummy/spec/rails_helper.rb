@@ -51,6 +51,6 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  require 'swagger_rails/rspec/adapter'
-  config.extend SwaggerRails::RSpec::Adapter
+  require 'swagger_rails/rspec/dsl'
+  config.extend SwaggerRails::RSpec::DSL
 end

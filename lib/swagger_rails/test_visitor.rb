@@ -2,7 +2,6 @@ require 'singleton'
 
 module SwaggerRails
   class TestVisitor
-
     include Singleton
 
     def submit_request!(test, metadata)
@@ -30,8 +29,10 @@ module SwaggerRails
     end
 
     def build_path(path_template, params_data)
+      path_params_data = params_data.select { |p| p[:in] == :path }
+
       path_template.dup.tap do |path|
-        params_data.each do |param_data|
+        path_params_data.each do |param_data|
           path.sub!("\{#{param_data[:name]}\}", param_data[:value].to_s)
         end
       end
@@ -47,7 +48,7 @@ module SwaggerRails
 
     def build_headers(params_data, consumes, produces)
       header_params_data = params_data.select { |p| p[:in] == :header }
-      headers = Hash[header_params_data.map { |p| [ p[:name].underscore.upcase, p[:value] ] }]
+      headers = Hash[header_params_data.map { |p| [ p[:name], p[:value] ] }]
 
       headers['ACCEPT'] = produces.join(';') if produces.present?
       headers['CONTENT_TYPE'] = consumes.join(';') if consumes.present?
