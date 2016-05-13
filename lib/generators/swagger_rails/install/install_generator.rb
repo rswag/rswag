@@ -6,7 +6,7 @@ module SwaggerRails
     source_root File.expand_path('../templates', __FILE__)
 
     def add_swagger_dir
-      empty_directory('config/swagger/v1')
+      empty_directory('swagger/v1')
     end
 
     def add_initializer

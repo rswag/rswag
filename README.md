@@ -1,7 +1,7 @@
 swagger_rails
 =========
 
-Leverage your api/integration test specs to generate [swagger](http://swagger.io/) descriptions for Rails-based API's. Use the provided DSL to accurately test and describe API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
+Generate API documentation, including a slick discovery UI and playground, directly from your rspec integration specs. Use the provided DSL to describe and test API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
 
 And that's not all ...
 

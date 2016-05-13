@@ -2,23 +2,32 @@ require "swagger_rails/engine"
 
 module SwaggerRails
 
-  def self.configure
-    yield self
+  class Configuration
+    attr_reader :swagger_docs, :swagger_dir_string
+
+    def initialize
+      @swagger_docs = {}
+      @swagger_dir_string = nil
+    end
+
+    def swagger_doc(path, doc)
+      @swagger_docs[path] = doc
+    end
+
+    def swagger_dir(dir_string)
+      @swagger_dir_string = dir_string
+    end
   end
 
   class << self
-    @@swagger_docs = {}
+    attr_reader :config
 
-    def swagger_doc(path, &block)
-      @@swagger_docs[path] = block
+    def configure
+      yield config
     end
 
-    def swagger_docs
-      Hash[
-        @@swagger_docs.map do |path, factory|
-          [ path, factory.call.merge(swagger: '2.0') ]
-        end
-      ]
+    def config
+      @config ||= Configuration.new
     end
   end
 end

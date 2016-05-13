@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    swagger_rails (0.0.1)
+    swagger_rails (1.0.0.pre.beta)
       rails (>= 3.1, < 5)
 
 GEM
@@ -111,7 +111,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.46)
+    tzinfo (0.3.49)
 
 PLATFORMS
   ruby
@@ -119,6 +119,9 @@ PLATFORMS
 DEPENDENCIES
   generator_spec
   pry
-  rspec-rails
+  rspec-rails (~> 3.0)
   sqlite3
   swagger_rails!
+
+BUNDLED WITH
+   1.10.6

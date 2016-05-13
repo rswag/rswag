@@ -3,7 +3,7 @@ module SwaggerRails
 
     def index
       @discovery_paths = Hash[
-        SwaggerRails.swagger_docs.map do |path, doc|
+        SwaggerRails.config.swagger_docs.map do |path, doc|
           [ "#{root_path}#{path}", doc[:info][:title] ]
         end
       ]

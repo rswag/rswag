@@ -49,12 +49,20 @@ module SwaggerRails
       end
 
       def run_test!
+        if metadata.has_key?(:swagger_doc)
+          swagger_doc = SwaggerRails.config.swagger_docs[metadata[:swagger_doc]]
+        else
+          swagger_doc = SwaggerRails.config.swagger_docs.values.first
+        end
+
+        test_visitor = SwaggerRails::TestVisitor.new(swagger_doc)
+
         before do |example|
-          SwaggerRails::TestVisitor.instance.submit_request!(self, example.metadata)
+          test_visitor.submit_request!(self, example.metadata)
         end
 
         it "returns a #{metadata[:response_code]} status" do |example|
-          SwaggerRails::TestVisitor.instance.assert_response!(self, example.metadata)
+          test_visitor.assert_response!(self, example.metadata)
         end
       end
     end

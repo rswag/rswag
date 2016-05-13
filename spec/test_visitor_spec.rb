@@ -5,7 +5,8 @@ module SwaggerRails
 
   describe TestVisitor do
     let(:test) { spy('test') }
-    subject { described_class.instance }
+    let(:swagger_doc) { {} }
+    subject { described_class.new(swagger_doc) }
 
     describe '#submit_request!' do
       before { subject.submit_request!(test, metadata) }
@@ -91,6 +92,21 @@ module SwaggerRails
             {},
             { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
           )
+        end
+      end
+
+      context 'when a basePath is provided' do
+        let(:swagger_doc) { { basePath: '/api' } }
+        let(:metadata) do
+          {
+            path_template: '/resource',
+            http_verb: :get,
+            parameters: []
+          }
+        end
+
+        it 'prepends the basePath to the request path' do
+          expect(test).to have_received(:get).with('/api/resource', {}, {})
         end
       end
     end

@@ -9,9 +9,10 @@ module SwaggerRails
         :example_group_finished,
         :stop
 
-      def initialize(output)
+      def initialize(output, config=SwaggerRails.config)
         @output = output
-        @swagger_docs = SwaggerRails.swagger_docs
+        @swagger_docs = config.swagger_docs
+        @swagger_dir_string = config.swagger_dir_string
 
         @output.puts 'Generating Swagger Docs ...'
       end
@@ -20,14 +21,14 @@ module SwaggerRails
         metadata = notification.group.metadata
         return unless metadata.has_key?(:response_code)
 
+        swagger_doc = @swagger_docs[metadata[:swagger_doc]] || @swagger_docs.values.first
         swagger_data = swagger_data_from(metadata)
-        swagger_doc = @swagger_docs[metadata[:docs_path]] || @swagger_docs.values.first
         swagger_doc.deep_merge!(swagger_data)
       end
 
       def stop(notification)
         @swagger_docs.each do |path, doc|
-          file_path = File.join(Rails.root, 'config/swagger', path)
+          file_path = File.join(@swagger_dir_string, path)
 
           File.open(file_path, 'w') do |file|
             file.write(JSON.pretty_generate(doc))
@@ -50,11 +51,19 @@ module SwaggerRails
       end
 
       def operation_from(metadata)
-        metadata.slice(:summary, :consumes, :produces, :parameters).tap do |operation|
-          operation[:responses] = {
-            metadata[:response_code] => metadata[:response]
-          }
-        end
+        {
+          tags: [ find_root_of(metadata)[:description] ] ,
+          summary: metadata[:summary],
+          consumes: metadata[:consumes],
+          produces: metadata[:produces],
+          parameters: metadata[:parameters],
+          responses: { metadata[:response_code] => metadata[:response] }
+        }
+      end
+
+      def find_root_of(metadata)
+        parent = metadata[:parent_example_group]
+        parent.nil? ? metadata : find_root_of(parent)
       end
     end
   end

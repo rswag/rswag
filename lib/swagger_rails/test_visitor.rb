@@ -1,8 +1,9 @@
-require 'singleton'
-
 module SwaggerRails
   class TestVisitor
-    include Singleton
+
+    def initialize(swagger_doc)
+      @swagger_doc = swagger_doc
+    end
 
     def submit_request!(test, metadata)
       params_data = params_data_for(test, metadata[:parameters])
@@ -35,6 +36,7 @@ module SwaggerRails
         path_params_data.each do |param_data|
           path.sub!("\{#{param_data[:name]}\}", param_data[:value].to_s)
         end
+        path.prepend(@swagger_doc[:basePath] || '')
       end
     end
 

@@ -14,7 +14,7 @@ describe SwaggerRails::InstallGenerator do
   end
 
   it 'creates a default swagger directory' do
-    assert_directory('config/swagger/v1')
+    assert_directory('swagger/v1')
   end
 
   it 'creates a swagger_rails initializer' do

@@ -6,7 +6,7 @@ module SwaggerRails
     isolate_namespace SwaggerRails
 
     initializer 'swagger_rails.initialize' do |app|
-      middleware.use SwaggerDocs, File.join(app.root, 'config', 'swagger')
+      middleware.use SwaggerDocs, SwaggerRails.config.swagger_dir_string
       middleware.use SwaggerUi, "#{root}/bower_components/swagger-ui/dist"
     end
   end
