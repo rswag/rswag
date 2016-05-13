@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    swagger_rails (1.0.0.pre.beta)
+    swagger_rails (1.0.0.pre.beta2)
       rails (>= 3.1, < 5)
 
 GEM
