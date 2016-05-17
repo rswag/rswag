@@ -82,7 +82,7 @@ Once you've generated the swagger files, the functionality to serve them up, alo
   mount SwaggerRails::Engine => '/api-docs'
   ```
   
-This will wire up routes for the swagger docs and swagger-ui assets, all prefixed with "/api-docs". For example, if you navigate to "/api-docs/index.html" you'll get the swagger-ui. If you navigate to "/api-docs/v1/swagger.json", you'll get the swagger.json file under your app root at "config/swagger/v1/swagger.json" - assuming it was generated.
+This will wire up routes for the swagger docs and swagger-ui assets, all prefixed with "/api-docs". For example, if you navigate to "/api-docs/index.html" you'll get the swagger-ui. If you navigate to "/api-docs/v1/swagger.json", you'll get the swagger.json file under your app root at "swagger/v1/swagger.json" - assuming it was generated.
 
 If you'd like your swagger resources to appear under a different base path, you can change the Engine mount point from "/api-docs" to something else.
 
