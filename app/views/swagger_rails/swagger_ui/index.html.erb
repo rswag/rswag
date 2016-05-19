@@ -64,6 +64,14 @@
           });
 
           addApiKeyAuthorization();
+
+          // Send Rails CSRF Token with every request
+          var csrfToken = new SwaggerClient.ApiKeyAuthorization(
+            'X-CSRF-Token',
+            '<%= form_authenticity_token %>',
+            'header'
+          );
+          swaggerUi.api.clientAuthorizations.add('csrf-token', csrfToken);
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
