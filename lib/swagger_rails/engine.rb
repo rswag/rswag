@@ -1,4 +1,4 @@
-require 'swagger_rails/middleware/swagger_docs'
+require 'swagger_rails/middleware/swagger_json'
 require 'swagger_rails/middleware/swagger_ui'
 
 module SwaggerRails
@@ -6,8 +6,8 @@ module SwaggerRails
     isolate_namespace SwaggerRails
 
     initializer 'swagger_rails.initialize' do |app|
-      middleware.use SwaggerDocs, SwaggerRails.config.swagger_dir_string
-      middleware.use SwaggerUi, "#{root}/bower_components/swagger-ui/dist"
+      middleware.use SwaggerJson, SwaggerRails.config
+      middleware.use SwaggerUi
     end
   end
 end

@@ -1,18 +1,17 @@
-require 'rspec/core/formatters/base_text_formatter'
-require 'rails_helper'
+require 'rspec/core/formatters'
+require 'swagger_helper'
 
 module SwaggerRails
   module RSpec
-
     class Formatter
       ::RSpec::Core::Formatters.register self,
         :example_group_finished,
         :stop
 
-      def initialize(output, config=SwaggerRails.config)
+      def initialize(output)
         @output = output
-        @swagger_docs = config.swagger_docs
-        @swagger_dir_string = config.swagger_dir_string
+        @swagger_root = ::RSpec.configuration.swagger_root
+        @swagger_docs = ::RSpec.configuration.swagger_docs
 
         @output.puts 'Generating Swagger Docs ...'
       end
@@ -27,8 +26,8 @@ module SwaggerRails
       end
 
       def stop(notification)
-        @swagger_docs.each do |path, doc|
-          file_path = File.join(@swagger_dir_string, path)
+        @swagger_docs.each do |url_path, doc|
+          file_path = File.join(@swagger_root, url_path)
 
           File.open(file_path, 'w') do |file|
             file.write(JSON.pretty_generate(doc))

@@ -26,11 +26,9 @@ __NOTE__: It's early days so please be gentle when reporting issues :) As author
 3. Create an integration spec to describe and test your API
 
     ```ruby
-    require 'rails_helper'
-    require 'swagger_rails/rspec/dsl'
+    require 'swagger_helper'
 
     describe 'Blogs API' do
-      extend SwaggerRails::RSpec::DSL
 
       path '/blogs' do
 
@@ -86,33 +84,40 @@ This will wire up routes for the swagger docs and swagger-ui assets, all prefixe
 
 If you'd like your swagger resources to appear under a different base path, you can change the Engine mount point from "/api-docs" to something else.
 
-By default, the generator will create all operation descriptions in a single swagger.json file. You can customize this by defining additional documents in the swagger_rails initializer (also created by the install generator) ...
+## Multiple Swagger Documents ##
+
+By default, the generator will create all operation descriptions in a single swagger.json file. You can customize this by defining additional documents in the swagger_helper (installed under your spec folder) ...
 
   ```ruby
-  SwaggerRails.configure do |c|
+  RSpec.configure do |config|
+    ...
 
-    c.swagger_doc 'v1/swagger.json' do
-      {
-        info: { title: 'API V1', version: 'v1' }
-      }
-    end
+    config.swagger_docs = {
+      'v1/swagger.json' => {
+        swagger: '2.0',
+        info: {
+          title: 'API V1',
+          version: 'v1'
+        }
+      },
 
-    c.swagger_doc 'v2/swagger.json' do
-      {
-        info: { title: 'API V2', version: 'v2' }
+      'v2/swagger.json' => {
+        swagger: '2.0',
+        info: {
+          title: 'API V2',
+          version: 'v2'
+        }
       }
-    end
+    }
   end
   ```
 
 And then tagging your spec's with the target swagger_doc:
 
   ```ruby
-  require 'rails_helper'
-  require 'swagger_rails/rspec/dsl'
+  require 'swagger_helper'
 
   describe 'Blogs API V2', swagger_doc: 'v2/swagger.json' do
-    extend SwaggerRails::RSpec::DSL
 
       path '/blogs' do
         ...
@@ -122,6 +127,20 @@ And then tagging your spec's with the target swagger_doc:
   ```
 
 Then, when you run the generator and spin up the swagger-ui, you'll see a select box in the top right allowing your audience to switch between the different API versions.
+
+## Tweaking the Swagger Document with Request Context ##
+
+You can provide global metadata for Swagger documents in the swagger_helper file and this will be included in the resulting Swagger JSON when you run the "swaggerize" rake task. For the most part, this is sufficient. However, you may want to make some changes that require the current request context. This is possible by applying an optional swagger_filter in the swagger_rails initializer (installed into config/initializers):
+
+  ```ruby
+  SwaggerRails.configure do |c|
+    ...
+
+    c.swagger_filter = lambda { |swagger, env| swagger['host'] = env['HTTP_HOST'] }
+  end
+  ```
+
+This function will get called prior to serialization of any Swagger file and is passed the rack env for the current request. This provides a lot of flexibilty. For example, you could dynamically assign the "host" property (as shown above) or you could inspect session information or Authoriation header and remove operations based on user permissions.
 
 ## Customizing the UI ##
 

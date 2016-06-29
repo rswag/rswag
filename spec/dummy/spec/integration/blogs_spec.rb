@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'swagger_helper'
 
 describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
 

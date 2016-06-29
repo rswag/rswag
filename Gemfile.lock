@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     swagger_rails (1.0.0.pre.beta2)
+      rack
       rails (>= 3.1, < 5)
 
 GEM
@@ -111,7 +112,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.49)
+    tzinfo (0.3.50)
 
 PLATFORMS
   ruby

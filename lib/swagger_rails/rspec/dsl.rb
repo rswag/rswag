@@ -50,9 +50,9 @@ module SwaggerRails
 
       def run_test!
         if metadata.has_key?(:swagger_doc)
-          swagger_doc = SwaggerRails.config.swagger_docs[metadata[:swagger_doc]]
+          swagger_doc = ::RSpec.configuration.swagger_docs[metadata[:swagger_doc]]
         else
-          swagger_doc = SwaggerRails.config.swagger_docs.values.first
+          swagger_doc = ::RSpec.configuration.swagger_docs.values.first
         end
 
         test_visitor = SwaggerRails::TestVisitor.new(swagger_doc)

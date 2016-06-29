@@ -13,6 +13,10 @@ module SwaggerRails
       template('swagger_rails.rb', 'config/initializers/swagger_rails.rb')
     end
 
+    def add_rspec_helper
+      template('swagger_helper.rb', 'spec/swagger_helper.rb')
+    end
+
     def add_routes
       route("mount SwaggerRails::Engine => '/api-docs'")
     end
