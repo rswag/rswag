@@ -14,7 +14,7 @@ module SwaggerRails
       @discovery_paths = Hash[
         swagger_filenames.map do |filename|
           [
-            "#{root_path.chomp('/')}#{filename.sub(swagger_root, '')}",
+            filename.sub(swagger_root, root_path),
             load_json(filename)["info"]["title"]
           ]
         end
