@@ -9,12 +9,14 @@ module SwaggerRails
 
     def index
       swagger_root = SwaggerRails.config.resolve_swagger_root(request.env)
+      swagger_root.concat('/') unless swagger_root.end_with?('/')
+
       swagger_filenames = Dir["#{swagger_root}/**/*.json"]
 
       @discovery_paths = Hash[
         swagger_filenames.map do |filename|
           [
-            filename.sub(swagger_root, root_path),
+            filename.sub(swagger_root, root_path.chomp('/')),
             load_json(filename)["info"]["title"]
           ]
         end
