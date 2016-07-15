@@ -3,10 +3,6 @@ require 'json'
 module SwaggerRails
   class SwaggerUiController < ApplicationController
 
-    def root
-      redirect_to action: 'index'
-    end
-
     def index
       swagger_root = SwaggerRails.config.resolve_swagger_root(request.env)
       swagger_root.concat('/') unless swagger_root.end_with?('/')
