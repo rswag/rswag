@@ -5,6 +5,7 @@ spec/dummy/db/*.sqlite3
 spec/dummy/db/*.sqlite3-journal
 spec/dummy/log/*.log
 spec/dummy/tmp/
+spec/dummy/public/assets
 spec/dummy/.sass-cache
 spec/generators/swagger_rails/tmp
 bower_components/*
