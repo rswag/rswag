@@ -20,6 +20,10 @@ module SwaggerRails
         describe(http_verb, metadata, &block)
       end
 
+      def operation_description(message)
+        metadata[:operation_description] = message
+      end
+
       [ :get, :post, :patch, :put, :delete, :head ].each do |http_verb|
         define_method(http_verb) do |summary=nil, &block|
           operation(http_verb, summary, &block)

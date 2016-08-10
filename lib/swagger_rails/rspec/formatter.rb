@@ -53,6 +53,7 @@ module SwaggerRails
         {
           tags: [ find_root_of(metadata)[:description] ] ,
           summary: metadata[:summary],
+          description: metadata[:operation_description],
           consumes: metadata[:consumes],
           produces: metadata[:produces],
           parameters: metadata[:parameters],

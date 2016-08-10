@@ -19,3 +19,7 @@ group :development, :test do
   gem 'pry'
   gem 'generator_spec'
 end
+
+group :test do
+  gem 'test-unit'
+end

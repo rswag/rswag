@@ -7,6 +7,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
     post 'creates a new blog' do
       consumes 'application/json'
       produces 'application/json'
+      operation_description 'Creates a new blog. You can provide detailed description here which will show up in Implementation Notes.'
       parameter :blog, :in => :body, schema: {
         :type => :object,
         :properties => {
@@ -36,7 +37,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
   end
 
   path '/blogs/{id}' do
-    get 'retreives a specific blog' do
+    get 'retrieves a specific blog' do
       produces 'application/json'
       parameter :id, :in => :path, :type => :string
 

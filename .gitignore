@@ -13,3 +13,4 @@ bower_components/*
 bower_components/swagger-ui/*
 !bower_components/swagger-ui/dist
 .ruby-version
+.idea
