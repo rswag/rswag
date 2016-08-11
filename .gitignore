@@ -14,3 +14,4 @@ bower_components/swagger-ui/*
 !bower_components/swagger-ui/dist
 .ruby-version
 .idea
+spec/dummy/swagger/v1_api.json
