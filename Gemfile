@@ -22,4 +22,5 @@ end
 
 group :test do
   gem 'test-unit'
+  gem 'database_cleaner'
 end

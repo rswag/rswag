@@ -38,6 +38,7 @@ GEM
     arel (3.0.3)
     builder (3.0.4)
     coderay (1.1.0)
+    database_cleaner (1.5.3)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     generator_spec (0.9.3)
@@ -121,6 +122,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  database_cleaner
   generator_spec
   pry
   rspec-rails (~> 3.0)
