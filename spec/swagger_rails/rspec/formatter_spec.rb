@@ -91,6 +91,10 @@ RSpec.describe ::SwaggerRails::RSpec::Formatter do
       run_group_and_send_stop_notification(group)
     end
 
+    it 'should print "Swagger Doc generated"' do
+      expect(formatter_output.string).to eq("Generating Swagger Docs ...\nSwagger Doc generated\n")
+    end
+
     it 'should write to swagger doc inside swagger root directory' do
       file_path = File.join(swagger_root, swagger_doc)
       file_context= nil
