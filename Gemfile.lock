@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    swagger_rails (1.0.0.pre.beta3)
+    swagger_rails (1.0.1.pre.beta3)
       rack
       rails (>= 3.1, <= 5)
 
