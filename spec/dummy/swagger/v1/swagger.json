@@ -11,6 +11,7 @@
           "Blogs API"
         ],
         "summary": "creates a new blog",
+        "description": "Creates a new blog. You can provide detailed description here which will show up in Implementation Notes.",
         "consumes": [
           "application/json"
         ],
@@ -48,6 +49,7 @@
           "Blogs API"
         ],
         "summary": "searches existing blogs",
+        "description": null,
         "consumes": null,
         "produces": [
           "application/json"
@@ -67,7 +69,8 @@
         "tags": [
           "Blogs API"
         ],
-        "summary": "retreives a specific blog",
+        "summary": "retrieves a specific blog",
+        "description": "For the id passed in the path, it searches and retrieves a blog against that id. If blog not found it returns a 404",
         "consumes": null,
         "produces": [
           "application/json"
@@ -82,6 +85,9 @@
         "responses": {
           "200": {
             "description": "blog found"
+          },
+          "404": {
+            "description": "blog not found"
           }
         }
       }
