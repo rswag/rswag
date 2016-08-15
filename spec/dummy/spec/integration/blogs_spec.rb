@@ -7,7 +7,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
     post 'creates a new blog' do
       consumes 'application/json'
       produces 'application/json'
-      operation_description 'Creates a new blog. You can provide detailed description here which will show up in Implementation Notes.'
+      implementation_notes 'Creates a new blog. You can provide detailed description here which will show up in Implementation Notes.'
       parameter :blog, :in => :body, schema: {
         :type => :object,
         :properties => {
@@ -39,7 +39,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
   path '/blogs/{id}' do
     get 'retrieves a specific blog' do
       produces 'application/json'
-      operation_description 'For the id passed in the path, it searches and retrieves a blog against that id. If blog not found it returns a 404'
+      implementation_notes 'For the id passed in the path, it searches and retrieves a blog against that id. If blog not found it returns a 404'
       parameter :id, :in => :path, :type => :string
 
       response '200', 'blog found' do

@@ -30,7 +30,7 @@ module SwaggerRails::RSpec
       {
         tags: [find_root_of(@metadata)[:description]],
         summary: @metadata[:summary],
-        description: @metadata[:operation_description],
+        description: @metadata[:implementation_notes],
         consumes: @metadata[:consumes],
         produces: @metadata[:produces],
         parameters: @metadata[:parameters],

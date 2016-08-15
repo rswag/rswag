@@ -11,7 +11,7 @@ RSpec.describe ::SwaggerRails::RSpec::Formatter do
         post('checks if site is alive') do
           consumes('application/json')
           produces('application/json')
-          operation_description('A very long description')
+          implementation_notes('A very long description')
           response('200', '(OK) Site up and running') do
             run_test!
           end

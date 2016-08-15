@@ -79,14 +79,14 @@ RSpec.describe ::SwaggerRails::RSpec::APIMetadata do
                                 :parameters => [],
                                 :consumes => ['application/json'],
                                 :produces => ['application/json'],
-                                :operation_description => 'A very long description' },
+                                :implementation_notes => 'A very long description' },
                               :path_template => '/ping',
                               :http_verb => :post,
                               :summary => 'checks if site is alive',
                               :parameters => [],
                               :consumes => ['application/json'],
                               :produces => ['application/json'],
-                              :operation_description => 'A very long description',
+                              :implementation_notes => 'A very long description',
                               :response_code => '200',
                               :response => { :description => '(OK) Site up and running' } }
   }
