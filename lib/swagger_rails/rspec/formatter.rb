@@ -1,5 +1,6 @@
 require 'rspec/core/formatters'
 require 'swagger_helper'
+require 'swagger_rails/rspec/api_metadata'
 
 module SwaggerRails
   module RSpec
@@ -17,12 +18,11 @@ module SwaggerRails
       end
 
       def example_group_finished(notification)
-        metadata = notification.group.metadata
-        return unless metadata.has_key?(:response_code)
+        metadata = APIMetadata.new(notification.group.metadata)
+        return unless metadata.response_example?
 
-        swagger_doc = @swagger_docs[metadata[:swagger_doc]] || @swagger_docs.values.first
-        swagger_data = swagger_data_from(metadata)
-        swagger_doc.deep_merge!(swagger_data)
+        swagger_doc = @swagger_docs[metadata.swagger_doc] || @swagger_docs.values.first
+        swagger_doc.deep_merge!(metadata.swagger_data)
       end
 
       def stop(notification)
@@ -35,34 +35,6 @@ module SwaggerRails
         end
 
         @output.puts 'Swagger Doc generated'
-      end
-
-      private
-
-      def swagger_data_from(metadata)
-        {
-          paths: {
-            metadata[:path_template] => {
-              metadata[:http_verb] => operation_from(metadata)
-            }
-          }
-        }
-      end
-
-      def operation_from(metadata)
-        {
-          tags: [ find_root_of(metadata)[:description] ] ,
-          summary: metadata[:summary],
-          consumes: metadata[:consumes],
-          produces: metadata[:produces],
-          parameters: metadata[:parameters],
-          responses: { metadata[:response_code] => metadata[:response] }
-        }
-      end
-
-      def find_root_of(metadata)
-        parent = metadata[:parent_example_group]
-        parent.nil? ? metadata : find_root_of(parent)
       end
     end
   end
