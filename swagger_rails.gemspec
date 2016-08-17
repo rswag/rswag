@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,bower_components/swagger-ui/dist,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
   s.add_dependency 'rack'
-  s.add_dependency "rails", ">= 3.1", "<= 5"
+  s.add_dependency "rails", ">= 3.1", "< 5.1"
 
   s.add_development_dependency "rspec-rails", "~> 3.0"
 end
