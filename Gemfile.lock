@@ -129,6 +129,3 @@ DEPENDENCIES
   sqlite3
   swagger_rails!
   test-unit
-
-BUNDLED WITH
-   1.12.5
