@@ -33,8 +33,8 @@ __NOTE__: It's early days so please be gentle when reporting issues :) As author
       path '/blogs' do
 
         post 'creates a new blog' do
-          consumes 'application/json'
           operation_description 'Detailed implementation notes for the create a new blog API endpoint'
+          consumes 'application/json'
           parameter :blog, in: :body, schema: {
             type: :object,
             properties: {

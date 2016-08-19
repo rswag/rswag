@@ -9,9 +9,9 @@ RSpec.describe ::SwaggerRails::RSpec::Formatter do
     RSpec.describe('Ping API', swagger_doc: 'v1_api.json') do
       path('/ping') do
         post('checks if site is alive') do
+          operation_description('A very long description')
           consumes('application/json')
           produces('application/json')
-          operation_description('A very long description')
           response('200', '(OK) Site up and running') do
             run_test!
           end
