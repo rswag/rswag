@@ -3,7 +3,7 @@ PATH
   specs:
     swagger_rails (1.0.1.pre.beta3)
       rack
-      rails (>= 3.1, <= 5)
+      rails (>= 3.1, < 5.1)
 
 GEM
   remote: https://rubygems.org/
