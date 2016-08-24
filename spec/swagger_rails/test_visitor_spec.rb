@@ -36,7 +36,7 @@ module SwaggerRails
         end
 
         it 'builds the path from values on the test object' do
-          expect(test).to have_received(:get).with('/resource/1', {}, {})
+          expect(test).to have_received(:get).with('/resource/1', { params: {}, headers: {} })
         end
       end
 
@@ -53,9 +53,10 @@ module SwaggerRails
 
         it 'builds a body from value on the test object' do
           expect(test).to have_received(:post).with(
-            '/resource',
-            "{\"foo\":\"bar\"}",
-            { 'CONTENT_TYPE' => 'application/json' }
+            '/resource', {
+              params: "{\"foo\":\"bar\"}",
+              headers: { 'CONTENT_TYPE' => 'application/json' }
+            }
           )
         end
       end
@@ -71,7 +72,7 @@ module SwaggerRails
         end
 
         it 'builds query params from values on the test object' do
-          expect(test).to have_received(:get).with('/resource', { 'type' => 'foo' }, {})
+          expect(test).to have_received(:get).with('/resource', { params: { 'type' => 'foo' }, headers: {} })
         end
       end
 
@@ -88,9 +89,10 @@ module SwaggerRails
 
         it 'builds request headers from values on the test object' do
           expect(test).to have_received(:get).with(
-            '/resource',
-            {},
-            { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
+            '/resource', {
+              params: {},
+              headers: { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
+            }
           )
         end
       end
@@ -106,7 +108,7 @@ module SwaggerRails
         end
 
         it 'prepends the basePath to the request path' do
-          expect(test).to have_received(:get).with('/api/resource', {}, {})
+          expect(test).to have_received(:get).with('/api/resource', { params: {}, headers: {} })
         end
       end
     end
