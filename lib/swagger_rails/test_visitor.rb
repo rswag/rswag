@@ -22,10 +22,21 @@ module SwaggerRails
 
     def params_data_for(test, parameters)
       parameters.map do |parameter|
+        parameter = resolve_param_ref(parameter[:$ref]) if parameter.has_key?(:$ref)
+
         parameter
           .slice(:name, :in)
           .merge(value: test.send(parameter[:name].to_s.underscore))
       end
+    end
+
+    def resolve_param_ref ref
+      raise "Invalid parameter reference: #{ref}" unless %r{#/parameters/(?<name>.+)} =~ ref
+
+      parameter = (@swagger_doc[:parameters][name] || @swagger_doc[:parameters][name.to_sym])
+      raise "Unknown parameter reference: #{ref}" unless parameter
+
+      parameter.merge(name: name)
     end
 
     def build_path(path_template, params_data)

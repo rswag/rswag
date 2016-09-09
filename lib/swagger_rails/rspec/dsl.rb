@@ -38,8 +38,16 @@ module SwaggerRails
         metadata[:produces] = mime_types
       end
 
+      # Accepts parameter objects:
+      #    parameter :petId, in: :path, type: :integer, required: true
+      # Or references:
+      #    parameter ref: '#/parameters/Pet'
       def parameter(name, attributes={})
-        metadata[:parameters] << { name: name.to_s }.merge(attributes)
+        metadata[:parameters] << if name.respond_to?(:has_key?)
+          { '$ref': name.delete(:ref) || name.delete('ref') }
+        else
+          { name: name.to_s }.merge(attributes)
+        end
       end
 
       def response(code, description, &block)
