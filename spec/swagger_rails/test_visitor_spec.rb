@@ -77,7 +77,7 @@ module SwaggerRails
 
       context 'given header parameters' do
         let(:metadata) do
-          allow(test).to receive(:date).and_return('2000-01-01')
+          allow(test).to receive(:Date).and_return('2000-01-01')
           return {
             path_template: '/resource',
             http_verb: :get,

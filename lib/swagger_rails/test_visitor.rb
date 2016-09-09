@@ -31,7 +31,7 @@ module SwaggerRails
 
         parameter
           .slice(:name, :in)
-          .merge(value: test.send(parameter[:name].to_s.underscore))
+          .merge(value: test.send(parameter[:name].to_s))
       end
     end
 
