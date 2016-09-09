@@ -43,10 +43,14 @@ module SwaggerRails
       # Or references:
       #    parameter ref: '#/parameters/Pet'
       def parameter(name, attributes={})
-        metadata[:parameters] << if name.respond_to?(:has_key?)
-          { '$ref': name.delete(:ref) || name.delete('ref') }
+        if name.respond_to?(:has_key?)
+          metadata[:parameters] << { '$ref': name.delete(:ref) || name.delete('ref') }
         else
-          { name: name.to_s }.merge(attributes)
+          attributes.symbolize_keys!
+          if attributes[:in] == 'path' || attributes[:in] == :path
+            attributes[:required] = true
+          end
+          metadata[:parameters] << { name: name.to_s }.merge(attributes)
         end
       end
 

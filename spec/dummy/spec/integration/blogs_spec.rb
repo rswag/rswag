@@ -40,7 +40,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
     get 'retrieves a specific blog' do
       operation_description 'For the id passed in the path, it searches and retrieves a blog against that id. If blog not found it returns a 404'
       produces 'application/json'
-      parameter :id, :in => :path, :type => :string
+      parameter :id, :in => :path, :type => :string, :required => true
 
       response '200', 'blog found' do
         let(:blog) { Blog.create(title: 'foo', content: 'bar') }
