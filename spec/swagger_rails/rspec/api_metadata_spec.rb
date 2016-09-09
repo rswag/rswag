@@ -121,5 +121,22 @@ RSpec.describe ::SwaggerRails::RSpec::APIMetadata do
                                                                                         :parameters => [],
                                                                                         :responses => { '200' => { :description => '(OK) Site up and running' } } } } } })
     end
+
+    it 'filters out nil values' do
+      request_metadata = SwaggerRails::RSpec::APIMetadata.new({
+        path_template: '/foo/{bar}',
+        http_verb: :get,
+        summary: nil,
+        operation_description: nil,
+        consumes: nil,
+        produces: nil,
+        parameters: [],
+        response_code: 200,
+        response: { description: nil }
+      })
+      expect(request_metadata.swagger_data).to eq({ paths: { "/foo/{bar}" => { get: { tags: [nil],
+                                                                                      parameters: [],
+                                                                                      responses: { 200 => {:description => nil} } } } } })
+    end
   end
 end
