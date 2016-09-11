@@ -14,7 +14,7 @@ __NOTE__: It's early days so please be gentle when reporting issues :) As author
 1. Add this line to your applications _Gemfile_:
 
     ```ruby
-    gem swagger_rails
+    gem 'swagger_rails'
     ```
 
 2. Run the install generator
