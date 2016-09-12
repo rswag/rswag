@@ -17,6 +17,10 @@ module SwaggerRails
       else
         test.send(metadata[:http_verb], path, body_or_params, headers)
       end
+
+      # Store a copy of the results so we can use it as an example
+      metadata[:response_mime_type] = test.response.headers['Content-Type'].split(';').first
+      metadata[:response_body] = test.response.body
     end
 
     def assert_response!(test, metadata)
