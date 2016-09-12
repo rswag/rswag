@@ -12,7 +12,11 @@ module SwaggerRails
       body_or_params = build_body_or_params(params_data)
       headers = build_headers(params_data, metadata[:consumes], metadata[:produces])
 
-      test.send(metadata[:http_verb], path, body_or_params, headers)
+      if Rails::VERSION::MAJOR >= 5
+        test.send(metadata[:http_verb], path, { params: body_or_params, headers: headers })
+      else
+        test.send(metadata[:http_verb], path, body_or_params, headers)
+      end
     end
 
     def assert_response!(test, metadata)
