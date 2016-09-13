@@ -1,0 +1,6 @@
+language: ruby
+rvm:
+  - 2.2
+cache: bundler
+install: bundle install && cd spec/dummy && bundle exec rake db:setup && cd -
+script: bundle exec rspec

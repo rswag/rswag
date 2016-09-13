@@ -11,7 +11,16 @@ module SwaggerRails
       path = build_path(metadata[:path_template], params_data)
       body_or_params = build_body_or_params(params_data)
       headers = build_headers(params_data, metadata[:consumes], metadata[:produces])
-      test.send(metadata[:http_verb], path, { params: body_or_params, headers: headers })
+
+      if Rails::VERSION::MAJOR >= 5
+        test.send(metadata[:http_verb], path, { params: body_or_params, headers: headers })
+      else
+        test.send(metadata[:http_verb], path, body_or_params, headers)
+      end
+
+      # Store a copy of the results so we can use it as an example
+      metadata[:response_mime_type] = test.response.headers['Content-Type'].split(';').first
+      metadata[:response_body] = test.response.body
     end
 
     def assert_response!(test, metadata)

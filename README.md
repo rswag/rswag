@@ -1,6 +1,8 @@
 swagger_rails
 =========
 
+[![Build Status](https://travis-ci.org/domaindrivendev/swagger_rails.svg)](https://travis-ci.org/domaindrivendev/swagger_rails)
+
 Generate API documentation, including a slick discovery UI and playground, directly from your rspec integration specs. Use the provided DSL to describe and test API operations in your spec files. Then, you can easily generate corresponding swagger.json files and serve them up with an embedded version of [swagger-ui](https://github.com/swagger-api/swagger-ui). Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API!
 
 And that's not all ...

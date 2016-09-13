@@ -6,6 +6,8 @@ module SwaggerRails
   module RSpec
     class Formatter
       ::RSpec::Core::Formatters.register self,
+        :example_finished,
+        :example_group_started,
         :example_group_finished,
         :stop
 
@@ -17,7 +19,32 @@ module SwaggerRails
         @output.puts 'Generating Swagger Docs ...'
       end
 
+      def example_group_started(notification)
+        @examples = nil
+      end
+
+      def example_finished(notification)
+        # TODO we should report errors so you know if you're trying to generate
+        # docs from failing specs
+        mime_type = notification.example.metadata[:response_mime_type]
+        body = notification.example.metadata[:response_body]
+
+        if mime_type && body
+          if mime_type == 'application/json'
+            begin
+              body = JSON.parse(body)
+            rescue JSON::ParserError => e
+            end
+          end
+
+          @examples = { mime_type => body }
+        end
+      end
+
       def example_group_finished(notification)
+        if notification.group.metadata[:response] && @examples
+          notification.group.metadata[:response][:examples] = @examples
+        end
         metadata = APIMetadata.new(notification.group.metadata)
         return unless metadata.response_example?
 
