@@ -4,6 +4,16 @@ require 'swagger_rails/test_visitor'
 module SwaggerRails
 
   describe TestVisitor do
+    # Helper to deal with the version difference in ActionDispatch::IntegrationTest
+    def request_params path, args = {}
+      if Rails::VERSION::MAJOR >= 5
+        [path, args]
+      else
+        [path, args.fetch(:params, {}), args.fetch(:headers, {})]
+      end
+    end
+
+
     let(:test) { spy('test') }
     let(:swagger_doc) { {} }
     subject { described_class.new(swagger_doc) }
@@ -36,7 +46,7 @@ module SwaggerRails
         end
 
         it 'builds the path from values on the test object' do
-          expect(test).to have_received(:get).with('/resource/1', { params: {}, headers: {} })
+          expect(test).to have_received(:get).with(*request_params('/resource/1'))
         end
       end
 
@@ -52,12 +62,11 @@ module SwaggerRails
         end
 
         it 'builds a body from value on the test object' do
-          expect(test).to have_received(:post).with(
-            '/resource', {
-              params: "{\"foo\":\"bar\"}",
-              headers: { 'CONTENT_TYPE' => 'application/json' }
-            }
-          )
+          expect(test).to have_received(:post).with(*request_params(
+            '/resource',
+            params: "{\"foo\":\"bar\"}",
+            headers: { 'CONTENT_TYPE' => 'application/json' }
+          ))
         end
       end
 
@@ -72,7 +81,10 @@ module SwaggerRails
         end
 
         it 'builds query params from values on the test object' do
-          expect(test).to have_received(:get).with('/resource', { params: { 'type' => 'foo' }, headers: {} })
+          expect(test).to have_received(:get).with(*request_params(
+            '/resource',
+            params: { 'type' => 'foo' }
+          ))
         end
       end
 
@@ -88,12 +100,11 @@ module SwaggerRails
         end
 
         it 'builds request headers from values on the test object' do
-          expect(test).to have_received(:get).with(
-            '/resource', {
-              params: {},
-              headers: { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
-            }
-          )
+          expect(test).to have_received(:get).with(*request_params(
+            '/resource',
+            params: {},
+            headers: { 'Date' => '2000-01-01', 'ACCEPT' => 'application/json' }
+          ))
         end
       end
 
@@ -108,7 +119,9 @@ module SwaggerRails
         end
 
         it 'prepends the basePath to the request path' do
-          expect(test).to have_received(:get).with('/api/resource', { params: {}, headers: {} })
+          expect(test).to have_received(:get).with(*request_params(
+            '/api/resource'
+          ))
         end
       end
     end
