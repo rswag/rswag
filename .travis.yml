@@ -1,6 +1,10 @@
 language: ruby
 rvm:
-  - 2.2
+  - 2.2.5
+env:
+  - "RAILS_VERSION=3.2.0"
+  - "RAILS_VERSION=4.2.0"
+  - "RAILS_VERSION=5.0.0"
 cache: bundler
 install: bundle install && cd spec/dummy && bundle exec rake db:setup && cd -
 script: bundle exec rspec

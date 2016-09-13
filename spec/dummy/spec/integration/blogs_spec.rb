@@ -12,7 +12,7 @@ describe 'Blogs API', swagger_doc: 'v1/swagger.json' do
         :type => :object,
         :properties => {
           title: { type: 'string' },
-          content: { type: 'string' }
+          content: { type: 'string', required: true }
         }
       }
 

@@ -15,9 +15,24 @@ gemspec
 #
 gem 'sqlite3'
 
+# Allow the rails version to come from an ENV setting so Tavis can test multiple
+# versions. Inspired by http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
+def rails_version
+  ENV['RAILS_VERSION'] || '3.2.22'
+end
+
 group :development, :test do
   gem 'pry'
   gem 'generator_spec'
+
+  gem 'rails', "~> #{rails_version}"
+
+  case rails_version.split('.').first
+  when '3'
+    gem 'strong_parameters'
+  when '4', '5'
+    gem 'responders'
+  end
 end
 
 group :test do
