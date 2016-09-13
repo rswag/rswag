@@ -35,7 +35,7 @@ module SwaggerRails::RSpec
         produces: @metadata[:produces],
         parameters: @metadata[:parameters],
         responses: { @metadata[:response_code] => @metadata[:response] }
-      }
+      }.reject{ |_,v| v.nil? }
     end
 
     def find_root_of(node)

@@ -49,8 +49,6 @@
           "Blogs API"
         ],
         "summary": "searches existing blogs",
-        "description": null,
-        "consumes": null,
         "produces": [
           "application/json"
         ],
@@ -71,7 +69,6 @@
         ],
         "summary": "retrieves a specific blog",
         "description": "For the id passed in the path, it searches and retrieves a blog against that id. If blog not found it returns a 404",
-        "consumes": null,
         "produces": [
           "application/json"
         ],
@@ -79,7 +76,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         ],
         "responses": {
