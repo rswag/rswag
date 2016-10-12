@@ -1,5 +1,6 @@
 rswag (formerly swagger_rails)
 =========
+[![Build Status](https://travis-ci.org/domaindrivendev/rswag.svg?branch=master)](https://travis-ci.org/domaindrivendev/rswag)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
