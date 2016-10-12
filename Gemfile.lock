@@ -10,6 +10,7 @@ PATH
     rswag-specs (1.0.0)
       json-schema (~> 2.2)
       rails (>= 3.1, < 5.1)
+      rspec-rails (>= 2.14, < 4)
 
 PATH
   remote: ./rswag-ui

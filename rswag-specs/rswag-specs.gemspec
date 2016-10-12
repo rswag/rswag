@@ -14,9 +14,9 @@ Gem::Specification.new do |s|
   s.description = "Simplify API integration testing with a succinct rspec DSL and generate Swagger files directly from your rspecs"
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
+  s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
 
   s.add_dependency "rails", ">= 3.1", "< 5.1" 
   s.add_dependency 'json-schema', '~> 2.2'
-  s.add_development_dependency 'rspec-rails', '>= 2.14', '< 4'
+  s.add_dependency 'rspec-rails', '>= 2.14', '< 4'
 end

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests"
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + [ "MIT-LICENSE" ]
+  s.files = Dir["{lib}/**/*"] + [ "MIT-LICENSE" ]
 
   s.add_dependency 'rswag-specs', Rswag::VERSION
   s.add_dependency 'rswag-api', Rswag::VERSION
