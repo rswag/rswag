@@ -3,7 +3,7 @@ rswag (formerly swagger_rails)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed JSON. This toolchain makes it seamless to go from integration specs, which you're probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed JSON. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
 
 And that's not all ...
 
@@ -100,7 +100,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 If you've used [Swagger](http://swagger.io/specification) before, then the syntax should be very familiar. To describe your API operations, start by specifying a path and then list the supported operations (i.e. HTTP verbs) for that path. Path parameters must be surrounded by curly braces ({}). Within an operation block (see "post" or "get" in the example above), most of the fields supported by the [Swagger "Operation" object](http://swagger.io/specification/#operationObject) are available as methods on the example group. To list (and test) the various responses for an operation, create one or more response blocks. Again, you can reference the [Swagger "Response" object](http://swagger.io/specification/#responseObject) for available fields.
 
-Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a 'body' parameter called 'blog'. It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
+Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
 
 If you'd like your specs to be a little more explicit about what's going on here, you can replace the call to __run_test!__ with equivalent "before" and "it" blocks:
 
@@ -175,7 +175,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 ### Output Location for Generated Swagger Files ###
 
-You can adjust this in the _swagger_helper.rb_ that's installed with __rspec-specs__:
+You can adjust this in the _swagger_helper.rb_ that's installed with __rswag-specs__:
 
 ```ruby
 # spec/swagger_helper.rb
@@ -254,7 +254,7 @@ TestApp::Application.routes.draw do
 end
 ```
 
-Assuming a Swagger file exists at '&lt;swagger_root&gt;/v1/swagger.json', this configuration would expose the file as the following JSON endpoint:
+Assuming a Swagger file exists at &lt;swagger_root&gt;/v1/swagger.json, this configuration would expose the file as the following JSON endpoint:
 
 ```
 GET http://<hostname>/your-custom-prefix/v1/swagger.json
