@@ -25,5 +25,5 @@ group :test do
   gem 'test-unit'
   gem 'rspec-rails'
   gem 'generator_spec'
-  gem 'rswag-specs', path: '~/src/rswag/rswag-specs'
+  gem 'rswag-specs', path: './rswag-specs'
 end
