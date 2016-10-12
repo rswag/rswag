@@ -50,7 +50,9 @@ echo '##### rswag #####'
 cd $ROOT_PATH/rswag
 gem push rswag-$version.gem
 
-
-
 # Cleanup
 cd $ROOT_PATH
+
+# Create git tag
+git tag v$version
+git push origin v$version
