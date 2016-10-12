@@ -3,8 +3,6 @@
 ROOT_PATH=$PWD
 set -e # abort if anything fails
 
-bundle check || bundle
-
 echo '####################'
 echo 'Unit Tests'
 echo '####################'
@@ -29,7 +27,7 @@ echo ''
 
 echo '##### test-app #####'
 cd $ROOT_PATH/test-app
-bundle exec rake db:setup
+bundle exec rake db:migrate db:test:prepare
 bundle exec rspec
 
 # Cleanup
