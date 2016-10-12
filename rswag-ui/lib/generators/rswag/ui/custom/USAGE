@@ -1,0 +1,8 @@
+Description:
+    Adds a local version of index.html.erb for customizing the swagger-ui
+
+Example:
+    rails generate rswag:ui:custom
+
+    This will create:
+        app/views/rswag/ui/home/index.html.erb

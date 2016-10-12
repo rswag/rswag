@@ -1,0 +1,10 @@
+Description:
+  Adds a Swagger to your Rails API
+
+Example:
+    rails generate rswag:install
+
+    This will create:
+        spec/swagger_helper.rb
+        config/initializers/rswag-api.rb
+        config/initializers/rswag-ui.rb
