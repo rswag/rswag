@@ -317,7 +317,8 @@ end
 The swagger-ui provides several options for customizing it's behavior, all of which are documented here https://github.com/swagger-api/swagger-ui#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
 
 ```ruby
-rails g rswag:ui:custom_ui
+rails g rswag:ui:custom
+
 ```
 
 This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_
