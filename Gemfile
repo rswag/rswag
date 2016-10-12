@@ -1,26 +1,29 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-# Declare your gem's dependencies in swagger_rails.gemspec.
-# Bundler will treat runtime dependencies like base dependencies, and
-# development dependencies will be added by default to the :development group.
-gemspec
+# Allow the rails version to come from an ENV setting so Travis can test multiple versions.
+# See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
+rails_version = ENV['RAILS_VERSION'] || '3.2.22'
 
-# Declare any dependencies that are still in development here instead of in
-# your gemspec. These might include edge Rails or gems from your path or
-# Git. Remember to move these dependencies to your gemspec before releasing
-# your gem to rubygems.org.
+gem 'rails', "#{rails_version}"
 
-# To use a debugger
-# gem 'debugger', group: [:development, :test]
-#
+case rails_version.split('.').first
+when '3'
+  gem 'strong_parameters'
+when '4', '5'
+  gem 'responders'
+end
+
 gem 'sqlite3'
 
-group :development, :test do
-  gem 'pry'
-  gem 'generator_spec'
-end
+gem 'rswag-api', path: './rswag-api'
+gem 'rswag-ui', path: './rswag-ui'
+
+# To use debugger
+# gem 'debugger'
 
 group :test do
   gem 'test-unit'
-  gem 'database_cleaner'
+  gem 'rspec-rails'
+  gem 'generator_spec'
+  gem 'rswag-specs', path: '~/src/rswag/rswag-specs'
 end
