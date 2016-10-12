@@ -11,6 +11,8 @@ Gem::Specification.new do |s|
   s.email       = ["domaindrivendev@gmail.com"]
   s.homepage    = "https://github.com/domaindrivendev/rswag"
   s.summary     = "A Rails Engine that includes swagger-ui and powers it from configured Swagger endpoints"
+  s.description = "Expose beautiful API documentation, that's powered by Swagger JSON endpoints, including a UI to explore and test operations"
+  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
 

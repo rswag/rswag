@@ -11,11 +11,12 @@ Gem::Specification.new do |s|
   s.email       = ["domaindrivendev@gmail.com"]
   s.homepage    = "https://github.com/domaindrivendev/rswag"
   s.summary     = "Swagger tooling for Rails API's"
-  s.description = "Generate Swagger files direclty from integration specs, expose them as JSON endpoints, and use them to power a slick API docs and discovery UI"
+  s.description = "Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests"
+  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + [ "MIT-LICENSE" ]
 
-  s.add_dependency 'rswag-specs'
-  s.add_dependency 'rswag-api'
-  s.add_dependency 'rswag-ui'
+  s.add_dependency 'rswag-specs', Rswag::VERSION
+  s.add_dependency 'rswag-api', Rswag::VERSION
+  s.add_dependency 'rswag-ui', Rswag::VERSION
 end
