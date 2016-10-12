@@ -1,0 +1,9 @@
+nguage: ruby
+rvm:
+  - 2.2.5
+env:
+  - "RAILS_VERSION=3.2.0"
+  - "RAILS_VERSION=4.2.0"
+  - "RAILS_VERSION=5.0.0"
+cache: bundler
+script: ./ci/test.sh

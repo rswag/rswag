@@ -8288,3 +8288,9 @@ Served asset /swagger-ui/css/print.css - 304 Not Modified (3ms)
 
 
 Started GET "/api-docs/v1/swagger.json" for 127.0.0.1 at 2016-10-10 17:40:13 -0700
+Connecting to database specified by database.yml
+  [1m[36m (0.5ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (1.9ms)[0m  DROP TABLE "blogs"
+  [1m[36m (0.9ms)[0m  [1mCREATE TABLE "blogs" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "content" text, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL) [0m
+  [1m[35m (0.3ms)[0m  SELECT version FROM "schema_migrations"
+  [1m[36m (0.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m

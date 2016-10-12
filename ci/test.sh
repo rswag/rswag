@@ -29,6 +29,7 @@ echo ''
 
 echo '##### test-app #####'
 cd $ROOT_PATH/test-app
+bundle exec rake db:setup
 bundle exec rspec
 
 # Cleanup
