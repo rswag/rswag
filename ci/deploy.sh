@@ -34,17 +34,17 @@ echo ''
 echo 'Type the version no, followed by [ENTER]:'
 read version
 
-#echo '##### rswag-api #####'
-#cd $ROOT_PATH/rswag-api
-#gem push rswag-api-$version.gem
-#
-#echo '##### rswag-specs #####'
-#cd $ROOT_PATH/rswag-specs
-#gem push rswag-specs-$version.gem
-#
-#echo '##### rswag-ui #####'
-#cd $ROOT_PATH/rswag-ui
-#gem push rswag-ui-$version.gem
+echo '##### rswag-api #####'
+cd $ROOT_PATH/rswag-api
+gem push rswag-api-$version.gem
+
+echo '##### rswag-specs #####'
+cd $ROOT_PATH/rswag-specs
+gem push rswag-specs-$version.gem
+
+echo '##### rswag-ui #####'
+cd $ROOT_PATH/rswag-ui
+gem push rswag-ui-$version.gem
 
 echo '##### rswag #####'
 cd $ROOT_PATH/rswag

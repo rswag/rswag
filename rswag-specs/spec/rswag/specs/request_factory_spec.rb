@@ -49,6 +49,53 @@ module Rswag
           end
         end
 
+        context "'query' parameter of type 'array'" do
+          before do
+            api_metadata[:operation][:parameters] << {
+              name: 'things',
+              in: :query,
+              type: :array,
+              collectionFormat: collectionFormat
+            }
+            allow(example).to receive(:things).and_return([ 'foo', 'bar' ])
+          end
+
+          context 'collectionFormat = csv' do
+            let(:collectionFormat) { :csv }
+            it "formats as comma separated values" do
+              expect(path).to eq('/blogs/1/comments/2?things=foo,bar')
+            end
+          end
+
+          context 'collectionFormat = ssv' do
+            let(:collectionFormat) { :ssv }
+            it "formats as space separated values" do
+              expect(path).to eq('/blogs/1/comments/2?things=foo bar')
+            end
+          end
+
+          context 'collectionFormat = tsv' do
+            let(:collectionFormat) { :tsv }
+            it "formats as tab separated values" do
+              expect(path).to eq('/blogs/1/comments/2?things=foo\tbar')
+            end
+          end
+
+          context 'collectionFormat = pipes' do
+            let(:collectionFormat) { :pipes }
+            it "formats as pipe separated values" do
+              expect(path).to eq('/blogs/1/comments/2?things=foo|bar')
+            end
+          end
+
+          context 'collectionFormat = multi' do
+            let(:collectionFormat) { :multi }
+            it "formats as multiple parameter instances" do
+              expect(path).to eq('/blogs/1/comments/2?things=foo&things=bar')
+            end
+          end
+        end
+
         context "global definition for 'api_key in query'" do
           before do
             global_metadata[:securityDefinitions] = { api_key: { type: :apiKey, name: 'api_key', in: :query } }

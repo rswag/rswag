@@ -12,15 +12,15 @@ module Rswag
 
       def build_fullpath(example)
         @api_metadata[:path].dup.tap do |t|
-          parameters_in(:path).each { |p| t.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s) }
-          t.concat(build_query(example))
           t.prepend(@global_metadata[:basePath] || '')
+          parameters_in(:path).each { |p| t.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s) }
+          t.concat(build_query_string(example))
         end
       end
 
-      def build_query(example)
+      def build_query_string(example)
         query_string = parameters_in(:query)
-          .map { |p| "#{p[:name]}=#{example.send(p[:name])}" }
+          .map { |p| build_query_string_part(p, example.send(p[:name])) }
           .join('&')
 
         query_string.empty? ? '' : "?#{query_string}"
@@ -63,6 +63,24 @@ module Rswag
           requirements = global_requirements.merge(@api_metadata[:operation][:security] || {})
           definitions = (@global_metadata[:securityDefinitions] || {}).slice(*requirements.keys)
           definitions.values.select { |d| d[:type] == :apiKey }
+        end
+      end
+
+      def build_query_string_part(param, value)
+        return "#{param[:name]}=#{value.to_s}" unless param[:type].to_sym == :array
+
+        name = param[:name]
+        case param[:collectionFormat]
+        when :ssv 
+          "#{name}=#{value.join(' ')}"
+        when :tsv 
+          "#{name}=#{value.join('\t')}"
+        when :pipes 
+          "#{name}=#{value.join('|')}"
+        when :multi 
+          value.map { |v| "#{name}=#{v}" }.join('&')
+        else
+          "#{name}=#{value.join(',')}" # csv is default
         end
       end
     end
