@@ -4,6 +4,12 @@ module Rswag
   module Specs
 
     describe RequestFactory do
+      subject { RequestFactory.new(api_metadata, global_metadata) }
+
+      before do
+        allow(example).to receive(:blog_id).and_return(1)
+        allow(example).to receive(:id).and_return('2')
+      end
       let(:api_metadata) do
         {
           path: '/blogs/{blog_id}/comments/{id}',
@@ -18,14 +24,7 @@ module Rswag
         }
       end
       let(:global_metadata) { {} }
-
-      subject { RequestFactory.new(api_metadata, global_metadata) }
-
       let(:example) { double('example') }
-      before do
-        allow(example).to receive(:blog_id).and_return(1)
-        allow(example).to receive(:id).and_return('2')
-      end
 
       describe '#build_fullpath(example)' do
         let(:path) { subject.build_fullpath(example) }

@@ -5,13 +5,14 @@ module Rswag
 
     describe ExampleGroupHelpers do
       subject { double('example_group') }
-      let(:api_metadata) { {} }
+
       before do
         subject.extend ExampleGroupHelpers
         allow(subject).to receive(:describe)
         allow(subject).to receive(:context)
         allow(subject).to receive(:metadata).and_return(api_metadata)
       end
+      let(:api_metadata) { {} }
 
       describe '#path(path)' do
         before { subject.path('/blogs') }
@@ -34,7 +35,6 @@ module Rswag
       end
 
       describe '#tags|description|operationId|consumes|produces|schemes|deprecated(value)' do
-        let(:api_metadata) { { operation: {} } }
         before do
           subject.tags('Blogs', 'Admin')
           subject.description('Some description')
@@ -44,6 +44,7 @@ module Rswag
           subject.schemes('http', 'https')
           subject.deprecated(true)
         end
+        let(:api_metadata) { { operation: {} } }
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
@@ -59,7 +60,6 @@ module Rswag
       end
 
       describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
-        let(:api_metadata) { { operation: {} } }
         before do
           subject.tags('Blogs', 'Admin')
           subject.description('Some description')
@@ -70,6 +70,7 @@ module Rswag
           subject.deprecated(true)
           subject.security(api_key: [])
         end
+        let(:api_metadata) { { operation: {} } }
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
@@ -120,8 +121,8 @@ module Rswag
       end
 
       describe '#schema(value)' do
-        let(:api_metadata) { { response: {} } }
         before { subject.schema(type: 'object') }
+        let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response' metadata" do
           expect(api_metadata[:response][:schema]).to match(type: 'object')
@@ -129,8 +130,8 @@ module Rswag
       end
 
       describe '#header(name, attributes)' do
-        let(:api_metadata) { { response: {} } }
         before { subject.header('Date', type: 'string') }
+        let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response headers' metadata" do
           expect(api_metadata[:response][:headers]).to match(

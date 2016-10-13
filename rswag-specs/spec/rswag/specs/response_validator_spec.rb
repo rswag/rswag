@@ -4,10 +4,10 @@ module Rswag
   module Specs
 
     describe ResponseValidator do
+      subject { ResponseValidator.new(api_metadata, global_metadata) }
+
       let(:api_metadata) { { response: { code: 200 } } }
       let(:global_metadata) { {} }
-
-      subject { ResponseValidator.new(api_metadata, global_metadata) }
 
       describe '#validate!(response)' do
         let(:call) { subject.validate!(response) }

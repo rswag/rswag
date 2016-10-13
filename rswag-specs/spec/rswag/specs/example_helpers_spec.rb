@@ -4,6 +4,16 @@ module Rswag
   module Specs
 
     describe ExampleHelpers do
+      subject { double('example') }
+
+      before do
+        subject.extend ExampleHelpers
+        # Mock out some infrastructure
+        stub_const('Rails::VERSION::MAJOR', 3)
+        config = double('config')
+        allow(config).to receive(:get_swagger_doc).and_return(global_metadata)
+        allow(subject).to receive(:config).and_return(config)
+      end
       let(:api_metadata) do
         {
           path: '/blogs/{blog_id}/comments/{id}',
@@ -34,22 +44,14 @@ module Rswag
         }
       end
 
-      subject { double('example') }
-
-      before do
-        subject.extend ExampleHelpers
-        allow(subject).to receive(:blog_id).and_return(1)
-        allow(subject).to receive(:id).and_return(2)
-        allow(subject).to receive(:q1).and_return('foo')
-        allow(subject).to receive(:api_key).and_return('fookey')
-        allow(subject).to receive(:blog).and_return(text: 'Some comment')
-        allow(subject).to receive(:global_metadata).and_return(global_metadata)
-        allow(subject).to receive(:put)
-      end
-
       describe '#submit_request(api_metadata)' do
         before do
-          stub_const('Rails::VERSION::MAJOR', 3)
+          allow(subject).to receive(:blog_id).and_return(1)
+          allow(subject).to receive(:id).and_return(2)
+          allow(subject).to receive(:q1).and_return('foo')
+          allow(subject).to receive(:api_key).and_return('fookey')
+          allow(subject).to receive(:blog).and_return(text: 'Some comment')
+          allow(subject).to receive(:put)
           subject.submit_request(api_metadata)
         end
 

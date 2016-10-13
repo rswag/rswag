@@ -1,5 +1,4 @@
 require 'active_support/core_ext/hash/deep_merge'
-require 'rspec/core/formatters/base_text_formatter'
 require 'swagger_helper'
 
 module Rswag
@@ -11,12 +10,9 @@ module Rswag
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
       end
 
-      def initialize(output)
+      def initialize(output, config = Rswag::Specs.config)
         @output = output
-        @swagger_root = ::RSpec.configuration.swagger_root
-        raise ConfigurationError, 'Missing swagger_root. See swagger_helper.rb' if @swagger_root.nil?
-        @swagger_docs = ::RSpec.configuration.swagger_docs || []
-        raise ConfigurationError, 'Missing swagger_docs. See swagger_helper.rb' if @swagger_docs.empty?
+        @config = config
 
         @output.puts 'Generating Swagger docs ...'
       end
@@ -30,13 +26,13 @@ module Rswag
         end
 
         return unless metadata.has_key?(:response)
-        swagger_doc = get_swagger_doc(metadata[:swagger_doc])
+        swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
 
       def stop(notification=nil)
-        @swagger_docs.each do |url_path, doc|
-          file_path = File.join(@swagger_root, url_path)
+        @config.swagger_docs.each do |url_path, doc|
+          file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
           FileUtils.mkdir_p dirname unless File.exists?(dirname)
 
@@ -49,12 +45,6 @@ module Rswag
       end
 
       private
-
-      def get_swagger_doc(tag)
-        return @swagger_docs.values.first if tag.nil?
-        raise ConfigurationError, "Unknown swagger_doc '#{tag}'" unless @swagger_docs.has_key?(tag)
-        @swagger_docs[tag]
-      end
 
       def metadata_to_swagger(metadata)
         response_code = metadata[:response][:code]
@@ -73,7 +63,5 @@ module Rswag
         }
       end
     end
-
-    class ConfigurationError < StandardError; end
   end
 end
