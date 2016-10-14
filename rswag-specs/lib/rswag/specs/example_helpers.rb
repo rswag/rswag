@@ -6,7 +6,8 @@ module Rswag
     module ExampleHelpers
 
       def submit_request(api_metadata)
-        factory = RequestFactory.new(api_metadata, config.get_swagger_doc(api_metadata[:swagger_doc]))
+        global_metadata = rswag_config.get_swagger_doc(api_metadata[:swagger_doc])
+        factory = RequestFactory.new(api_metadata, global_metadata)
 
         if RAILS_VERSION < 5
           send(
@@ -28,13 +29,14 @@ module Rswag
       end
 
       def assert_response_matches_metadata(api_metadata)
-        validator = ResponseValidator.new(api_metadata, config.get_swagger_doc(api_metadata[:swagger_doc]))
+        global_metadata = rswag_config.get_swagger_doc(api_metadata[:swagger_doc])
+        validator = ResponseValidator.new(api_metadata, global_metadata)
         validator.validate!(response)
       end
 
       private
 
-      def config
+      def rswag_config
         ::Rswag::Specs.config
       end
     end

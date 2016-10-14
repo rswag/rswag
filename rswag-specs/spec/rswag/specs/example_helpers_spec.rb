@@ -10,9 +10,9 @@ module Rswag
         subject.extend ExampleHelpers
         # Mock out some infrastructure
         stub_const('Rails::VERSION::MAJOR', 3)
-        config = double('config')
-        allow(config).to receive(:get_swagger_doc).and_return(global_metadata)
-        allow(subject).to receive(:config).and_return(config)
+        rswag_config = double('rswag_config')
+        allow(rswag_config).to receive(:get_swagger_doc).and_return(global_metadata)
+        allow(subject).to receive(:rswag_config).and_return(rswag_config)
       end
       let(:api_metadata) do
         {
