@@ -44,7 +44,13 @@ module Rswag
       private
 
       def parameters_in(location)
-        (@api_metadata[:operation][:parameters] || [])
+        path_item_params = @api_metadata[:path_item][:parameters] || []
+        operation_params = @api_metadata[:operation][:parameters] || []
+        applicable_params = operation_params
+          .concat(path_item_params)
+          .uniq { |p| p[:name] } # operation params should override path_item params
+
+        applicable_params
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref']) : p } # resolve any references
           .concat(resolve_api_key_parameters)
           .select { |p| p[:in] == location }

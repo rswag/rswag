@@ -68,6 +68,14 @@
       }
     },
     "/blogs/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
       "get": {
         "summary": "Retrieves a blog",
         "tags": [
@@ -77,14 +85,6 @@
         "operationId": "getBlog",
         "produces": [
           "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
         ],
         "responses": {
           "200": {

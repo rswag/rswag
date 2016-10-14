@@ -37,8 +37,14 @@ module Rswag
 
       def parameter(attributes)
         attributes[:required] = true if attributes[:in].to_sym == :path
-        metadata[:operation][:parameters] ||= []
-        metadata[:operation][:parameters] << attributes
+
+        if metadata.has_key?(:operation)
+          metadata[:operation][:parameters] ||= []
+          metadata[:operation][:parameters] << attributes
+        else
+          metadata[:path_item][:parameters] ||= []
+          metadata[:path_item][:parameters] << attributes
+        end
       end
 
       def response(code, description, &block)
