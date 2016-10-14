@@ -11,7 +11,7 @@ module Rswag
       end
 
       def build_fullpath(example)
-        @api_metadata[:path].dup.tap do |t|
+        @api_metadata[:path_item][:template].dup.tap do |t|
           t.prepend(@global_metadata[:basePath] || '')
           parameters_in(:path).each { |p| t.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s) }
           t.concat(build_query_string(example))

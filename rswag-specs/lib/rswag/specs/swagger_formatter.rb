@@ -56,7 +56,7 @@ module Rswag
 
         {
           paths: {
-            metadata[:path] => {
+            metadata[:path_item][:template] => {
               verb => operation
             }
           }

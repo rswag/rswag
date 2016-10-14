@@ -12,7 +12,7 @@ module Rswag
       end
       let(:api_metadata) do
         {
-          path: '/blogs/{blog_id}/comments/{id}',
+          path_item: { template: '/blogs/{blog_id}/comments/{id}' },
           operation: {
             verb: :put,
             summary: 'Updates a blog',

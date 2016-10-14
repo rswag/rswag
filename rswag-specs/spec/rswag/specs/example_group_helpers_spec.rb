@@ -19,7 +19,7 @@ module Rswag
 
         it "delegates to 'describe' with 'path' metadata" do
           expect(subject).to have_received(:describe).with(
-            '/blogs', path: '/blogs'
+            '/blogs', path_item: { template: '/blogs' }
           )
         end
       end
