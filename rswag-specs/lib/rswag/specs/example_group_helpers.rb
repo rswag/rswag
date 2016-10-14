@@ -2,9 +2,9 @@ module Rswag
   module Specs
     module ExampleGroupHelpers
 
-      def path(path, &block)
-        api_metadata = { path: path}
-        describe(path, api_metadata, &block)
+      def path(template, &block)
+        api_metadata = { path_item: { template: template } }
+        describe(template, api_metadata, &block)
       end
 
       [ :get, :post, :patch, :put, :delete, :head ].each do |verb|
@@ -37,8 +37,14 @@ module Rswag
 
       def parameter(attributes)
         attributes[:required] = true if attributes[:in].to_sym == :path
-        metadata[:operation][:parameters] ||= []
-        metadata[:operation][:parameters] << attributes
+
+        if metadata.has_key?(:operation)
+          metadata[:operation][:parameters] ||= []
+          metadata[:operation][:parameters] << attributes
+        else
+          metadata[:path_item][:parameters] ||= []
+          metadata[:path_item][:parameters] << attributes
+        end
       end
 
       def response(code, description, &block)

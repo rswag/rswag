@@ -24,7 +24,7 @@ module Rswag
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
           {
-            path: '/blogs',
+            path_item: { template: '/blogs' },
             operation: { verb: :post, summary: 'Creates a blog' },
             response: { code: '201', description: 'blog created' }
           }

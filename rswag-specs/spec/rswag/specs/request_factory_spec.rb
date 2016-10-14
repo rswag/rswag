@@ -12,7 +12,7 @@ module Rswag
       end
       let(:api_metadata) do
         {
-          path: '/blogs/{blog_id}/comments/{id}',
+          path_item: { template: '/blogs/{blog_id}/comments/{id}' },
           operation: {
             verb: :put,
             summary: 'Updates a blog',
@@ -123,6 +123,17 @@ module Rswag
 
           it 'prepends the basePath' do
             expect(path).to eq('/foobar/blogs/1/comments/2')
+          end
+        end
+
+        context "defined at the 'path' level" do
+          before do
+            api_metadata[:path_item][:parameters] = [ { name: :blog_id, in: :path } ]
+            api_metadata[:operation][:parameters] = [ { name: :id, in: :path } ]
+          end
+
+          it "builds path from parameters defined at path and operation levels" do
+            expect(path).to eq('/blogs/1/comments/2')
           end
         end
       end

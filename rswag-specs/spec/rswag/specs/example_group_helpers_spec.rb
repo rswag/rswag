@@ -19,7 +19,7 @@ module Rswag
 
         it "delegates to 'describe' with 'path' metadata" do
           expect(subject).to have_received(:describe).with(
-            '/blogs', path: '/blogs'
+            '/blogs', path_item: { template: '/blogs' }
           )
         end
       end
@@ -87,10 +87,21 @@ module Rswag
       end
 
       describe '#parameter(attributes)' do
-        let(:api_metadata) { { operation: {} } }
 
-        context 'always' do 
+        context "when called at the 'path' level" do
           before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          let(:api_metadata) { { path_item: {} } } # i.e. operation not defined yet
+
+          it "adds to the 'path_item parameters' metadata" do
+            expect(api_metadata[:path_item][:parameters]).to match(
+              [ name: :blog, in: :body, schema: { type: 'object' } ]
+            )
+          end
+        end
+
+        context "when called at the 'operation' level" do
+          before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          let(:api_metadata) { { path_item: {}, operation: {} } } # i.e. operation defined
 
           it "adds to the 'operation parameters' metadata" do
             expect(api_metadata[:operation][:parameters]).to match(
@@ -101,6 +112,7 @@ module Rswag
 
         context "'path' parameter" do
           before { subject.parameter(name: :id, in: :path) }
+          let(:api_metadata) { { operation: {} } }
    
           it "automatically sets the 'required' flag" do
             expect(api_metadata[:operation][:parameters]).to match(
