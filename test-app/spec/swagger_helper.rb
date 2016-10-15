@@ -51,9 +51,9 @@ RSpec.configure do |config|
           in: :query
         }
       },
-      security: {
-        api_key: []
-      }
+      security: [
+        { api_key: [] }
+      ]
     }
   }
 end

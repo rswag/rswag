@@ -102,7 +102,7 @@ module Rswag
           end
 
           context 'global requirement' do
-            before { global_metadata[:security] = { api_key: [] } }
+            before { global_metadata[:security] = [ { api_key: [] } ] }
 
             it "appends the api_key using metadata and example value" do
               expect(path).to eq('/blogs/1/comments/2?api_key=fookey')
@@ -110,7 +110,7 @@ module Rswag
           end
 
           context 'operation-specific requirement' do
-            before { api_metadata[:operation][:security] = { api_key: [] } }
+            before { api_metadata[:operation][:security] = [ { api_key: [] } ] }
 
             it "appends the api_key using metadata and example value" do
               expect(path).to eq('/blogs/1/comments/2?api_key=fookey')

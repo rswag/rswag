@@ -65,9 +65,13 @@ module Rswag
 
       def resolve_api_key_parameters
         @api_key_params ||= begin
-          global_requirements = (@global_metadata[:security] || {})
-          requirements = global_requirements.merge(@api_metadata[:operation][:security] || {})
-          definitions = (@global_metadata[:securityDefinitions] || {}).slice(*requirements.keys)
+          # First figure out the security requirement applicable to the operation
+          global_requirements = (@global_metadata[:security] || [] ).map { |r| r.keys.first }
+          operation_requirements = (@api_metadata[:operation][:security] || [] ).map { |r| r.keys.first }
+          requirements = global_requirements | operation_requirements
+
+          # Then obtain the scheme definitions for those requirements
+          definitions = (@global_metadata[:securityDefinitions] || {}).slice(*requirements)
           definitions.values.select { |d| d[:type] == :apiKey }
         end
       end

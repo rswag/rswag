@@ -26,9 +26,9 @@ module Rswag
               { name: 'q1', in: :query, type: 'string' },
               { name: :blog, in: :body, schema: { type: 'object' } }
             ],
-            security: {
-              api_key: []
-            }
+            security: [
+              { api_key: [] }
+            ]
           }
         }
       end
