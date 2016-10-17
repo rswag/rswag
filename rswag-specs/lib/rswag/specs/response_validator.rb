@@ -1,4 +1,6 @@
+require 'active_support/core_ext/hash/slice'
 require 'json-schema'
+require 'rswag/specs/extended_schema'
 
 module Rswag
   module Specs
@@ -23,10 +25,14 @@ module Rswag
       end
 
       def validate_body!(body)
-        schema = @api_metadata[:response][:schema]
-        return if schema.nil?
+        response_schema = @api_metadata[:response][:schema]
+        return if response_schema.nil?
+
         begin
-          JSON::Validator.validate!(schema.merge(@global_metadata), body)
+          validation_schema = response_schema
+            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+            .merge(@global_metadata.slice(:definitions))
+          JSON::Validator.validate!(validation_schema, body)
         rescue JSON::Schema::ValidationError => ex
           raise UnexpectedResponse, "Expected response body to match schema: #{ex.message}" 
         end
