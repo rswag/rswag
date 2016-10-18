@@ -52,6 +52,12 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       response '200', 'blog found' do
         schema '$ref' => '#/definitions/blog'
 
+        response_examples 'application/json' => {
+            id: 1,
+            title: 'Hello world!',
+            content: 'Hello world and hello universe. Thank you all very much!!!'
+          }
+
         let(:blog) { Blog.create(title: 'foo', content: 'bar') }
         let(:id) { blog.id }
         run_test!
