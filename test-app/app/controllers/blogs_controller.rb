@@ -17,6 +17,10 @@ class BlogsController < ApplicationController
   # GET /blogs/1
   def show
     @blog = Blog.find_by_id(params[:id])
+
+    fresh_when(@blog)
+    return unless stale?(@blog)
+
     respond_with @blog, status: :not_found and return unless @blog
     respond_with @blog
   end

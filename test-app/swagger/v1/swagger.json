@@ -89,8 +89,26 @@
         "responses": {
           "200": {
             "description": "blog found",
+            "headers": {
+              "ETag": {
+                "type": "string"
+              },
+              "Last-Modified": {
+                "type": "string"
+              },
+              "Cache-Control": {
+                "type": "string"
+              }
+            },
             "schema": {
               "$ref": "#/definitions/blog"
+            },
+            "examples": {
+              "application/json": {
+                "id": 1,
+                "title": "Hello world!",
+                "content": "Hello world and hello universe. Thank you all very much!!!"
+              }
             }
           },
           "404": {

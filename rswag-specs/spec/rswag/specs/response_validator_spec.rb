@@ -66,6 +66,43 @@ module Rswag
             it { expect { call }.to raise_error UnexpectedResponse }
           end
         end
+
+        context "'headers' provided" do
+          before do
+            api_metadata[:response][:headers] = {
+              'X-Rate-Limit-Limit' => {
+                description: 'The number of allowed requests in the current period',
+                type: 'integer'
+              },
+              'X-Rate-Limit-Remaining' => {
+                description: 'The number of remaining requests in the current period',
+                type: 'integer'
+              },
+              'X-Rate-Limit-Reset' => {
+                description: 'The number of seconds left in the current period',
+                type: 'integer'
+              }
+            }
+          end
+
+          context 'response code & body matches' do
+            let(:response) { OpenStruct.new(code: 200, body: '{}', headers: {
+              'X-Rate-Limit-Limit' => 1,
+              'X-Rate-Limit-Remaining' => 1,
+              'X-Rate-Limit-Reset' => 1
+            }) }
+            it { expect { call }.to_not raise_error }
+          end
+
+          context 'response code matches & body does not' do
+            let(:response) { OpenStruct.new(code: 200, body: '{}', headers: {
+              'X-Rate-Limit-Limit' => 'invalid',
+              'X-Rate-Limit-Remaining' => 'invalid',
+              'X-Rate-Limit-Reset' => 'invalid'
+            }) }
+            it { expect { call }.to raise_error UnexpectedResponse }
+          end
+        end
       end
     end
   end
