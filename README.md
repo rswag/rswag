@@ -264,7 +264,7 @@ end
 
 ### Response examples ###
 
-You can provide custom response examples to the generated swagger file by calling the method `response_examples` inside the response block:
+You can provide custom response examples to the generated swagger file by calling the method `examples` inside the response block:
 
 ```ruby
 # spec/integration/blogs_spec.rb
@@ -275,7 +275,7 @@ describe 'Blogs API' do
     get 'Retrieves a blog' do
 
       response 200, 'blog found' do
-        response_examples 'application/json' => {
+        examples 'application/json' => {
             id: 1,
             title: 'Hello world!',
             content: '...'

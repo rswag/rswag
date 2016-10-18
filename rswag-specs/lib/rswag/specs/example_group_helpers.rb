@@ -61,7 +61,11 @@ module Rswag
         metadata[:response][:headers][name] = attributes
       end
 
-      def response_examples(example)
+      # NOTE: Similar to 'description', 'examples' need to handle the case when
+      # being invoked with no params to avoid overriding 'examples' method of
+      # rspec-core ExampleGroup
+      def examples(example = nil)
+        return super() if example.nil?
         metadata[:response][:examples] = example
       end
 

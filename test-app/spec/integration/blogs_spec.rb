@@ -56,7 +56,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         schema '$ref' => '#/definitions/blog'
 
-        response_examples 'application/json' => {
+        examples 'application/json' => {
             id: 1,
             title: 'Hello world!',
             content: 'Hello world and hello universe. Thank you all very much!!!'
