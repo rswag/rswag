@@ -50,7 +50,17 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       produces 'application/json'
 
       response '200', 'blog found' do
+        header 'ETag', type: :string
+        header 'Last-Modified', type: :string
+        header 'Cache-Control', type: :string
+
         schema '$ref' => '#/definitions/blog'
+
+        examples 'application/json' => {
+            id: 1,
+            title: 'Hello world!',
+            content: 'Hello world and hello universe. Thank you all very much!!!'
+          }
 
         let(:blog) { Blog.create(title: 'foo', content: 'bar') }
         let(:id) { blog.id }

@@ -113,7 +113,7 @@ module Rswag
         context "'path' parameter" do
           before { subject.parameter(name: :id, in: :path) }
           let(:api_metadata) { { operation: {} } }
-   
+
           it "automatically sets the 'required' flag" do
             expect(api_metadata[:operation][:parameters]).to match(
               [ name: :id, in: :path, required: true ]
@@ -149,6 +149,25 @@ module Rswag
           expect(api_metadata[:response][:headers]).to match(
             'Date' => { type: 'string' }
           )
+        end
+      end
+
+      describe '#examples(example)' do
+        let(:json_example) do
+          {
+            'application/json' => {
+              foo: 'bar'
+            }
+          }
+        end
+        let(:api_metadata) { { response: {} } }
+
+        before do
+          subject.examples(json_example)
+        end
+
+        it "adds to the 'response examples' metadata" do
+          expect(api_metadata[:response][:examples]).to eq(json_example)
         end
       end
     end

@@ -127,7 +127,7 @@ In addition to paths, operations and responses, Swagger also supports global API
 # spec/swagger_helper.rb
 RSpec.configure do |config|
   config.swagger_root = Rails.root.to_s + '/swagger'
-  
+
   config.swagger_docs = {
     'v1/swagger.json' => {
       swagger: '2.0',
@@ -224,21 +224,62 @@ describe 'Blogs API' do
   path '/blogs' do
 
     post 'Creates a blog' do
-    
+
       response 422, 'invalid request' do
         schema '$ref' => '#/definitions/errors_object'
   ...
 end
-          
+
 # spec/integration/comments_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}/comments' do
 
     post 'Creates a comment' do
-    
+
       response 422, 'invalid request' do
         schema '$ref' => '#/definitions/errors_object'
+  ...
+end
+```
+
+### Response headers ###
+
+In Rswag, you could use `header` method inside the response block to specify header objects for this response. Rswag will validate your response headers with those header objects and inject them into the generated swagger file:
+
+```ruby
+# spec/integration/comments_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs/{blog_id}/comments' do
+
+    post 'Creates a comment' do
+
+      response 422, 'invalid request' do
+        header 'X-Rate-Limit-Limit', type: :integer, description: 'The number of allowed requests in the current period'
+        header 'X-Rate-Limit-Remaining', type: :integer, description: 'The number of remaining requests in the current period'
+  ...
+end
+```
+
+### Response examples ###
+
+You can provide custom response examples to the generated swagger file by calling the method `examples` inside the response block:
+
+```ruby
+# spec/integration/blogs_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs/{blog_id}' do
+
+    get 'Retrieves a blog' do
+
+      response 200, 'blog found' do
+        examples 'application/json' => {
+            id: 1,
+            title: 'Hello world!',
+            content: '...'
+          }
   ...
 end
 ```
@@ -273,7 +314,7 @@ end
 ```
 
 __NOTE__: If you're using rswag-specs to generate Swagger files, you'll want to ensure they both use the same &lt;swagger_root&gt;. The reason for separate settings is to maintain independence between the two gems. For example, you could install rswag-api independently and create your Swagger files manually.
- 
+
 ### Dynamic Values for Swagger JSON ##
 
 There may be cases where you need to add dynamic values to the Swagger JSON that's returned by rswag-api. For example, you may want to provide an explicit host name. Rather than hardcoding it, you can configure a filter that's executed prior to serializing every Swagger document:
@@ -287,7 +328,7 @@ end
 ```
 
 Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations based on user permissions.
- 
+
 ### Enable Swagger Endpoints for swagger-ui ###
 
 You can update the _rswag-ui.rb_ initializer, installed with rswag-ui, to specify which Swagger endpoints should be available to power the documentation UI. If you're using rswag-api, these should correspond to the Swagger endpoints it exposes. When the UI is rendered, you'll see these listed in a drop-down to the top right of the page:

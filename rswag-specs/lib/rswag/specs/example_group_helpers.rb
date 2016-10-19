@@ -25,7 +25,7 @@ module Rswag
       # functionality while also setting the appropriate metadata if applicable
       def description(value=nil)
         return super() if value.nil?
-        metadata[:operation][:description] = value 
+        metadata[:operation][:description] = value
       end
 
       # These are array properties - note the splat operator
@@ -59,6 +59,14 @@ module Rswag
       def header(name, attributes)
         metadata[:response][:headers] ||= {}
         metadata[:response][:headers][name] = attributes
+      end
+
+      # NOTE: Similar to 'description', 'examples' need to handle the case when
+      # being invoked with no params to avoid overriding 'examples' method of
+      # rspec-core ExampleGroup
+      def examples(example = nil)
+        return super() if example.nil?
+        metadata[:response][:examples] = example
       end
 
       def run_test!
