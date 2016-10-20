@@ -96,9 +96,8 @@ module Rswag
 
           context 'response code matches & body does not' do
             let(:response) { OpenStruct.new(code: 200, body: '{}', headers: {
-              'X-Rate-Limit-Limit' => 'invalid',
-              'X-Rate-Limit-Remaining' => 'invalid',
-              'X-Rate-Limit-Reset' => 'invalid'
+              'X-Rate-Limit-Limit' => 1,
+              'X-Rate-Limit-Remaining' => 1
             }) }
             it { expect { call }.to raise_error UnexpectedResponse }
           end

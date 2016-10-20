@@ -28,15 +28,10 @@ module Rswag
       def validate_headers!(headers)
         header_schema = @api_metadata[:response][:headers]
         return if header_schema.nil?
-        header_schema.each do |header_name, schema|
-          validate_header!(schema, header_name, headers[header_name.to_s])
-        end
-      end
 
-      def validate_header!(schema, header_name, header_value)
-        JSON::Validator.validate!(schema.merge(@global_metadata), header_value.to_json)
-      rescue JSON::Schema::ValidationError => ex
-        raise UnexpectedResponse, "Expected response headers #{header_name} to match schema: #{ex.message}"
+        header_schema.keys.each do |header_name|
+          raise UnexpectedResponse, "Expected response header #{header_name} to be present" if headers[header_name.to_s].nil?
+        end
       end
 
       def validate_body!(body)
