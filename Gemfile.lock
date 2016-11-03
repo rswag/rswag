@@ -53,6 +53,7 @@ GEM
     builder (3.0.4)
     diff-lcs (1.2.5)
     erubis (2.7.0)
+    execjs (2.7.0)
     generator_spec (0.9.3)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
@@ -62,6 +63,7 @@ GEM
     json (1.8.3)
     json-schema (2.7.0)
       addressable (>= 2.4)
+    libv8 (3.16.14.15)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -94,6 +96,7 @@ GEM
     rake (11.3.0)
     rdoc (3.12.2)
       json (~> 1.4)
+    ref (2.0.0)
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -124,12 +127,17 @@ GEM
       railties (~> 3.0)
     test-unit (3.2.1)
       power_assert
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.51)
+    uglifier (3.0.2)
+      execjs (>= 0.3.0, < 3)
 
 PLATFORMS
   ruby
@@ -144,3 +152,5 @@ DEPENDENCIES
   sqlite3
   strong_parameters
   test-unit
+  therubyracer
+  uglifier

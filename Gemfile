@@ -27,3 +27,8 @@ group :test do
   gem 'generator_spec'
   gem 'rswag-specs', path: './rswag-specs'
 end
+
+group :assets do
+  gem 'uglifier'
+  gem 'therubyracer'
+end
