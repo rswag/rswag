@@ -25,6 +25,12 @@ module Rswag
         end
       end
 
+      def swagger_dry_run
+        @swagger_dry_run ||= begin
+          @rspec_config.swagger_dry_run.nil? || @rspec_config.swagger_dry_run
+        end
+      end
+
       def get_swagger_doc(name)
         return swagger_docs.values.first if name.nil?
         raise ConfigurationError, "Unknown swagger_doc '#{name}'" unless swagger_docs[name]

@@ -12,6 +12,7 @@ module Rswag
     ::RSpec.configure do |c|
       c.add_setting :swagger_root
       c.add_setting :swagger_docs
+      c.add_setting :swagger_dry_run
       c.extend ExampleGroupHelpers, type: :request
       c.include ExampleHelpers, type: :request
     end
