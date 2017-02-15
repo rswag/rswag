@@ -14,7 +14,7 @@ module Rswag
             api_metadata[:operation][:verb],
             factory.build_fullpath(self),
             factory.build_body(self),
-            factory.build_headers(self)
+            rackify_headers(factory.build_headers(self)) # Rails test infrastructure requires Rack headers
           )
         else
           send(
@@ -35,6 +35,22 @@ module Rswag
       end
 
       private
+
+      def rackify_headers(headers)
+        name_value_pairs = headers.map do |name, value|
+          [
+            case name
+              when 'Accept' then 'HTTP_ACCEPT'
+              when 'Content-Type' then 'CONTENT_TYPE'
+              when 'Authorization' then 'HTTP_AUTHORIZATION'
+              else name
+            end,
+            value
+          ]
+        end
+
+        Hash[ name_value_pairs ]
+      end
 
       def rswag_config
         ::Rswag::Specs.config

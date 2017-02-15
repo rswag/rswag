@@ -200,6 +200,58 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
 end
 ```
 
+### Specifying/Testing API Security ###
+
+Swagger allows for the specification of different security schemes and their applicability to operations in an API. To leverage this in rswag, you define the schemes globally in _swagger_helper.rb_ and then use the "security" attribute at the operation level to specify which schemes, if any, are applicable to that operation. Swagger supports :basic, :apiKey and :oauth2 scheme types. See [the spec](http://swagger.io/specification/#security-definitions-object-109) for more info.
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_root = Rails.root.to_s + '/swagger'
+
+  config.swagger_docs = {
+    'v1/swagger.json' => {
+      ...
+      securityDefinitions: {
+        basic: {
+          type: :basic
+        },
+        apiKey: {
+          type: :apiKey,
+          name: 'api_key',
+          in: :query
+        }
+      }
+    }
+  }
+end
+
+# spec/integration/blogs_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs' do
+
+    post 'Creates a blog' do
+      tags 'Blogs'
+      security [ basic: [] ]
+      ...
+
+      response '201', 'blog created' do
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
+        run_test!
+      end
+
+      response '401', 'authentication failed' do
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('bogus:bogus')}" }
+        run_test!
+      end
+    end
+  end
+end
+```
+
+__NOTE:__ Depending on the scheme types, you'll be required to assign a corresponding parameter value with each example. For example, :basic auth is required above and so the :Authorization (header) parameter must be set accordingly
+
 ## Configuration & Customization ##
 
 The steps described above will get you up and running with minimal setup. However, rswag offers a lot of flexibility to customize as you see fit. Before exploring the various options, you'll need to be aware of it's different components. The following table lists each of them and the files that get added/updated as part of a standard install.

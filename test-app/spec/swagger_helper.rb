@@ -45,6 +45,9 @@ RSpec.configure do |config|
         }
       },
       securityDefinitions: {
+        basic_auth: {
+          type: :basic
+        },
         api_key: {
           type: :apiKey,
           name: 'api_key',
