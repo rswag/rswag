@@ -20,6 +20,14 @@ module Rswag
         end
       end
 
+      def auth_basic(user, pass)
+        metadata[:basic_auth] = ActionController::HttpAuthentication::Basic.encode_credentials(user, pass)
+      end
+
+      def operation_description(message)
+        metadata[:operation_description] = message
+      end
+
       # NOTE: 'description' requires special treatment because ExampleGroup already
       # defines a method with that name. Provide an override that supports the existing
       # functionality while also setting the appropriate metadata if applicable
