@@ -163,6 +163,29 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
   ...
 end
 ```
+## Security ##
+
+### Tests with HTTP AUTH ###
+
+You can write your specs to set HTTP Basic AUTH header in the request to test (or not test!) http authentication.
+```
+describe 'Blogs API' do
+
+  path '/blogs' do
+
+    get 'Gets a blog' do
+
+      response 200, 'great request' do
+        auth_basic('username', 'password')
+        schema '$ref' => '#/definitions/greatness'
+      end
+
+      response 401, 'who are you' do
+        schema '$ref' => '#/definitions/greatness'
+      end
+    end
+  end
+end
 
 ## Configuration & Customization ##
 

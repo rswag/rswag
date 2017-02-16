@@ -20,7 +20,14 @@ module Rswag
         end
       end
 
-      def auth_basic(user, pass)
+      # Public - sets metadata key so when request headers are built
+      #   the Authentication header is populated with http basic auth
+      #
+      # user - the username for the http basic auth
+      # pass - the password for http basic auth
+      #
+      # Returns nothing important, or the string used for http basic auth header
+      def auth_basic(user = '', pass = '')
         metadata[:basic_auth] = "Basic #{::Base64.strict_encode64("#{user}:#{pass}")}"
       end
 
