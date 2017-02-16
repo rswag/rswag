@@ -21,11 +21,7 @@ module Rswag
       end
 
       def auth_basic(user, pass)
-        metadata[:basic_auth] = ActionController::HttpAuthentication::Basic.encode_credentials(user, pass)
-      end
-
-      def operation_description(message)
-        metadata[:operation_description] = message
+        metadata[:basic_auth] = "Basic #{::Base64.strict_encode64("#{user}:#{pass}")}"
       end
 
       # NOTE: 'description' requires special treatment because ExampleGroup already

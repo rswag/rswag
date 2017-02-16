@@ -33,12 +33,12 @@ module Rswag
 
       def build_headers(example)
         headers = Hash[ parameters_in(:header).map { |p| [ p[:name], example.send(p[:name]).to_s ] } ]
+        headers['Authorization'] = @api_metadata[:basic_auth] if @api_metadata[:basic_auth]
         headers.tap do |h|
           produces = @api_metadata[:operation][:produces] || @global_metadata[:produces]
           consumes = @api_metadata[:operation][:consumes] || @global_metadata[:consumes]
           h['ACCEPT'] = produces.join(';') unless produces.nil?
           h['CONTENT_TYPE'] = consumes.join(';') unless consumes.nil?
-          h['Authorization'] = @api_metadata[:basic_auth] if @api_metadata[:basic_auth]
         end
       end
 
