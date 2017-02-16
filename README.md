@@ -186,6 +186,7 @@ describe 'Blogs API' do
     end
   end
 end
+```
 
 ## Configuration & Customization ##
 
