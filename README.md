@@ -119,6 +119,31 @@ response '201', 'blog created' do
 end
 ```
 
+### Null Values ###
+
+This library is currently using JSON::Draft4 for validation of response models. It does not support null as a value. So you can add the property 'x-nullable' to a definition to allow null/nil values to pass.
+```ruby
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+
+      response '200', 'blog found' do
+        schema type: :object,
+          properties: {
+            id: { type: :integer },
+            title: { type: :string },
+            content: { type: :string, 'x-nullable': true }
+          }
+        ....
+      end
+    end
+  end
+end
+```
+*Note:* the OAI v3 may be released soon(ish?) and include a nullable property. This may have an effect on the need/use of custom extension to the draft. Do not use this property if you don't understand the implications.
+<https://github.com/OAI/OpenAPI-Specification/issues/229#issuecomment-280376087>
+
 ### Global Metadata ###
 
 In addition to paths, operations and responses, Swagger also supports global API metadata. When you install rswag, a file called _swagger_helper.rb_ is added to your spec folder. This is where you define one or more Swagger documents and provide global metadata. Again, the format is based on Swagger so most of the global fields supported by the top level ["Swagger" object](http://swagger.io/specification/#swaggerObject) can be provided with each document definition. As an example, you could define a Swagger document for each version of your API and in each case specify a title, version string and URL basePath:
