@@ -1,22 +1,22 @@
 PATH
-  remote: ./rswag-api
+  remote: rswag-api
   specs:
-    rswag-api (1.2.0)
+    rswag-api (1.2.1)
       rails (>= 3.1, < 5.1)
 
 PATH
-  remote: ./rswag-specs
+  remote: rswag-specs
   specs:
-    rswag-specs (1.2.0)
+    rswag-specs (1.2.1)
       json (~> 1.8)
       json-schema (~> 2.2)
       rails (>= 3.1, < 5.1)
       rspec-rails (>= 2.14, < 4)
 
 PATH
-  remote: ./rswag-ui
+  remote: rswag-ui
   specs:
-    rswag-ui (1.2.0)
+    rswag-ui (1.2.1)
       rails (>= 3.1, < 5.1)
 
 GEM
@@ -172,3 +172,6 @@ DEPENDENCIES
   test-unit
   therubyracer
   uglifier
+
+BUNDLED WITH
+   1.14.6
