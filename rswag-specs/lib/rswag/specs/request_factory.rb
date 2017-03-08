@@ -28,7 +28,7 @@ module Rswag
 
       def build_body(example)
         body_parameter = parameters_in(:body).first
-        body_parameter.nil? ? '' : example.send(body_parameter[:name]).to_json
+        body_parameter.nil? ? '' : example.send(body_parameter[:name])
       end
 
       def build_headers(example)
