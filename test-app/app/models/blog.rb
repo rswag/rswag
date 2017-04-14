@@ -5,7 +5,8 @@ class Blog < ActiveRecord::Base
     {
       id: id,
       title: title,
-      content: content
+      content: content,
+      thumbnail: thumbnail
     }
   end
 end

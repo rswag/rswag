@@ -39,9 +39,10 @@ RSpec.configure do |config|
           properties: {
             id: { type: 'integer' },
             title: { type: 'string' },
-            content: { type: 'string' }
+            content: { type: 'string' },
+            thumbnail: { type: 'string'}
           },
-          required: [ 'id', 'title', 'content' ]
+          required: [ 'id', 'title', 'content', 'thumbnail' ]
         }
       },
       securityDefinitions: {

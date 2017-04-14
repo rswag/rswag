@@ -27,6 +27,7 @@ module Rswag
       end
 
       def build_body(example)
+        return build_form_data(example) if parameters_in(:formData).present?
         body_parameter = parameters_in(:body).first
         body_parameter.nil? ? '' : example.send(body_parameter[:name]).to_json
       end
@@ -92,6 +93,10 @@ module Rswag
         else
           "#{name}=#{value.join(',')}" # csv is default
         end
+      end
+
+      def build_form_data(example)
+        Hash[parameters_in(:formData).map { |p| [p[:name][/^\w+[^\[]/, 0], example.send(p[:name][/^\w+[^\[]/, 0])] }]
       end
     end
   end

@@ -158,6 +158,17 @@ module Rswag
           end
         end
 
+        context "'formData' parameter" do
+          before do
+            api_metadata[:operation][:parameters] << { name: 'comment', in: :formData, type: 'string' }
+            allow(example).to receive(:comment).and_return('Some comment')
+          end
+
+          it 'returns the example value as a hash' do
+            expect(body).to eq({"comment" => "Some comment"})
+          end
+        end
+
         context "referenced 'body' parameter" do
           before do
             api_metadata[:operation][:parameters] << { '$ref' => '#/parameters/comment' }
@@ -169,6 +180,20 @@ module Rswag
 
           it 'returns the example value as a json string' do
             expect(body).to eq("{\"text\":\"Some comment\"}")
+          end
+        end
+
+        context "referenced 'formData' parameter" do
+          before do
+            api_metadata[:operation][:parameters] << { '$ref' => '#/parameters/comment' }
+            global_metadata[:parameters] = {
+              'comment' => { name: 'comment', in: :formData, type: 'string' }
+            }
+            allow(example).to receive(:comment).and_return('Some comment')
+          end
+
+          it 'returns the example value as a json string' do
+            expect(body).to eq({"comment" => "Some comment"})
           end
         end
       end
