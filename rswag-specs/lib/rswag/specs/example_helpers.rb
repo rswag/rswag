@@ -28,10 +28,10 @@ module Rswag
         end
       end
 
-      def assert_response_matches_metadata(api_metadata)
+      def assert_response_matches_metadata(api_metadata, &block)
         global_metadata = rswag_config.get_swagger_doc(api_metadata[:swagger_doc])
         validator = ResponseValidator.new(api_metadata, global_metadata)
-        validator.validate!(response)
+        validator.validate!(response, &block)
       end
 
       private

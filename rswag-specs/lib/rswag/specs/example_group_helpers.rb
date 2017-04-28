@@ -69,7 +69,7 @@ module Rswag
         metadata[:response][:examples] = example
       end
 
-      def run_test!
+      def run_test!(&block)
         # NOTE: rspec 2.x support
         if RSPEC_VERSION < 3
           before do
@@ -77,7 +77,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response" do
-            assert_response_matches_metadata(example.metadata)
+            assert_response_matches_metadata(example.metadata, &block)
           end
         else
           before do |example|
@@ -85,7 +85,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response" do |example|
-            assert_response_matches_metadata(example.metadata)
+            assert_response_matches_metadata(example.metadata, &block)
           end
         end
       end

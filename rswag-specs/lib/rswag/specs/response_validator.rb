@@ -1,5 +1,6 @@
 require 'active_support/core_ext/hash/slice'
 require 'json-schema'
+require 'json'
 require 'rswag/specs/extended_schema'
 
 module Rswag
@@ -11,10 +12,10 @@ module Rswag
         @global_metadata = global_metadata
       end
 
-      def validate!(response)
+      def validate!(response, &block)
         validate_code!(response.code)
         validate_headers!(response.headers)
-        validate_body!(response.body)
+        validate_body!(response.body, &block)
       end
 
       private
@@ -34,7 +35,7 @@ module Rswag
         end
       end
 
-      def validate_body!(body)
+      def validate_body!(body, &block)
         response_schema = @api_metadata[:response][:schema]
         return if response_schema.nil?
 
@@ -46,6 +47,8 @@ module Rswag
         rescue JSON::Schema::ValidationError => ex
           raise UnexpectedResponse, "Expected response body to match schema: #{ex.message}"
         end
+
+        block.call(JSON.parse(body)) if block_given?
       end
     end
 

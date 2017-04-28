@@ -29,7 +29,7 @@ module Rswag
             api_metadata[:response][:schema] = {
               type: 'object',
               properties: { text: { type: 'string' } },
-              required: [ 'text' ]
+              required: ['text']
             }
           end
 
@@ -42,6 +42,24 @@ module Rswag
             let(:response) { OpenStruct.new(code: 200, body: "{\"foo\":\"Some comment\"}") }
             it { expect { call }.to raise_error UnexpectedResponse }
           end
+
+          context "'block' provided" do
+            let(:call) do
+              subject.validate!(response) do |body|
+                expect(body['text']).to eq('Some comment')
+              end
+            end
+
+            context 'the block validation passes' do
+              let(:response) { OpenStruct.new(code: 200, body: "{\"text\":\"Some comment\"}") }
+              it { expect { call }.to_not raise_error }
+            end
+
+            context 'the block validation fails' do
+              let(:response) { OpenStruct.new(code: 200, body: "{\"text\":\"Some other comment\"}") }
+              it { expect { call }.to raise_error(RSpec::Expectations::ExpectationNotMetError) }
+            end
+          end
         end
 
         context "referenced 'schema' provided" do
@@ -51,7 +69,7 @@ module Rswag
               author: {
                 type: 'object',
                 properties: { name: { type: 'string' } },
-                required: [ 'name' ]
+                required: ['name']
               }
             }
           end
