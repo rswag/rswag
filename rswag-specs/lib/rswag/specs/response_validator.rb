@@ -16,6 +16,7 @@ module Rswag
         validate_code!(response.code)
         validate_headers!(response.headers)
         validate_body!(response.body, &block)
+        block.call(response) if block_given?
       end
 
       private
@@ -35,7 +36,7 @@ module Rswag
         end
       end
 
-      def validate_body!(body, &block)
+      def validate_body!(body)
         response_schema = @api_metadata[:response][:schema]
         return if response_schema.nil?
 
@@ -47,8 +48,6 @@ module Rswag
         rescue JSON::Schema::ValidationError => ex
           raise UnexpectedResponse, "Expected response body to match schema: #{ex.message}"
         end
-
-        block.call(body) if block_given?
       end
     end
 

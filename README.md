@@ -108,7 +108,7 @@ If you want to do additional validation on the response, pass a block to the __r
 ```ruby
 response '201', 'blog created' do
   run_test! do |response|
-    data = JSON.parse(response)
+    data = JSON.parse(response.body)
     expect(data['title']).to eq('foo')
   end
 end
