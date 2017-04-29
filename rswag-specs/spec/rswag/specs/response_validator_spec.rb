@@ -46,7 +46,8 @@ module Rswag
           context "'block' provided" do
             let(:call) do
               subject.validate!(response) do |body|
-                expect(body['text']).to eq('Some comment')
+                data = JSON.parse(body)
+                expect(data['text']).to eq('Some comment')
               end
             end
 

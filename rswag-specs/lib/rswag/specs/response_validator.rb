@@ -48,7 +48,7 @@ module Rswag
           raise UnexpectedResponse, "Expected response body to match schema: #{ex.message}"
         end
 
-        block.call(JSON.parse(body)) if block_given?
+        block.call(body) if block_given?
       end
     end
 
