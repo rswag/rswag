@@ -1,13 +1,13 @@
 PATH
   remote: rswag-api
   specs:
-    rswag-api (1.2.0)
+    rswag-api (1.2.1)
       rails (>= 3.1, < 5.2)
 
 PATH
   remote: rswag-specs
   specs:
-    rswag-specs (1.2.0)
+    rswag-specs (1.2.1)
       json (~> 1.8)
       json-schema (~> 2.2)
       rails (>= 3.1, < 5.2)
@@ -16,7 +16,7 @@ PATH
 PATH
   remote: rswag-ui
   specs:
-    rswag-ui (1.2.0)
+    rswag-ui (1.2.1)
       rails (>= 3.1, < 5.2)
 
 GEM
