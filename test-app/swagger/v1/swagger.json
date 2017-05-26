@@ -70,10 +70,7 @@
     "/blogs/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "type": "string",
-          "required": true
+          "$ref": "#/parameters/id_path_parameter"
         }
       ],
       "get": {
@@ -116,6 +113,14 @@
           }
         }
       }
+    }
+  },
+  "parameters": {
+    "id_path_parameter": {
+      "name": "id",
+      "type": "string",
+      "in": "path",
+      "required": true
     }
   },
   "definitions": {

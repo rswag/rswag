@@ -20,6 +20,14 @@ RSpec.configure do |config|
         version: 'v1'
       },
       paths: {},
+      parameters: {
+        id_path_parameter: {
+          name: :id,
+          type: :string,
+          in: :path,
+          required: true
+        },
+      },
       definitions: {
         errors_object: {
           type: 'object',

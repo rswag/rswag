@@ -41,7 +41,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   end
 
   path '/blogs/{id}' do
-    parameter name: :id, :in => :path, :type => :string
+    parameter({ "$ref" => "#/parameters/id_path_parameter" })
 
     get 'Retrieves a blog' do
       tags 'Blogs'
