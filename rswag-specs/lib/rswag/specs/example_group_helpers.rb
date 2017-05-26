@@ -36,7 +36,9 @@ module Rswag
       end
 
       def parameter(attributes)
-        attributes[:required] = true if attributes[:in].to_sym == :path
+        if attributes.fetch(:in, nil) == :path
+          attributes[:required] = true
+        end
 
         if metadata.has_key?(:operation)
           metadata[:operation][:parameters] ||= []
