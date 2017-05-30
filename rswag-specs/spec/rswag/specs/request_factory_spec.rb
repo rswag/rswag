@@ -162,7 +162,7 @@ module Rswag
           before do
             api_metadata[:operation][:parameters] << { '$ref' => '#/parameters/comment' }
             global_metadata[:parameters] = {
-              'comment' => { name: 'comment', in: :body, schema: { type: 'object' } }
+              comment: { name: 'comment', in: :body, schema: { type: 'object' } }
             }
             allow(example).to receive(:comment).and_return(text: 'Some comment')
           end
