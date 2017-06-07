@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <title>Swagger UI</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="<%= asset_path 'swagger-ui/swagger-ui.css' %>" >
-  <link rel="icon" type="image/png" href="<%= asset_path 'swagger-ui/favicon-32x32.png' %>" sizes="32x32" />
-  <link rel="icon" type="image/png" href="<%= asset_path 'swagger-ui/favicon-16x16.png' %>" sizes="16x16" />
+  <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
+  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   <style>
     html
     {
@@ -21,6 +21,7 @@
     {
         box-sizing: inherit;
     }
+
     body {
       margin:0;
       background: #fafafa;
@@ -64,63 +65,28 @@
   </defs>
 </svg>
 
-<div class="swagger-ui swagger-container">
-  <div class="topbar">
-    <div class="wrapper">
-      <div class="topbar-wrapper">
-        <a href="#" title="Swagger UX" class="link">
-          <img height="30" width="30" src="<%= asset_path 'swagger-ui/logo_small.png' %>" alt="Swagger UX">
-          <span>swagger</span>
-        </a>
-        <form class="download-url-wrapper">
-          <input type="text" id="input_baseUrl" name="baseUrl" class="download-url-input" value="<%= @swagger_endpoints.first.path %>">
-          <select id="select_document" onchange="selectDocument()" class="download-url-button button">
-            <% @swagger_endpoints.each do |endpoint| %>
-              <option value='<%= endpoint.path %>'><%= endpoint.title %></option>
-            <% end %>
-          </select>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 <div id="swagger-ui"></div>
 
-<script src="<%= asset_path 'swagger-ui/swagger-ui-bundle.js' %>"> </script>
-<script src="<%= asset_path 'swagger-ui/swagger-ui-standalone-preset.js' %>"> </script>
+<script src="./swagger-ui-bundle.js"> </script>
+<script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
-function HideTopbarPlugin() {
-  // this plugin overrides the Topbar component to return nothing
-  return {
-    components: {
-      Topbar: function() { return null }
-    }
-  }
-}
-
-function selectDocument() {
-  document.getElementById('input_baseUrl').value = document.getElementById('select_document').value
-  loadDocument();
-}
-
-function loadDocument() {
+window.onload = function() {
+  // Build a system
   const ui = SwaggerUIBundle({
-    url: document.getElementById('input_baseUrl').value,
+    url: "http://petstore.swagger.io/v2/swagger.json",
     dom_id: '#swagger-ui',
     presets: [
       SwaggerUIBundle.presets.apis,
       SwaggerUIStandalonePreset
     ],
     plugins: [
-      SwaggerUIBundle.plugins.DownloadUrl,
-      HideTopbarPlugin
+      SwaggerUIBundle.plugins.DownloadUrl
     ],
     layout: "StandaloneLayout"
   })
+
   window.ui = ui
 }
-
-window.onload = loadDocument();
 </script>
 </body>
 
