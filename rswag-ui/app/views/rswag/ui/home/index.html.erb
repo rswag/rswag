@@ -99,7 +99,7 @@ function HideTopbarPlugin() {
 }
 
 function selectDocument() {
-  document.getElementById('input_baseUrl').value = document.getElementById('select_document').value
+  document.getElementById('input_baseUrl').value = window.location.protocol + '//' + window.location.host + document.getElementById('select_document').value
   loadDocument();
 }
 
@@ -120,7 +120,7 @@ function loadDocument() {
   window.ui = ui
 }
 
-window.onload = loadDocument();
+window.onload = selectDocument();
 </script>
 </body>
 
