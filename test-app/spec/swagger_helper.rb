@@ -39,7 +39,7 @@ RSpec.configure do |config|
           properties: {
             id: { type: 'integer' },
             title: { type: 'string' },
-            content: { type: 'string' }
+            content: { type: 'string', 'x-nullable': true }
           },
           required: [ 'id', 'title', 'content' ]
         }
