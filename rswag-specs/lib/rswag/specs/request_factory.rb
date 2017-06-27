@@ -43,12 +43,16 @@ module Rswag
 
       private
 
+      def extract_uniq_param_identifier_from(operation_param)
+        operation_param[:name] || operation_param['$ref']
+      end
+
       def parameters_in(location)
         path_item_params = @api_metadata[:path_item][:parameters] || []
         operation_params = @api_metadata[:operation][:parameters] || []
         applicable_params = operation_params
           .concat(path_item_params)
-          .uniq { |p| p[:name] } # operation params should override path_item params
+          .uniq { |p| extract_uniq_param_identifier_from(p) } # operation params should override path_item params
 
         applicable_params
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref']) : p } # resolve any references
@@ -57,8 +61,8 @@ module Rswag
       end
 
       def resolve_parameter(ref)
-        defined_params = @global_metadata[:parameters] 
-        key = ref.sub('#/parameters/', '')
+        defined_params = @global_metadata[:parameters]
+        key = ref.sub('#/parameters/', '').to_sym
         raise "Referenced parameter '#{ref}' must be defined" unless defined_params && defined_params[key]
         defined_params[key]
       end
