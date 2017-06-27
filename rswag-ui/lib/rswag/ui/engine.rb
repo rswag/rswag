@@ -5,7 +5,14 @@ module Rswag
 
       initializer 'rswag-ui.initialize' do |app|
         if app.config.respond_to?(:assets)
-          app.config.assets.precompile += [ 'swagger-ui/*' ]
+          app.config.assets.precompile += [
+            'swagger-ui/css/*',
+            'swagger-ui/fonts/*',
+            'swagger-ui/images/*',
+            'swagger-ui/lang/*',
+            'swagger-ui/lib/*',
+            'swagger-ui/swagger-ui.min.js'
+          ]
         end
       end
     end

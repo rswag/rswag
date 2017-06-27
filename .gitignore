@@ -3,3 +3,4 @@
 **/*/*.gem
 **/*/*.sqlite3
 **/*/public/assets
+*.swp
