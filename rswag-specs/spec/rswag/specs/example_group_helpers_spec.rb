@@ -86,6 +86,14 @@ module Rswag
         end
       end
 
+      describe'#auth_basic(user, pass)' do
+        before { subject.auth_basic('asdf', 'x') }
+
+        it 'set the basic_auth metadata key to basic auth string' do
+          expect(api_metadata[:basic_auth]).to match 'Basic YXNkZjp4'
+        end
+      end
+
       describe '#parameter(attributes)' do
 
         context "when called at the 'path' level" do

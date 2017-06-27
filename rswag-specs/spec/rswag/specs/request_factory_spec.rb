@@ -193,6 +193,16 @@ module Rswag
           end
         end
 
+        context "http_auth 'header' set" do
+          before do
+            api_metadata[:basic_auth] = 'Basic YXNkZjp4'
+          end
+
+          it 'returns a hash of names with example values' do
+            expect(headers).to eq({ 'Authorization' => 'Basic YXNkZjp4' })
+          end
+        end
+
         context 'consumes & produces' do
           before do
             api_metadata[:operation][:consumes] =  [ 'application/json', 'application/xml' ]

@@ -33,6 +33,7 @@ module Rswag
 
       def build_headers(example)
         headers = Hash[ parameters_in(:header).map { |p| [ p[:name], example.send(p[:name]).to_s ] } ]
+        headers['Authorization'] = @api_metadata[:basic_auth] if @api_metadata[:basic_auth]
         headers.tap do |h|
           produces = @api_metadata[:operation][:produces] || @global_metadata[:produces]
           consumes = @api_metadata[:operation][:consumes] || @global_metadata[:consumes]
@@ -57,7 +58,7 @@ module Rswag
       end
 
       def resolve_parameter(ref)
-        defined_params = @global_metadata[:parameters] 
+        defined_params = @global_metadata[:parameters]
         key = ref.sub('#/parameters/', '')
         raise "Referenced parameter '#{ref}' must be defined" unless defined_params && defined_params[key]
         defined_params[key]
@@ -81,13 +82,13 @@ module Rswag
 
         name = param[:name]
         case param[:collectionFormat]
-        when :ssv 
+        when :ssv
           "#{name}=#{value.join(' ')}"
-        when :tsv 
+        when :tsv
           "#{name}=#{value.join('\t')}"
-        when :pipes 
+        when :pipes
           "#{name}=#{value.join('|')}"
-        when :multi 
+        when :multi
           value.map { |v| "#{name}=#{v}" }.join('&')
         else
           "#{name}=#{value.join(',')}" # csv is default
