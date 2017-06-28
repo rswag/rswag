@@ -32,13 +32,20 @@ module Rswag
       end
 
       def build_headers(example)
-        headers = Hash[ parameters_in(:header).map { |p| [ p[:name], example.send(p[:name]).to_s ] } ]
-        headers.tap do |h|
-          produces = @api_metadata[:operation][:produces] || @global_metadata[:produces]
-          consumes = @api_metadata[:operation][:consumes] || @global_metadata[:consumes]
-          h['ACCEPT'] = produces.join(';') unless produces.nil?
-          h['CONTENT_TYPE'] = consumes.join(';') unless consumes.nil?
+        name_value_pairs = parameters_in(:header).map do |param|
+          [
+            param[:name],
+            example.send(param[:name]).to_s
+          ]
         end
+
+        # Add MIME type headers based on produces/consumes metadata
+        produces = @api_metadata[:operation][:produces] || @global_metadata[:produces]
+        consumes = @api_metadata[:operation][:consumes] || @global_metadata[:consumes]
+        name_value_pairs << [ 'Accept', produces.join(';') ] unless produces.nil?
+        name_value_pairs << [ 'Content-Type', consumes.join(';') ] unless consumes.nil?
+
+        Hash[ name_value_pairs ]
       end
 
       private
@@ -52,28 +59,34 @@ module Rswag
 
         applicable_params
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref']) : p } # resolve any references
-          .concat(resolve_api_key_parameters)
+          .concat(security_parameters)
           .select { |p| p[:in] == location }
       end
 
       def resolve_parameter(ref)
-        defined_params = @global_metadata[:parameters] 
+        defined_params = @global_metadata[:parameters]
         key = ref.sub('#/parameters/', '')
         raise "Referenced parameter '#{ref}' must be defined" unless defined_params && defined_params[key]
         defined_params[key]
       end
 
-      def resolve_api_key_parameters
-        @api_key_params ||= begin
-          # First figure out the security requirement applicable to the operation
-          global_requirements = (@global_metadata[:security] || [] ).map { |r| r.keys.first }
-          operation_requirements = (@api_metadata[:operation][:security] || [] ).map { |r| r.keys.first }
-          requirements = global_requirements | operation_requirements
-
-          # Then obtain the scheme definitions for those requirements
-          definitions = (@global_metadata[:securityDefinitions] || {}).slice(*requirements)
-          definitions.values.select { |d| d[:type] == :apiKey }
+      def security_parameters
+        applicable_security_schemes.map do |scheme|
+          if scheme[:type] == :apiKey
+            { name: scheme[:name], type: :string, in: scheme[:in] }
+          else
+            { name: 'Authorization', type: :string, in: :header } # use auth header for basic & oauth2
+          end
         end
+      end
+
+      def applicable_security_schemes
+        # First figure out the security requirement applicable to the operation
+        requirements = @api_metadata[:operation][:security] || @global_metadata[:security]
+        scheme_names = requirements ? requirements.map { |r| r.keys.first } : []
+
+        # Then obtain the scheme definitions for those requirements
+        (@global_metadata[:securityDefinitions] || {}).slice(*scheme_names).values
       end
 
       def build_query_string_part(param, value)
@@ -81,13 +94,13 @@ module Rswag
 
         name = param[:name]
         case param[:collectionFormat]
-        when :ssv 
+        when :ssv
           "#{name}=#{value.join(' ')}"
-        when :tsv 
+        when :tsv
           "#{name}=#{value.join('\t')}"
-        when :pipes 
+        when :pipes
           "#{name}=#{value.join('|')}"
-        when :multi 
+        when :multi
           value.map { |v| "#{name}=#{v}" }.join('&')
         else
           "#{name}=#{value.join(',')}" # csv is default
