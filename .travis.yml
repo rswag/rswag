@@ -1,15 +1,64 @@
-nguage: ruby
+language: ruby
+
 rvm:
   - 2.2.5
+
 env:
-  - "RAILS_VERSION=3.2.22"
-  - "RAILS_VERSION=4.2.0"
-  - "RAILS_VERSION=5.0.0"
-  - "RAILS_VERSION=5.1.1"
-cache: bundler
-install: bundle update
+  - RAILS_VERSION=5.1.2
+  - RAILS_VERSION=4.2.0
+  - RAILS_VERSION=3.2.22
+
+cache:
+  directories:
+    - /home/travis/.rvm/gems/ruby-2.2.5
+
+install: bundle install
+
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+
 script: ./ci/test.sh
+
+jobs:
+  include:
+    - stage: publish components
+      script: 'cd rswag-api'
+      deploy:
+        gemspec: rswag-api.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-specs'
+      deploy:
+        gemspec: rswag-specs.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-ui'
+      deploy:
+        gemspec: rswag-ui.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish rswag
+      script: 'cd rswag'
+      deploy:
+        gemspec: rswag.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true

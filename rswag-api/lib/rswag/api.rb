@@ -1,4 +1,3 @@
-require 'rswag/api/version'
 require 'rswag/api/configuration'
 require 'rswag/api/engine'
 

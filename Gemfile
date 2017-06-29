@@ -29,8 +29,8 @@ group :test do
   gem 'capybara'
   gem 'capybara-webkit'
 end
-#
-#group :assets do
-#  gem 'uglifier'
-#  gem 'therubyracer'
-#end
+
+group :assets do
+  gem 'uglifier'
+  gem 'therubyracer'
+end
