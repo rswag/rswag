@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Open up your API to the phenomenal Swagger ecosystem by exposing Swagger files, that describe your service, as JSON endpoints"
   s.license     = "MIT"
 
-  s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
+  s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile"]
 
-  s.add_dependency "rails", ">= 3.1", "< 5.1" 
+  s.add_dependency 'railties', '>= 3.1'
 end

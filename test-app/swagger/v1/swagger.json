@@ -5,6 +5,30 @@
     "version": "v1"
   },
   "paths": {
+    "/auth-tests/basic": {
+      "post": {
+        "summary": "Authenticates with basic auth",
+        "tags": [
+          "Auth Test"
+        ],
+        "operationId": "testBasicAuth",
+        "security": [
+          {
+            "basic_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
     "/blogs": {
       "post": {
         "summary": "Creates a blog",
@@ -192,7 +216,8 @@
           "type": "string"
         },
         "content": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "thumbnail": {
           "type": "string"
@@ -207,6 +232,9 @@
     }
   },
   "securityDefinitions": {
+    "basic_auth": {
+      "type": "basic"
+    },
     "api_key": {
       "type": "apiKey",
       "name": "api_key",

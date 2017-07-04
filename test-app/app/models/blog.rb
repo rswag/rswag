@@ -5,7 +5,7 @@ class Blog < ActiveRecord::Base
     {
       id: id,
       title: title,
-      content: content,
+      content: nil,
       thumbnail: thumbnail
     }
   end

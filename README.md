@@ -130,6 +130,31 @@ response '201', 'blog created' do
 end
 ```
 
+### Null Values ###
+
+This library is currently using JSON::Draft4 for validation of response models. It does not support null as a value. So you can add the property 'x-nullable' to a definition to allow null/nil values to pass.
+```ruby
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+
+      response '200', 'blog found' do
+        schema type: :object,
+          properties: {
+            id: { type: :integer },
+            title: { type: :string },
+            content: { type: :string, 'x-nullable': true }
+          }
+        ....
+      end
+    end
+  end
+end
+```
+*Note:* the OAI v3 may be released soon(ish?) and include a nullable property. This may have an effect on the need/use of custom extension to the draft. Do not use this property if you don't understand the implications.
+<https://github.com/OAI/OpenAPI-Specification/issues/229#issuecomment-280376087>
+
 ### Global Metadata ###
 
 In addition to paths, operations and responses, Swagger also supports global API metadata. When you install rswag, a file called _swagger_helper.rb_ is added to your spec folder. This is where you define one or more Swagger documents and provide global metadata. Again, the format is based on Swagger so most of the global fields supported by the top level ["Swagger" object](http://swagger.io/specification/#swaggerObject) can be provided with each document definition. As an example, you could define a Swagger document for each version of your API and in each case specify a title, version string and URL basePath:
@@ -174,6 +199,58 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
   ...
 end
 ```
+
+### Specifying/Testing API Security ###
+
+Swagger allows for the specification of different security schemes and their applicability to operations in an API. To leverage this in rswag, you define the schemes globally in _swagger_helper.rb_ and then use the "security" attribute at the operation level to specify which schemes, if any, are applicable to that operation. Swagger supports :basic, :apiKey and :oauth2 scheme types. See [the spec](http://swagger.io/specification/#security-definitions-object-109) for more info.
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_root = Rails.root.to_s + '/swagger'
+
+  config.swagger_docs = {
+    'v1/swagger.json' => {
+      ...
+      securityDefinitions: {
+        basic: {
+          type: :basic
+        },
+        apiKey: {
+          type: :apiKey,
+          name: 'api_key',
+          in: :query
+        }
+      }
+    }
+  }
+end
+
+# spec/integration/blogs_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs' do
+
+    post 'Creates a blog' do
+      tags 'Blogs'
+      security [ basic: [] ]
+      ...
+
+      response '201', 'blog created' do
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
+        run_test!
+      end
+
+      response '401', 'authentication failed' do
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('bogus:bogus')}" }
+        run_test!
+      end
+    end
+  end
+end
+```
+
+__NOTE:__ Depending on the scheme types, you'll be required to assign a corresponding parameter value with each example. For example, :basic auth is required above and so the :Authorization (header) parameter must be set accordingly
 
 ## Configuration & Customization ##
 
@@ -382,7 +459,7 @@ end
 
 ### Customizing the swagger-ui ###
 
-The swagger-ui provides several options for customizing it's behavior, all of which are documented here https://github.com/swagger-api/swagger-ui#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
+The swagger-ui provides several options for customizing it's behavior, all of which are documented here https://github.com/swagger-api/swagger-ui/tree/2.x#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
 
 ```ruby
 rails g rswag:ui:custom
