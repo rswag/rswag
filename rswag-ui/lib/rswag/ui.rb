@@ -1,4 +1,3 @@
-require 'rswag/ui/version'
 require 'rswag/ui/configuration'
 require 'rswag/ui/engine'
 

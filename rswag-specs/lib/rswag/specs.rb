@@ -1,5 +1,4 @@
 require 'rspec/core'
-require 'rswag/specs/version'
 require 'rswag/specs/example_group_helpers'
 require 'rswag/specs/example_helpers'
 require 'rswag/specs/configuration'

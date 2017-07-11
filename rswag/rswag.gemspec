@@ -1,12 +1,9 @@
 $:.push File.expand_path("../lib", __FILE__)
 
-# Maintain your gem's version:
-require 'rswag/version'
-
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "rswag"
-  s.version     = Rswag::VERSION
+  s.version     = ENV['TRAVIS_TAG'] || '0.0.0'
   s.authors     = ["Richie Morris"]
   s.email       = ["domaindrivendev@gmail.com"]
   s.homepage    = "https://github.com/domaindrivendev/rswag"
@@ -16,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{lib}/**/*"] + [ "MIT-LICENSE" ]
 
-  s.add_dependency 'rswag-specs', Rswag::VERSION
-  s.add_dependency 'rswag-api', Rswag::VERSION
-  s.add_dependency 'rswag-ui', Rswag::VERSION
+  s.add_dependency 'rswag-specs', ENV['TRAVIS_TAG'] || '0.0.0'
+  s.add_dependency 'rswag-api', ENV['TRAVIS_TAG'] || '0.0.0'
+  s.add_dependency 'rswag-ui', ENV['TRAVIS_TAG'] || '0.0.0'
 end
