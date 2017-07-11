@@ -20,6 +20,8 @@ module Rswag
 
       def build_query_string(example)
         query_string = parameters_in(:query)
+          .select { |p| p.fetch(:required, true) ||
+                        example.respond_to?(p[:name]) }
           .map { |p| build_query_string_part(p, example.send(p[:name])) }
           .join('&')
 

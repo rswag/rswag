@@ -48,6 +48,22 @@ module Rswag
           end
         end
 
+        context "optional 'query' parameters" do
+          before do
+            api_metadata[:operation][:parameters] << { name: 'q1', in: :query, type: 'string' }
+            api_metadata[:operation][:parameters] << { name: 'q2', in: :query, type: 'string', required: true }
+            api_metadata[:operation][:parameters] << { name: 'q3', in: :query, type: 'string', required: false }
+            api_metadata[:operation][:parameters] << { name: 'q4', in: :query, type: 'string', required: false }
+            allow(example).to receive(:q1).and_return('foo')
+            allow(example).to receive(:q2).and_return('bar')
+            allow(example).to receive(:q3).and_return('baz')
+          end
+
+          it "appends a query string using metadata and example values" do
+            expect(path).to eq('/blogs/1/comments/2?q1=foo&q2=bar&q3=baz')
+          end
+        end
+
         context "'query' parameter of type 'array'" do
           before do
             api_metadata[:operation][:parameters] << {
