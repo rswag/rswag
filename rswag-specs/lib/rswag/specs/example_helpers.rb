@@ -5,33 +5,30 @@ module Rswag
   module Specs
     module ExampleHelpers
 
-      def submit_request(api_metadata)
-        global_metadata = rswag_config.get_swagger_doc(api_metadata[:swagger_doc])
-        factory = RequestFactory.new(api_metadata, global_metadata)
+      def submit_request(metadata)
+        request = RequestFactory.new.build_request(metadata, self)
 
         if RAILS_VERSION < 5
           send(
-            api_metadata[:operation][:verb],
-            factory.build_fullpath(self),
-            factory.build_body(self),
-            rackify_headers(factory.build_headers(self)) # Rails test infrastructure requires Rack headers
+            request[:verb],
+            request[:path],
+            request[:body],
+            rackify_headers(request[:headers]) # Rails test infrastructure requires Rack headers
           )
         else
           send(
-            api_metadata[:operation][:verb],
-            factory.build_fullpath(self),
+            request[:verb],
+            request[:path],
             {
-              params: factory.build_body(self),
-              headers: factory.build_headers(self)
+              params: request[:body],
+              headers: request[:headers]
             }
           )
         end
       end
 
-      def assert_response_matches_metadata(api_metadata, &block)
-        global_metadata = rswag_config.get_swagger_doc(api_metadata[:swagger_doc])
-        validator = ResponseValidator.new(api_metadata, global_metadata)
-        validator.validate!(response, &block)
+      def assert_response_matches_metadata(metadata, &block)
+        ResponseValidator.new.validate!(metadata, response, &block)
       end
 
       private
@@ -50,10 +47,6 @@ module Rswag
         end
 
         Hash[ name_value_pairs ]
-      end
-
-      def rswag_config
-        ::Rswag::Specs.config
       end
     end
   end

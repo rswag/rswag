@@ -5,96 +5,78 @@ module Rswag
   module Specs
     class RequestFactory
 
-      def initialize(api_metadata, global_metadata)
-        @api_metadata = api_metadata
-        @global_metadata = global_metadata
+      def initialize(config = ::Rswag::Specs.config)
+        @config = config
       end
 
-      def build_fullpath(example)
-        @api_metadata[:path_item][:template].dup.tap do |t|
-          t.prepend(@global_metadata[:basePath] || '')
-          parameters_in(:path).each { |p| t.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s) }
-          t.concat(build_query_string(example))
+      def build_request(metadata, example)
+        swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+        parameters = expand_parameters(metadata, swagger_doc, example)
+
+        {}.tap do |request|
+          add_verb(request, metadata)
+          add_path(request, metadata, swagger_doc, parameters, example)
+          add_headers(request, parameters, example)
+          add_content(request, metadata, swagger_doc, parameters, example)
         end
-      end
-
-      def build_query_string(example)
-        query_string = parameters_in(:query)
-          .select { |p| p.fetch(:required, true) ||
-                        example.respond_to?(p[:name]) }
-          .map { |p| build_query_string_part(p, example.send(p[:name])) }
-          .join('&')
-
-        query_string.empty? ? '' : "?#{query_string}"
-      end
-
-      def build_body(example)
-        body_parameter = parameters_in(:body).first
-        body_parameter.nil? ? '' : example.send(body_parameter[:name]).to_json
-      end
-
-      def build_headers(example)
-        name_value_pairs = parameters_in(:header).map do |param|
-          [
-            param[:name],
-            example.send(param[:name]).to_s
-          ]
-        end
-
-        # Add MIME type headers based on produces/consumes metadata
-        produces = @api_metadata[:operation][:produces] || @global_metadata[:produces]
-        consumes = @api_metadata[:operation][:consumes] || @global_metadata[:consumes]
-        name_value_pairs << [ 'Accept', produces.join(';') ] unless produces.nil?
-        name_value_pairs << [ 'Content-Type', consumes.join(';') ] unless consumes.nil?
-
-        Hash[ name_value_pairs ]
       end
 
       private
 
-      def parameters_in(location)
-        path_item_params = @api_metadata[:path_item][:parameters] || []
-        operation_params = @api_metadata[:operation][:parameters] || []
-        applicable_params = operation_params
+      def expand_parameters(metadata, swagger_doc, example)
+        operation_params = metadata[:operation][:parameters] || []
+        path_item_params = metadata[:path_item][:parameters] || []
+        security_params = derive_security_params(metadata, swagger_doc)
+
+        operation_params
           .concat(path_item_params)
-          .uniq { |p| p[:name] } # operation params should override path_item params
-
-        applicable_params
-          .map { |p| p['$ref'] ? resolve_parameter(p['$ref']) : p } # resolve any references
-          .concat(security_parameters)
-          .select { |p| p[:in] == location }
+          .concat(security_params)
+          .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
+          .uniq { |p| "#{p[:name]}_#{p[:in]}" }
+          .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
       end
 
-      def resolve_parameter(ref)
-        defined_params = @global_metadata[:parameters]
+      def derive_security_params(metadata, swagger_doc)
+        requirements = metadata[:operation][:security] || swagger_doc[:security]
+        scheme_names = requirements ? requirements.map { |r| r.keys.first } : []
+        applicable_schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
+
+        applicable_schemes.map do |scheme|
+          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param.merge(type: :string)
+        end
+      end
+
+      def resolve_parameter(ref, swagger_doc)
+        definitions = swagger_doc[:parameters]
         key = ref.sub('#/parameters/', '')
-        raise "Referenced parameter '#{ref}' must be defined" unless defined_params && defined_params[key]
-        defined_params[key]
+        raise "Referenced parameter '#{ref}' must be defined" unless definitions && definitions[key]
+        definitions[key]
       end
 
-      def security_parameters
-        applicable_security_schemes.map do |scheme|
-          if scheme[:type] == :apiKey
-            { name: scheme[:name], type: :string, in: scheme[:in] }
-          else
-            { name: 'Authorization', type: :string, in: :header } # use auth header for basic & oauth2
+      def add_verb(request, metadata) 
+        request[:verb] = metadata[:operation][:verb]
+      end
+
+      def add_path(request, metadata, swagger_doc, parameters, example)
+        template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+
+        request[:path] = template.tap do |template|
+          parameters.select { |p| p[:in] == :path }.each do |p|
+            template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
+          end
+
+          parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
+            template.concat(i == 0 ? '?' : '&')
+            template.concat(build_query_string_part(p, example.send(p[:name])))
           end
         end
       end
 
-      def applicable_security_schemes
-        # First figure out the security requirement applicable to the operation
-        requirements = @api_metadata[:operation][:security] || @global_metadata[:security]
-        scheme_names = requirements ? requirements.map { |r| r.keys.first } : []
-
-        # Then obtain the scheme definitions for those requirements
-        (@global_metadata[:securityDefinitions] || {}).slice(*scheme_names).values
-      end
-
       def build_query_string_part(param, value)
-        return "#{param[:name]}=#{value.to_s}" unless param[:type].to_sym == :array
-
         name = param[:name]
+        return "#{name}=#{value.to_s}" unless param[:type].to_sym == :array
+
         case param[:collectionFormat]
         when :ssv
           "#{name}=#{value.join(' ')}"
@@ -106,6 +88,36 @@ module Rswag
           value.map { |v| "#{name}=#{v}" }.join('&')
         else
           "#{name}=#{value.join(',')}" # csv is default
+        end
+      end
+
+      def add_headers(request, parameters, example)
+        name_value_pairs = parameters
+          .select { |p| p[:in] == :header }
+          .map { |p| [ p[:name], example.send(p[:name]).to_s ] }
+
+        request[:headers] = Hash[ name_value_pairs ]
+      end
+
+      def add_content(request, metadata, swagger_doc, parameters, example)
+        # Accept header
+        produces = metadata[:operation][:produces] || swagger_doc[:produces]
+        if produces
+          accept = example.respond_to?(:'Accept') ? example.send(:'Accept') : produces.first
+          request[:headers]['Accept'] = accept
+        end
+
+        # Content-Type and body
+        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes] 
+        return if consumes.nil?
+
+        content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
+        request[:headers]['Content-Type'] = content_type
+
+        if content_type.include?('json')
+          body_param = parameters.select { |p| p[:in] == :body }.first
+          return if body_param.nil?
+          request[:body] = example.send(body_param[:name]).to_json
         end
       end
     end
