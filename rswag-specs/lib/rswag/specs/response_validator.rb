@@ -40,13 +40,12 @@ module Rswag
         response_schema = @api_metadata[:response][:schema]
         return if response_schema.nil?
 
-        begin
-          validation_schema = response_schema
-            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-            .merge(@global_metadata.slice(:definitions))
-          JSON::Validator.validate!(validation_schema, body)
-        rescue JSON::Schema::ValidationError => ex
-          raise UnexpectedResponse, "Expected response body to match schema: #{ex.message}"
+        validation_schema = response_schema
+          .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+          .merge(@global_metadata.slice(:definitions))
+        error_messages = JSON::Validator.fully_validate(validation_schema, body)
+        if error_messages.any?
+          raise UnexpectedResponse, "Expected response body to match schema: #{error_messages[0]}"
         end
       end
     end
