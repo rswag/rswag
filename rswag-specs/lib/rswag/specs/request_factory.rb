@@ -1,4 +1,5 @@
 require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/hash/conversions'
 require 'json'
 
 module Rswag
@@ -16,8 +17,8 @@ module Rswag
         {}.tap do |request|
           add_verb(request, metadata)
           add_path(request, metadata, swagger_doc, parameters, example)
-          add_headers(request, parameters, example)
-          add_content(request, metadata, swagger_doc, parameters, example)
+          add_headers(request, metadata, swagger_doc, parameters, example)
+          add_payload(request, parameters, example)
         end
       end
 
@@ -91,34 +92,60 @@ module Rswag
         end
       end
 
-      def add_headers(request, parameters, example)
-        name_value_pairs = parameters
+      def add_headers(request, metadata, swagger_doc, parameters, example)
+        tuples = parameters
           .select { |p| p[:in] == :header }
           .map { |p| [ p[:name], example.send(p[:name]).to_s ] }
 
-        request[:headers] = Hash[ name_value_pairs ]
-      end
-
-      def add_content(request, metadata, swagger_doc, parameters, example)
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
         if produces
           accept = example.respond_to?(:'Accept') ? example.send(:'Accept') : produces.first
-          request[:headers]['Accept'] = accept
+          tuples << [ 'Accept', accept ]
         end
 
-        # Content-Type and body
+        # Content-Type header
         consumes = metadata[:operation][:consumes] || swagger_doc[:consumes] 
-        return if consumes.nil?
-
-        content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
-        request[:headers]['Content-Type'] = content_type
-
-        if content_type.include?('json')
-          body_param = parameters.select { |p| p[:in] == :body }.first
-          return if body_param.nil?
-          request[:body] = example.send(body_param[:name]).to_json
+        if consumes
+          content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
+          tuples << [ 'Content-Type', content_type ]
         end
+
+        # Rails test infrastructure requires rackified headers
+        rackified_tuples = tuples.map do |pair|
+          [
+            case pair[0]
+              when 'Accept' then 'HTTP_ACCEPT'
+              when 'Content-Type' then 'CONTENT_TYPE'
+              when 'Authorization' then 'HTTP_AUTHORIZATION'
+              else pair[0]
+            end,
+            pair[1]
+          ]
+        end
+
+        request[:headers] = Hash[ rackified_tuples ]
+      end
+
+      def add_payload(request, parameters, example)
+        content_type = request[:headers]['CONTENT_TYPE']
+        return if content_type.nil?
+
+        if [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include?(content_type)
+          request[:payload] = build_form_payload(parameters, example)
+        else
+          request[:payload] = build_json_payload(parameters, example)
+        end
+      end
+
+      def build_json_payload(parameters, example)
+        body_param = parameters.select { |p| p[:in] == :body }.first
+        body_param ? example.send(body_param[:name]).to_json : nil
+      end
+
+      def build_form_payload(parameters, example)
+        nil
+        # TODO:
       end
     end
   end

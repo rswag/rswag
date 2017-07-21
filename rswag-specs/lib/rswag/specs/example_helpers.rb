@@ -12,15 +12,15 @@ module Rswag
           send(
             request[:verb],
             request[:path],
-            request[:body],
-            rackify_headers(request[:headers]) # Rails test infrastructure requires Rack headers
+            request[:payload],
+            request[:headers]
           )
         else
           send(
             request[:verb],
             request[:path],
             {
-              params: request[:body],
+              params: request[:payload],
               headers: request[:headers]
             }
           )
@@ -29,24 +29,6 @@ module Rswag
 
       def assert_response_matches_metadata(metadata, &block)
         ResponseValidator.new.validate!(metadata, response, &block)
-      end
-
-      private
-
-      def rackify_headers(headers)
-        name_value_pairs = headers.map do |name, value|
-          [
-            case name
-              when 'Accept' then 'HTTP_ACCEPT'
-              when 'Content-Type' then 'CONTENT_TYPE'
-              when 'Authorization' then 'HTTP_AUTHORIZATION'
-              else name
-            end,
-            value
-          ]
-        end
-
-        Hash[ name_value_pairs ]
       end
     end
   end

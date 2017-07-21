@@ -133,8 +133,8 @@ module Rswag
           end
 
           context "no 'Content-Type' provided" do
-            it "sets 'Content-Type' header to first in list" do
-              expect(request[:headers]).to eq('Content-Type' => 'application/json')
+            it "sets 'CONTENT_TYPE' header to first in list" do
+              expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/json')
             end
           end
 
@@ -143,19 +143,19 @@ module Rswag
               allow(example).to receive(:'Content-Type').and_return('application/xml')
             end
 
-            it "sets 'Content-Type' header to example value" do
-              expect(request[:headers]).to eq('Content-Type' => 'application/xml')
+            it "sets 'CONTENT_TYPE' header to example value" do
+              expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
             end
           end
 
-          context 'JSON body' do
+          context 'JSON payload' do
             before do
               metadata[:operation][:parameters] = [ { name: 'comment', in: :body, schema: { type: 'object' } } ]
               allow(example).to receive(:comment).and_return(text: 'Some comment')
             end
 
-            it 'sets body to example value as JSON string' do
-              expect(request[:body]).to eq("{\"text\":\"Some comment\"}")
+            it "serializes first 'body' parameter to JSON string" do
+              expect(request[:payload]).to eq("{\"text\":\"Some comment\"}")
             end
           end
         end
@@ -166,8 +166,8 @@ module Rswag
           end
 
           context "no 'Accept' value provided" do
-            it "sets 'Accept' header to first in list" do
-              expect(request[:headers]).to eq('Accept' => 'application/json')
+            it "sets 'HTTP_ACCEPT' header to first in list" do
+              expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/json')
             end
           end
 
@@ -176,8 +176,8 @@ module Rswag
               allow(example).to receive(:'Accept').and_return('application/xml')
             end
 
-            it "sets 'Accept' header to example value" do
-              expect(request[:headers]).to eq('Accept' => 'application/xml')
+            it "sets 'HTTP_ACCEPT' header to example value" do
+              expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/xml')
             end
           end
         end
@@ -213,8 +213,8 @@ module Rswag
             allow(example).to receive(:Authorization).and_return('Basic foobar')
           end
 
-          it "sets 'Authorization' header to example value" do
-            expect(request[:headers]).to eq('Authorization' => 'Basic foobar')
+          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
           end
         end
 
@@ -225,8 +225,8 @@ module Rswag
             allow(example).to receive(:Authorization).and_return('Bearer foobar')
           end
 
-          it "sets 'Authorization' header to example value" do
-            expect(request[:headers]).to eq('Authorization' => 'Bearer foobar')
+          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Bearer foobar')
           end
         end
 
@@ -266,8 +266,8 @@ module Rswag
         context "global consumes" do
           before { swagger_doc[:consumes] = [ 'application/xml' ] }
 
-          it "defaults 'Content-Type' to global value(s)" do
-            expect(request[:headers]).to eq('Content-Type' => 'application/xml')
+          it "defaults 'CONTENT_TYPE' to global value(s)" do
+            expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
           end
         end
 
