@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 20160218212104) do
   create_table "blogs", force: :cascade do |t|
     t.string "title"
     t.text "content"
+    t.string "thumbnail"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

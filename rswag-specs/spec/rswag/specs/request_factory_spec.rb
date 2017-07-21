@@ -158,6 +158,25 @@ module Rswag
               expect(request[:payload]).to eq("{\"text\":\"Some comment\"}")
             end
           end
+
+          context 'form payload' do
+            before do
+              metadata[:operation][:consumes] = [ 'multipart/form-data' ]
+              metadata[:operation][:parameters] = [
+                { name: 'f1', in: :formData, type: :string },
+                { name: 'f2', in: :formData, type: :string }
+              ]
+              allow(example).to receive(:f1).and_return('foo blah')
+              allow(example).to receive(:f2).and_return('bar blah')
+            end
+
+            it 'sets payload to hash of names and example values' do
+              expect(request[:payload]).to eq(
+                'f1' => 'foo blah',
+                'f2' => 'bar blah'
+              )
+            end
+          end
         end
 
         context 'produces content' do

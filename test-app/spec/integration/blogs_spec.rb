@@ -10,7 +10,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :blog, :in => :body, schema: { '$ref' => '#/definitions/blog' }
+      parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
 
       let(:blog) { { title: 'foo', content: 'bar' } }
 
@@ -22,11 +22,6 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         schema '$ref' => '#/definitions/errors_object'
 
         let(:blog) { { title: 'foo' } }
-        run_test!
-      end
-
-      response '406', 'unsupported accept header' do
-        let(:'Accept') { 'application/foo' }
         run_test!
       end
     end
@@ -53,10 +48,10 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   end
 
   path '/blogs/{id}' do
-    parameter name: :id, :in => :path, :type => :string
+    parameter name: :id, in: :path, type: :string
 
     let(:id) { blog.id }
-    let(:blog) { Blog.create(title: 'foo', content: 'bar') }
+    let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
 
     get 'Retrieves a blog' do
       tags 'Blogs'
@@ -74,9 +69,11 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         examples 'application/json' => {
             id: 1,
             title: 'Hello world!',
-            content: 'Hello world and hello universe. Thank you all very much!!!'
+            content: 'Hello world and hello universe. Thank you all very much!!!',
+            thumbnail: "thumbnail.png"
           }
 
+        let(:id) { blog.id }
         run_test!
       end
 
@@ -84,9 +81,24 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         let(:id) { 'invalid' }
         run_test!
       end
+    end
+  end
 
-      response '406', 'unsupported accept header' do
-        let(:'Accept') { 'application/foo' }
+  path '/blogs/{id}/upload' do
+    parameter name: :id, in: :path, type: :string
+
+    let(:id) { blog.id }
+    let(:blog) { Blog.create(title: 'foo', content: 'bar') }
+
+    put 'upload a blog thumbnail' do
+      tags 'Blogs'
+      description 'Upload a thumbnail for specific blog by id'
+      operationId 'uploadThumbnailBlog'
+      consumes 'multipart/form-data'
+      parameter name: :file, :in => :formData, :type => :file, required: true
+
+      response '200', 'blog updated' do
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
         run_test!
       end
     end
