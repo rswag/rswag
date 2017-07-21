@@ -4,121 +4,85 @@ module Rswag
   module Specs
 
     describe ResponseValidator do
-      subject { ResponseValidator.new(api_metadata, global_metadata) }
+      subject { ResponseValidator.new(config) }
 
-      let(:api_metadata) { { response: { code: 200 } } }
-      let(:global_metadata) { {} }
-
-      describe '#validate!(response)' do
-        let(:call) { subject.validate!(response) }
-
-        context "no 'schema' provided" do
-          context 'response code matches' do
-            let(:response) { OpenStruct.new(code: 200, body: '') }
-            it { expect { call }.to_not raise_error }
-          end
-
-          context 'response code does not match' do
-            let(:response) { OpenStruct.new(code: 201, body: '') }
-            it { expect { call }.to raise_error UnexpectedResponse }
-          end
-        end
-
-        context "'schema' provided" do
-          before do
-            api_metadata[:response][:schema] = {
-              type: 'object',
-              properties: { text: { type: 'string' } },
-              required: ['text']
+      before do
+        allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
+      end
+      let(:config) { double('config') } 
+      let(:swagger_doc) { {} }
+      let(:example) { double('example') }
+      let(:metadata) do
+        {
+          response: {
+            code: 200,
+            headers: { 'X-Rate-Limit-Limit' => { type: :integer } },
+            schema: {
+              type: :object,
+              properties: { text: { type: :string } },
+              required: [ 'text' ]
             }
-          end
+          }
+        }
+      end
 
-          context 'response code & body matches' do
-            let(:response) { OpenStruct.new(code: 200, body: "{\"text\":\"Some comment\"}") }
+      describe '#validate!(metadata, response)' do
+        let(:call) { subject.validate!(metadata, response) }
+        let(:response) do
+          OpenStruct.new(
+            code: '200',
+            headers: { 'X-Rate-Limit-Limit' => '10' },
+            body: "{\"text\":\"Some comment\"}"
+          )
+        end
+
+        context "response matches metadata" do
+          it { expect { call }.to_not raise_error }
+        end
+
+        context "response code differs from metadata" do
+          before { response.code = '400' }
+          it { expect { call }.to raise_error /Expected response code/ }
+        end
+
+        context "response headers differ from metadata" do
+          before { response.headers = {} }
+          it { expect { call }.to raise_error /Expected response header/ }
+        end
+
+        context "response body differs from metadata" do
+          before { response.body = "{\"foo\":\"Some comment\"}" }
+          it { expect { call }.to raise_error /Expected response body/ }
+        end
+
+        context 'validation block provided' do
+          let(:call) { subject.validate!(metadata, response, &block) }
+
+          context 'block passes' do
+            let(:block) { Proc.new { |response| expect(response.code).to eq('200') } }
             it { expect { call }.to_not raise_error }
           end
 
-          context 'response code matches & body does not' do
-            let(:response) { OpenStruct.new(code: 200, body: "{\"foo\":\"Some comment\"}") }
-            it { expect { call }.to raise_error UnexpectedResponse }
-          end
-
-          context "'block' provided" do
-            let(:call) do
-              subject.validate!(response) do |response|
-                data = JSON.parse(response.body)
-                expect(data['text']).to eq('Some comment')
-              end
-            end
-
-            context 'the block validation passes' do
-              let(:response) { OpenStruct.new(code: 200, body: "{\"text\":\"Some comment\"}") }
-              it { expect { call }.to_not raise_error }
-            end
-
-            context 'the block validation fails' do
-              let(:response) { OpenStruct.new(code: 200, body: "{\"text\":\"Some other comment\"}") }
-              it { expect { call }.to raise_error(RSpec::Expectations::ExpectationNotMetError) }
-            end
+          context 'block fails' do
+            let(:block) { Proc.new { |response| expect(response.code).to eq('201') } }
+            it { expect { call }.to raise_error RSpec::Expectations::ExpectationNotMetError }
           end
         end
 
-        context "referenced 'schema' provided" do
+        context 'referenced schemas' do
           before do
-            api_metadata[:response][:schema] = { '$ref' => '#/definitions/author' }
-            global_metadata[:definitions] = {
-              author: {
-                type: 'object',
-                properties: { name: { type: 'string' } },
-                required: ['name']
+            swagger_doc[:definitions] = {
+              'blog' => {
+                type: :object,
+                properties: { foo: { type: :string } },
+                required: [ 'foo' ]
               }
             }
+            metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
           end
 
-          context 'response code & body matches' do
-            let(:response) { OpenStruct.new(code: 200, body: "{\"name\":\"Some name\"}") }
-            it { expect { call }.to_not raise_error }
-          end
-
-          context 'response code matches & body does not' do
-            let(:response) { OpenStruct.new(code: 200, body: "{\"foo\":\"Some name\"}") }
-            it { expect { call }.to raise_error UnexpectedResponse }
-          end
-        end
-
-        context "'headers' provided" do
-          before do
-            api_metadata[:response][:headers] = {
-              'X-Rate-Limit-Limit' => {
-                description: 'The number of allowed requests in the current period',
-                type: 'integer'
-              },
-              'X-Rate-Limit-Remaining' => {
-                description: 'The number of remaining requests in the current period',
-                type: 'integer'
-              },
-              'X-Rate-Limit-Reset' => {
-                description: 'The number of seconds left in the current period',
-                type: 'integer'
-              }
-            }
-          end
-
-          context 'response code & body matches' do
-            let(:response) { OpenStruct.new(code: 200, body: '{}', headers: {
-              'X-Rate-Limit-Limit' => 1,
-              'X-Rate-Limit-Remaining' => 1,
-              'X-Rate-Limit-Reset' => 1
-            }) }
-            it { expect { call }.to_not raise_error }
-          end
-
-          context 'response code matches & body does not' do
-            let(:response) { OpenStruct.new(code: 200, body: '{}', headers: {
-              'X-Rate-Limit-Limit' => 1,
-              'X-Rate-Limit-Remaining' => 1
-            }) }
-            it { expect { call }.to raise_error UnexpectedResponse }
+          it 'uses the referenced schema to validate the response body' do
+            expect { call }.to raise_error /Expected response body/
           end
         end
       end

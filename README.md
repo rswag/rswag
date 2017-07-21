@@ -82,6 +82,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
             let(:id) { 'invalid' }
             run_test!
           end
+
+          response '406', 'unsupported accept header' do
+            let(:'Accept') { 'application/foo' }
+            run_test!
+          end
         end
       end
     end

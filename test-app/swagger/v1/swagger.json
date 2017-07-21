@@ -40,6 +40,9 @@
         "consumes": [
           "application/json"
         ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "blog",
@@ -58,6 +61,9 @@
             "schema": {
               "$ref": "#/definitions/errors_object"
             }
+          },
+          "406": {
+            "description": "unsupported accept header"
           }
         }
       },
@@ -87,6 +93,9 @@
                 "$ref": "#/definitions/blog"
               }
             }
+          },
+          "406": {
+            "description": "unsupported accept header"
           }
         }
       }
@@ -137,6 +146,9 @@
           },
           "404": {
             "description": "blog not found"
+          },
+          "406": {
+            "description": "unsupported accept header"
           }
         }
       }

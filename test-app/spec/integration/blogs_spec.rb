@@ -9,10 +9,12 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Creates a new blog from provided data'
       operationId 'createBlog'
       consumes 'application/json'
+      produces 'application/json'
       parameter name: :blog, :in => :body, schema: { '$ref' => '#/definitions/blog' }
 
+      let(:blog) { { title: 'foo', content: 'bar' } }
+
       response '201', 'blog created' do
-        let(:blog) { { title: 'foo', content: 'bar' } }
         run_test!
       end
 
@@ -20,6 +22,11 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         schema '$ref' => '#/definitions/errors_object'
 
         let(:blog) { { title: 'foo' } }
+        run_test!
+      end
+
+      response '406', 'unsupported accept header' do
+        let(:'Accept') { 'application/foo' }
         run_test!
       end
     end
@@ -31,10 +38,15 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       produces 'application/json'
       parameter name: :keywords, in: :query, type: 'string'
 
+      let(:keywords) { 'foo bar' }
+
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+        run_test!
+      end
 
-        let(:keywords) { 'foo bar' }
+      response '406', 'unsupported accept header' do
+        let(:'Accept') { 'application/foo' }
         run_test!
       end
     end
@@ -42,6 +54,9 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
   path '/blogs/{id}' do
     parameter name: :id, :in => :path, :type => :string
+
+    let(:id) { blog.id }
+    let(:blog) { Blog.create(title: 'foo', content: 'bar') }
 
     get 'Retrieves a blog' do
       tags 'Blogs'
@@ -62,13 +77,16 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
             content: 'Hello world and hello universe. Thank you all very much!!!'
           }
 
-        let(:blog) { Blog.create(title: 'foo', content: 'bar') }
-        let(:id) { blog.id }
         run_test!
       end
 
       response '404', 'blog not found' do
         let(:id) { 'invalid' }
+        run_test!
+      end
+
+      response '406', 'unsupported accept header' do
+        let(:'Accept') { 'application/foo' }
         run_test!
       end
     end

@@ -1,6 +1,4 @@
 class AuthTestsController < ApplicationController
-  wrap_parameters Blog
-  respond_to :json
 
   # POST /auth-tests/basic
   def basic

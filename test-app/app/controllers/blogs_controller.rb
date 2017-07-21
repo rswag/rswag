@@ -1,6 +1,4 @@
 class BlogsController < ApplicationController
-  wrap_parameters Blog
-  respond_to :json
 
   # POST /blogs
   def create

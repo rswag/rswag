@@ -1,5 +1,5 @@
 TestApp::Application.routes.draw do
-  resources :blogs, defaults: { :format => :json }
+  resources :blogs
 
   post 'auth-tests/basic', to: 'auth_tests#basic'
 
