@@ -1,5 +1,6 @@
 TestApp::Application.routes.draw do
   resources :blogs
+  put '/blogs/:id/upload', to: 'blogs#upload'
 
   post 'auth-tests/basic', to: 'auth_tests#basic'
 

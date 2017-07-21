@@ -138,14 +138,20 @@ module Rswag
         end
       end
 
+      def build_form_payload(parameters, example)
+        #See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
+        # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
+        # Rails test infrastructure allows us to send the values directly as a hash
+        # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
+        tuples = parameters
+          .select { |p| p[:in] == :formData }
+          .map { |p| [ p[:name], example.send(p[:name]) ] }
+        Hash[ tuples ]
+      end
+
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
         body_param ? example.send(body_param[:name]).to_json : nil
-      end
-
-      def build_form_payload(parameters, example)
-        nil
-        # TODO:
       end
     end
   end

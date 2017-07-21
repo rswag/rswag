@@ -61,9 +61,6 @@
             "schema": {
               "$ref": "#/definitions/errors_object"
             }
-          },
-          "406": {
-            "description": "unsupported accept header"
           }
         }
       },
@@ -140,15 +137,47 @@
               "application/json": {
                 "id": 1,
                 "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!"
+                "content": "Hello world and hello universe. Thank you all very much!!!",
+                "thumbnail": "thumbnail.png"
               }
             }
           },
           "404": {
             "description": "blog not found"
-          },
-          "406": {
-            "description": "unsupported accept header"
+          }
+        }
+      }
+    },
+    "/blogs/{id}/upload": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "put": {
+        "summary": "upload a blog thumbnail",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Upload a thumbnail for specific blog by id",
+        "operationId": "uploadThumbnailBlog",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "blog updated"
           }
         }
       }
@@ -184,12 +213,16 @@
         "content": {
           "type": "string",
           "x-nullable": true
+        },
+        "thumbnail": {
+          "type": "string"
         }
       },
       "required": [
         "id",
         "title",
-        "content"
+        "content",
+        "thumbnail"
       ]
     }
   },
