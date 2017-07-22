@@ -82,15 +82,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/blog"
-              }
-            }
-          },
           "406": {
             "description": "unsupported accept header"
           }

@@ -55,20 +55,6 @@ module Rswag
           it { expect { call }.to raise_error /Expected response body/ }
         end
 
-        context 'validation block provided' do
-          let(:call) { subject.validate!(metadata, response, &block) }
-
-          context 'block passes' do
-            let(:block) { Proc.new { |response| expect(response.code).to eq('200') } }
-            it { expect { call }.to_not raise_error }
-          end
-
-          context 'block fails' do
-            let(:block) { Proc.new { |response| expect(response.code).to eq('201') } }
-            it { expect { call }.to raise_error RSpec::Expectations::ExpectationNotMetError }
-          end
-        end
-
         context 'referenced schemas' do
           before do
             swagger_doc[:definitions] = {

@@ -22,7 +22,9 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         schema '$ref' => '#/definitions/errors_object'
 
         let(:blog) { { title: 'foo' } }
-        run_test!
+        run_test! do |response|
+          expect(response.body).to include("can't be blank")
+        end
       end
     end
 
@@ -37,7 +39,6 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/definitions/blog' }
-        run_test!
       end
 
       response '406', 'unsupported accept header' do

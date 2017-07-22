@@ -27,8 +27,8 @@ module Rswag
         end
       end
 
-      def assert_response_matches_metadata(metadata, &block)
-        ResponseValidator.new.validate!(metadata, response, &block)
+      def assert_response_matches_metadata(metadata)
+        ResponseValidator.new.validate!(metadata, response)
       end
     end
   end

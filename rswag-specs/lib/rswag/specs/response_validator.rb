@@ -11,13 +11,12 @@ module Rswag
         @config = config
       end
 
-      def validate!(metadata, response, &block)
+      def validate!(metadata, response)
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
         validate_code!(metadata, response.code)
         validate_headers!(metadata, response.headers)
-        validate_body!(metadata, swagger_doc, response.body, &block)
-        block.call(response) if block_given?
+        validate_body!(metadata, swagger_doc, response.body)
       end
 
       private
