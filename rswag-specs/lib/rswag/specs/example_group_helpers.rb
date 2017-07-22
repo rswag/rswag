@@ -2,9 +2,9 @@ module Rswag
   module Specs
     module ExampleGroupHelpers
 
-      def path(template, &block)
-        api_metadata = { path_item: { template: template } }
-        describe(template, api_metadata, &block)
+      def path(template, metadata={}, &block)
+        metadata[:path_item] = { template: template }
+        describe(template, metadata, &block)
       end
 
       [ :get, :post, :patch, :put, :delete, :head ].each do |verb|
@@ -47,9 +47,9 @@ module Rswag
         end
       end
 
-      def response(code, description, &block)
-        api_metadata = { response: { code: code, description: description } }
-        context(description, api_metadata, &block)
+      def response(code, description, metadata={}, &block)
+        metadata[:response] = { code: code, description: description }
+        context(description, metadata, &block)
       end
 
       def schema(value)
