@@ -33,7 +33,7 @@ module Rswag
           .concat(path_item_params)
           .concat(security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
-          .uniq { |p| "#{p[:name]}_#{p[:in]}" }
+          .uniq { |p| p[:name] }
           .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
       end
 
@@ -139,7 +139,7 @@ module Rswag
       end
 
       def build_form_payload(parameters, example)
-        #See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
+        # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
