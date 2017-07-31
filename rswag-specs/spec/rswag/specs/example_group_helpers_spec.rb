@@ -120,6 +120,15 @@ module Rswag
             )
           end
         end
+
+        context "when 'in' parameter key is not defined" do
+          before { subject.parameter(name: :id) }
+          let(:api_metadata) { { operation: {} } }
+
+          it "does not require the 'in' parameter key" do
+            expect(api_metadata[:operation][:parameters]).to match([ name: :id ])
+          end
+        end
       end
 
       describe '#response(code, description)' do
