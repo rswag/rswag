@@ -39,7 +39,7 @@ module Rswag
 
       def derive_security_params(metadata, swagger_doc)
         requirements = metadata[:operation][:security] || swagger_doc[:security]
-        scheme_names = requirements ? requirements.map { |r| r.keys.first } : []
+        scheme_names = requirements ? requirements.map { |r| r.keys }.flatten : []
         applicable_schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
 
         applicable_schemes.map do |scheme|
