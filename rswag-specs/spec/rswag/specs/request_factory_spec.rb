@@ -225,6 +225,35 @@ module Rswag
           end
         end
 
+        context 'apiKey pair' do
+          before do
+            swagger_doc[:securityDefinitions] = {
+                api_key_1: { type: :apiKey, name: 'api_key_1', in: key_location },
+                api_key_2: { type: :apiKey, name: 'api_key_2', in: key_location }
+            }
+            metadata[:operation][:security] = [ api_key_1: [], api_key_2: [] ]
+            allow(example).to receive(:api_key_1).and_return('abcd')
+            allow(example).to receive(:api_key_2).and_return('xyz')
+          end
+
+          context 'in query' do
+            let(:key_location) { :query }
+
+            it 'adds name and example values to the query string' do
+              expect(request[:path]).to eq('/blogs?api_key_1=abcd&api_key_2=xyz')
+            end
+          end
+
+          context 'in header' do
+            let(:key_location) { :header }
+
+            it 'adds name and example values to the headers' do
+              expect(request[:headers]).to include('api_key_1' => 'abcd')
+              expect(request[:headers]).to include('api_key_2' => 'xyz')
+            end
+          end
+        end
+
         context 'basic auth' do
           before do
             swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
