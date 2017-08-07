@@ -53,6 +53,7 @@ module Rswag
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
           .reject { |k,v| k == :verb }
+          .tap {|x| x[:parameters].uniq!}
           .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
