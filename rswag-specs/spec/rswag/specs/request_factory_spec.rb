@@ -201,6 +201,18 @@ module Rswag
           end
         end
 
+        context 'basic auth' do
+          before do
+            swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+            metadata[:operation][:security] = [ basic: [] ]
+            allow(example).to receive(:Authorization).and_return('Basic foobar')
+          end
+
+          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+          end
+        end
+
         context 'apiKey' do
           before do
             swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
@@ -225,18 +237,6 @@ module Rswag
           end
         end
 
-        context 'basic auth' do
-          before do
-            swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
-            metadata[:operation][:security] = [ basic: [] ]
-            allow(example).to receive(:Authorization).and_return('Basic foobar')
-          end
-
-          it "sets 'HTTP_AUTHORIZATION' header to example value" do
-            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
-          end
-        end
-
         context 'oauth2' do
           before do
             swagger_doc[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: [ 'read:blogs' ] } }
@@ -246,6 +246,23 @@ module Rswag
 
           it "sets 'HTTP_AUTHORIZATION' header to example value" do
             expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Bearer foobar')
+          end
+        end
+
+        context 'paired security requirements' do
+          before do
+            swagger_doc[:securityDefinitions] = {
+              basic: { type: :basic },
+              api_key: { type: :apiKey, name: 'api_key', in: :query }
+            }
+            metadata[:operation][:security] = [ { basic: [], api_key: [] } ]
+            allow(example).to receive(:Authorization).and_return('Basic foobar')
+            allow(example).to receive(:api_key).and_return('foobar')
+          end
+
+          it "sets both params to example values" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+            expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end
 

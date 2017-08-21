@@ -38,13 +38,13 @@ module Rswag
       end
 
       def derive_security_params(metadata, swagger_doc)
-        requirements = metadata[:operation][:security] || swagger_doc[:security]
-        scheme_names = requirements ? requirements.map { |r| r.keys.first } : []
-        applicable_schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
+        requirements = metadata[:operation][:security] || swagger_doc[:security] || []
+        scheme_names = requirements.flat_map { |r| r.keys }
+        schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
 
-        applicable_schemes.map do |scheme|
+        schemes.map do |scheme|
           param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
-          param.merge(type: :string)
+          param.merge(type: :string, required: requirements.one?)
         end
       end
 

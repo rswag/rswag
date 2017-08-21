@@ -91,7 +91,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
 
-    put 'upload a blog thumbnail' do
+    put 'Uploads a blog thumbnail' do
       tags 'Blogs'
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
