@@ -281,7 +281,7 @@ module Rswag
 
         context 'referenced parameters' do
           before do
-            swagger_doc[:parameters] = { 'q1' => { name: 'q1', in: :query, type: :string } }
+            swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
             metadata[:operation][:parameters] = [ { '$ref' => '#/parameters/q1' } ]
             allow(example).to receive(:q1).and_return('foo')
           end

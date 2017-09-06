@@ -49,8 +49,8 @@ module Rswag
       end
 
       def resolve_parameter(ref, swagger_doc)
+        key = ref.sub('#/parameters/', '').to_sym
         definitions = swagger_doc[:parameters]
-        key = ref.sub('#/parameters/', '')
         raise "Referenced parameter '#{ref}' must be defined" unless definitions && definitions[key]
         definitions[key]
       end
