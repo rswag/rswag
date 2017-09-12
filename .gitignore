@@ -5,3 +5,4 @@
 **/*/public/assets
 *.swp
 Gemfile.lock
+.idea
