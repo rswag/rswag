@@ -87,6 +87,8 @@ module Rswag
           "#{name}=#{value.join('|')}"
         when :multi
           value.map { |v| "#{name}=#{v}" }.join('&')
+        when :arel
+          value.map { |k, v| "#{name}[#{k.to_s}]=#{v}" }.join('&')
         else
           "#{name}=#{value.join(',')}" # csv is default
         end

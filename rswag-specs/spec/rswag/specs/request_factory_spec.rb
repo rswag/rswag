@@ -102,6 +102,20 @@ module Rswag
           end
         end
 
+        context "'query' parameters of type 'array' and collectionFormat = arel" do
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'q', in: :query, type: :array, collectionFormat: :arel }
+            ]
+            allow(example).to receive(:q).and_return(name_eq: 'foo')
+          end
+
+          let(:collection_format) { :arel }
+          it "formats as an arel predicate map" do
+            expect(request[:path]).to eq('/blogs?q[name_eq]=foo')
+          end
+        end
+
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [ { name: 'Api-Key', in: :header, type: :string } ]
