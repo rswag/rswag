@@ -4,7 +4,7 @@ rswag (formerly swagger_rails)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed JSON. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed JSON. This toolchain makes it seamless to go from integration specs, which you're probably doing in some form already, to living documentation for your API consumers.
 
 And that's not all ...
 
