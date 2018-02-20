@@ -235,6 +235,34 @@ module Rswag
               expect(request[:headers]).to eq('api_key' => 'foobar')
             end
           end
+
+          context 'in header with no other params' do
+            let(:key_location) { :header }
+
+            it 'adds name and example value to the headers' do
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+              expect(metadata[:operation][:parameters]).to(
+                include(name: 'api_key', in: :header, type: :string, required: true)
+              )
+            end
+          end
+
+          context 'in header with auth param already added' do
+            let(:key_location) { :header }
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string },
+                { name: 'api_key', in: :header, type: :string }
+              ]
+              allow(example).to receive(:q1).and_return('foo')
+              allow(example).to receive(:api_key).and_return('foobar')
+            end
+
+            it 'adds authorization parameter only once' do
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+              expect(metadata[:operation][:parameters].size).to eq 2
+            end
+          end
         end
 
         context 'oauth2' do
