@@ -28,6 +28,7 @@ group :test do
   gem 'generator_spec'
   gem 'capybara'
   gem 'capybara-webkit'
+  gem 'puma'
 end
 
 group :assets do
