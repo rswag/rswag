@@ -29,15 +29,11 @@ module Rswag
         path_item_params = metadata[:path_item][:parameters] || []
         security_params = derive_security_params(metadata, swagger_doc)
 
-        operation_params = operation_params
-          .concat(path_item_params)
-          .concat(security_params)
+        # NOTE: Use of + instead of concat to avoid mutation of the metadata object
+        (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
           .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
-
-        metadata[:operation][:parameters] = operation_params unless operation_params.empty?
-        operation_params
       end
 
       def derive_security_params(metadata, swagger_doc)
