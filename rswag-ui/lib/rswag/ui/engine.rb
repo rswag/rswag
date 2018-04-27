@@ -1,19 +1,16 @@
+require 'rswag/ui/middleware'
+
 module Rswag
   module Ui
     class Engine < ::Rails::Engine
       isolate_namespace Rswag::Ui
 
       initializer 'rswag-ui.initialize' do |app|
-        if app.config.respond_to?(:assets)
-          app.config.assets.precompile += [
-            'swagger-ui/css/*',
-            'swagger-ui/fonts/*',
-            'swagger-ui/images/*',
-            'swagger-ui/lang/*',
-            'swagger-ui/lib/*',
-            'swagger-ui/swagger-ui.min.js'
-          ]
-        end
+        middleware.use Rswag::Ui::Middleware, Rswag::Ui.config
+      end
+
+      rake_tasks do
+        load File.expand_path('../../../tasks/rswag-ui_tasks.rake', __FILE__)
       end
     end
   end

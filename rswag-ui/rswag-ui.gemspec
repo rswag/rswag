@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = "Expose beautiful API documentation, that's powered by Swagger JSON endpoints, including a UI to explore and test operations"
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,lib,vendor}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
+  s.files = Dir["{lib,node_modules}/**/*"] + ["MIT-LICENSE", "Rakefile" ]
 
   s.add_dependency 'actionpack', '>=3.1', '< 6.0'
   s.add_dependency 'railties', '>= 3.1', '< 6.0'

@@ -12,7 +12,7 @@ cache:
   directories:
     - /home/travis/.rvm/gems/ruby-2.2.5
 
-install: bundle install
+install: ./ci/build.sh
 
 before_script:
   - export DISPLAY=:99.0
