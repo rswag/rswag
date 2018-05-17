@@ -37,7 +37,7 @@ class BlogsController < ApplicationController
 
   def save_uploaded_file(field)
     return if field.nil?
-    file = File.join('tmp', field.original_filename)
+    file = File.join('public/uploads', field.original_filename)
     FileUtils.cp field.tempfile.path, file
     field.original_filename
   end

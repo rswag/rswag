@@ -15,12 +15,8 @@ end
 
 gem 'sqlite3'
 
-gem 'rswag-specs', path: './rswag-specs'
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
-
-# To use debugger
-# gem 'debugger'
 
 group :test do
   gem 'test-unit'
@@ -28,10 +24,13 @@ group :test do
   gem 'generator_spec'
   gem 'capybara'
   gem 'capybara-webkit'
-  gem 'puma'
+  gem 'rswag-specs', path: './rswag-specs'
 end
 
 group :assets do
   gem 'uglifier'
   gem 'therubyracer'
 end
+
+gem 'byebug'
+gem 'puma'
