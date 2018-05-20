@@ -17,6 +17,19 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     gem 'rswag'
     ```
+    or if you like to avoid loading rspec in other bundler groups.
+    
+    ```ruby
+    # Gemfile
+    gem 'rswag-api'
+    gem 'rswag-ui'
+
+    groups :test do
+      gem 'rspec-rails'
+      gem 'rswag-specs'
+    end
+    ```
+
 
 2. Run the install generator
 
