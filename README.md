@@ -10,6 +10,14 @@ And that's not all ...
 
 Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
 
+## Compatibility ##
+
+|Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
+|----------|----------|----------|
+|[master](https://github.com/domaindrivendev/rswag/tree/master)|2.0|3.13.2|
+|[2.0.0](https://github.com/domaindrivendev/rswag/tree/2.0.0)|2.0|3.13.2|
+|[1.6.0](https://github.com/domaindrivendev/rswag/tree/1.6.0)|2.0|2.2.5|
+
 ## Getting Started ##
 
 1. Add this line to your applications _Gemfile_:
@@ -17,8 +25,9 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     gem 'rswag'
     ```
+
     or if you like to avoid loading rspec in other bundler groups.
-    
+
     ```ruby
     # Gemfile
     gem 'rswag-api'
@@ -29,7 +38,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
       gem 'rswag-specs'
     end
     ```
-
 
 2. Run the install generator
 
@@ -485,3 +493,13 @@ rails g rswag:ui:custom
 ```
 
 This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_
+
+### Publish UI Assets with "assets:precompile:
+
+Rswag ships with an embedded version of the [swagger-ui](https://github.com/swagger-api/swagger-ui), which is a static collection of JavaScript and CSS files. These assets are served by the rswag-ui middleware. However, for optimal performance you may want to serve them directly from your web server (e.g. Apache or NGINX). To do this, you'll need to copy them to the web server root. This is the "public" folder in a typical Rails application.
+
+```
+bundle exec rake rswag:ui:copy_assets[public/api-docs]
+```
+
+__NOTE:__: The provided subfolder MUST correspond to the UI mount prefix - "api-docs" by default.
