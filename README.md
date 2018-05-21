@@ -494,7 +494,7 @@ rails g rswag:ui:custom
 
 This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_
 
-### Publish UI Assets with "assets:precompile:
+### Serve UI Assets Directly from your Web Server
 
 Rswag ships with an embedded version of the [swagger-ui](https://github.com/swagger-api/swagger-ui), which is a static collection of JavaScript and CSS files. These assets are served by the rswag-ui middleware. However, for optimal performance you may want to serve them directly from your web server (e.g. Apache or NGINX). To do this, you'll need to copy them to the web server root. This is the "public" folder in a typical Rails application.
 
