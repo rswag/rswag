@@ -44,9 +44,7 @@ jobs:
           tags: true
 
     - stage: publish components
-      script:
-        - 'cd rswag-ui'
-        - 'npm install'
+      script: 'cd rswag-ui'
       deploy:
         gemspec: rswag-ui.gemspec
         provider: rubygems
