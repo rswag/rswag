@@ -49,6 +49,7 @@ jobs:
         gemspec: rswag-ui.gemspec
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
+        skip_cleanup: true
         on:
           branch: master
           tags: true
