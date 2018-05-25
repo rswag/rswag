@@ -9,7 +9,7 @@ module Rswag
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
       let(:metadata) do
@@ -47,13 +47,15 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [
               { name: 'q1', in: :query, type: :string },
-              { name: 'q2', in: :query, type: :string }
+              { name: 'q2', in: :query, type: :string },
+              { name: 'q3', in: :query, type: :string }
             ]
             allow(example).to receive(:q1).and_return('foo')
             allow(example).to receive(:q2).and_return('bar')
+            allow(example).to receive(:q3).and_return(nil)
           end
 
-          it "builds the query string from example values" do
+          it "builds the query string from example values, skipping nils" do
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
           end
         end
