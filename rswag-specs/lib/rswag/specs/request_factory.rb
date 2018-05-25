@@ -66,13 +66,12 @@ module Rswag
             template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
           end
 
-          parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
+          query = parameters.select { |p| p[:in] == :query }.map do |p|
             value = example.send(p[:name])
-            unless value.nil?
-              template.concat(i == 0 ? '?' : '&')
-              template.concat(build_query_string_part(p, value))
-            end
-          end
+            build_query_string_part(p, value) unless value.nil?
+          end.compact.join('&')
+          
+          template.concat('?' + query) unless query.empty?
         end
       end
 
