@@ -1,4 +1,4 @@
-rswag (formerly swagger_rails)
+rswag
 =========
 [![Build Status](https://travis-ci.org/domaindrivendev/rswag.svg?branch=master)](https://travis-ci.org/domaindrivendev/rswag)
 
@@ -15,7 +15,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
 |[master](https://github.com/domaindrivendev/rswag/tree/master)|2.0|3.13.2|
-|[2.0.0](https://github.com/domaindrivendev/rswag/tree/2.0.0)|2.0|3.13.2|
+|[2.0.3](https://github.com/domaindrivendev/rswag/tree/2.0.3)|2.0|3.13.2|
 |[1.6.0](https://github.com/domaindrivendev/rswag/tree/1.6.0)|2.0|2.2.5|
 
 ## Getting Started ##
