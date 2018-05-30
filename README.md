@@ -33,7 +33,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     gem 'rswag-api'
     gem 'rswag-ui'
 
-    groups :test do
+    group :test do
       gem 'rspec-rails'
       gem 'rswag-specs'
     end
