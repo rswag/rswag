@@ -150,7 +150,7 @@ module Rswag
 
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-        body_param ? example.send(body_param[:name]).to_json : nil
+        body_param ? example.send(body_param[:name]) : nil
       end
     end
   end
