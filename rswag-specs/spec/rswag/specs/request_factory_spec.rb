@@ -155,7 +155,7 @@ module Rswag
             end
 
             it "serializes first 'body' parameter to JSON string" do
-              expect(request[:payload]).to eq("{\"text\":\"Some comment\"}")
+              expect(request[:payload]).to eq({ text: 'Some comment' })
             end
           end
 
