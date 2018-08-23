@@ -116,8 +116,10 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 4. Generate the Swagger JSON file(s)
 
     ```ruby
-    rake rswag:specs:swaggerize
+    rake spec:swaggerize
     ```
+
+    (Deprecated) `rake rswag:specs:swaggerize`. If using `dotenv-rails` the test environment is not loaded unless `RAILS_ENV=test` is set.
 
 5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
