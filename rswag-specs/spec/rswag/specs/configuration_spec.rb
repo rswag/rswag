@@ -3,7 +3,7 @@ require 'rswag/specs/configuration'
 module Rswag
   module Specs
 
-    describe Configuration do
+    RSpec.describe Configuration do
       subject { described_class.new(rspec_config) }
 
       let(:rspec_config) { OpenStruct.new(swagger_root: swagger_root, swagger_docs: swagger_docs) }
