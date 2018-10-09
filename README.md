@@ -44,6 +44,13 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     rails g rswag:install
     ```
+    
+    Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
+    
+    ```ruby
+    rails g rswag:api:install rswag:ui:install
+    RAILS_ENV=test rails g rswag:specs:install
+    ```
 
 3. Create an integration spec to describe and test your API.
 
