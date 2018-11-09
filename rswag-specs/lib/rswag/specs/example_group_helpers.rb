@@ -71,7 +71,16 @@ module Rswag
         metadata[:response][:examples] = example
       end
 
-      def run_test!(&block)
+      #
+      # Perform request and assert response matches swagger definitions
+      #
+      # @param strict: nil [Boolean] whether to validate response agains given schema strictly
+      # @param &block [Proc] you can make additional assertions within that block
+      # @return [void]
+      def run_test!(strict: nil, &block)
+        options = {}
+        options[:swagger_strict_schema_validation] = !!strict unless strict.nil?
+
         # NOTE: rspec 2.x support
         if RSPEC_VERSION < 3
           before do
@@ -79,7 +88,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response" do
-            assert_response_matches_metadata(metadata)
+            assert_response_matches_metadata(metadata.merge(options))
             block.call(response) if block_given?
           end
         else
@@ -88,7 +97,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response" do |example|
-            assert_response_matches_metadata(example.metadata, &block)
+            assert_response_matches_metadata(example.metadata.merge(options), &block)
             example.instance_exec(response, &block) if block_given?
           end
         end

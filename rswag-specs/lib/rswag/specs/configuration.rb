@@ -36,6 +36,10 @@ module Rswag
         raise ConfigurationError, "Unknown swagger_doc '#{name}'" unless swagger_docs[name]
         swagger_docs[name]
       end
+
+      def swagger_strict_schema_validation
+        @rspec_config.swagger_strict_schema_validation
+      end
     end
 
     class ConfigurationError < StandardError; end

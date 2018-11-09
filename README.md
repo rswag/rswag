@@ -44,9 +44,9 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     rails g rswag:install
     ```
-    
+
     Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
-    
+
     ```ruby
     rails g rswag:api:install rswag:ui:install
     RAILS_ENV=test rails g rswag:specs:install
@@ -160,6 +160,27 @@ response '201', 'blog created' do
   it 'returns a valid 201 response' do |example|
     assert_response_matches_metadata(example.metadata)
   end
+end
+```
+
+#### Strict schema validation
+
+By default, if response body will contiain undocumented properties tests will pass. However, if you'd like to validate against a strict schema definition you can set the global config option:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_strict_schema_validation = true
+end
+```
+
+or set the option per individual example:
+
+```ruby
+run_test!(strict: true)
+# or
+it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+  assert_response_matches_metadata(example.metadata)
 end
 ```
 
