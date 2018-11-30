@@ -7,6 +7,13 @@ module Rswag
 
       initializer 'rswag-ui.initialize' do |app|
         middleware.use Rswag::Ui::Middleware, Rswag::Ui.config
+
+        if Rswag::Ui.config.basic_auth_enabled
+          c = Rswag::Ui.config
+          app.middleware.use ::Rack::Auth::Basic do |username, password|
+            c.config_object[:basic_auth].values == [username, password]
+          end
+        end
       end
 
       rake_tasks do
