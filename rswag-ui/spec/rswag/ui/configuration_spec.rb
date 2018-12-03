@@ -1,4 +1,6 @@
-require 'spec_helper'
+require 'rswag/ui/configuration'
+
+require_relative '../../spec_helper'
 
 RSpec.describe Rswag::Ui::Configuration do
   describe '#swagger_endpoints'
@@ -40,7 +42,7 @@ RSpec.describe Rswag::Ui::Configuration do
     it 'sets the username and password' do
       configuration = described_class.new
       configuration.basic_auth_credentials 'foo', 'bar'
-      credentials = configuration.config_object[:basic_aut]
+      credentials = configuration.config_object[:basic_auth]
 
       expect(credentials).to eq(username: 'foo', password: 'bar')
     end

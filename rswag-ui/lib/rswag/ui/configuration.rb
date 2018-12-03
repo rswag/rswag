@@ -1,4 +1,5 @@
 require 'ostruct'
+require 'rack'
 
 module Rswag
   module Ui
