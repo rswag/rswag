@@ -126,6 +126,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     rake rswag:specs:swaggerize
     ```
 
+    This common command is also aliased as `rake rswag`.
+
 5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
 ## The rspec DSL ##
