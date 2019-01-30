@@ -44,9 +44,9 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     rails g rswag:install
     ```
-    
+
     Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
-    
+
     ```ruby
     rails g rswag:api:install rswag:ui:install
     RAILS_ENV=test rails g rswag:specs:install
@@ -465,6 +465,19 @@ end
 ```
 
 Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations based on user permissions.
+
+### Custom Headers for Swagger Files ###
+
+You can specify custom headers for serving your generated Swagger JSON. For example you may want to force a specific charset for the 'Content-Type' header. You can configure a hash of headers to be sent with the request:
+
+```ruby
+Rswag::Api.configure do |c|
+  ...
+  
+  c.swagger_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
+end
+```
+
 
 ### Enable Swagger Endpoints for swagger-ui ###
 

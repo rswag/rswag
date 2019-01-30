@@ -2,7 +2,7 @@ require 'json'
 
 module Rswag
   module Api
-    class Middleware 
+    class Middleware
 
       def initialize(app, config)
         @app = app
@@ -16,14 +16,15 @@ module Rswag
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           swagger = load_json(filename)
           @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
+          headers = { 'Content-Type' => 'application/json' }.merge(@config.swagger_headers || {})
 
           return [
             '200',
-            { 'Content-Type' => 'application/json' },
+            headers,
             [ JSON.dump(swagger) ]
           ]
         end
-          
+
         return @app.call(env)
       end
 

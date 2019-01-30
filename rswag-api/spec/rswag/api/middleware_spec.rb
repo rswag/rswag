@@ -37,6 +37,42 @@ module Rswag
           end
         end
 
+        context 'when swagger_headers is configured' do
+          let(:env) { env_defaults.merge('PATH_INFO' => 'v1/swagger.json') }
+
+          context 'replacing the default content type header' do
+            before do
+              config.swagger_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
+            end
+            it 'returns a 200 status' do
+              expect(response.length).to eql(3)
+              expect(response.first).to eql('200')
+            end
+
+            it 'applies the headers to the response' do
+              expect(response[1]).to include( 'Content-Type' => 'application/json; charset=UTF-8')
+            end
+          end
+
+          context 'adding an additional header' do
+            before do
+              config.swagger_headers = { 'Access-Control-Allow-Origin' => '*' }
+            end
+            it 'returns a 200 status' do
+              expect(response.length).to eql(3)
+              expect(response.first).to eql('200')
+            end
+
+            it 'applies the headers to the response' do
+              expect(response[1]).to include( 'Access-Control-Allow-Origin' => '*')
+            end
+
+            it 'keeps the default header' do
+              expect(response[1]).to include( 'Content-Type' => 'application/json')
+            end
+          end
+        end
+
         context "given a path that doesn't map to any swagger file" do
           let(:env) { env_defaults.merge('PATH_INFO' => 'foobar.json') }
           before do
