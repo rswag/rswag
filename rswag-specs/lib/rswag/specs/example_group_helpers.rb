@@ -14,7 +14,7 @@ module Rswag
         end
       end
 
-      [ :operationId, :deprecated, :security ].each do |attr_name|
+      [ :externalDocs, :operationId, :deprecated, :security ].each do |attr_name|
         define_method(attr_name) do |value|
           metadata[:operation][attr_name] = value
         end

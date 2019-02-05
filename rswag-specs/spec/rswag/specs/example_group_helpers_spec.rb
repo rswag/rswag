@@ -34,10 +34,11 @@ module Rswag
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated(value)' do
+      describe '#tags|description|externalDocs|operationId|consumes|produces|schemes|deprecated(value)' do
         before do
           subject.tags('Blogs', 'Admin')
           subject.description('Some description')
+          subject.externalDocs({ description: "External docs description", url: "https://example.com" })
           subject.operationId('createBlog')
           subject.consumes('application/json', 'application/xml')
           subject.produces('application/json', 'application/xml')
@@ -50,6 +51,7 @@ module Rswag
           expect(api_metadata[:operation]).to match(
             tags: [ 'Blogs', 'Admin' ],
             description: 'Some description',
+            externalDocs: { description: "External docs description", url: "https://example.com" },
             operationId: 'createBlog',
             consumes: [ 'application/json', 'application/xml' ],
             produces: [ 'application/json', 'application/xml' ],
@@ -59,10 +61,11 @@ module Rswag
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
+      describe '#tags|description|externalDocs|operationId|consumes|produces|schemes|deprecated|security(value)' do
         before do
           subject.tags('Blogs', 'Admin')
           subject.description('Some description')
+          subject.externalDocs({ description: "External docs description", url: "https://example.com" })
           subject.operationId('createBlog')
           subject.consumes('application/json', 'application/xml')
           subject.produces('application/json', 'application/xml')
@@ -76,6 +79,7 @@ module Rswag
           expect(api_metadata[:operation]).to match(
             tags: [ 'Blogs', 'Admin' ],
             description: 'Some description',
+            externalDocs: { description: "External docs description", url: "https://example.com" },
             operationId: 'createBlog',
             consumes: [ 'application/json', 'application/xml' ],
             produces: [ 'application/json', 'application/xml' ],
