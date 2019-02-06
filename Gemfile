@@ -13,7 +13,7 @@ when '4', '5'
   gem 'responders'
 end
 
-gem 'sqlite3'
+gem 'sqlite3', '~> 1.3.6'
 
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
