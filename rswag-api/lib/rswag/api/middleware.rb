@@ -1,4 +1,5 @@
 require 'json'
+require 'yaml'
 
 module Rswag
   module Api
@@ -14,7 +15,7 @@ module Rswag
         filename = "#{@config.resolve_swagger_root(env)}/#{path}"
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
-          swagger = load_json(filename)
+          swagger = parse_file(filename)
           @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
 
           return [
@@ -28,6 +29,18 @@ module Rswag
       end
 
       private
+
+      def parse_file(filename)
+        if /\.yml$/ === filename
+          load_yaml(filename)
+        else
+          load_json(filename)
+        end
+      end
+
+      def load_yaml(filename)
+        YAML.safe_load(File.read(filename))
+      end
 
       def load_json(filename)
         JSON.parse(File.read(filename))
