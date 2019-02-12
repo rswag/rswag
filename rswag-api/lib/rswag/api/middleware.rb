@@ -31,7 +31,7 @@ module Rswag
       private
 
       def parse_file(filename)
-        if /\.yml$/ === filename
+        if /\.ya?ml$/ === filename
           load_yaml(filename)
         else
           load_json(filename)
