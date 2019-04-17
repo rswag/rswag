@@ -8,12 +8,12 @@ gem 'rails', "#{rails_version}"
 
 case rails_version.split('.').first
 when '3'
+  gem 'sqlite3', '~> 1.3.5'
   gem 'strong_parameters'
 when '4', '5'
   gem 'responders'
+  gem 'sqlite3', '~> 1.3.6'
 end
-
-gem 'sqlite3'
 
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
