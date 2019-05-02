@@ -1,4 +1,5 @@
 require 'rswag/specs/example_group_helpers'
+require 'pry'
 
 module Rswag
   module Specs
@@ -83,6 +84,18 @@ module Rswag
             deprecated: true,
             security: { api_key: [] }
           )
+        end
+      end
+
+      describe '#custom_property(attributes)' do
+        before do
+          subject.custom_property(name: 'x-something', value: 'x-value')
+        end
+
+        let(:api_metadata) { { operation: {} } }
+
+        it "adds to the 'operation' metadata" do
+          expect(api_metadata[:operation]['x-something']).to eq('x-value')
         end
       end
 

@@ -28,6 +28,12 @@ module Rswag
         metadata[:operation][:description] = value
       end
 
+      def custom_property(attributes)
+        property_name = attributes[:name]
+        property_value = attributes[:value]
+        metadata[:operation][property_name] = property_value
+      end
+
       # These are array properties - note the splat operator
       [ :tags, :consumes, :produces, :schemes ].each do |attr_name|
         define_method(attr_name) do |*value|
