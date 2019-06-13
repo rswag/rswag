@@ -27,6 +27,13 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
           expect(response.body).to include("can't be blank")
         end
       end
+
+      response '500', 'Internal Server Error' do
+        schema '$ref' => '#/definitions/errors_object'
+        examples 'application/json' => { "errors": ["Internal Server Error"] }
+
+        document_response_without_test!
+      end
     end
 
     get 'Searches blogs' do

@@ -97,6 +97,29 @@ module Rswag
           end
         end
       end
+
+      def document_response_without_test!
+        # NOTE: rspec 2.x support
+        if RSPEC_VERSION < 3
+          before do
+            submit_request(example.metadata)
+          end
+
+          it 'adds documentation without testing the response' do
+            # Only check that the response is present
+            expect(example.metadata[:response]).to be_present
+          end
+        else
+          before do |example|
+            submit_request(example.metadata)
+          end
+
+          it 'adds documentation without testing the response' do |example|
+            # Only check that the response is present
+            expect(example.metadata[:response]).to be_present
+          end
+        end
+      end
     end
   end
 end
