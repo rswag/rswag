@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "API V1",
     "version": "v1"
@@ -99,7 +99,7 @@
             "name": "blog",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/blog"
+              "$ref": "#/components/schemas/blog"
             }
           }
         ],
@@ -110,7 +110,7 @@
           "422": {
             "description": "invalid request",
             "schema": {
-              "$ref": "#/definitions/errors_object"
+              "$ref": "#/components/schemas/errors_object"
             }
           }
         }
@@ -173,7 +173,7 @@
               }
             },
             "schema": {
-              "$ref": "#/definitions/blog"
+              "$ref": "#/components/schemas/blog"
             },
             "examples": {
               "application/json": {
@@ -225,57 +225,70 @@
       }
     }
   },
-  "definitions": {
-    "errors_object": {
-      "type": "object",
-      "properties": {
-        "errors": {
-          "$ref": "#/definitions/errors_map"
+  "servers": [
+    {
+      "url": "https://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "www.example.com"
         }
       }
-    },
-    "errors_map": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "blog": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "thumbnail": {
-          "type": "string"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "errors_object": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/errors_map"
+          }
         }
       },
-      "required": [
-        "id",
-        "title",
-        "content",
-        "thumbnail"
-      ]
-    }
-  },
-  "securityDefinitions": {
-    "basic_auth": {
-      "type": "basic"
+      "errors_map": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "blog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "content",
+          "thumbnail"
+        ]
+      }
     },
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "query"
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "query"
+      }
     }
   }
 }

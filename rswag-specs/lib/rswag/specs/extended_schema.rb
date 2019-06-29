@@ -15,7 +15,7 @@ module Rswag
     class ExtendedTypeAttribute < JSON::Schema::TypeV4Attribute
       
       def self.validate(current_schema, data, fragments, processor, validator, options={})
-        return if data.nil? && current_schema.schema['x-nullable'] == true
+        return if data.nil? && (current_schema.schema['nullable'] == true || current_schema.schema['x-nullable'] == true)
         super
       end
     end

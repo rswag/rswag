@@ -10,7 +10,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
+      parameter name: :blog, in: :body, schema: { '$ref' => '#/components/schemas/blog' }
 
       let(:blog) { { title: 'foo', content: 'bar' } }
 
@@ -19,7 +19,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
 
       response '422', 'invalid request' do
-        schema '$ref' => '#/definitions/errors_object'
+        schema '$ref' => '#/components/schemas/errors_object'
 
         let(:blog) { { title: 'foo' } }
         run_test! do |response|
@@ -38,7 +38,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:keywords) { 'foo bar' }
 
       response '200', 'success' do
-        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
       end
 
       response '406', 'unsupported accept header' do
@@ -65,7 +65,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         header 'Last-Modified', type: :string
         header 'Cache-Control', type: :string
 
-        schema '$ref' => '#/definitions/blog'
+        schema '$ref' => '#/components/schemas/blog'
 
         examples 'application/json' => {
             id: 1,

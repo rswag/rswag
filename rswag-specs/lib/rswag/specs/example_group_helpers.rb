@@ -35,6 +35,14 @@ module Rswag
         end
       end
 
+      #TODO: look at adding request_body method to handle diffs in Open API 2.0 to 3.0
+      # https://swagger.io/docs/specification/describing-request-body/
+      # need to make sure we output requestBody in the swagger generator .json
+      # also need to make sure that it can handle content: , required: true/false, schema: ref
+
+
+
+
       def parameter(attributes)
         if attributes[:in] && attributes[:in].to_sym == :path
           attributes[:required] = true

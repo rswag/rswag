@@ -14,47 +14,61 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
     'v1/swagger.json' => {
-      swagger: '2.0',
+      openapi: '3.0.0',
       info: {
         title: 'API V1',
         version: 'v1'
       },
       paths: {},
-      definitions: {
-        errors_object: {
-          type: 'object',
-          properties: {
-            errors: { '$ref' => '#/definitions/errors_map' }
+      servers: [
+          {
+              url: "https://{defaultHost}",
+              variables: {
+                  defaultHost: {
+                      default: "www.example.com"
+                  }
+              }
           }
+      ],
+ 
+      components: {
+        schemas: {
+            errors_object: {
+                type: 'object',
+                properties: {
+                    errors: { '$ref' => '#/components/schemas/errors_map' }
+                }
+            },
+            errors_map: {
+                type: 'object',
+                additionalProperties: {
+                    type: 'array',
+                    items: { type: 'string' }
+                }
+            },
+            blog: {
+                type: 'object',
+                properties: {
+                    id: { type: 'integer' },
+                    title: { type: 'string' },
+                    content: { type: 'string', nullable: true },
+                    thumbnail: { type: 'string'}
+                },
+                required: [ 'id', 'title', 'content', 'thumbnail' ]
+            }
         },
-        errors_map: {
-          type: 'object',
-          additionalProperties: {
-            type: 'array',
-            items: { type: 'string' }
-          }
-        },
-        blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            title: { type: 'string' },
-            content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string'}
-          },
-          required: [ 'id', 'title', 'content', 'thumbnail' ]
+        securitySchemes: {
+            basic_auth: {
+                type: :http,
+                scheme: :basic
+            },
+            api_key: {
+                type: :apiKey,
+                name: 'api_key',
+                in: :query
+            }
         }
       },
-      securityDefinitions: {
-        basic_auth: {
-          type: :basic
-        },
-        api_key: {
-          type: :apiKey,
-          name: 'api_key',
-          in: :query
-        }
-      }
     }
   }
 end
