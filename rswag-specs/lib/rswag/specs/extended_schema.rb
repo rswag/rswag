@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require 'json-schema'
 
 module Rswag
   module Specs
     class ExtendedSchema < JSON::Schema::Draft4
-      
       def initialize
         super
         @attributes['type'] = ExtendedTypeAttribute
@@ -13,9 +14,9 @@ module Rswag
     end
 
     class ExtendedTypeAttribute < JSON::Schema::TypeV4Attribute
-      
-      def self.validate(current_schema, data, fragments, processor, validator, options={})
+      def self.validate(current_schema, data, fragments, processor, validator, options = {})
         return if data.nil? && (current_schema.schema['nullable'] == true || current_schema.schema['x-nullable'] == true)
+
         super
       end
     end

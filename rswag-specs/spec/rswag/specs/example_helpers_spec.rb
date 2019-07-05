@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/example_helpers'
 
 module Rswag
   module Specs
-
     describe ExampleHelpers do
       subject { double('example') }
 
@@ -12,7 +13,7 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
         stub_const('Rswag::Specs::RAILS_VERSION', 3)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) do
         {
           securityDefinitions: {
@@ -30,7 +31,7 @@ module Rswag
           operation: {
             verb: :put,
             summary: 'Updates a blog',
-            consumes: [ 'application/json' ],
+            consumes: ['application/json'],
             parameters: [
               { name: :blog_id, in: :path, type: 'integer' },
               { name: 'id', in: :path, type: 'integer' },
@@ -58,8 +59,8 @@ module Rswag
         it "submits a request built from metadata and 'let' values" do
           expect(subject).to have_received(:put).with(
             '/blogs/1/comments/2?q1=foo&api_key=fookey',
-            "{\"text\":\"Some comment\"}",
-            { 'CONTENT_TYPE' => 'application/json' }
+            '{"text":"Some comment"}',
+            'CONTENT_TYPE' => 'application/json'
           )
         end
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash/slice'
 require 'json-schema'
 require 'json'
@@ -6,7 +8,6 @@ require 'rswag/specs/extended_schema'
 module Rswag
   module Specs
     class ResponseValidator
-
       def initialize(config = ::Rswag::Specs.config)
         @config = config
       end
@@ -41,12 +42,12 @@ module Rswag
         response_schema = metadata[:response][:schema]
         return if response_schema.nil?
 
-        components_schemas = {components: {schemas: swagger_doc[:components][:schemas]}}
+        components_schemas = { components: { schemas: swagger_doc[:components][:schemas] } }
 
         validation_schema = response_schema
-          .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(components_schemas)
-        
+                            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+                            .merge(components_schemas)
+
         errors = JSON::Validator.fully_validate(validation_schema, body)
         raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
       end

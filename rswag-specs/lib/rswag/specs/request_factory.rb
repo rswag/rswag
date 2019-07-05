@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -5,7 +7,6 @@ require 'json'
 module Rswag
   module Specs
     class RequestFactory
-
       def initialize(config = ::Rswag::Specs.config)
         @config = config
       end
@@ -38,11 +39,11 @@ module Rswag
 
       def derive_security_params(metadata, swagger_doc)
         requirements = metadata[:operation][:security] || swagger_doc[:security] || []
-        scheme_names = requirements.flat_map { |r| r.keys }
+        scheme_names = requirements.flat_map(&:keys)
         schemes = (swagger_doc[:components][:securitySchemes] || {}).slice(*scheme_names).values
 
         schemes.map do |scheme|
-          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param = scheme[:type] == :apiKey ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(type: :string, required: requirements.one?)
         end
       end
@@ -51,10 +52,11 @@ module Rswag
         key = ref.sub('#/parameters/', '').to_sym
         definitions = swagger_doc[:parameters]
         raise "Referenced parameter '#{ref}' must be defined" unless definitions && definitions[key]
+
         definitions[key]
       end
 
-      def add_verb(request, metadata) 
+      def add_verb(request, metadata)
         request[:verb] = metadata[:operation][:verb]
       end
 
@@ -75,7 +77,7 @@ module Rswag
 
       def build_query_string_part(param, value)
         name = param[:name]
-        return "#{name}=#{value.to_s}" unless param[:type].to_sym == :array
+        return "#{name}=#{value}" unless param[:type].to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
@@ -93,44 +95,44 @@ module Rswag
 
       def add_headers(request, metadata, swagger_doc, parameters, example)
         tuples = parameters
-          .select { |p| p[:in] == :header }
-          .map { |p| [ p[:name], example.send(p[:name]).to_s ] }
+                 .select { |p| p[:in] == :header }
+                 .map { |p| [p[:name], example.send(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
         if produces
-          accept = example.respond_to?(:'Accept') ? example.send(:'Accept') : produces.first
-          tuples << [ 'Accept', accept ]
+          accept = example.respond_to?(:Accept) ? example.send(:Accept) : produces.first
+          tuples << ['Accept', accept]
         end
 
         # Content-Type header
-        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes] 
+        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes]
         if consumes
           content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
-          tuples << [ 'Content-Type', content_type ]
+          tuples << ['Content-Type', content_type]
         end
 
         # Rails test infrastructure requires rackified headers
         rackified_tuples = tuples.map do |pair|
           [
             case pair[0]
-              when 'Accept' then 'HTTP_ACCEPT'
-              when 'Content-Type' then 'CONTENT_TYPE'
-              when 'Authorization' then 'HTTP_AUTHORIZATION'
-              else pair[0]
+            when 'Accept' then 'HTTP_ACCEPT'
+            when 'Content-Type' then 'CONTENT_TYPE'
+            when 'Authorization' then 'HTTP_AUTHORIZATION'
+            else pair[0]
             end,
             pair[1]
           ]
         end
 
-        request[:headers] = Hash[ rackified_tuples ]
+        request[:headers] = Hash[rackified_tuples]
       end
 
       def add_payload(request, parameters, example)
         content_type = request[:headers]['CONTENT_TYPE']
         return if content_type.nil?
 
-        if [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include?(content_type)
+        if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
           request[:payload] = build_form_payload(parameters, example)
         else
           request[:payload] = build_json_payload(parameters, example)
@@ -143,14 +145,21 @@ module Rswag
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
-          .select { |p| p[:in] == :formData }
-          .map { |p| [ p[:name], example.send(p[:name]) ] }
-        Hash[ tuples ]
+                 .select { |p| p[:in] == :formData }
+                 .map { |p| [p[:name], example.send(p[:name])] }
+        Hash[tuples]
       end
 
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-        body_param ? example.send(body_param[:name]).to_json : nil
+        return nil unless body_param
+
+        # p "example is #{example.send(body_param[:name]).to_json} ** AND body param is #{body_param}" if body_param
+        # body_param ? example.send(body_param[:name]).to_json : nil
+
+        source_body_param = example.send(body_param[:name]) if body_param[:name] && example.respond_to?(body_param[:name])
+        source_body_param ||= body_param[:param_value]
+        source_body_param ? source_body_param.to_json : nil
       end
     end
   end

@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/swagger_formatter'
 require 'ostruct'
 
 module Rswag
   module Specs
-    
     describe SwaggerFormatter do
       subject { described_class.new(output, config) }
 
@@ -13,7 +14,7 @@ module Rswag
       end
       let(:config) { double('config') }
       let(:output) { double('output').as_null_object }
-      let(:swagger_root) { File.expand_path('../tmp/swagger', __FILE__) }
+      let(:swagger_root) { File.expand_path('tmp/swagger', __dir__) }
 
       describe '#example_group_finished(notification)' do
         before do
@@ -47,8 +48,8 @@ module Rswag
       end
 
       describe '#stop' do
-        before do 
-          FileUtils.rm_r(swagger_root) if File.exists?(swagger_root)
+        before do
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
           allow(config).to receive(:swagger_docs).and_return(
             'v1/swagger.json' => { info: { version: 'v1' } },
             'v2/swagger.json' => { info: { version: 'v2' } }
@@ -64,7 +65,7 @@ module Rswag
         end
 
         after do
-          FileUtils.rm_r(swagger_root) if File.exists?(swagger_root)
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end
       end
     end

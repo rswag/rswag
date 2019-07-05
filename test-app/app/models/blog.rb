@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class Blog < ActiveRecord::Base
   validates :content, presence: true
 
-  def as_json(options)
+  def as_json(_options)
     {
       id: id,
       title: title,
-      content: nil,
+      content: content,
       thumbnail: thumbnail
     }
   end

@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/configuration'
 
 module Rswag
   module Specs
-
     describe Configuration do
       subject { described_class.new(rspec_config) }
 
