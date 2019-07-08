@@ -34,6 +34,15 @@ module Rswag
 
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
+          # remove 2.0 parameters
+          doc[:paths].each_pair do |_k, v|
+            v.each_pair do |_verb, value|
+              if value&.dig(:parameters)
+                value[:parameters].reject! { |p| p[:in] == :body }
+              end
+            end
+          end
+          
           file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
           FileUtils.mkdir_p dirname unless File.exist?(dirname)
@@ -52,24 +61,18 @@ module Rswag
         response_code = metadata[:response][:code]
         response = metadata[:response].reject { |k, _v| k == :code }
 
-        if response_code.to_s == '201'
-          # need to merge in to resppnse
-          if response[:examples]&.dig('application/json')
-            example = response[:examples].dig('application/json').dup
-            response.merge!(content: { 'application/json' => { example: example } })
-            response.delete(:examples)
-          end
+        # need to merge in to response
+        if response[:examples]&.dig('application/json')
+          example = response[:examples].dig('application/json').dup
+          response.merge!(content: { 'application/json' => { example: example } })
+          response.delete(:examples)
         end
+
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
                     .reject { |k, _v| k == :verb }
                     .merge(responses: { response_code => response })
-
-        # can remove the 2.0 compliant body incoming parameters
-        if operation&.dig(:parameters)
-          operation[:parameters].reject! { |p| p[:in] == :body }
-        end
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]

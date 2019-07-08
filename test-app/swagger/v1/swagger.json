@@ -5,81 +5,6 @@
     "version": "v1"
   },
   "paths": {
-    "/auth-tests/basic": {
-      "post": {
-        "summary": "Authenticates with basic auth",
-        "tags": [
-          "Auth Tests"
-        ],
-        "operationId": "testBasicAuth",
-        "security": [
-          {
-            "basic_auth": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Valid credentials"
-          },
-          "401": {
-            "description": "Invalid credentials"
-          }
-        }
-      }
-    },
-    "/auth-tests/api-key": {
-      "post": {
-        "summary": "Authenticates with an api key",
-        "tags": [
-          "Auth Tests"
-        ],
-        "operationId": "testApiKey",
-        "security": [
-          {
-            "api_key": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Valid credentials"
-          },
-          "401": {
-            "description": "Invalid credentials"
-          }
-        }
-      }
-    },
-    "/auth-tests/basic-and-api-key": {
-      "post": {
-        "summary": "Authenticates with basic auth and api key",
-        "tags": [
-          "Auth Tests"
-        ],
-        "operationId": "testBasicAndApiKey",
-        "security": [
-          {
-            "basic_auth": [
-
-            ],
-            "api_key": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Valid credentials"
-          },
-          "401": {
-            "description": "Invalid credentials"
-          }
-        }
-      }
-    },
     "/blogs": {
       "post": {
         "summary": "Creates a blog",
@@ -94,23 +19,55 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [
-          {
-            "name": "blog",
-            "in": "body",
-            "schema": {
-              "$ref": "#/components/schemas/blog"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "examples": {
+                "blog": {
+                  "value": {
+                    "blog": {
+                      "title": "foo",
+                      "content": "bar"
+                    }
+                  }
+                }
+              }
             }
           }
+        },
+        "parameters": [
+
         ],
         "responses": {
           "201": {
-            "description": "blog created"
+            "description": "blog created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "title": "foo",
+                  "content": "bar",
+                  "thumbnail": null
+                }
+              }
+            }
           },
           "422": {
             "description": "invalid request",
             "schema": {
               "$ref": "#/components/schemas/errors_object"
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "errors": {
+                    "content": [
+                      "can't be blank"
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -135,91 +92,6 @@
         "responses": {
           "406": {
             "description": "unsupported accept header"
-          }
-        }
-      }
-    },
-    "/blogs/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "type": "string",
-          "required": true
-        }
-      ],
-      "get": {
-        "summary": "Retrieves a blog",
-        "tags": [
-          "Blogs"
-        ],
-        "description": "Retrieves a specific blog by id",
-        "operationId": "getBlog",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "blog found",
-            "headers": {
-              "ETag": {
-                "type": "string"
-              },
-              "Last-Modified": {
-                "type": "string"
-              },
-              "Cache-Control": {
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/components/schemas/blog"
-            },
-            "examples": {
-              "application/json": {
-                "id": 1,
-                "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!",
-                "thumbnail": "thumbnail.png"
-              }
-            }
-          },
-          "404": {
-            "description": "blog not found"
-          }
-        }
-      }
-    },
-    "/blogs/{id}/upload": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "type": "string",
-          "required": true
-        }
-      ],
-      "put": {
-        "summary": "Uploads a blog thumbnail",
-        "tags": [
-          "Blogs"
-        ],
-        "description": "Upload a thumbnail for specific blog by id",
-        "operationId": "uploadThumbnailBlog",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "parameters": [
-          {
-            "name": "file",
-            "in": "formData",
-            "type": "file",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "blog updated"
           }
         }
       }

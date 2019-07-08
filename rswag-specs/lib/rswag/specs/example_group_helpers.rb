@@ -42,6 +42,8 @@ module Rswag
       # TODO: setup travis CI?
 
       # MUST HAVES
+      # TODO: look at integrating and documenting the rest of the responses in the blog_spec and get a clean 3.0 output
+      # Then can look at handling different request_body things like $ref, etc
       # TODO: look at adding request_body method to handle diffs in Open API 2.0 to 3.0
       # TODO: look at adding examples  in content request_body
       # https://swagger.io/docs/specification/describing-request-body/
@@ -123,7 +125,7 @@ module Rswag
           end
         else
           before do |example|
-            submit_request(example.metadata)
+            submit_request(example.metadata)                                                                                            #
           end
 
           it "returns a #{metadata[:response][:code]} response" do |example|
@@ -137,12 +139,14 @@ module Rswag
             if body_parameter && respond_to?(body_parameter[:name]) && example.metadata[:operation][:requestBody][:content]['application/json']
               # save response examples by default
               example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) } unless response.body.to_s.empty?
-
+               
               # save request examples using the let(:param_name) { REQUEST_BODY_HASH } syntax in the test
-              example.metadata[:operation][:requestBody][:content]['application/json'] = { examples: {} } unless example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
-              json_request_examples = example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
-              json_request_examples[body_parameter[:name]] = { value: send(body_parameter[:name]) }
-              example.metadata[:operation][:requestBody][:content]['application/json'][:examples] = json_request_examples
+              if response.code.to_s =~ /^2\d{2}$/
+                example.metadata[:operation][:requestBody][:content]['application/json'] = { examples: {} } unless example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
+                json_request_examples = example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
+                json_request_examples[body_parameter[:name]] = { value: send(body_parameter[:name]) }
+                example.metadata[:operation][:requestBody][:content]['application/json'][:examples] = json_request_examples
+              end
             end
           end
         end

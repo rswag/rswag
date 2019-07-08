@@ -31,6 +31,7 @@ end
 
 group :development do
   gem 'guard-rspec', require: false
+  gem 'rswag-specs', path: './rswag-specs'
   gem 'rubocop'
 end
 
