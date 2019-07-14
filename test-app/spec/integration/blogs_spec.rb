@@ -12,7 +12,6 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      # parameter name: :blog, in: :body, schema: { '$ref' => '#/components/schemas/blog' }
 
       request_body_json schema: { '$ref' => '#/components/schemas/blog' },
                         examples: :blog
@@ -20,13 +19,14 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:blog) { { blog: { title: 'foo', content: 'bar' } } }
 
       response '201', 'blog created' do
+        schema '$ref' => '#/components/schemas/blog'
         run_test!
       end
 
       response '422', 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'
-
         let(:blog) { { blog: { title: 'foo' } } }
+
         run_test! do |response|
           expect(response.body).to include("can't be blank")
         end
@@ -44,6 +44,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
+        run_test!
       end
 
       response '406', 'unsupported accept header' do
@@ -54,7 +55,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   end
 
   path '/blogs/{id}' do
-    parameter name: :id, in: :path, type: :string
+
 
     let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
@@ -64,6 +65,8 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Retrieves a specific blog by id'
       operationId 'getBlog'
       produces 'application/json'
+      
+      parameter name: :id, in: :path, type: :string
 
       response '200', 'blog found' do
         header 'ETag', type: :string
@@ -90,13 +93,15 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
+  # TODO: get this to output to proper 3.0 syntax for multi-part upload body
+  # https://swagger.io/docs/specification/describing-request-body/file-upload/
   path '/blogs/{id}/upload' do
-    parameter name: :id, in: :path, type: :string
-
     let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
 
     put 'Uploads a blog thumbnail' do
+      parameter name: :id, in: :path, type: :string
+
       tags 'Blogs'
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'

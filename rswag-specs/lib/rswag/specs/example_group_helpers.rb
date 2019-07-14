@@ -69,7 +69,7 @@ module Rswag
             example_key_name = passed_examples.first # can come up with better scheme here
             # TODO: write more tests around this adding to the parameter
             # if symbol try and use save_request_example
-            param_attributes = { name: example_key_name, in: :body, required: required, param_value: example_key_name }
+            param_attributes = { name: example_key_name, in: :body, required: required, param_value: example_key_name, schema: schema }
             parameter(param_attributes)
           end
         end
@@ -78,6 +78,10 @@ module Rswag
       def parameter(attributes)
         if attributes[:in] && attributes[:in].to_sym == :path
           attributes[:required] = true
+        end
+
+        if attributes[:type] && attributes[:schema].nil?
+          attributes[:schema] = {type: attributes[:type]}
         end
 
         if metadata.key?(:operation)
@@ -94,12 +98,19 @@ module Rswag
         context(description, metadata, &block)
       end
 
-      def schema(value)
-        metadata[:response][:schema] = value
+      def schema(value, content_type: 'application/json')
+        content_hash = {content_type => {schema: value}}
+        metadata[:response][:content] = content_hash
       end
 
       def header(name, attributes)
         metadata[:response][:headers] ||= {}
+         
+        if attributes[:type] && attributes[:schema].nil?
+          attributes[:schema] = {type: attributes[:type]}
+          attributes.delete(:type)
+        end
+
         metadata[:response][:headers][name] = attributes
       end
 

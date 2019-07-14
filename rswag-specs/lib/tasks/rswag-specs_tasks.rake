@@ -6,7 +6,7 @@ namespace :rswag do
     desc 'Generate Swagger JSON files from integration specs'
     RSpec::Core::RakeTask.new('swaggerize') do |t|
       t.pattern = 'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
-      # TODO: fix this, as dry-run is always true despite what is in the config
+      
       # NOTE: rspec 2.x support
       if Rswag::Specs::RSPEC_VERSION > 2 && Rswag::Specs.config.swagger_dry_run
         t.rspec_opts = [ '--format Rswag::Specs::SwaggerFormatter', '--dry-run', '--order defined' ]

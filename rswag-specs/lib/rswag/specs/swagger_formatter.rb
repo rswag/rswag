@@ -37,9 +37,20 @@ module Rswag
           # remove 2.0 parameters
           doc[:paths].each_pair do |_k, v|
             v.each_pair do |_verb, value|
-              if value&.dig(:parameters)
+              is_hash = value.is_a?(Hash)
+              if is_hash && value.dig(:parameters)
+                schema_param = value&.dig(:parameters)&.find{|p| p[:in] == :body && p[:schema] }
+                if value &&  schema_param && value&.dig(:requestBody, :content, 'application/json')
+                  value[:requestBody][:content]['application/json'].merge!(schema: schema_param[:schema])
+                end
+
                 value[:parameters].reject! { |p| p[:in] == :body }
+                value[:parameters].each { |p| p.delete(:type) }
+                value[:headers].each { |p| p.delete(:type)}  if value[:headers]
               end
+
+              value.delete(:consumes) if is_hash && value.dig(:consumes)
+              value.delete(:produces) if is_hash && value.dig(:produces)
             end
           end
           
@@ -64,7 +75,10 @@ module Rswag
         # need to merge in to response
         if response[:examples]&.dig('application/json')
           example = response[:examples].dig('application/json').dup
-          response.merge!(content: { 'application/json' => { example: example } })
+          schema = response.dig(:content, 'application/json', :schema)
+          new_hash = {example: example}
+          new_hash[:schema] = schema if schema
+          response.merge!(content: { 'application/json' => new_hash })
           response.delete(:examples)
         end
 
