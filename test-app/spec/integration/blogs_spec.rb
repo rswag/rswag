@@ -93,8 +93,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
-  # TODO: get this to output to proper 3.0 syntax for multi-part upload body
-  # https://swagger.io/docs/specification/describing-request-body/file-upload/
+  
   path '/blogs/{id}/upload' do
     let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
@@ -106,7 +105,6 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
-      # parameter name: :file, in: :formData, type: :file, required: true
 
       request_body_multipart schema: {properties: {:orderId => { type: :integer }, file: { type: :string, format: :binary }} }
 
