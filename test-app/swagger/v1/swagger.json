@@ -177,14 +177,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "file",
-            "in": "formData",
-            "required": true,
-            "schema": {
-              "type": "file"
-            }
           }
         ],
         "tags": [
@@ -192,6 +184,23 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "orderId": {
+                    "type": "integer"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "blog updated"

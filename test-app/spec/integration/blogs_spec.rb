@@ -65,7 +65,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Retrieves a specific blog by id'
       operationId 'getBlog'
       produces 'application/json'
-      
+
       parameter name: :id, in: :path, type: :string
 
       response '200', 'blog found' do
@@ -106,7 +106,9 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
-      parameter name: :file, in: :formData, type: :file, required: true
+      # parameter name: :file, in: :formData, type: :file, required: true
+
+      request_body_multipart schema: {properties: {:orderId => { type: :integer }, file: { type: :string, format: :binary }} }
 
       response '200', 'blog updated' do
         let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
@@ -115,3 +117,4 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 end
+

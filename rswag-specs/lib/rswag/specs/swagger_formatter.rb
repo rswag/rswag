@@ -44,7 +44,7 @@ module Rswag
                   value[:requestBody][:content]['application/json'].merge!(schema: schema_param[:schema])
                 end
 
-                value[:parameters].reject! { |p| p[:in] == :body }
+                value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
                 value[:parameters].each { |p| p.delete(:type) }
                 value[:headers].each { |p| p.delete(:type)}  if value[:headers]
               end

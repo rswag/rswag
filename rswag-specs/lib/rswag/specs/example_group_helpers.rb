@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'hashie'
 
 module Rswag
   module Specs
@@ -72,6 +73,30 @@ module Rswag
             param_attributes = { name: example_key_name, in: :body, required: required, param_value: example_key_name, schema: schema }
             parameter(param_attributes)
           end
+        end
+      end
+
+      def request_body_multipart(schema:, description: nil)
+        content_hash = { 'multipart/form-data' => { schema: schema }}
+        request_body(description: description, content: content_hash)
+
+        schema.extend(Hashie::Extensions::DeepLocate)
+        file_properties = schema.deep_locate -> (_k, v, _obj) { v == :binary } 
+
+        hash_locator = []
+
+        file_properties.each do |match|
+          hash_match = schema.deep_locate -> (_k, v, _obj) { v == match }
+          hash_locator.concat(hash_match) unless hash_match.empty?
+        end
+
+        property_hashes = hash_locator.flat_map do |locator|
+          locator.select { |_k,v| file_properties.include?(v) }
+        end
+
+        property_hashes.each do |property_hash|
+          file_name = property_hash.keys.first
+          parameter name: file_name, in: :formData, type: :file, required: true
         end
       end
 
