@@ -35,7 +35,7 @@ module Rswag
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           # remove 2.0 parameters
-          doc[:paths].each_pair do |_k, v|
+          doc[:paths]&.each_pair do |_k, v|
             v.each_pair do |_verb, value|
               is_hash = value.is_a?(Hash)
               if is_hash && value.dig(:parameters)
