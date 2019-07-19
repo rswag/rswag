@@ -179,7 +179,7 @@ module Rswag
         let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response' metadata" do
-          expect(api_metadata[:response][:schema]).to match(type: 'object')
+          expect(api_metadata[:response][:content]['application/json'][:schema]).to match(type: 'object')
         end
       end
 
@@ -189,7 +189,7 @@ module Rswag
 
         it "adds to the 'response headers' metadata" do
           expect(api_metadata[:response][:headers]).to match(
-            'Date' => { type: 'string' }
+            'Date' => {schema: { type: 'string' }}
           )
         end
       end
