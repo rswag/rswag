@@ -11,7 +11,7 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
       let(:config) { double('config') }
-      let(:swagger_doc) { {} }
+      let(:swagger_doc) { {:components => {}} }
       let(:example) { double('example') }
       let(:metadata) do
         {
@@ -58,14 +58,21 @@ module Rswag
 
         context 'referenced schemas' do
           before do
-            swagger_doc[:definitions] = {
-              'blog' => {
-                type: :object,
-                properties: { foo: { type: :string } },
-                required: ['foo']
-              }
+            # swagger_doc[:definitions] = {
+            #   'blog' => {
+            #     type: :object,
+            #     properties: { foo: { type: :string } },
+            #     required: ['foo']
+            #   }
+            # }
+            swagger_doc[:components][:schemas] = {
+                'blog' => {
+                    type: :object,
+                    properties: { foo: { type: :string } },
+                    required: ['foo']
+                }
             }
-            metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
+            metadata[:response][:schema] = { '$ref' => '#/components/schemas/blog' }
           end
 
           it 'uses the referenced schema to validate the response body' do
