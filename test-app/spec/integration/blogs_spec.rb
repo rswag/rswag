@@ -16,6 +16,9 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       request_body_json schema: { '$ref' => '#/components/schemas/blog' },
                         examples: :blog
 
+      request_body_text_plain
+      request_body_xml schema: { '$ref' => '#/components/schemas/blog' }
+
       let(:blog) { { blog: { title: 'foo', content: 'bar' } } }
 
       response '201', 'blog created' do
@@ -53,6 +56,30 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
     end
   end
+
+  path '/blogs/flexible' do
+    post 'Creates a blog flexible body' do
+      tags 'Blogs'
+      description 'Creates a flexible blog from provided data'
+      operationId 'createFlexibleBlog'
+      consumes 'application/json'
+      produces 'application/json'
+
+      request_body_json schema: {
+                                  :oneOf => [{'$ref' => '#/components/schemas/blog'},
+                                             {'$ref' => '#/components/schemas/flexible_blog'}]
+                                },
+                        examples: :flexible_blog
+
+      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
+
+      response '201', 'flexible blog created' do
+        schema '$ref' => '#/components/schemas/blog'
+        run_test!
+      end
+    end
+  end
+
 
   path '/blogs/{id}' do
 

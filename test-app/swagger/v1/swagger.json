@@ -105,6 +105,16 @@
               "schema": {
                 "$ref": "#/components/schemas/blog"
               }
+            },
+            "test/plain": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/blog"
+              }
             }
           }
         },
@@ -179,6 +189,64 @@
           },
           "406": {
             "description": "unsupported accept header"
+          }
+        }
+      }
+    },
+    "/blogs/flexible": {
+      "post": {
+        "summary": "Creates a blog flexible body",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Creates a flexible blog from provided data",
+        "operationId": "createFlexibleBlog",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "examples": {
+                "flexible_blog": {
+                  "value": {
+                    "blog": {
+                      "headline": "my headline",
+                      "text": "my text"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/blog"
+                  },
+                  {
+                    "$ref": "#/components/schemas/flexible_blog"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "flexible blog created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "title": "my headline",
+                  "content": "my text",
+                  "thumbnail": null
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/blog"
+                }
+              }
+            }
           }
         }
       }
@@ -334,6 +402,29 @@
           "id",
           "title",
           "content",
+          "thumbnail"
+        ]
+      },
+      "flexible_blog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "headline",
           "thumbnail"
         ]
       }

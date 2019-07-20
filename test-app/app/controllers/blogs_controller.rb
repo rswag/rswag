@@ -8,6 +8,18 @@ class BlogsController < ApplicationController
     respond_with @blog
   end
 
+  # POST /blogs/flexible
+  def flexible_create
+
+    # contrived example to play around with new anyOf and oneOf
+    # request body definition for 3.0
+    blog_params = params.require(:blog).permit(:title, :content, :headline, :text)
+
+
+    @blog = Blog.create(blog_params)
+    respond_with @blog
+  end
+
   # Put /blogs/1
   def upload
     @blog = Blog.find_by_id(params[:id])

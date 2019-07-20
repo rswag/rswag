@@ -1,4 +1,6 @@
 TestApp::Application.routes.draw do
+
+  post '/blogs/flexible', to: 'blogs#flexible_create'
   resources :blogs
   put '/blogs/:id/upload', to: 'blogs#upload'
 
