@@ -37,20 +37,26 @@ module Rswag
           raise UnexpectedResponse, "Expected response header #{name} to be present" if headers[name.to_s].nil?
         end
       end
-
+ 
       def validate_body!(metadata, swagger_doc, body)
-        response_schema = metadata[:response][:schema]
-        return if response_schema.nil?
+        test_schemas = extract_schemas(metadata)
+        return if test_schemas.nil?
 
         components = swagger_doc[:components] || {}
         components_schemas = { components: { schemas: components[:schemas] } }
 
-        validation_schema = response_schema
+        validation_schema = test_schemas[:schema] # response_schema
                             .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
                             .merge(components_schemas)
-
         errors = JSON::Validator.fully_validate(validation_schema, body)
         raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
+      end
+
+      def extract_schemas(metadata)
+        produces = Array(metadata[:operation][:produces])
+        response_content = metadata[:response][:content] || {}
+        producer_content = produces.first || 'application/json'
+        response_content[producer_content]
       end
     end
 

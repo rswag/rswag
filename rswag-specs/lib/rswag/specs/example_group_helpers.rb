@@ -55,7 +55,15 @@ module Rswag
       def request_body(attributes)
         # can make this generic, and accept any incoming hash (like parameter method)
         attributes.compact!
-        metadata[:operation][:requestBody] = attributes
+
+        if metadata[:operation][:requestBody].blank?
+          metadata[:operation][:requestBody] = attributes
+        elsif metadata[:operation][:requestBody] && metadata[:operation][:requestBody][:content]
+          # merge in
+          content_hash = metadata[:operation][:requestBody][:content]
+          incoming_content_hash = attributes[:content]
+          content_hash.merge!(incoming_content_hash) if incoming_content_hash
+        end
       end
 
       def request_body_json(schema:, required: true, description: nil, examples: nil)
@@ -75,6 +83,18 @@ module Rswag
             parameter(param_attributes)
           end
         end
+      end
+
+      def request_body_text_plain(required: false, description: nil, examples: nil)
+        content_hash = { 'test/plain' => { schema: {type: :string}, examples: examples }.compact! || {} }
+        request_body(description: description, required: required, content: content_hash)
+      end
+
+      # TODO: add examples to this like we can for json, might be large lift as many assumptions are made on content-type
+      def request_body_xml(schema:,required: false, description: nil, examples: nil)
+        passed_examples = Array(examples)
+        content_hash = { 'application/xml' => { schema: schema, examples: examples }.compact! || {} }
+        request_body(description: description, required: required, content: content_hash)
       end
 
       def request_body_multipart(schema:, description: nil)

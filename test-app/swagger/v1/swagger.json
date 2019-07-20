@@ -243,7 +243,14 @@
                   "thumbnail": null
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/blog"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/blog"
+                    },
+                    {
+                      "$ref": "#/components/schemas/flexible_blog"
+                    }
+                  ]
                 }
               }
             }
@@ -395,14 +402,13 @@
             "nullable": true
           },
           "thumbnail": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
           "id",
-          "title",
-          "content",
-          "thumbnail"
+          "title"
         ]
       },
       "flexible_blog": {
@@ -419,13 +425,13 @@
             "nullable": true
           },
           "thumbnail": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
           "id",
-          "headline",
-          "thumbnail"
+          "headline"
         ]
       }
     },

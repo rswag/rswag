@@ -15,7 +15,6 @@ class BlogsController < ApplicationController
     # request body definition for 3.0
     blog_params = params.require(:blog).permit(:title, :content, :headline, :text)
 
-
     @blog = Blog.create(blog_params)
     respond_with @blog
   end

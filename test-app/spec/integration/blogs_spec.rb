@@ -74,7 +74,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
 
       response '201', 'flexible blog created' do
-        schema '$ref' => '#/components/schemas/blog'
+        schema :oneOf => [{'$ref' => '#/components/schemas/blog'},{'$ref' => '#/components/schemas/flexible_blog'}]
         run_test!
       end
     end
@@ -120,7 +120,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
-  
+
   path '/blogs/{id}/upload' do
     let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
