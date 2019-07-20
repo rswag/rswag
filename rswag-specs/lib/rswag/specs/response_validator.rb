@@ -42,7 +42,8 @@ module Rswag
         response_schema = metadata[:response][:schema]
         return if response_schema.nil?
 
-        components_schemas = { components: { schemas: swagger_doc[:components][:schemas] } }
+        components = swagger_doc[:components] || {}
+        components_schemas = { components: { schemas: components[:schemas] } }
 
         validation_schema = response_schema
                             .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')

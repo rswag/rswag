@@ -11,7 +11,7 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
       let(:config) { double('config') }
-      let(:swagger_doc) { {:components => {}} }
+      let(:swagger_doc) {{}}
       let(:example) { double('example') }
       let(:metadata) do
         {
@@ -58,13 +58,7 @@ module Rswag
 
         context 'referenced schemas' do
           before do
-            # swagger_doc[:definitions] = {
-            #   'blog' => {
-            #     type: :object,
-            #     properties: { foo: { type: :string } },
-            #     required: ['foo']
-            #   }
-            # }
+            swagger_doc[:components] = {}
             swagger_doc[:components][:schemas] = {
                 'blog' => {
                     type: :object,

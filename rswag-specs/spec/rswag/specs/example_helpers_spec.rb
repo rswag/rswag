@@ -16,11 +16,13 @@ module Rswag
       let(:config) { double('config') }
       let(:swagger_doc) do
         {
-          securityDefinitions: {
-            api_key: {
-              type: :apiKey,
-              name: 'api_key',
-              in: :query
+          components: {
+            securitySchemes: {
+              api_key: {
+                type: :apiKey,
+                name: 'api_key',
+                in: :query
+              }
             }
           }
         }
