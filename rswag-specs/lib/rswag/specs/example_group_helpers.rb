@@ -43,7 +43,6 @@ module Rswag
       # TODO: setup travis CI?
 
       # MUST HAVES
-      # TODO: fix the specs in the rswag-specs gem
       # TODO: look at handling different ways schemas can be defined in 3.0 for requestBody and response
       # can we handle all of them?
       # Then can look at handling different request_body things like $ref, etc

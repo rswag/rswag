@@ -17,7 +17,7 @@ module Rswag
       end
 
       it 'installs the Rails initializer' do
-        assert_file('config/initializers/rswag-api.rb')
+        assert_file('config/initializers/rswag_api.rb')
       end
 
       # Don't know how to test this

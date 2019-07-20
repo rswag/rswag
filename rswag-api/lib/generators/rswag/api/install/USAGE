@@ -5,4 +5,4 @@ Example:
     rails generate rswag:api:install
 
     This will create:
-        config/initializers/rswag-api.rb
+        config/initializers/rswag_api.rb
