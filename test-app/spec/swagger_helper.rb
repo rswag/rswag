@@ -69,6 +69,16 @@ RSpec.configure do |config|
               required: %w[id headline]
           }
         },
+        examples: {
+            flexible_blog_example: {
+                summary: 'Sample example of a flexible blog',
+                value: {
+                    id:  1,
+                    headline: 'This is a headline',
+                    text: 'Some sample text'
+                }
+            }
+        },
         securitySchemes: {
           basic_auth: {
             type: :http,

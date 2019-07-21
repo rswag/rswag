@@ -152,11 +152,8 @@ module Rswag
       end
 
       def build_json_payload(parameters, example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
+        body_param = parameters.select { |p| p[:in] == :body &&  p[:name].is_a?(Symbol) }.first
         return nil unless body_param
-
-        # p "example is #{example.send(body_param[:name]).to_json} ** AND body param is #{body_param}" if body_param
-        # body_param ? example.send(body_param[:name]).to_json : nil
 
         source_body_param = example.send(body_param[:name]) if body_param[:name] && example.respond_to?(body_param[:name])
         source_body_param ||= body_param[:param_value]

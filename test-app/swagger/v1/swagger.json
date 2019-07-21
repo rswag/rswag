@@ -258,6 +258,63 @@
         }
       }
     },
+    "/blogs/alternate": {
+      "post": {
+        "summary": "Creates a blog - different :examples in requestBody",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Creates a new blog from provided data",
+        "operationId": "createAlternateBlog",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "examples": {
+                "blog": {
+                  "value": {
+                    "blog": {
+                      "title": "alt title",
+                      "content": "alt bar"
+                    }
+                  }
+                },
+                "external_blog": {
+                  "externalValue": "http://api.sample.org/myjson_example"
+                },
+                "another_example": {
+                  "$ref": "#/components/examples/flexible_blog_example"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/blog"
+              }
+            }
+          }
+        },
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "blog created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "title": "alt title",
+                  "content": "alt bar",
+                  "thumbnail": null
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/blog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/blogs/{id}": {
       "get": {
         "summary": "Retrieves a blog",
@@ -433,6 +490,16 @@
           "id",
           "headline"
         ]
+      }
+    },
+    "examples": {
+      "flexible_blog_example": {
+        "summary": "Sample example of a flexible blog",
+        "value": {
+          "id": 1,
+          "headline": "This is a headline",
+          "text": "Some sample text"
+        }
       }
     },
     "securitySchemes": {

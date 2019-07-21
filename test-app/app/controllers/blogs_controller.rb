@@ -19,6 +19,14 @@ class BlogsController < ApplicationController
     respond_with @blog
   end
 
+  # POST /blogs/alternate
+  def alternate_create
+
+    # contrived example to show different :examples in the requestBody section
+    @blog = Blog.create(params.require(:blog).permit(:title, :content))
+    respond_with @blog
+  end
+
   # Put /blogs/1
   def upload
     @blog = Blog.find_by_id(params[:id])

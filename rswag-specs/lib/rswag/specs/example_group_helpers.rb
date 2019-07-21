@@ -43,7 +43,7 @@ module Rswag
       # TODO: setup travis CI?
 
       # MUST HAVES
-      # TODO: look at handling different ways schemas can be defined in 3.0 for requestBody and response
+      # TODO: *** look at handling different ways schemas can be defined in 3.0 for requestBody and response
       # can we handle all of them?
       # Then can look at handling different request_body things like $ref, etc
       # TODO: look at adding request_body method to handle diffs in Open API 2.0 to 3.0
@@ -75,12 +75,20 @@ module Rswag
           # it can contain a 'value' key which is a direct hash (easiest)
           # it can contain a 'external_value' key which makes an external call to load the json
           # it can contain a '$ref' key. Which points to #/components/examples/blog
-          if passed_examples.first.is_a?(Symbol)
-            example_key_name = passed_examples.first # can come up with better scheme here
-            # TODO: write more tests around this adding to the parameter
-            # if symbol try and use save_request_example
-            param_attributes = { name: example_key_name, in: :body, required: required, param_value: example_key_name, schema: schema }
-            parameter(param_attributes)
+          passed_examples.each do |passed_example|
+            if passed_example.is_a?(Symbol)
+              example_key_name = passed_example
+              # TODO: write more tests around this adding to the parameter
+              # if symbol try and use save_request_example
+              param_attributes = { name: example_key_name, in: :body, required: required, param_value: example_key_name, schema: schema }
+              parameter(param_attributes)
+            elsif passed_example.is_a?(Hash) && passed_example[:externalValue]
+              param_attributes = { name: passed_example, in: :body, required: required, param_value: passed_example[:externalValue], schema: schema }
+              parameter(param_attributes)
+            elsif passed_example.is_a?(Hash) && passed_example['$ref']
+              param_attributes = { name: passed_example, in: :body, required: required, param_value: passed_example['$ref'], schema: schema }
+              parameter(param_attributes)
+            end
           end
         end
       end
@@ -169,6 +177,45 @@ module Rswag
         metadata[:response][:examples] = example
       end
 
+      # checks the examples in the parameters should be able to add $ref and externalValue examples.
+      # This syntax would look something like this in the integration _spec.rb file
+      #
+      # request_body_json schema: { '$ref' => '#/components/schemas/blog' },
+      #   examples: [:blog, {name: :external_blog,
+      #                       externalValue: 'http://api.sample.org/myjson_example'},
+      #                     {name: :another_example,
+      #                       '$ref' => '#/components/examples/flexible_blog_example'}]
+      # The first value :blog, points to a let param of the same name, and is used to make the request in the
+      # integration test (it is used to build the request payload)
+      #
+      # The second item in the array shows how to add an externalValue for the examples in the requestBody section
+      # The third item shows how to add a $ref item that points to the components/examples section of the swagger spec.
+      #
+      # NOTE: that the externalValue will produce valid example syntax in the swagger output, but swagger-ui
+      # will not show it yet
+      def merge_other_examples!(example_metadata)
+        # example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
+        content_node = example_metadata[:operation][:requestBody][:content]['application/json']
+        return unless content_node
+
+        external_example = example_metadata[:operation]&.dig(:parameters)&.detect { |p| p[:in] == :body && p[:name].is_a?(Hash) && p[:name][:externalValue] } || {}
+        ref_example = example_metadata[:operation]&.dig(:parameters)&.detect { |p| p[:in] == :body && p[:name].is_a?(Hash) && p[:name]['$ref'] } || {}
+        examples_node = content_node[:examples] ||= {}
+
+        nodes_to_add = []
+        nodes_to_add << external_example unless external_example.empty?
+        nodes_to_add << ref_example unless ref_example.empty?
+        
+        nodes_to_add.each do |node|
+          json_request_examples = examples_node ||= {}
+          other_name = node[:name][:name]
+          other_key = node[:name][:externalValue] ? :externalValue : '$ref'
+          if other_name
+            json_request_examples.merge!(other_name => {other_key => node[:param_value]})
+          end  
+        end
+      end
+
       def run_test!(&block)
         # NOTE: rspec 2.x support
         if RSPEC_VERSION < 3
@@ -202,9 +249,13 @@ module Rswag
                 example.metadata[:operation][:requestBody][:content]['application/json'] = { examples: {} } unless example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
                 json_request_examples = example.metadata[:operation][:requestBody][:content]['application/json'][:examples]
                 json_request_examples[body_parameter[:name]] = { value: send(body_parameter[:name]) }
+
                 example.metadata[:operation][:requestBody][:content]['application/json'][:examples] = json_request_examples
               end
             end
+
+            self.class.merge_other_examples!(example.metadata) if example.metadata[:operation][:requestBody]
+ 
           end
         end
       end

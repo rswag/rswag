@@ -80,6 +80,32 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
+  path '/blogs/alternate' do
+    post 'Creates a blog - different :examples in requestBody' do
+      tags 'Blogs'
+      description 'Creates a new blog from provided data'
+      operationId 'createAlternateBlog'
+      consumes 'application/json'
+      produces 'application/json'
+
+      # NOTE: the externalValue: http://... is valid 3.0 spec, but swagger-UI does NOT support it yet
+      # https://github.com/swagger-api/swagger-ui/issues/5433
+      request_body_json schema: { '$ref' => '#/components/schemas/blog' },
+                        examples: [:blog, {name: :external_blog,
+                                           externalValue: 'http://api.sample.org/myjson_example'},
+                                          {name: :another_example,
+                                           '$ref' => '#/components/examples/flexible_blog_example'}]
+
+      let(:blog) { { blog: { title: 'alt title', content: 'alt bar' } } }
+
+      response '201', 'blog created' do
+        schema '$ref' => '#/components/schemas/blog'
+        run_test!
+      end
+    end
+  end
+
+
 
   path '/blogs/{id}' do
 
