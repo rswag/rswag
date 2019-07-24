@@ -1,4 +1,4 @@
-module Rswag
+module OpenApi::Rswag
   module Api
     class Configuration
       attr_accessor :swagger_root, :swagger_filter

@@ -1,6 +1,6 @@
-require 'rswag/api/middleware'
+require 'open_api/rswag/api/middleware'
 
-module Rswag
+module OpenApi::Rswag
   module Api
     class Engine < ::Rails::Engine
       isolate_namespace Rswag::Api

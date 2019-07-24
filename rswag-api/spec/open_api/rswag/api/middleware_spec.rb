@@ -1,7 +1,7 @@
-require 'rswag/api/middleware'
-require 'rswag/api/configuration'
+require 'open_api/rswag/api/middleware'
+require 'open_api/rswag/api/configuration'
 
-module Rswag
+module OpenApi::Rswag
   module Api
 
     describe Middleware do

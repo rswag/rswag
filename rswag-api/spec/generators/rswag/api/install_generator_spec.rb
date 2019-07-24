@@ -1,6 +1,7 @@
 require 'generator_spec'
 require 'generators/rswag/api/install/install_generator'
 
+
 module Rswag
   module Api
 
@@ -25,3 +26,4 @@ module Rswag
     end
   end
 end
+
