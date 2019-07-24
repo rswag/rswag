@@ -17,7 +17,7 @@ end
 
 gem 'sqlite3', '~> 1.3.6'
 
-gem 'rswag-api', path: './rswag-api'
+gem 'open_api-rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 
 group :test do
