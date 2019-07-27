@@ -4,4 +4,4 @@ module Rails
   end
 end
 
-require 'rswag/specs'
+require 'open_api/rswag/specs'
