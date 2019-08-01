@@ -44,14 +44,9 @@ module OpenApi
         # TODO: setup travis CI?
 
         # MUST HAVES
-        # TODO: *** look at handling different ways schemas can be defined in 3.0 for requestBody and response
-        # can we handle all of them?
-        # Then can look at handling different request_body things like $ref, etc
-        # TODO: look at adding request_body method to handle diffs in Open API 2.0 to 3.0
-        # TODO: look at adding examples  in content request_body
-        # https://swagger.io/docs/specification/describing-request-body/
-        # need to make sure we output requestBody in the swagger generator .json
-        # also need to make sure that it can handle content: , required: true/false, schema: ref
+        # need to run ```npm install``` in rswag-ui dir to get assets to load
+        # not sure if its an asset issue or what but this should load => http://localhost:3000/api-docs/index.html
+        # TODO: fix examples in the main README
 
         def request_body(attributes)
           # can make this generic, and accept any incoming hash (like parameter method)
