@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version     = ENV['TRAVIS_TAG'] || '0.0.0'
   s.authors     = ['Richie Morris', 'Jay Danielian']
   s.email       = ['domaindrivendev@gmail.com']
-  s.homepage    = 'https://github.com/jdanielian/rswag'
+  s.homepage    = 'https://github.com/jdanielian/open-api-rswag'
   s.summary     = 'A Swagger-based DSL for rspec-rails & accompanying rake task for generating Swagger files'
   s.description = 'Simplify API integration testing with a succinct rspec DSL and generate Swagger files directly from your rspecs'
   s.license     = 'MIT'

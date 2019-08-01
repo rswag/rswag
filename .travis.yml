@@ -1,16 +1,15 @@
 language: ruby
 
 rvm:
-  - 2.2.5
+  - 2.5.1
 
 env:
   - RAILS_VERSION=5.2.0
   - RAILS_VERSION=4.2.0
-  - RAILS_VERSION=3.2.22
 
 cache:
   directories:
-    - /home/travis/.rvm/gems/ruby-2.2.5
+    - /home/travis/.rvm/gems/ruby-2.5.1
 
 install: ./ci/build.sh
 
@@ -26,7 +25,7 @@ jobs:
     - stage: publish components
       script: 'cd rswag-api'
       deploy:
-        gemspec: rswag-api.gemspec
+        gemspec: open_api-rswag-api.gemspec
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
@@ -36,7 +35,7 @@ jobs:
     - stage: publish components
       script: 'cd rswag-specs'
       deploy:
-        gemspec: rswag-specs.gemspec
+        gemspec: open_api-rswag-specs.gemspec
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
@@ -46,7 +45,7 @@ jobs:
     - stage: publish components
       script: 'cd rswag-ui'
       deploy:
-        gemspec: rswag-ui.gemspec
+        gemspec: open_api-rswag-ui.gemspec
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         skip_cleanup: true
@@ -57,7 +56,7 @@ jobs:
     - stage: publish rswag
       script: 'cd rswag'
       deploy:
-        gemspec: rswag.gemspec
+        gemspec: open_api-rswag.gemspec
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
