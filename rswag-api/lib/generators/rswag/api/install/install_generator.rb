@@ -7,7 +7,7 @@ module Rswag
       source_root File.expand_path('../templates', __FILE__)
 
       def add_initializer
-        template('rswag-api.rb', 'config/initializers/rswag-api.rb')
+        template('rswag_api.rb', 'config/initializers/rswag_api.rb')
       end
 
       def add_routes

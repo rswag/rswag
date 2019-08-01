@@ -11,9 +11,14 @@ Set up your machine:
 
 ```
 bundle
-cd spec/dummy
+cd test-app
 bundle exec rake db:setup
 cd -
+```
+
+Initialize the rswag-ui repo with assets.
+```
+ci/build.sh
 ```
 
 Make sure the tests pass:

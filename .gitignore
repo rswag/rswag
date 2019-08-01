@@ -6,3 +6,5 @@
 **/*/node_modules
 *.swp
 Gemfile.lock
+/.idea/
+**/test-app/.byebug_history

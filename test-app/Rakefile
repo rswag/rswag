@@ -4,4 +4,12 @@
 
 require File.expand_path('../config/application', __FILE__)
 
+
+
 TestApp::Application.load_tasks
+
+
+RSpec::Core::RakeTask.new('swaggerize') do |t|
+  t.pattern = 'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
+  t.rspec_opts = [ '--format Rswag::Specs::SwaggerFormatter', '--order defined' ]
+end

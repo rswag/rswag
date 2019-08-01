@@ -532,3 +532,16 @@ bundle exec rake rswag:ui:copy_assets[public/api-docs]
 ```
 
 __NOTE:__: The provided subfolder MUST correspond to the UI mount prefix - "api-docs" by default.
+
+
+Notes to test swagger output locally with swagger editor
+```
+docker pull swaggerapi/swagger-editor
+```
+```
+docker run -d -p 80:8080 swaggerapi/swagger-editor
+```
+This will run the swagger editor in the docker daemon and can be accessed 
+at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
+
+
