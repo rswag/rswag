@@ -18,20 +18,20 @@ end
 gem 'sqlite3', '~> 1.3.6'
 
 gem 'open_api-rswag-api', path: './rswag-api'
-gem 'rswag-ui', path: './rswag-ui'
+gem 'open_api-rswag-ui', path: './rswag-ui'
 
 group :test do
   gem 'capybara'
   gem 'capybara-webkit'
   gem 'generator_spec'
   gem 'rspec-rails'
-  gem 'rswag-specs', path: './rswag-specs'
+  gem 'open_api-rswag-specs', path: './rswag-specs'
   gem 'test-unit'
 end
 
 group :development do
   gem 'guard-rspec', require: false
-  gem 'rswag-specs', path: './rswag-specs'
+  gem 'open_api-rswag-specs', path: './rswag-specs'
   gem 'rubocop'
 end
 

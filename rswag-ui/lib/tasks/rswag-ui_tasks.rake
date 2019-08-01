@@ -6,7 +6,7 @@ namespace :rswag do
       dest = args[:dest]
       FileUtils.rm_r(dest, force: true)
       FileUtils.mkdir_p(dest)
-      FileUtils.cp_r(Dir.glob("#{Rswag::Ui.config.assets_root}/{*.js,*.png,*.css}"), dest)
+      FileUtils.cp_r(Dir.glob("#{OpenApi::Rswag::Ui.config.assets_root}/{*.js,*.png,*.css}"), dest)
     end
   end
 end
