@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version     = ENV['TRAVIS_TAG'] || '0.0.0'
   s.authors     = ["Richie Morris", "Jay Danielian"]
   s.email       = ["domaindrivendev@gmail.com"]
-  s.homepage    = "https://github.com/jdanielian/rswag"
+  s.homepage    = "https://github.com/jdanielian/open-api-rswag"
   s.summary     = "A Rails Engine that exposes Swagger files as JSON endpoints"
   s.description = "Open up your API to the phenomenal Swagger ecosystem by exposing Swagger files, that describe your service, as JSON endpoints"
   s.license     = "MIT"
