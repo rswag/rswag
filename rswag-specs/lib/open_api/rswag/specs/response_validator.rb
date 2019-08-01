@@ -41,7 +41,7 @@ module OpenApi
 
         def validate_body!(metadata, swagger_doc, body)
           test_schemas = extract_schemas(metadata)
-          return if test_schemas.nil?
+          return if test_schemas.nil? || test_schemas.empty?
 
           components = swagger_doc[:components] || {}
           components_schemas = { components: { schemas: components[:schemas] } }
