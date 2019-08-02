@@ -127,6 +127,34 @@ module Rswag
           end
         end
 
+        context 'optional parameter named include' do
+          context 'not included' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'include', in: :query, type: :string, required: false }
+              ]
+              allow(example).to receive(:include).and_return(RSpec::Matchers::BuiltIn::Include.new)
+            end
+
+            it 'builds request hash without them' do
+              expect(request[:path]).to eq('/blogs')
+            end
+          end
+
+          context 'included' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'include', in: :query, type: :string, required: false }
+              ]
+              allow(example).to receive(:include).and_return('foo')
+            end
+
+            it 'builds request hash without them' do
+              expect(request[:path]).to eq('/blogs?include=foo')
+            end
+          end
+        end
+
         context "consumes content" do
           before do
             metadata[:operation][:consumes] = [ 'application/json', 'application/xml' ]
