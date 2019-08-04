@@ -11,7 +11,7 @@ module Rswag
       end
 
       def add_routes
-        route("mount Rswag::Api::Engine => '/api-docs'")
+        route("mount OpenApi::Rswag::Api::Engine => '/api-docs'")
       end
     end
   end
