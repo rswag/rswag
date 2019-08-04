@@ -1,6 +1,6 @@
 open-api-rswag
 =========
-[![Build Status](https://travis-ci.org/jdanielian/open-api-rswag.svg?branch=master)](https://travis-ci.org/jdanielian/open-api-rswag)
+[![Build Status](https://travis-ci.com/jdanielian/open-api-rswag.svg?branch=master)](https://travis-ci.com/jdanielian/open-api-rswag)
 
 OpenApi 3.0 compatible version of the fantastic rswag ruby gem. Most of the content originated from the original [rswag](https://github.com/domaindrivendev/rswag) gem. 
 This fork was created to provide Open API 3.0 syntax for the swagger documentation. 
