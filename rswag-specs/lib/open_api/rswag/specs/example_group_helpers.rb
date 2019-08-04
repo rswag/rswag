@@ -41,7 +41,7 @@ module OpenApi
 
         # NICE TO HAVE
         # TODO: update generator templates to include 3.0 syntax
-        # TODO: setup travis CI?
+        # TODO: perform a tagged commit to trigger rubygem push for v 0.0.1
 
         # MUST HAVES
         # need to run ```npm install``` in rswag-ui dir to get assets to load
