@@ -26,6 +26,7 @@ jobs:
       script: 'cd rswag-api'
       deploy:
         gemspec: open_api-rswag-api.gemspec
+        gem: open_api-rswag-api
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
@@ -36,6 +37,7 @@ jobs:
       script: 'cd rswag-specs'
       deploy:
         gemspec: open_api-rswag-specs.gemspec
+        gem: open_api-rswag-specs
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
@@ -46,6 +48,7 @@ jobs:
       script: 'cd rswag-ui'
       deploy:
         gemspec: open_api-rswag-ui.gemspec
+        gem: open_api-rswag-ui
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         skip_cleanup: true
@@ -57,6 +60,7 @@ jobs:
       script: 'cd rswag'
       deploy:
         gemspec: open_api-rswag.gemspec
+        gem: open_api-rswag
         provider: rubygems
         api_key: $RUBYGEMS_API_KEY
         on:
