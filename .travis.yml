@@ -28,3 +28,45 @@ addons:
 
 script: ./ci/test.sh
 
+jobs:
+  include:
+    - stage: publish components
+      script: 'cd rswag-api'
+      deploy:
+        gemspec: rswag-api.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-specs'
+      deploy:
+        gemspec: rswag-specs.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-ui'
+      deploy:
+        gemspec: rswag-ui.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish rswag
+      script: 'cd rswag'
+      deploy:
+        gemspec: rswag.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
