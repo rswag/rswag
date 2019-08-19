@@ -10,15 +10,15 @@ echo ''
 
 echo '##### rswag-api #####'
 cd $ROOT_PATH/rswag-api
-bundle exec rspec
+xvfb-run bundle exec rspec
 
 echo '##### rswag-specs #####'
 cd $ROOT_PATH/rswag-specs
-bundle exec rspec
+xvfb-run bundle exec rspec
 
 echo '##### rswag-ui #####'
 cd $ROOT_PATH/rswag-ui
-bundle exec rspec
+xvfb-run bundle exec rspec
 
 echo '####################'
 echo 'Integration Tests'
@@ -27,8 +27,8 @@ echo ''
 
 echo '##### test-app #####'
 cd $ROOT_PATH/test-app
-bundle exec rake db:migrate db:test:prepare
-bundle exec rspec
+xvfb-run bundle exec rake db:migrate db:test:prepare
+xvfb-run bundle exec rspec
 
 # Cleanup
 cd $ROOT_PATH
