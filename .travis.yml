@@ -1,6 +1,7 @@
 language: ruby
 
 rvm:
+  - 2.2.5
   - 2.6.3
 
 env:
@@ -8,6 +9,17 @@ env:
   - RAILS_VERSION=5.2.0
   - RAILS_VERSION=4.2.0
   - RAILS_VERSION=3.2.22
+
+matrix:
+  include:
+    - rvm: 2.2.5
+      env: RAILS_VERSION=3.2.22
+    - rvm: 2.2.5
+      env: RAILS_VERSION=4.2.0
+    - rvm: 2.6.3
+      env: RAILS_VERSION=5.2.0
+    - rvm: 2.6.3
+      env: RAILS_VERSION=6.0.0
 
 dist: xenial
 services:
