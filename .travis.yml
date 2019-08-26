@@ -10,8 +10,6 @@ rvm:
 env:
   - RAILS_VERSION=6.0.0
   - RAILS_VERSION=5.2.0
-  - RAILS_VERSION=4.2.0
-  - RAILS_VERSION=3.2.22
 
 addons:
   apt:
