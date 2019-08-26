@@ -9,6 +9,10 @@ env:
   - RAILS_VERSION=4.2.0
   - RAILS_VERSION=3.2.22
 
+dist: xenial
+services:
+  - xvfb
+
 addons:
   apt:
     packages:
