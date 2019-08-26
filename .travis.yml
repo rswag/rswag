@@ -9,6 +9,12 @@ env:
   - RAILS_VERSION=4.2.0
   - RAILS_VERSION=3.2.22
 
+addons:
+  apt:
+    packages:
+      - libqtwebkit-dev
+      - libqtwebkit4
+
 cache:
   directories:
     - /home/travis/.rvm/gems/ruby-2.6.3
