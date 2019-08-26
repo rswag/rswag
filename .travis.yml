@@ -9,6 +9,17 @@ env:
   - RAILS_VERSION=4.2.0
   - RAILS_VERSION=3.2.22
 
+addons:
+  apt:
+    packages:
+      # build dependencies for capybara-webkit
+      - g++
+      - qt5-default
+      - libqt5webkit5-dev
+      - gstreamer1.0-plugins-base
+      - gstreamer1.0-tools
+      - gstreamer1.0-x
+
 cache:
   directories:
     - /home/travis/.rvm/gems/ruby-2.6.3
