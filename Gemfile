@@ -9,7 +9,7 @@ gem 'rails', "#{rails_version}"
 case rails_version.split('.').first
 when '3'
   gem 'strong_parameters'
-when '4', '5'
+when '4', '5', '6'
   gem 'responders'
 end
 
