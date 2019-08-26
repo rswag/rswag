@@ -1,4 +1,7 @@
 language: ruby
+dist: xenial
+services:
+  - xvfb
 
 matrix:
   include:
@@ -10,10 +13,6 @@ matrix:
       env: RAILS_VERSION=5.2.0
     - rvm: 2.6.3
       env: RAILS_VERSION=6.0.0
-
-dist: xenial
-services:
-  - xvfb
 
 addons:
   apt:
