@@ -11,6 +11,12 @@ cache:
   directories:
     - /home/travis/.rvm/gems/ruby-2.5.1
 
+addons:
+  apt:
+    packages:
+    - libqtwebkit-dev
+    - libqtwebkit4
+
 install: ./ci/build.sh
 
 before_script:
