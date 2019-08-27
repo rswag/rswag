@@ -19,6 +19,9 @@ addons:
 
 install: ./ci/build.sh
 
+services:
+- xvfb
+
 before_script:
   - export DISPLAY=:99.0
   - sleep 3
