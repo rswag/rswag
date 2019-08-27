@@ -5,7 +5,7 @@ rvm:
 
 env:
   - RAILS_VERSION=5.2.0
-  - RAILS_VERSION=4.2.8
+  # - RAILS_VERSION=4.2.8
 
 cache:
   directories:
