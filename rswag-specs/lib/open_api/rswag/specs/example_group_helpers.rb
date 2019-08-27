@@ -238,7 +238,9 @@ module OpenApi
 
               if body_parameter && respond_to?(body_parameter[:name]) && example.metadata[:operation][:requestBody][:content]['application/json']
                 # save response examples by default
-                example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) } unless response.body.to_s.empty?
+                if example.metadata[:response][:examples].nil? || example.metadata[:response][:examples].empty?
+                  example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) } unless response.body.to_s.empty?
+                end
 
                 # save request examples using the let(:param_name) { REQUEST_BODY_HASH } syntax in the test
                 if response.code.to_s =~ /^2\d{2}$/
