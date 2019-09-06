@@ -4,14 +4,14 @@ source 'https://rubygems.org'
 
 # Allow the rails version to come from an ENV setting so Travis can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '5.1.2'
+rails_version = ENV['RAILS_VERSION'] || '5.2.3'
 
 gem 'rails', rails_version.to_s
 
 case rails_version.split('.').first
 when '3'
   gem 'strong_parameters'
-when '4', '5'
+when '4', '5', '6'
   gem 'responders'
 end
 
