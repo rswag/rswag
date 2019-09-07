@@ -106,12 +106,11 @@ module OpenApi
           request_body(description: description, content: content_hash)
 
           schema.extend(Hashie::Extensions::DeepLocate)
-          file_properties = schema.deep_locate -> (_k, v, _obj) { v == :binary }
-
+          file_properties = schema.deep_locate ->(_k, v, _obj) { v == :binary }
           hash_locator = []
 
           file_properties.each do |match|
-            hash_match = schema.deep_locate -> (_k, v, _obj) { v == match }
+            hash_match = schema.deep_locate ->(_k, v, _obj) { v == match }
             hash_locator.concat(hash_match) unless hash_match.empty?
           end
 
@@ -119,9 +118,17 @@ module OpenApi
             locator.select { |_k,v| file_properties.include?(v) }
           end
 
+          existing_keys = []
           property_hashes.each do |property_hash|
-            file_name = property_hash.keys.first
-            parameter name: file_name, in: :formData, type: :file, required: true
+            property_hash.keys.each do |k|
+              if existing_keys.include?(k)
+                next
+              else
+                file_name = k
+                existing_keys << k
+                parameter name: file_name, in: :formData, type: :file, required: true
+              end
+            end
           end
         end
 
