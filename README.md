@@ -486,7 +486,7 @@ Rswag::Api.configure do |c|
 end
 ```
 
-Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations based on user permissions.
+Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
 ### Enable Swagger Endpoints for swagger-ui ###
 
