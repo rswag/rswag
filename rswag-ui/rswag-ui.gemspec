@@ -13,6 +13,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir.glob("{lib,node_modules}/**/*") + ["MIT-LICENSE", "Rakefile" ]
 
-  s.add_dependency 'actionpack', '>=3.1', '< 6.0'
-  s.add_dependency 'railties', '>= 3.1', '< 6.0'
+  s.add_dependency 'actionpack', '>=3.1', '< 6.1'
+  s.add_dependency 'railties', '>= 3.1', '< 6.1'
 end
