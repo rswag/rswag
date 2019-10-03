@@ -1,6 +1,7 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
+require 'byebug'
 
 module Rswag
   module Specs
@@ -33,7 +34,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
+          .reject { |p| !example.respond_to?(p[:name]) }
       end
 
       def derive_security_params(metadata, swagger_doc)
@@ -54,7 +55,7 @@ module Rswag
         definitions[key]
       end
 
-      def add_verb(request, metadata) 
+      def add_verb(request, metadata)
         request[:verb] = metadata[:operation][:verb]
       end
 
@@ -104,7 +105,7 @@ module Rswag
         end
 
         # Content-Type header
-        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes] 
+        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes]
         if consumes
           content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
           tuples << [ 'Content-Type', content_type ]

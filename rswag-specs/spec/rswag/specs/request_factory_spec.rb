@@ -9,7 +9,7 @@ module Rswag
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
       let(:metadata) do
@@ -113,11 +113,57 @@ module Rswag
           end
         end
 
-        context 'optional parameters not provided' do
+        context 'implicit optional parameters not provided' do
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'q1', in: :query, type: :string },
+              { name: 'Api-Key', in: :header, type: :string }
+            ]
+          end
+
+          it 'builds request hash without them' do
+            expect(request[:path]).to eq('/blogs')
+            expect(request[:headers]).to eq({})
+          end
+        end
+
+        context 'explicit optional parameters not provided' do
           before do
             metadata[:operation][:parameters] = [
               { name: 'q1', in: :query, type: :string, required: false },
               { name: 'Api-Key', in: :header, type: :string, required: false }
+            ]
+          end
+
+          it 'builds request hash without them' do
+            expect(request[:path]).to eq('/blogs')
+            expect(request[:headers]).to eq({})
+          end
+        end
+
+        context 'optional parameters provided' do
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'q1', in: :query, type: :string },
+              { name: 'Api-Key', in: :header, type: :string }
+            ]
+            allow(example).to receive(:q1).and_return('foo')
+            allow(example).to receive(:'Api-Key').and_return('bar')
+          end
+
+          it 'builds request hash without them' do
+            expect(request[:path]).to eq('/blogs?q1=foo')
+            expect(request[:headers]).to eq({ 'Api-Key' => 'bar' })
+          end
+        end
+
+        # This is the expected outcome, in order to test application-level
+        # responses when required params are not defined
+        context 'required parameters not provided' do
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'q1', in: :query, type: :string, required: true },
+              { name: 'Api-Key', in: :header, type: :string, required: true }
             ]
           end
 
