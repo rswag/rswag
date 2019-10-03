@@ -43,3 +43,17 @@ bundle exec rspec
 Push to your fork and [submit a Pull Request][pr].
 
 [pr]: https://github.com/rswag/rswag/compare/
+
+## Release
+(for maintainers)
+
+Update the changelog.md, putting the new version number in and moving the Unreleased marker.
+
+Merge the changes into master you wish to release.
+
+Add and push a new git tag, annotated tags preferred:
+```
+git tag -s 2.0.6 -m 'v2.0.6'
+```
+
+Travis will detect the tag and release all gems with that tag version number.

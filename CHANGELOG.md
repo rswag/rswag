@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [2.0.6] - 2019-10-03
+### Added
 - Support for Rails 6 [#228](https://github.com/rswag/rswag/pull/228)
 - Support for Windows paths [#176](https://github.com/rswag/rswag/pull/176)
 ### Changed
