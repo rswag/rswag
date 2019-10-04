@@ -7,7 +7,7 @@ module Rswag
         describe(template, metadata, &block)
       end
 
-      [ :get, :post, :patch, :put, :delete, :head ].each do |verb|
+      [ :get, :post, :patch, :put, :delete, :head, :options, :trace ].each do |verb|
         define_method(verb) do |summary, &block|
           api_metadata = { operation: { verb: verb, summary: summary } }
           describe(verb, api_metadata, &block)
