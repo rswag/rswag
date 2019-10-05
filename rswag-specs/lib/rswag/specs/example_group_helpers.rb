@@ -58,6 +58,10 @@ module Rswag
         metadata[:response][:schema] = value
       end
 
+      def ref(value)
+        metadata[:response][:$ref] = value
+      end
+
       def header(name, attributes)
         metadata[:response][:headers] ||= {}
         metadata[:response][:headers][name] = attributes

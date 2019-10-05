@@ -150,6 +150,15 @@ module Rswag
         end
       end
 
+      describe '#ref(value)' do
+        before { subject.ref('#/responses/Unauthorized') }
+        let(:api_metadata) { { response: {} } }
+
+        it "adds to the 'response' metadata" do
+          expect(api_metadata[:response][:$ref]).to match('#/responses/Unauthorized')
+        end
+      end
+
       describe '#header(name, attributes)' do
         before { subject.header('Date', type: 'string') }
         let(:api_metadata) { { response: {} } }
