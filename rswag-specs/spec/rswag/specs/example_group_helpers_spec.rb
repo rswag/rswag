@@ -24,7 +24,7 @@ module Rswag
         end
       end
 
-      describe '#get|post|patch|put|delete|head(verb, summary)' do
+      describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
         before { subject.post('Creates a blog') }
 
         it "delegates to 'describe' with 'operation' metadata" do
