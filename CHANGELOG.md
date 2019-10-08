@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 ### Changed
+- Update swagger-ui to 3.18.2
 ### Deprecated
 ### Removed
 ### Fixed
