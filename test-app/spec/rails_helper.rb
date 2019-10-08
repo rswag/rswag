@@ -51,9 +51,12 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  Capybara.javascript_driver = :webkit
-end
+  Capybara.register_driver :firefox_headless do |app|
+    options = ::Selenium::WebDriver::Firefox::Options.new
+    options.args << '--headless'
 
-Capybara::Webkit.configure do |config|
-  config.block_unknown_urls
+    Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
+  end
+
+  Capybara.javascript_driver = :firefox_headless
 end
