@@ -28,7 +28,8 @@ group :test do
   gem 'rspec-rails'
   gem 'generator_spec'
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'geckodriver-helper'
+  gem 'selenium-webdriver'
   gem 'rswag-specs', path: './rswag-specs'
 end
 
