@@ -1,6 +1,6 @@
 rswag
 =========
-[![Build Status](https://travis-ci.org/domaindrivendev/rswag.svg?branch=master)](https://travis-ci.org/domaindrivendev/rswag)
+[![Build Status](https://travis-ci.org/rswag/rswag.svg?branch=master)](https://travis-ci.org/rswag/rswag)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
@@ -14,9 +14,9 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/domaindrivendev/rswag/tree/master)|2.0|3.17.3|
-|[2.0.5](https://github.com/domaindrivendev/rswag/tree/2.0.4)|2.0|3.17.3|
-|[1.6.0](https://github.com/domaindrivendev/rswag/tree/1.6.0)|2.0|2.2.5|
+|[master](https://github.com/rswag/rswag/tree/master)|2.0|3.18.2|
+|[2.0.6](https://github.com/rswag/rswag/tree/2.0.6)|2.0|3.17.3|
+|[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
 ## Getting Started ##
 
@@ -202,7 +202,8 @@ RSpec.configure do |config|
       swagger: '2.0',
       info: {
         title: 'API V1',
-        version: 'v1'
+        version: 'v1',
+        description: 'This is the first version of my API'
       },
       basePath: '/api/v1'
     },
@@ -211,7 +212,8 @@ RSpec.configure do |config|
       swagger: '2.0',
       info: {
         title: 'API V2',
-        version: 'v2'
+        version: 'v2',
+        description: 'This is the second version of my API'
       },
       basePath: '/api/v2'
     }
@@ -219,7 +221,8 @@ RSpec.configure do |config|
 end
 ```
 
-__NOTE__: By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If you're using multiple documents, you'll need to tag the individual specs with their target document name:
+#### Supporting multiple versions of API #### 
+By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
 
 ```ruby
 # spec/integration/v2/blogs_spec.rb
@@ -231,6 +234,25 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
   path '/blogs/{id}' do
   ...
 end
+```
+
+#### Formatting the description literals: #### 
+Swagger supports the Markdown syntax to format strings. This can be especially handy if you were to provide a long description of a given API version or endpoint. Use [this guide](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for reference. 
+
+__NOTE:__ There is one difference between the official Markdown syntax and Swagger interpretation, namely tables. To create a table like this:
+
+| Column1 | Collumn2 |
+| ------- | -------- |
+| cell1   | cell2    | 
+
+you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
+
+```
+&#13;
+| Column1 | Collumn2 |&#13;
+| ------- | -------- |&#13;
+| cell1   | cell2    |&#13;
+&#13;
 ```
 
 ### Specifying/Testing API Security ###
@@ -464,7 +486,7 @@ Rswag::Api.configure do |c|
 end
 ```
 
-Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations based on user permissions.
+Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
 ### Enable Swagger Endpoints for swagger-ui ###
 

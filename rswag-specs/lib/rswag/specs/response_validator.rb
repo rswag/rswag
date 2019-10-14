@@ -14,17 +14,19 @@ module Rswag
       def validate!(metadata, response)
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
-        validate_code!(metadata, response.code)
+        validate_code!(metadata, response)
         validate_headers!(metadata, response.headers)
         validate_body!(metadata, swagger_doc, response.body)
       end
 
       private
 
-      def validate_code!(metadata, code)
+      def validate_code!(metadata, response)
         expected = metadata[:response][:code].to_s
-        if code != expected
-          raise UnexpectedResponse, "Expected response code '#{code}' to match '#{expected}'"
+        if response.code != expected
+          raise UnexpectedResponse,
+                "Expected response code '#{response.code}' to match '#{expected}'\n" \
+                "Response body: #{response.body}"
         end
       end
 
