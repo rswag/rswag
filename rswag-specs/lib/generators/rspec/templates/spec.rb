@@ -6,7 +6,7 @@ RSpec.describe '<%= controller_path %>', type: :request do
 <%    unless path_item[:params].empty? -%>
     # You'll want to customize the parameter types...
 <%      path_item[:params].each do |param| -%>
-    parameter '<%= param %>', in: :body, type: :string
+    parameter name: '<%= param %>', in: :path, type: :string, description: '<%= param %>'
 <%      end -%>
 <%    end -%>
 <%    path_item[:actions].each do | action, details | %>
