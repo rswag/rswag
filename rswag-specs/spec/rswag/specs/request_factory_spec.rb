@@ -4,249 +4,335 @@ module Rswag
   module Specs
 
     describe RequestFactory do
-      subject { RequestFactory.new(api_metadata, global_metadata) }
+      subject { RequestFactory.new(config) }
 
       before do
-        allow(example).to receive(:blog_id).and_return(1)
-        allow(example).to receive(:id).and_return('2')
+        allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:api_metadata) do
+      let(:config) { double('config') } 
+      let(:swagger_doc) { {} }
+      let(:example) { double('example') }
+      let(:metadata) do
         {
-          path_item: { template: '/blogs/{blog_id}/comments/{id}' },
-          operation: {
-            verb: :put,
-            summary: 'Updates a blog',
-            parameters: [
-              { name: :blog_id, in: :path, type: 'integer' },
-              { name: 'id', in: :path, type: 'integer' }
-            ]
-          }
+          path_item: { template: '/blogs' },
+          operation: { verb: :get }
         }
       end
-      let(:global_metadata) { {} }
-      let(:example) { double('example') }
 
-      describe '#build_fullpath(example)' do
-        let(:path) { subject.build_fullpath(example) }
+      describe '#build_request(metadata, example)' do
+        let(:request) { subject.build_request(metadata, example) }
 
-        context 'always' do
-          it "builds a path using metadata and example values" do
-            expect(path).to eq('/blogs/1/comments/2')
+        it 'builds request hash for given example' do
+          expect(request[:verb]).to eq(:get)
+          expect(request[:path]).to eq('/blogs')
+        end
+
+        context "'path' parameters" do
+          before do
+            metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+            metadata[:operation][:parameters] = [
+              { name: 'blog_id', in: :path, type: :number },
+              { name: 'id', in: :path, type: :number }
+            ]
+            allow(example).to receive(:blog_id).and_return(1)
+            allow(example).to receive(:id).and_return(2)
+          end
+
+          it 'builds the path from example values' do
+            expect(request[:path]).to eq('/blogs/1/comments/2')
           end
         end
 
         context "'query' parameters" do
           before do
-            api_metadata[:operation][:parameters] << { name: 'q1', in: :query, type: 'string' }
-            api_metadata[:operation][:parameters] << { name: 'q2', in: :query, type: 'string' }
+            metadata[:operation][:parameters] = [
+              { name: 'q1', in: :query, type: :string },
+              { name: 'q2', in: :query, type: :string }
+            ]
             allow(example).to receive(:q1).and_return('foo')
             allow(example).to receive(:q2).and_return('bar')
           end
 
-          it "appends a query string using metadata and example values" do
-            expect(path).to eq('/blogs/1/comments/2?q1=foo&q2=bar')
+          it "builds the query string from example values" do
+            expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
           end
         end
 
-        context "'query' parameter of type 'array'" do
+        context "'query' parameters of type 'array'" do
           before do
-            api_metadata[:operation][:parameters] << {
-              name: 'things',
-              in: :query,
-              type: :array,
-              collectionFormat: collectionFormat
-            }
+            metadata[:operation][:parameters] = [
+              { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
+            ]
             allow(example).to receive(:things).and_return([ 'foo', 'bar' ])
           end
 
           context 'collectionFormat = csv' do
-            let(:collectionFormat) { :csv }
+            let(:collection_format) { :csv }
             it "formats as comma separated values" do
-              expect(path).to eq('/blogs/1/comments/2?things=foo,bar')
+              expect(request[:path]).to eq('/blogs?things=foo,bar')
             end
           end
 
           context 'collectionFormat = ssv' do
-            let(:collectionFormat) { :ssv }
+            let(:collection_format) { :ssv }
             it "formats as space separated values" do
-              expect(path).to eq('/blogs/1/comments/2?things=foo bar')
+              expect(request[:path]).to eq('/blogs?things=foo bar')
             end
           end
 
           context 'collectionFormat = tsv' do
-            let(:collectionFormat) { :tsv }
+            let(:collection_format) { :tsv }
             it "formats as tab separated values" do
-              expect(path).to eq('/blogs/1/comments/2?things=foo\tbar')
+              expect(request[:path]).to eq('/blogs?things=foo\tbar')
             end
           end
 
           context 'collectionFormat = pipes' do
-            let(:collectionFormat) { :pipes }
+            let(:collection_format) { :pipes }
             it "formats as pipe separated values" do
-              expect(path).to eq('/blogs/1/comments/2?things=foo|bar')
+              expect(request[:path]).to eq('/blogs?things=foo|bar')
             end
           end
 
           context 'collectionFormat = multi' do
-            let(:collectionFormat) { :multi }
+            let(:collection_format) { :multi }
             it "formats as multiple parameter instances" do
-              expect(path).to eq('/blogs/1/comments/2?things=foo&things=bar')
+              expect(request[:path]).to eq('/blogs?things=foo&things=bar')
             end
           end
         end
 
-        context "global definition for 'api_key in query'" do
+        context "'header' parameters" do
           before do
-            global_metadata[:securityDefinitions] = { api_key: { type: :apiKey, name: 'api_key', in: :query } }
-            allow(example).to receive(:api_key).and_return('fookey')
+            metadata[:operation][:parameters] = [ { name: 'Api-Key', in: :header, type: :string } ]
+            allow(example).to receive(:'Api-Key').and_return('foobar')
           end
 
-          context 'global requirement' do
-            before { global_metadata[:security] = [ { api_key: [] } ] }
+          it 'adds names and example values to headers' do
+            expect(request[:headers]).to eq({ 'Api-Key' => 'foobar' })
+          end
+        end
 
-            it "appends the api_key using metadata and example value" do
-              expect(path).to eq('/blogs/1/comments/2?api_key=fookey')
+        context 'optional parameters not provided' do
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'q1', in: :query, type: :string, required: false },
+              { name: 'Api-Key', in: :header, type: :string, required: false }
+            ]
+          end
+
+          it 'builds request hash without them' do
+            expect(request[:path]).to eq('/blogs')
+            expect(request[:headers]).to eq({})
+          end
+        end
+
+        context "consumes content" do
+          before do
+            metadata[:operation][:consumes] = [ 'application/json', 'application/xml' ]
+          end
+
+          context "no 'Content-Type' provided" do
+            it "sets 'CONTENT_TYPE' header to first in list" do
+              expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/json')
             end
           end
 
-          context 'operation-specific requirement' do
-            before { api_metadata[:operation][:security] = [ { api_key: [] } ] }
-
-            it "appends the api_key using metadata and example value" do
-              expect(path).to eq('/blogs/1/comments/2?api_key=fookey')
+          context "explicit 'Content-Type' provided" do
+            before do
+              allow(example).to receive(:'Content-Type').and_return('application/xml')
             end
+
+            it "sets 'CONTENT_TYPE' header to example value" do
+              expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
+            end
+          end
+
+          context 'JSON payload' do
+            before do
+              metadata[:operation][:parameters] = [ { name: 'comment', in: :body, schema: { type: 'object' } } ]
+              allow(example).to receive(:comment).and_return(text: 'Some comment')
+            end
+
+            it "serializes first 'body' parameter to JSON string" do
+              expect(request[:payload]).to eq("{\"text\":\"Some comment\"}")
+            end
+          end
+
+          context 'form payload' do
+            before do
+              metadata[:operation][:consumes] = [ 'multipart/form-data' ]
+              metadata[:operation][:parameters] = [
+                { name: 'f1', in: :formData, type: :string },
+                { name: 'f2', in: :formData, type: :string }
+              ]
+              allow(example).to receive(:f1).and_return('foo blah')
+              allow(example).to receive(:f2).and_return('bar blah')
+            end
+
+            it 'sets payload to hash of names and example values' do
+              expect(request[:payload]).to eq(
+                'f1' => 'foo blah',
+                'f2' => 'bar blah'
+              )
+            end
+          end
+        end
+
+        context 'produces content' do
+          before do
+            metadata[:operation][:produces] = [ 'application/json', 'application/xml' ]
+          end
+
+          context "no 'Accept' value provided" do
+            it "sets 'HTTP_ACCEPT' header to first in list" do
+              expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/json')
+            end
+          end
+
+          context "explicit 'Accept' value provided" do
+            before do
+              allow(example).to receive(:'Accept').and_return('application/xml')
+            end
+
+            it "sets 'HTTP_ACCEPT' header to example value" do
+              expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/xml')
+            end
+          end
+        end
+
+        context 'basic auth' do
+          before do
+            swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+            metadata[:operation][:security] = [ basic: [] ]
+            allow(example).to receive(:Authorization).and_return('Basic foobar')
+          end
+
+          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+          end
+        end
+
+        context 'apiKey' do
+          before do
+            swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
+            metadata[:operation][:security] = [ apiKey: [] ]
+            allow(example).to receive(:api_key).and_return('foobar')
+          end
+
+          context 'in query' do
+            let(:key_location) { :query }
+
+            it 'adds name and example value to the query string' do
+              expect(request[:path]).to eq('/blogs?api_key=foobar')
+            end
+          end
+
+          context 'in header' do
+            let(:key_location) { :header }
+
+            it 'adds name and example value to the headers' do
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+            end
+          end
+
+          context 'in header with auth param already added' do
+            let(:key_location) { :header }
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string },
+                { name: 'api_key', in: :header, type: :string }
+              ]
+              allow(example).to receive(:q1).and_return('foo')
+              allow(example).to receive(:api_key).and_return('foobar')
+            end
+
+            it 'adds authorization parameter only once' do
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+              expect(metadata[:operation][:parameters].size).to eq 2
+            end
+          end
+        end
+
+        context 'oauth2' do
+          before do
+            swagger_doc[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: [ 'read:blogs' ] } }
+            metadata[:operation][:security] = [ oauth2: [ 'read:blogs' ] ]
+            allow(example).to receive(:Authorization).and_return('Bearer foobar')
+          end
+
+          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Bearer foobar')
+          end
+        end
+
+        context 'paired security requirements' do
+          before do
+            swagger_doc[:securityDefinitions] = {
+              basic: { type: :basic },
+              api_key: { type: :apiKey, name: 'api_key', in: :query }
+            }
+            metadata[:operation][:security] = [ { basic: [], api_key: [] } ]
+            allow(example).to receive(:Authorization).and_return('Basic foobar')
+            allow(example).to receive(:api_key).and_return('foobar')
+          end
+
+          it "sets both params to example values" do
+            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+            expect(request[:path]).to eq('/blogs?api_key=foobar')
+          end
+        end
+
+        context "path-level parameters" do
+          before do
+            metadata[:operation][:parameters] = [ { name: 'q1', in: :query, type: :string } ]
+            metadata[:path_item][:parameters] = [ { name: 'q2', in: :query, type: :string } ]
+            allow(example).to receive(:q1).and_return('foo')
+            allow(example).to receive(:q2).and_return('bar')
+          end
+
+          it "populates operation and path level parameters " do
+            expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
+          end
+        end
+
+        context 'referenced parameters' do
+          before do
+            swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
+            metadata[:operation][:parameters] = [ { '$ref' => '#/parameters/q1' } ]
+            allow(example).to receive(:q1).and_return('foo')
+          end
+
+          it 'uses the referenced metadata to build the request' do
+            expect(request[:path]).to eq('/blogs?q1=foo')
           end
         end
 
         context 'global basePath' do
-          before { global_metadata[:basePath] = '/foobar' }
+          before { swagger_doc[:basePath] = '/api' }
 
-          it 'prepends the basePath' do
-            expect(path).to eq('/foobar/blogs/1/comments/2')
+          it 'prepends to the path' do
+            expect(request[:path]).to eq('/api/blogs')
           end
         end
 
-        context "defined at the 'path' level" do
+        context "global consumes" do
+          before { swagger_doc[:consumes] = [ 'application/xml' ] }
+
+          it "defaults 'CONTENT_TYPE' to global value(s)" do
+            expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
+          end
+        end
+
+        context "global security requirements" do
           before do
-            api_metadata[:path_item][:parameters] = [ { name: :blog_id, in: :path } ]
-            api_metadata[:operation][:parameters] = [ { name: :id, in: :path } ]
+            swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: :query } }
+            swagger_doc[:security] = [ apiKey: [] ]
+            allow(example).to receive(:api_key).and_return('foobar')
           end
 
-          it "builds path from parameters defined at path and operation levels" do
-            expect(path).to eq('/blogs/1/comments/2')
-          end
-        end
-      end
-
-      describe '#build_body(example)' do
-        let(:body) { subject.build_body(example) }
-
-        context "no 'body' parameter" do
-          it "returns ''" do
-            expect(body).to eq('')
-          end
-        end
-
-        context "'body' parameter" do
-          before do
-            api_metadata[:operation][:parameters] << { name: 'comment', in: :body, schema: { type: 'object' } }
-            allow(example).to receive(:comment).and_return(text: 'Some comment')
-          end
-
-          it 'returns the example value as a json string' do
-            expect(body).to eq("{\"text\":\"Some comment\"}")
-          end
-        end
-
-        context "referenced 'body' parameter" do
-          before do
-            api_metadata[:operation][:parameters] << { '$ref' => '#/parameters/comment' }
-            global_metadata[:parameters] = {
-              'comment' => { name: 'comment', in: :body, schema: { type: 'object' } }
-            }
-            allow(example).to receive(:comment).and_return(text: 'Some comment')
-          end
-
-          it 'returns the example value as a json string' do
-            expect(body).to eq("{\"text\":\"Some comment\"}")
-          end
-        end
-      end
-
-      describe '#build_headers' do
-        let(:headers) { subject.build_headers(example) }
-
-        context "no 'header' params" do
-          it 'returns an empty hash' do
-            expect(headers).to eq({})
-          end
-        end
-
-        context "'header' params" do
-          before do
-            api_metadata[:operation][:parameters] << { name: 'Api-Key', in: :header, type: 'string' }
-            allow(example).to receive(:'Api-Key').and_return('foobar')
-          end
-
-          it 'returns a hash of names with example values' do
-            expect(headers).to eq({ 'Api-Key' => 'foobar' })
-          end
-        end
-
-        context "global definition for 'basic auth'" do
-          before do
-            global_metadata[:securityDefinitions] = { basic_auth: { type: :basic} }
-            allow(example).to receive(:'Authorization').and_return('Basic foobar')
-          end
-
-          context 'global requirement' do
-            before { global_metadata[:security] = [ { basic_auth: [] } ] }
-
-            it "includes a corresponding Authorization header" do
-              expect(headers).to match(
-                'Authorization' => 'Basic foobar'
-              )
-            end
-          end
-
-          context 'operation-specific requirement' do
-            before { api_metadata[:operation][:security] = [ { basic_auth: [] } ] }
-
-            it "includes a corresponding Authorization header" do
-              expect(headers).to match(
-                'Authorization' => 'Basic foobar'
-              )
-            end
-          end
-        end
-
-        context 'consumes & produces' do
-          before do
-            api_metadata[:operation][:consumes] =  [ 'application/json', 'application/xml' ]
-            api_metadata[:operation][:produces] =  [ 'application/json', 'application/xml' ]
-          end
-
-          it "includes corresponding 'Accept' & 'Content-Type' headers" do
-            expect(headers).to match(
-              'Accept' => 'application/json;application/xml',
-              'Content-Type' => 'application/json;application/xml'
-            )
-          end
-        end
-
-        context 'global consumes & produces' do
-          let(:global_metadata) do
-            {
-              consumes: [ 'application/json', 'application/xml' ],
-              produces: [ 'application/json', 'application/xml' ]
-            }
-          end
-
-          it "includes corresponding 'Accept' & 'Content-Type' headers" do
-            expect(headers).to match(
-              'Accept' => 'application/json;application/xml',
-              'Content-Type' => 'application/json;application/xml'
-            )
+          it 'applieds the scheme by default' do
+            expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end
       end

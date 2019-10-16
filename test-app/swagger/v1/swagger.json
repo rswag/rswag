@@ -9,12 +9,63 @@
       "post": {
         "summary": "Authenticates with basic auth",
         "tags": [
-          "Auth Test"
+          "Auth Tests"
         ],
         "operationId": "testBasicAuth",
         "security": [
           {
             "basic_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth-tests/api-key": {
+      "post": {
+        "summary": "Authenticates with an api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testApiKey",
+        "security": [
+          {
+            "api_key": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth-tests/basic-and-api-key": {
+      "post": {
+        "summary": "Authenticates with basic auth and api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testBasicAndApiKey",
+        "security": [
+          {
+            "basic_auth": [
+
+            ],
+            "api_key": [
 
             ]
           }
@@ -38,6 +89,9 @@
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
         "consumes": [
+          "application/json"
+        ],
+        "produces": [
           "application/json"
         ],
         "parameters": [
@@ -79,14 +133,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/blog"
-              }
-            }
+          "406": {
+            "description": "unsupported accept header"
           }
         }
       }
@@ -131,12 +179,47 @@
               "application/json": {
                 "id": 1,
                 "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!"
+                "content": "Hello world and hello universe. Thank you all very much!!!",
+                "thumbnail": "thumbnail.png"
               }
             }
           },
           "404": {
             "description": "blog not found"
+          }
+        }
+      }
+    },
+    "/blogs/{id}/upload": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "put": {
+        "summary": "Uploads a blog thumbnail",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Upload a thumbnail for specific blog by id",
+        "operationId": "uploadThumbnailBlog",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "blog updated"
           }
         }
       }
@@ -172,12 +255,16 @@
         "content": {
           "type": "string",
           "x-nullable": true
+        },
+        "thumbnail": {
+          "type": "string"
         }
       },
       "required": [
         "id",
         "title",
-        "content"
+        "content",
+        "thumbnail"
       ]
     }
   },
@@ -190,12 +277,5 @@
       "name": "api_key",
       "in": "query"
     }
-  },
-  "security": [
-    {
-      "api_key": [
-
-      ]
-    }
-  ]
+  }
 }

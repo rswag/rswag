@@ -3,5 +3,6 @@
 **/*/*.gem
 **/*/*.sqlite3
 **/*/public/assets
+**/*/node_modules
 *.swp
-.idea
+Gemfile.lock

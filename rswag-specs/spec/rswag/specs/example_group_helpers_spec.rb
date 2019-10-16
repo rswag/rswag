@@ -24,7 +24,7 @@ module Rswag
         end
       end
 
-      describe '#get|post|patch|put|delete|head(verb, summary)' do
+      describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
         before { subject.post('Creates a blog') }
 
         it "delegates to 'describe' with 'operation' metadata" do
@@ -118,6 +118,15 @@ module Rswag
             expect(api_metadata[:operation][:parameters]).to match(
               [ name: :id, in: :path, required: true ]
             )
+          end
+        end
+
+        context "when 'in' parameter key is not defined" do
+          before { subject.parameter(name: :id) }
+          let(:api_metadata) { { operation: {} } }
+
+          it "does not require the 'in' parameter key" do
+            expect(api_metadata[:operation][:parameters]).to match([ name: :id ])
           end
         end
       end

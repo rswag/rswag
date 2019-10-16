@@ -2,12 +2,12 @@ module Rswag
   module Specs
     module ExampleGroupHelpers
 
-      def path(template, &block)
-        api_metadata = { path_item: { template: template } }
-        describe(template, api_metadata, &block)
+      def path(template, metadata={}, &block)
+        metadata[:path_item] = { template: template }
+        describe(template, metadata, &block)
       end
 
-      [ :get, :post, :patch, :put, :delete, :head ].each do |verb|
+      [ :get, :post, :patch, :put, :delete, :head, :options, :trace ].each do |verb|
         define_method(verb) do |summary, &block|
           api_metadata = { operation: { verb: verb, summary: summary } }
           describe(verb, api_metadata, &block)
@@ -36,7 +36,9 @@ module Rswag
       end
 
       def parameter(attributes)
-        attributes[:required] = true if attributes[:in].to_sym == :path
+        if attributes[:in] && attributes[:in].to_sym == :path
+          attributes[:required] = true
+        end
 
         if metadata.has_key?(:operation)
           metadata[:operation][:parameters] ||= []
@@ -47,9 +49,9 @@ module Rswag
         end
       end
 
-      def response(code, description, &block)
-        api_metadata = { response: { code: code, description: description } }
-        context(description, api_metadata, &block)
+      def response(code, description, metadata={}, &block)
+        metadata[:response] = { code: code, description: description }
+        context(description, metadata, &block)
       end
 
       def schema(value)
@@ -77,7 +79,8 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response" do
-            assert_response_matches_metadata(example.metadata, &block)
+            assert_response_matches_metadata(metadata)
+            block.call(response) if block_given?
           end
         else
           before do |example|
@@ -86,6 +89,7 @@ module Rswag
 
           it "returns a #{metadata[:response][:code]} response" do |example|
             assert_response_matches_metadata(example.metadata, &block)
+            example.instance_exec(response, &block) if block_given?
           end
         end
       end
