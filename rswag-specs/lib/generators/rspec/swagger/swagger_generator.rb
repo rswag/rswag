@@ -11,7 +11,7 @@ module Rspec
       end
 
       def create_spec_file
-        template 'spec.rb', File.join('spec/requests', "#{controller_path}_spec.rb")
+        template 'spec.rb', File.join('spec', 'requests', "#{controller_path}_spec.rb")
       end
 
       private
