@@ -26,14 +26,15 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     gem 'rswag'
     ```
 
-    or if you like to avoid loading rspec in other bundler groups.
+    or if you like to avoid loading rspec in other bundler groups load the rswag-specs component separately.
+    Note: Adding it to the :development group is not strictly necessary, but without it, generators and rake tasks must be preceded by RAILS_ENV=test.
 
     ```ruby
     # Gemfile
     gem 'rswag-api'
     gem 'rswag-ui'
 
-    group :test do
+    group :development, :test do
       gem 'rspec-rails'
       gem 'rswag-specs'
     end
@@ -44,11 +45,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```ruby
     rails g rswag:install
     ```
-    
+
     Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
-    
+
     ```ruby
-    rails g rswag:api:install 
+    rails g rswag:api:install
     rails g rswag:ui:install
     RAILS_ENV=test rails g rswag:specs:install
     ```
@@ -222,7 +223,7 @@ RSpec.configure do |config|
 end
 ```
 
-#### Supporting multiple versions of API #### 
+#### Supporting multiple versions of API ####
 By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
 
 ```ruby
@@ -237,14 +238,14 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
 end
 ```
 
-#### Formatting the description literals: #### 
-Swagger supports the Markdown syntax to format strings. This can be especially handy if you were to provide a long description of a given API version or endpoint. Use [this guide](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for reference. 
+#### Formatting the description literals: ####
+Swagger supports the Markdown syntax to format strings. This can be especially handy if you were to provide a long description of a given API version or endpoint. Use [this guide](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for reference.
 
 __NOTE:__ There is one difference between the official Markdown syntax and Swagger interpretation, namely tables. To create a table like this:
 
 | Column1 | Collumn2 |
 | ------- | -------- |
-| cell1   | cell2    | 
+| cell1   | cell2    |
 
 you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
 
