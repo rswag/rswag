@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
 
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do

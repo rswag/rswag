@@ -3,7 +3,7 @@ require 'rswag/specs/example_helpers'
 module Rswag
   module Specs
 
-    describe ExampleHelpers do
+    RSpec.describe ExampleHelpers do
       subject { double('example') }
 
       before do
@@ -12,7 +12,7 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
         stub_const('Rswag::Specs::RAILS_VERSION', 3)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) do
         {
           securityDefinitions: {
