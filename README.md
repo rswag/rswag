@@ -14,8 +14,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|2.0|3.17.3|
-|[2.0.6](https://github.com/rswag/rswag/tree/2.0.6)|2.0|3.17.3|
+|[master](https://github.com/rswag/rswag/tree/master)|2.0|3.18.2|
+|[2.1.0](https://github.com/rswag/rswag/tree/2.1.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
 ## Getting Started ##
@@ -48,7 +48,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
     
     ```ruby
-    rails g rswag:api:install rswag:ui:install
+    rails g rswag:api:install 
+    rails g rswag:ui:install
     RAILS_ENV=test rails g rswag:specs:install
     ```
 
