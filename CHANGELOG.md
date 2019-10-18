@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [2.1.1] - 2019-10-18
+### Fixed
+- Fix incorrect require reference for swagger_generator [#248](https://github.com/rswag/rswag/issues/248)
+
 ## [2.1.0] - 2019-10-17
 ### Added
 - New Spec Generator [#75](https://github.com/rswag/rswag/pull/75)
