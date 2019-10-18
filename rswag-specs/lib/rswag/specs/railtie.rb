@@ -7,7 +7,7 @@ module Rswag
       end
 
       generators do
-        require 'generators/rspec/swagger/swagger_generator.rb'
+        require 'generators/rspec/swagger_generator.rb'
       end
     end
   end
