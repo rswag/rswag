@@ -1,6 +1,7 @@
 rswag
 =========
 [![Build Status](https://travis-ci.org/rswag/rswag.svg?branch=master)](https://travis-ci.org/rswag/rswag)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1175b984edc4610f82ab/maintainability)](https://codeclimate.com/github/rswag/rswag/maintainability)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
@@ -15,7 +16,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
 |[master](https://github.com/rswag/rswag/tree/master)|2.0|3.18.2|
-|[2.1.0](https://github.com/rswag/rswag/tree/2.1.0)|2.0|3.18.2|
+|[2.1.1](https://github.com/rswag/rswag/tree/2.1.1)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
 ## Getting Started ##
