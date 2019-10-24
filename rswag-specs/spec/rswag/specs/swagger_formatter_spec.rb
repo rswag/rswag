@@ -3,8 +3,8 @@ require 'ostruct'
 
 module Rswag
   module Specs
-    
-    describe SwaggerFormatter do
+
+    RSpec.describe SwaggerFormatter do
       subject { described_class.new(output, config) }
 
       # Mock out some infrastructure
@@ -47,7 +47,7 @@ module Rswag
       end
 
       describe '#stop' do
-        before do 
+        before do
           FileUtils.rm_r(swagger_root) if File.exists?(swagger_root)
           allow(config).to receive(:swagger_docs).and_return(
             'v1/swagger.json' => { info: { version: 'v1' } },

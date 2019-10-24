@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'swagger-ui', js: true do
+RSpec.feature 'swagger-ui', js: true do
 
   scenario 'browsing api-docs' do
     visit '/api-docs'

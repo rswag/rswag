@@ -3,7 +3,7 @@ require 'rswag/specs/example_group_helpers'
 module Rswag
   module Specs
 
-    describe ExampleGroupHelpers do
+    RSpec.describe ExampleGroupHelpers do
       subject { double('example_group') }
 
       before do

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "swagger-ui-dist": "3.23.11"
+=======
+    "swagger-ui-dist": "3.18.2"
+>>>>>>> origin/master
   }
 }
