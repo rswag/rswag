@@ -16,3 +16,6 @@ namespace :rswag do
     end
   end
 end
+
+task :rswag => ['rswag:specs:swaggerize']
+

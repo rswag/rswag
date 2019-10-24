@@ -3,13 +3,13 @@ require 'rswag/specs/request_factory'
 module Rswag
   module Specs
 
-    describe RequestFactory do
+    RSpec.describe RequestFactory do
       subject { RequestFactory.new(config) }
 
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
       let(:metadata) do
