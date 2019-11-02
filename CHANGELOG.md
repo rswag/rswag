@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- New swagger_format config option for setting YAML output [#251](https://github.com/rswag/rswag/pull/251)
 ### Changed
 ### Deprecated
 ### Removed
