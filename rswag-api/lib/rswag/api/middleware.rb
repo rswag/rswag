@@ -1,9 +1,10 @@
 require 'json'
 require 'yaml'
+require 'rack/mime'
 
 module Rswag
   module Api
-    class Middleware 
+    class Middleware
 
       def initialize(app, config)
         @app = app
@@ -17,14 +18,16 @@ module Rswag
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           swagger = parse_file(filename)
           @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
+          mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
+          body = unload_swagger(filename, swagger)
 
           return [
             '200',
-            { 'Content-Type' => 'application/json' },
-            [ JSON.dump(swagger) ]
+            { 'Content-Type' => mime },
+            [ body ]
           ]
         end
-          
+
         return @app.call(env)
       end
 
@@ -44,6 +47,14 @@ module Rswag
 
       def load_json(filename)
         JSON.parse(File.read(filename))
+      end
+
+      def unload_swagger(filename, swagger)
+        if /\.ya?ml$/ === filename
+          YAML.dump(swagger)
+        else
+          JSON.dump(swagger)
+        end
       end
     end
   end

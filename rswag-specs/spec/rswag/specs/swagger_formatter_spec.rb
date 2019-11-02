@@ -53,14 +53,30 @@ module Rswag
             'v1/swagger.json' => { info: { version: 'v1' } },
             'v2/swagger.json' => { info: { version: 'v2' } }
           )
+          allow(config).to receive(:swagger_format).and_return(swagger_format)
           subject.stop(notification)
         end
 
         let(:notification) { double('notification') }
+        context 'with default format' do
+          let(:swagger_format) { :json }
 
-        it 'writes the swagger_doc(s) to file' do
-          expect(File).to exist("#{swagger_root}/v1/swagger.json")
-          expect(File).to exist("#{swagger_root}/v2/swagger.json")
+          it 'writes the swagger_doc(s) to file' do
+            expect(File).to exist("#{swagger_root}/v1/swagger.json")
+            expect(File).to exist("#{swagger_root}/v2/swagger.json")
+            expect { JSON.parse(File.read("#{swagger_root}/v2/swagger.json")) }.not_to raise_error
+          end
+        end
+
+        context 'with yaml format' do
+          let(:swagger_format) { :yaml }
+
+          it 'writes the swagger_doc(s) as yaml' do
+            expect(File).to exist("#{swagger_root}/v1/swagger.json")
+            expect { JSON.parse(File.read("#{swagger_root}/v1/swagger.json")) }.to raise_error(JSON::ParserError)
+            # Psych::DisallowedClass would be raised if we do not pre-process ruby symbols
+            expect { YAML.safe_load(File.read("#{swagger_root}/v1/swagger.json")) }.not_to raise_error
+          end
         end
 
         after do
