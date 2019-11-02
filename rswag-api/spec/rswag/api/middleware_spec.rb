@@ -87,8 +87,8 @@ module Rswag
 
           it 'returns contents of the swagger file' do
             expect(response.length).to eql(3)
-            expect(response[1]).to include( 'Content-Type' => 'application/json')
-            expect(response[2].join).to include('"title":"API V1"')
+            expect(response[1]).to include( 'Content-Type' => 'text/yaml')
+            expect(response[2].join).to include('title: API V1')
           end
         end
       end
