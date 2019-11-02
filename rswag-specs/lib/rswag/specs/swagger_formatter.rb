@@ -48,12 +48,15 @@ module Rswag
 
       def pretty_generate(doc)
         if @config.swagger_format == :yaml
-          # NOTE: Yaml will quite happily embed ruby-only classes such as symbols.
-          # clean_doc = stringify(doc)
-          YAML.dump(doc)
+          YAML.dump(doc.deep_stringify_keys)
         else # config errors are thrown in 'def swagger_format', no throw needed here
           JSON.pretty_generate(doc)
         end
+      end
+
+      def deep_stringify_hash_keys(doc)
+
+        doc
       end
 
       def metadata_to_swagger(metadata)
