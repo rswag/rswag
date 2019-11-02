@@ -6,7 +6,9 @@ module Rswag
     RSpec.describe Configuration do
       subject { described_class.new(rspec_config) }
 
-      let(:rspec_config) { OpenStruct.new(swagger_root: swagger_root, swagger_docs: swagger_docs) }
+      let(:rspec_config) do
+        OpenStruct.new(swagger_root: swagger_root, swagger_docs: swagger_docs, swagger_format: swagger_format)
+      end
       let(:swagger_root) { 'foobar' }
       let(:swagger_docs) do
         {
@@ -14,6 +16,7 @@ module Rswag
           'v2/swagger.json' => { info: { title: 'v2' } }
         }
       end
+      let(:swagger_format) { :yaml }
 
       describe '#swagger_root' do
         let(:response) { subject.swagger_root }
@@ -43,6 +46,26 @@ module Rswag
         context 'provided but empty' do
           let(:swagger_docs) { {} }
           it { expect { response }.to raise_error ConfigurationError }
+        end
+      end
+
+      describe '#swagger_format' do
+        let(:response) { subject.swagger_format }
+
+        context 'provided in rspec config' do
+          it { expect(response).to be_an_instance_of(Symbol) }
+        end
+
+        context 'unsupported format provided' do
+          let(:swagger_format) { :xml }
+
+          it { expect { response }.to raise_error ConfigurationError }
+        end
+
+        context 'not provided' do
+          let(:swagger_format) { nil }
+
+          it { expect(response).to eq(:json) }
         end
       end
 
