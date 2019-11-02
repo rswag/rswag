@@ -522,7 +522,7 @@ end
 The swagger-ui provides several options for customizing it's behavior, all of which are documented here https://github.com/swagger-api/swagger-ui/tree/2.x#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
 
 ```ruby
-rails generate rswag:ui:custom
+rails g rswag:ui:custom
 
 ```
 

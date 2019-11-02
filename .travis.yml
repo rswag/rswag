@@ -17,7 +17,9 @@ addons:
       - libqtwebkit-dev
       - libqtwebkit4
 
-cache: bundler
+cache:
+  directories:
+    - /home/travis/.rvm/gems/ruby-2.6.3
 
 install: ./ci/build.sh
 
