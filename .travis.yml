@@ -29,7 +29,7 @@ jobs:
   include:
     - stage: publish components
       script: 'cd rswag-api'
-      if: tag = true
+      if: tag IS present
       deploy:
         gemspec: rswag-api.gemspec
         provider: rubygems
@@ -40,7 +40,7 @@ jobs:
 
     - stage: publish components
       script: 'cd rswag-specs'
-      if: tag = true
+      if: tag IS present
       deploy:
         gemspec: rswag-specs.gemspec
         provider: rubygems
@@ -51,7 +51,7 @@ jobs:
 
     - stage: publish components
       script: 'cd rswag-ui'
-      if: tag = true
+      if: tag IS present
       deploy:
         gemspec: rswag-ui.gemspec
         provider: rubygems
@@ -63,7 +63,7 @@ jobs:
 
     - stage: publish rswag
       script: 'cd rswag'
-      if: tag = true
+      if: tag IS present
       deploy:
         gemspec: rswag.gemspec
         provider: rubygems
