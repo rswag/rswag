@@ -74,6 +74,8 @@ module Rswag
           it 'writes the swagger_doc(s) as yaml' do
             expect(File).to exist("#{swagger_root}/v1/swagger.json")
             expect { JSON.parse(File.read("#{swagger_root}/v1/swagger.json")) }.to raise_error(JSON::ParserError)
+            # Psych::DisallowedClass would be raised if we do not pre-process ruby symbols
+            expect { YAML.safe_load(File.read("#{swagger_root}/v1/swagger.json")) }.not_to raise_error
           end
         end
 
