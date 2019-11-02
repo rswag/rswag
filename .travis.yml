@@ -1,11 +1,11 @@
 language: ruby
 
-dist: xenial
+dist: bionic
 services:
   - xvfb
 
 rvm:
-  - 2.6.4
+  - 2.6.3
 
 env:
   - RAILS_VERSION=6.0.0
