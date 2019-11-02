@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New swagger_format config option for setting YAML output [#251](https://github.com/rswag/rswag/pull/251)
 ### Changed
+- rswag-api will serve yaml files as yaml [#251](https://github.com/rswag/rswag/pull/251)
 ### Deprecated
 ### Removed
 ### Fixed
