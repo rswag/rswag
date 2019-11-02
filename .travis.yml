@@ -17,9 +17,7 @@ addons:
       - libqtwebkit-dev
       - libqtwebkit4
 
-cache:
-  directories:
-    - /home/travis/.rvm/gems/ruby-2.6.3
+cache: bundler
 
 install: ./ci/build.sh
 
@@ -29,6 +27,7 @@ jobs:
   include:
     - stage: publish components
       script: 'cd rswag-api'
+      if: tags = true
       deploy:
         gemspec: rswag-api.gemspec
         provider: rubygems
@@ -39,6 +38,7 @@ jobs:
 
     - stage: publish components
       script: 'cd rswag-specs'
+      if: tags = true
       deploy:
         gemspec: rswag-specs.gemspec
         provider: rubygems
@@ -49,6 +49,7 @@ jobs:
 
     - stage: publish components
       script: 'cd rswag-ui'
+      if: tags = true
       deploy:
         gemspec: rswag-ui.gemspec
         provider: rubygems
@@ -60,6 +61,7 @@ jobs:
 
     - stage: publish rswag
       script: 'cd rswag'
+      if: tags = true
       deploy:
         gemspec: rswag.gemspec
         provider: rubygems
