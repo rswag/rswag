@@ -48,15 +48,16 @@ module Rswag
 
       def pretty_generate(doc)
         if @config.swagger_format == :yaml
-          YAML.dump(doc.deep_stringify_keys)
+          clean_doc = yaml_prepare(doc)
+          YAML.dump(clean_doc)
         else # config errors are thrown in 'def swagger_format', no throw needed here
           JSON.pretty_generate(doc)
         end
       end
 
-      def deep_stringify_hash_keys(doc)
-
-        doc
+      def yaml_prepare(doc)
+        json_doc = JSON.pretty_generate(doc)
+        clean_doc = JSON.parse(json_doc)
       end
 
       def metadata_to_swagger(metadata)
