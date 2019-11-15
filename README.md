@@ -339,6 +339,15 @@ end
 
 __NOTE__: If you do change this, you'll also need to update the rswag-api.rb initializer (assuming you're using rswag-api). More on this later.
 
+### Input Location for Rspec Tests ###
+
+By default, rswag will search for integration tests in _spec/requests_, _spec/api_ and _spec/integration_. If you want to use tests from other locations, provide the PATTERN argument to rake:
+
+```ruby
+# search for tests in spec/swagger
+rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
+```
+
 ### Referenced Parameters and Schema Definitions ###
 
 Swagger allows you to describe JSON structures inline with your operation descriptions OR as referenced globals. For example, you might have a standard response structure for all failed operations. Rather than repeating the schema in every operation spec, you can define it globally and provide a reference to it in each spec:
