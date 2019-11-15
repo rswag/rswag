@@ -454,12 +454,30 @@ end
 
 ### Running tests without documenting ###
 
-If you want to use Rswag for testing without adding it to you swagger docs, you can simply nullify the response metadata after the test run.
-
+If you want to use Rswag for testing without adding it to you swagger docs, you can provide the document tag:
 ```ruby
-after do |example|
-  example.metadata[:response] = null
-end
+describe 'Blogs API' do
+  path '/blogs/{blog_id}' do
+    get 'Retrieves a blog' do
+      # documentation is now disabled for this response only
+      response 200, 'blog found', document: false do
+        ...
+```
+
+You can also reenable documentation for specific responses only:
+```ruby
+# documentation is now disabled
+describe 'Blogs API', document: false do
+  path '/blogs/{blog_id}' do
+    get 'Retrieves a blog' do
+      # documentation is reenabled for this response only
+      response 200, 'blog found', document: true do
+        ...
+      end
+
+      response 401, 'special case' do
+        ...
+      end
 ```
 
 ### Route Prefix for Swagger JSON Endpoints ###
