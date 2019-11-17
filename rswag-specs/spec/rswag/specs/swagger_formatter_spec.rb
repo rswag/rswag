@@ -26,23 +26,37 @@ module Rswag
           {
             path_item: { template: '/blogs' },
             operation: { verb: :post, summary: 'Creates a blog' },
-            response: { code: '201', description: 'blog created' }
+            response: { code: '201', description: 'blog created' },
+            document: document
           }
         end
 
-        it 'converts to swagger and merges into the corresponding swagger doc' do
-          expect(swagger_doc).to match(
-            paths: {
-              '/blogs' => {
-                post: {
-                  summary: 'Creates a blog',
-                  responses: {
-                    '201' => { description: 'blog created' }
+        context 'with the document tag set to false' do
+          let(:document) { false }
+
+          it 'does not update the swagger doc' do
+            expect(swagger_doc).to be_empty
+          end
+        end
+
+        context 'with the document tag set to anything but false' do
+          # anything works, including its absence when specifying responses.
+          let(:document) { nil }
+
+          it 'converts to swagger and merges into the corresponding swagger doc' do
+            expect(swagger_doc).to match(
+              paths: {
+                '/blogs' => {
+                  post: {
+                    summary: 'Creates a blog',
+                    responses: {
+                      '201' => { description: 'blog created' }
+                    }
                   }
                 }
               }
-            }
-          )
+            )
+          end
         end
       end
 

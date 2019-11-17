@@ -25,7 +25,11 @@ module Rswag
           metadata = notification.metadata
         end
 
+        # !metadata[:document] won't work, since nil means we should generate
+        # docs.
+        return if metadata[:document] == false
         return unless metadata.has_key?(:response)
+
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
