@@ -8,13 +8,13 @@ module Rswag
       end
 
       def call(env)
-        if base_path?(env) 
+        if base_path?(env)
           redirect_uri = env['SCRIPT_NAME'].chomp('/') + '/index.html'
           return [ 301, { 'Location' => redirect_uri }, [ ] ]
         end
 
         if index_path?(env)
-          return [ 200, { 'Content-Type' => 'text/html' }, [ render_template ] ]
+          return [ 200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [ render_template ] ]
         end
 
         super
@@ -38,6 +38,16 @@ module Rswag
 
       def template_filename
         @config.template_locations.find { |filename| File.exists?(filename) }
+      end
+
+      def csp
+        <<~POLICY.gsub "\n", ' '
+          default-src 'self';
+          img-src 'self' data: https://online.swagger.io;
+          font-src 'self' https://fonts.gstatic.com;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          script-src 'self' 'unsafe-inline';
+        POLICY
       end
     end
   end
