@@ -1,10 +1,11 @@
 rswag
 =========
-[![Build Status](https://travis-ci.org/domaindrivendev/rswag.svg?branch=master)](https://travis-ci.org/domaindrivendev/rswag)
+[![Build Status](https://travis-ci.org/rswag/rswag.svg?branch=master)](https://travis-ci.org/rswag/rswag)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1175b984edc4610f82ab/maintainability)](https://codeclimate.com/github/rswag/rswag/maintainability)
 
 [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed JSON. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
 
 And that's not all ...
 
@@ -14,9 +15,9 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/domaindrivendev/rswag/tree/master)|2.0|3.17.3|
-|[2.0.5](https://github.com/domaindrivendev/rswag/tree/2.0.4)|2.0|3.17.3|
-|[1.6.0](https://github.com/domaindrivendev/rswag/tree/1.6.0)|2.0|2.2.5|
+|[master](https://github.com/rswag/rswag/tree/master)|2.0|3.18.2|
+|[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
+|[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
 ## Getting Started ##
 
@@ -26,14 +27,15 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     gem 'rswag'
     ```
 
-    or if you like to avoid loading rspec in other bundler groups.
+    or if you like to avoid loading rspec in other bundler groups load the rswag-specs component separately.
+    Note: Adding it to the :development group is not strictly necessary, but without it, generators and rake tasks must be preceded by RAILS_ENV=test.
 
     ```ruby
     # Gemfile
     gem 'rswag-api'
     gem 'rswag-ui'
 
-    group :test do
+    group :development, :test do
       gem 'rspec-rails'
       gem 'rswag-specs'
     end
@@ -48,7 +50,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     Or run the install generators for each package separately if you installed Rswag as separate gems, as indicated above:
 
     ```ruby
-    rails g rswag:api:install rswag:ui:install
+    rails g rswag:api:install
+    rails g rswag:ui:install
     RAILS_ENV=test rails g rswag:specs:install
     ```
 
@@ -120,11 +123,16 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     end
     ```
 
+    There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
+
+
 4. Generate the Swagger JSON file(s)
 
     ```ruby
     rake rswag:specs:swaggerize
     ```
+
+    This common command is also aliased as `rake rswag`.
 
 5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
@@ -185,7 +193,7 @@ describe 'Blogs API' do
   end
 end
 ```
-*Note:* the OAI v3 may be released soon(ish?) and include a nullable property. This may have an effect on the need/use of custom extension to the draft. Do not use this property if you don't understand the implications.
+*Note:* OAI v3 has a nullable property. Rswag will work to support this soon. This may have an effect on the need/use of custom extension to the draft. Do not use this property if you don't understand the implications.
 <https://github.com/OAI/OpenAPI-Specification/issues/229#issuecomment-280376087>
 
 ### Global Metadata ###
@@ -202,16 +210,18 @@ RSpec.configure do |config|
       swagger: '2.0',
       info: {
         title: 'API V1',
-        version: 'v1'
+        version: 'v1',
+        description: 'This is the first version of my API'
       },
       basePath: '/api/v1'
     },
 
-    'v2/swagger.json' => {
-      swagger: '2.0',
+    'v2/swagger.yaml' => {
+      openapi: '3.0.0',
       info: {
         title: 'API V2',
-        version: 'v2'
+        version: 'v2',
+        description: 'This is the second version of my API'
       },
       basePath: '/api/v2'
     }
@@ -219,11 +229,12 @@ RSpec.configure do |config|
 end
 ```
 
-__NOTE__: By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If you're using multiple documents, you'll need to tag the individual specs with their target document name:
+#### Supporting multiple versions of API ####
+By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
 
 ```ruby
 # spec/integration/v2/blogs_spec.rb
-describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
+describe 'Blogs API', swagger_doc: 'v2/swagger.yaml' do
 
   path '/blogs' do
   ...
@@ -231,6 +242,25 @@ describe 'Blogs API', swagger_doc: 'v2/swagger.json' do
   path '/blogs/{id}' do
   ...
 end
+```
+
+#### Formatting the description literals: ####
+Swagger supports the Markdown syntax to format strings. This can be especially handy if you were to provide a long description of a given API version or endpoint. Use [this guide](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for reference.
+
+__NOTE:__ There is one difference between the official Markdown syntax and Swagger interpretation, namely tables. To create a table like this:
+
+| Column1 | Collumn2 |
+| ------- | -------- |
+| cell1   | cell2    |
+
+you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
+
+```
+&#13;
+| Column1 | Collumn2 |&#13;
+| ------- | -------- |&#13;
+| cell1   | cell2    |&#13;
+&#13;
 ```
 
 ### Specifying/Testing API Security ###
@@ -308,6 +338,15 @@ end
 ```
 
 __NOTE__: If you do change this, you'll also need to update the rswag-api.rb initializer (assuming you're using rswag-api). More on this later.
+
+### Input Location for Rspec Tests ###
+
+By default, rswag will search for integration tests in _spec/requests_, _spec/api_ and _spec/integration_. If you want to use tests from other locations, provide the PATTERN argument to rake:
+
+```ruby
+# search for tests in spec/swagger
+rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
+```
 
 ### Referenced Parameters and Schema Definitions ###
 
@@ -421,6 +460,35 @@ RSpec.configure do |config|
   config.swagger_dry_run = false
 end
 ```
+
+### Running tests without documenting ###
+
+If you want to use Rswag for testing without adding it to you swagger docs, you can provide the document tag:
+```ruby
+describe 'Blogs API' do
+  path '/blogs/{blog_id}' do
+    get 'Retrieves a blog' do
+      # documentation is now disabled for this response only
+      response 200, 'blog found', document: false do
+        ...
+```
+
+You can also reenable documentation for specific responses only:
+```ruby
+# documentation is now disabled
+describe 'Blogs API', document: false do
+  path '/blogs/{blog_id}' do
+    get 'Retrieves a blog' do
+      # documentation is reenabled for this response only
+      response 200, 'blog found', document: true do
+        ...
+      end
+
+      response 401, 'special case' do
+        ...
+      end
+```
+
 ### Route Prefix for Swagger JSON Endpoints ###
 
 The functionality to expose Swagger files, such as those generated by rswag-specs, as JSON endpoints is implemented as a Rails Engine. As with any Engine, you can change it's mount prefix in _routes.rb_:
@@ -464,7 +532,7 @@ Rswag::Api.configure do |c|
 end
 ```
 
-Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations based on user permissions.
+Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
 ### Enable Swagger Endpoints for swagger-ui ###
 
