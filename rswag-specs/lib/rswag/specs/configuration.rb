@@ -26,9 +26,11 @@ module Rswag
       end
 
       def swagger_dry_run
-        @swagger_dry_run ||= begin
-          @rspec_config.swagger_dry_run.nil? || @rspec_config.swagger_dry_run
+        return @swagger_dry_run if defined? @swagger_dry_run
+        if ENV.key?('SWAGGER_DRY_RUN')
+          @rspec_config.swagger_dry_run = ENV['SWAGGER_DRY_RUN'] == '1'
         end
+        @swagger_dry_run = @rspec_config.swagger_dry_run.nil? || @rspec_config.swagger_dry_run
       end
 
       def swagger_format
