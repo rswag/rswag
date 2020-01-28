@@ -34,6 +34,14 @@ module OpenApi
           end
         end
 
+        def swagger_format
+          @swagger_format ||= begin
+            @rspec_config.swagger_format = :json if @rspec_config.swagger_format.nil? || @rspec_config.swagger_format.empty?
+            raise ConfigurationError, "Unknown swagger_format '#{@rspec_config.swagger_format}'" unless [:json, :yaml].include?(@rspec_config.swagger_format)
+            @rspec_config.swagger_format
+          end
+        end
+
         def get_swagger_doc(name)
           return swagger_docs.values.first if name.nil?
           raise ConfigurationError, "Unknown swagger_doc '#{name}'" unless swagger_docs[name]

@@ -13,6 +13,7 @@ module OpenApi
         c.add_setting :swagger_root
         c.add_setting :swagger_docs
         c.add_setting :swagger_dry_run
+        c.add_setting :swagger_format
         c.extend ExampleGroupHelpers, type: :request
         c.include ExampleHelpers, type: :request
       end

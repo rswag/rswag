@@ -60,7 +60,7 @@ module OpenApi
             FileUtils.mkdir_p dirname unless File.exist?(dirname)
 
             File.open(file_path, 'w') do |file|
-              file.write(JSON.pretty_generate(doc))
+              file.write(pretty_generate(doc))
             end
 
             @output.puts "Swagger doc generated at #{file_path}"
@@ -68,6 +68,20 @@ module OpenApi
         end
 
         private
+
+        def pretty_generate(doc)
+          if @config.swagger_format == :yaml
+            clean_doc = yaml_prepare(doc)
+            YAML.dump(clean_doc)
+          else # config errors are thrown in 'def swagger_format', no throw needed here
+            JSON.pretty_generate(doc)
+          end
+        end
+
+        def yaml_prepare(doc)
+          json_doc = JSON.pretty_generate(doc)
+          JSON.parse(json_doc)
+        end
 
         def metadata_to_swagger(metadata)
           response_code = metadata[:response][:code]
