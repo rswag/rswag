@@ -72,17 +72,17 @@ module OpenApi
         def metadata_to_swagger(metadata)
           response_code = metadata[:response][:code]
           response = metadata[:response].reject { |k, _v| k == :code }
+          content_type = metadata[:response][:content].present? ? metadata[:response][:content].keys.first : 'application/json'
 
           # need to merge in to response
-          if response[:examples]&.dig('application/json')
-            example = response[:examples].dig('application/json').dup
-            schema = response.dig(:content, 'application/json', :schema)
+          if response[:examples]&.dig(content_type)
+            example = response[:examples].dig(content_type).dup
+            schema = response.dig(:content, content_type, :schema)
             new_hash = {example: example}
             new_hash[:schema] = schema if schema
-            response.merge!(content: { 'application/json' => new_hash })
+            response.merge!(content: { content_type => new_hash })
             response.delete(:examples)
           end
-
 
           verb = metadata[:operation][:verb]
           operation = metadata[:operation]
