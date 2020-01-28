@@ -40,7 +40,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     group :test do
       gem 'rspec-rails'
-      gem 'rswag-specs'
+      gem 'open_api-rswag-specs'
     end
     ```
 
