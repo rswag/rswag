@@ -133,7 +133,7 @@ module Rswag
         if [ 'application/x-www-form-urlencoded', 'multipart/form-data' ].include?(content_type)
           request[:payload] = build_form_payload(parameters, example)
         elsif [ 'application/xml', 'text/xml' ].include?(content_type)
-          request[:payload] = build_form_payload(parameters, example)        
+          request[:payload] = build_xml_payload(parameters, example)        
         else
           request[:payload] = build_json_payload(parameters, example)
         end
