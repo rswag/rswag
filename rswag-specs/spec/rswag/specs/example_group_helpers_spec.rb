@@ -1,10 +1,11 @@
-require 'rswag/specs/example_group_helpers'
+# frozen_string_literal: true
+
+require "rswag/specs/example_group_helpers"
 
 module Rswag
   module Specs
-
     RSpec.describe ExampleGroupHelpers do
-      subject { double('example_group') }
+      subject { double("example_group") }
 
       before do
         subject.extend ExampleGroupHelpers
@@ -14,59 +15,59 @@ module Rswag
       end
       let(:api_metadata) { {} }
 
-      describe '#path(path)' do
-        before { subject.path('/blogs') }
+      describe "#path(path)" do
+        before { subject.path("/blogs") }
 
         it "delegates to 'describe' with 'path' metadata" do
           expect(subject).to have_received(:describe).with(
-            '/blogs', path_item: { template: '/blogs' }
+            "/blogs", path_item: { template: "/blogs" }
           )
         end
       end
 
-      describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
-        before { subject.post('Creates a blog') }
+      describe "#get|post|patch|put|delete|head|options|trace(verb, summary)" do
+        before { subject.post("Creates a blog") }
 
         it "delegates to 'describe' with 'operation' metadata" do
           expect(subject).to have_received(:describe).with(
-            :post, operation: { verb: :post, summary: 'Creates a blog' }
+            :post, operation: { verb: :post, summary: "Creates a blog" }
           )
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated(value)' do
+      describe "#tags|description|operationId|consumes|produces|schemes|deprecated(value)" do
         before do
-          subject.tags('Blogs', 'Admin')
-          subject.description('Some description')
-          subject.operationId('createBlog')
-          subject.consumes('application/json', 'application/xml')
-          subject.produces('application/json', 'application/xml')
-          subject.schemes('http', 'https')
+          subject.tags("Blogs", "Admin")
+          subject.description("Some description")
+          subject.operationId("createBlog")
+          subject.consumes("application/json", "application/xml")
+          subject.produces("application/json", "application/xml")
+          subject.schemes("http", "https")
           subject.deprecated(true)
         end
         let(:api_metadata) { { operation: {} } }
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: [ 'Blogs', 'Admin' ],
-            description: 'Some description',
-            operationId: 'createBlog',
-            consumes: [ 'application/json', 'application/xml' ],
-            produces: [ 'application/json', 'application/xml' ],
-            schemes: [ 'http', 'https' ],
+            tags: %w[Blogs Admin],
+            description: "Some description",
+            operationId: "createBlog",
+            consumes: ["application/json", "application/xml"],
+            produces: ["application/json", "application/xml"],
+            schemes: %w[http https],
             deprecated: true
           )
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
+      describe "#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)" do
         before do
-          subject.tags('Blogs', 'Admin')
-          subject.description('Some description')
-          subject.operationId('createBlog')
-          subject.consumes('application/json', 'application/xml')
-          subject.produces('application/json', 'application/xml')
-          subject.schemes('http', 'https')
+          subject.tags("Blogs", "Admin")
+          subject.description("Some description")
+          subject.operationId("createBlog")
+          subject.consumes("application/json", "application/xml")
+          subject.produces("application/json", "application/xml")
+          subject.schemes("http", "https")
           subject.deprecated(true)
           subject.security(api_key: [])
         end
@@ -74,38 +75,37 @@ module Rswag
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: [ 'Blogs', 'Admin' ],
-            description: 'Some description',
-            operationId: 'createBlog',
-            consumes: [ 'application/json', 'application/xml' ],
-            produces: [ 'application/json', 'application/xml' ],
-            schemes: [ 'http', 'https' ],
+            tags: %w[Blogs Admin],
+            description: "Some description",
+            operationId: "createBlog",
+            consumes: ["application/json", "application/xml"],
+            produces: ["application/json", "application/xml"],
+            schemes: %w[http https],
             deprecated: true,
             security: { api_key: [] }
           )
         end
       end
 
-      describe '#parameter(attributes)' do
-
+      describe "#parameter(attributes)" do
         context "when called at the 'path' level" do
-          before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          before { subject.parameter(name: :blog, in: :body, schema: { type: "object" }) }
           let(:api_metadata) { { path_item: {} } } # i.e. operation not defined yet
 
           it "adds to the 'path_item parameters' metadata" do
             expect(api_metadata[:path_item][:parameters]).to match(
-              [ name: :blog, in: :body, schema: { type: 'object' } ]
+              [name: :blog, in: :body, schema: { type: "object" }]
             )
           end
         end
 
         context "when called at the 'operation' level" do
-          before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          before { subject.parameter(name: :blog, in: :body, schema: { type: "object" }) }
           let(:api_metadata) { { path_item: {}, operation: {} } } # i.e. operation defined
 
           it "adds to the 'operation parameters' metadata" do
             expect(api_metadata[:operation][:parameters]).to match(
-              [ name: :blog, in: :body, schema: { type: 'object' } ]
+              [name: :blog, in: :body, schema: { type: "object" }]
             )
           end
         end
@@ -116,7 +116,7 @@ module Rswag
 
           it "automatically sets the 'required' flag" do
             expect(api_metadata[:operation][:parameters]).to match(
-              [ name: :id, in: :path, required: true ]
+              [name: :id, in: :path, required: true]
             )
           end
         end
@@ -126,46 +126,46 @@ module Rswag
           let(:api_metadata) { { operation: {} } }
 
           it "does not require the 'in' parameter key" do
-            expect(api_metadata[:operation][:parameters]).to match([ name: :id ])
+            expect(api_metadata[:operation][:parameters]).to match([name: :id])
           end
         end
       end
 
-      describe '#response(code, description)' do
-        before { subject.response('201', 'success') }
+      describe "#response(code, description)" do
+        before { subject.response("201", "success") }
 
         it "delegates to 'context' with 'response' metadata" do
           expect(subject).to have_received(:context).with(
-            'success', response: { code: '201', description: 'success' }
+            "success", response: { code: "201", description: "success" }
           )
         end
       end
 
-      describe '#schema(value)' do
-        before { subject.schema(type: 'object') }
+      describe "#schema(value)" do
+        before { subject.schema(type: "object") }
         let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response' metadata" do
-          expect(api_metadata[:response][:schema]).to match(type: 'object')
+          expect(api_metadata[:response][:schema]).to match(type: "object")
         end
       end
 
-      describe '#header(name, attributes)' do
-        before { subject.header('Date', type: 'string') }
+      describe "#header(name, attributes)" do
+        before { subject.header("Date", type: "string") }
         let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response headers' metadata" do
           expect(api_metadata[:response][:headers]).to match(
-            'Date' => { type: 'string' }
+            "Date" => { type: "string" }
           )
         end
       end
 
-      describe '#examples(example)' do
+      describe "#examples(example)" do
         let(:json_example) do
           {
-            'application/json' => {
-              foo: 'bar'
+            "application/json" => {
+              foo: "bar"
             }
           }
         end

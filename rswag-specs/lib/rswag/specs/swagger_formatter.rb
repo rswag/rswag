@@ -1,10 +1,11 @@
-require 'active_support/core_ext/hash/deep_merge'
-require 'swagger_helper'
+# frozen_string_literal: true
+
+require "active_support/core_ext/hash/deep_merge"
+require "swagger_helper"
 
 module Rswag
   module Specs
     class SwaggerFormatter
-
       # NOTE: rspec 2.x support
       if RSPEC_VERSION > 2
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
@@ -14,33 +15,33 @@ module Rswag
         @output = output
         @config = config
 
-        @output.puts 'Generating Swagger docs ...'
+        @output.puts "Generating Swagger docs ..."
       end
 
       def example_group_finished(notification)
         # NOTE: rspec 2.x support
-        if RSPEC_VERSION > 2
-          metadata = notification.group.metadata
-        else
-          metadata = notification.metadata
-        end
+        metadata = if RSPEC_VERSION > 2
+                     notification.group.metadata
+                   else
+                     notification.metadata
+                   end
 
         # !metadata[:document] won't work, since nil means we should generate
         # docs.
         return if metadata[:document] == false
-        return unless metadata.has_key?(:response)
+        return unless metadata.key?(:response)
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
 
-      def stop(notification=nil)
+      def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
-          FileUtils.mkdir_p dirname unless File.exists?(dirname)
+          FileUtils.mkdir_p dirname unless File.exist?(dirname)
 
-          File.open(file_path, 'w') do |file|
+          File.open(file_path, "w") do |file|
             file.write(pretty_generate(doc))
           end
 
@@ -66,17 +67,17 @@ module Rswag
 
       def metadata_to_swagger(metadata)
         response_code = metadata[:response][:code]
-        response = metadata[:response].reject { |k,v| k == :code }
+        response = metadata[:response].reject { |k, _v| k == :code }
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k,v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k,v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end

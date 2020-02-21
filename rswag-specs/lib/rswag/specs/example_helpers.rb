@@ -1,10 +1,11 @@
-require 'rswag/specs/request_factory'
-require 'rswag/specs/response_validator'
+# frozen_string_literal: true
+
+require "rswag/specs/request_factory"
+require "rswag/specs/response_validator"
 
 module Rswag
   module Specs
     module ExampleHelpers
-
       def submit_request(metadata)
         request = RequestFactory.new.build_request(metadata, self)
 

@@ -1,34 +1,35 @@
-require 'json'
-require 'yaml'
-require 'rack/mime'
+# frozen_string_literal: true
+
+require "json"
+require "yaml"
+require "rack/mime"
 
 module Rswag
   module Api
     class Middleware
-
       def initialize(app, config)
         @app = app
         @config = config
       end
 
       def call(env)
-        path = env['PATH_INFO']
+        path = env["PATH_INFO"]
         filename = "#{@config.resolve_swagger_root(env)}/#{path}"
 
-        if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
+        if env["REQUEST_METHOD"] == "GET" && File.file?(filename)
           swagger = parse_file(filename)
-          @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
-          mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
+          @config.swagger_filter&.call(swagger, env)
+          mime = Rack::Mime.mime_type(::File.extname(path), "text/plain")
           body = unload_swagger(filename, swagger)
 
           return [
-            '200',
-            { 'Content-Type' => mime },
-            [ body ]
+            "200",
+            { "Content-Type" => mime },
+            [body]
           ]
         end
 
-        return @app.call(env)
+        @app.call(env)
       end
 
       private

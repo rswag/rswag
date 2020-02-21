@@ -1,5 +1,7 @@
-require 'rswag/ui/configuration'
-require 'rswag/ui/engine'
+# frozen_string_literal: true
+
+require "rswag/ui/configuration"
+require "rswag/ui/engine"
 
 module Rswag
   module Ui

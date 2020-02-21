@@ -1,38 +1,39 @@
-require 'rswag/specs/response_validator'
+# frozen_string_literal: true
+
+require "rswag/specs/response_validator"
 
 module Rswag
   module Specs
-
     RSpec.describe ResponseValidator do
       subject { ResponseValidator.new(config) }
 
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:config) { double('config') }
+      let(:config) { double("config") }
       let(:swagger_doc) { {} }
-      let(:example) { double('example') }
+      let(:example) { double("example") }
       let(:metadata) do
         {
           response: {
             code: 200,
-            headers: { 'X-Rate-Limit-Limit' => { type: :integer } },
+            headers: { "X-Rate-Limit-Limit" => { type: :integer } },
             schema: {
               type: :object,
               properties: { text: { type: :string } },
-              required: [ 'text' ]
+              required: ["text"]
             }
           }
         }
       end
 
-      describe '#validate!(metadata, response)' do
+      describe "#validate!(metadata, response)" do
         let(:call) { subject.validate!(metadata, response) }
         let(:response) do
           OpenStruct.new(
-            code: '200',
-            headers: { 'X-Rate-Limit-Limit' => '10' },
-            body: "{\"text\":\"Some comment\"}"
+            code: "200",
+            headers: { "X-Rate-Limit-Limit" => "10" },
+            body: '{"text":"Some comment"}'
           )
         end
 
@@ -41,7 +42,7 @@ module Rswag
         end
 
         context "response code differs from metadata" do
-          before { response.code = '400' }
+          before { response.code = "400" }
           it { expect { call }.to raise_error /Expected response code/ }
         end
 
@@ -51,23 +52,23 @@ module Rswag
         end
 
         context "response body differs from metadata" do
-          before { response.body = "{\"foo\":\"Some comment\"}" }
+          before { response.body = '{"foo":"Some comment"}' }
           it { expect { call }.to raise_error /Expected response body/ }
         end
 
-        context 'referenced schemas' do
+        context "referenced schemas" do
           before do
             swagger_doc[:definitions] = {
-              'blog' => {
+              "blog" => {
                 type: :object,
                 properties: { foo: { type: :string } },
-                required: [ 'foo' ]
+                required: ["foo"]
               }
             }
-            metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
+            metadata[:response][:schema] = { "$ref" => "#/definitions/blog" }
           end
 
-          it 'uses the referenced schema to validate the response body' do
+          it "uses the referenced schema to validate the response body" do
             expect { call }.to raise_error /Expected response body/
           end
         end

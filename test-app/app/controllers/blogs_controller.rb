@@ -1,7 +1,8 @@
-require 'fileutils'
+# frozen_string_literal: true
+
+require "fileutils"
 
 class BlogsController < ApplicationController
-
   # POST /blogs
   def create
     @blog = Blog.create(params.require(:blog).permit(:title, :content))
@@ -12,6 +13,7 @@ class BlogsController < ApplicationController
   def upload
     @blog = Blog.find_by_id(params[:id])
     return head :not_found if @blog.nil?
+
     @blog.thumbnail = save_uploaded_file params[:file]
     head @blog.save ? :ok : :unprocsessible_entity
   end
@@ -29,7 +31,7 @@ class BlogsController < ApplicationController
     fresh_when(@blog)
     return unless stale?(@blog)
 
-    respond_with @blog, status: :not_found and return unless @blog
+    respond_with(@blog, status: :not_found) && return unless @blog
     respond_with @blog
   end
 
@@ -37,7 +39,8 @@ class BlogsController < ApplicationController
 
   def save_uploaded_file(field)
     return if field.nil?
-    file = File.join('public/uploads', field.original_filename)
+
+    file = File.join("public/uploads", field.original_filename)
     FileUtils.cp field.tempfile.path, file
     field.original_filename
   end

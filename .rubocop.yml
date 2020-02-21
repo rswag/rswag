@@ -1,0 +1,14 @@
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Layout/LineLength:
+  Max: 100
+  Exclude:
+    - '**/spec/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - '**/spec/**/*'
