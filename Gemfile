@@ -24,11 +24,10 @@ gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 
 group :test do
+  gem 'rubocop'
   gem 'test-unit'
   gem 'rspec-rails'
   gem 'generator_spec'
-  gem 'capybara'
-  gem 'capybara-webkit'
   gem 'rswag-specs', path: './rswag-specs'
 end
 
