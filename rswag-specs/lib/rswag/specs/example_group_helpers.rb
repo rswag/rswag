@@ -66,6 +66,11 @@ module Rswag
         metadata[:response][:headers][name] = attributes
       end
 
+      def link(name, attributes)
+        metadata[:response][:links] ||= {}
+        metadata[:response][:links][name] = attributes
+      end
+
       # NOTE: Similar to 'description', 'examples' need to handle the case when
       # being invoked with no params to avoid overriding 'examples' method of
       # rspec-core ExampleGroup

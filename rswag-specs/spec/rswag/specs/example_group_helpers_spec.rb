@@ -136,6 +136,20 @@ module Rswag
         end
       end
 
+      describe '#link(name, attributes)' do
+        before do
+          subject.link('GetUserByUserId', '$ref' => '#/components/links/GetUserByUserId')
+          subject.link('GetUserByReference', '$ref' => '#/components/links/GetUserByReference')
+        end
+        let(:api_metadata) { { response: {} } }
+        it "adds to the 'response links' metadata" do
+          expect(api_metadata[:response][:links]).to match(
+            'GetUserByUserId' => { '$ref' => '#/components/links/GetUserByUserId' },
+            'GetUserByReference' => { '$ref' => '#/components/links/GetUserByReference' }
+          )
+        end
+      end
+
       describe '#examples(example)' do
         let(:json_example) do
           {
