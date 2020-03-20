@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -39,6 +41,10 @@ module Rswag
       def derive_security_params(metadata, swagger_doc)
         requirements = metadata[:operation][:security] || swagger_doc[:security] || []
         scheme_names = requirements.flat_map { |r| r.keys }
+        ## OA3
+        # scheme_names = requirements.flat_map(&:keys)
+        # components = swagger_doc[:components] || {}
+        # schemes = (components[:securitySchemes] || {}).slice(*scheme_names).values
         schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
 
         schemes.map do |scheme|
@@ -99,7 +105,7 @@ module Rswag
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
         if produces
-          accept = example.respond_to?(:'Accept') ? example.send(:'Accept') : produces.first
+          accept = example.respond_to?(:Accept) ? example.send(:Accept) : produces.first
           tuples << [ 'Accept', accept ]
         end
 
@@ -145,13 +151,22 @@ module Rswag
         tuples = parameters
           .select { |p| p[:in] == :formData }
           .map { |p| [ p[:name], example.send(p[:name]) ] }
-        Hash[ tuples ]
+        Hash[tuples]
       end
 
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
         body_param ? example.send(body_param[:name]).to_json : nil
       end
+      ## OA3
+      # def build_json_payload(parameters, example)
+      #   body_param = parameters.select { |p| p[:in] == :body &&  p[:name].is_a?(Symbol) }.first
+      #   return nil unless body_param
+
+      #   source_body_param = example.send(body_param[:name]) if body_param[:name] && example.respond_to?(body_param[:name])
+      #   source_body_param ||= body_param[:param_value]
+      #   source_body_param ? source_body_param.to_json : nil
+      # end
     end
   end
 end

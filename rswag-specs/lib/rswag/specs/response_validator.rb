@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash/slice'
 require 'json-schema'
 require 'json'
@@ -6,7 +8,6 @@ require 'rswag/specs/extended_schema'
 module Rswag
   module Specs
     class ResponseValidator
-
       def initialize(config = ::Rswag::Specs.config)
         @config = config
       end
@@ -25,8 +26,8 @@ module Rswag
         expected = metadata[:response][:code].to_s
         if response.code != expected
           raise UnexpectedResponse,
-                "Expected response code '#{response.code}' to match '#{expected}'\n" \
-                "Response body: #{response.body}"
+            "Expected response code '#{response.code}' to match '#{expected}'\n" \
+              "Response body: #{response.body}"
         end
       end
 
@@ -40,13 +41,33 @@ module Rswag
       def validate_body!(metadata, swagger_doc, body)
         response_schema = metadata[:response][:schema]
         return if response_schema.nil?
+        ## OA3
+        # test_schemas = extract_schemas(metadata)
+        # return if test_schemas.nil? || test_schemas.empty?
 
+        # OA3
+        # components = swagger_doc[:components] || {}
+        # components_schemas = { components: { schemas: components[:schemas] } }
+
+        # validation_schema = test_schemas[:schema] # response_schema
         validation_schema = response_schema
           .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
           .merge(swagger_doc.slice(:definitions))
+          ## OA3
+          # .merge(components_schemas)
+
         errors = JSON::Validator.fully_validate(validation_schema, body)
         raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
       end
+      ## OA3
+      # def extract_schemas(metadata)
+      #   metadata[:operation] = {produces: []} if metadata[:operation].nil?
+      #   produces = Array(metadata[:operation][:produces])
+
+      #   producer_content = produces.first || 'application/json'
+      #   response_content = metadata[:response][:content] || {producer_content => {}}
+      #   response_content[producer_content]
+      # end
     end
 
     class UnexpectedResponse < StandardError; end

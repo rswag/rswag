@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/example_helpers'
 
 module Rswag
@@ -24,6 +26,21 @@ module Rswag
           }
         }
       end
+      ## OA3
+      # let(:swagger_doc) do
+      #   {
+      #     components: {
+      #       securitySchemes: {
+      #         api_key: {
+      #           type: :apiKey,
+      #           name: 'api_key',
+      #           in: :query
+      #         }
+      #       }
+      #     }
+      #   }
+      # end
+
       let(:metadata) do
         {
           path_item: { template: '/blogs/{blog_id}/comments/{id}' },
@@ -58,8 +75,10 @@ module Rswag
         it "submits a request built from metadata and 'let' values" do
           expect(subject).to have_received(:put).with(
             '/blogs/1/comments/2?q1=foo&api_key=fookey',
-            "{\"text\":\"Some comment\"}",
+            '{"text":"Some comment"}',
             { 'CONTENT_TYPE' => 'application/json' }
+            ## OA3
+            # 'CONTENT_TYPE' => 'application/json'
           )
         end
       end

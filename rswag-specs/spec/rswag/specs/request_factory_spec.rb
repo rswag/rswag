@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/request_factory'
 
 module Rswag
@@ -204,6 +206,8 @@ module Rswag
         context 'basic auth' do
           before do
             swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+            ## OA3
+            # swagger_doc[:components] = { securitySchemes: { basic: { type: :basic } } }
             metadata[:operation][:security] = [ basic: [] ]
             allow(example).to receive(:Authorization).and_return('Basic foobar')
           end
@@ -216,6 +220,10 @@ module Rswag
         context 'apiKey' do
           before do
             swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
+            ## OA3
+            # swagger_doc[:components] = { securitySchemes: {
+            #   apiKey: { type: :apiKey, name: 'api_key', in: key_location }
+            # } }
             metadata[:operation][:security] = [ apiKey: [] ]
             allow(example).to receive(:api_key).and_return('foobar')
           end
@@ -257,6 +265,10 @@ module Rswag
         context 'oauth2' do
           before do
             swagger_doc[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: [ 'read:blogs' ] } }
+            ## OA3
+            # swagger_doc[:components] = { securitySchemes: {
+            #     oauth2: { type: :oauth2, scopes: ['read:blogs'] }
+            # } }
             metadata[:operation][:security] = [ oauth2: [ 'read:blogs' ] ]
             allow(example).to receive(:Authorization).and_return('Bearer foobar')
           end
@@ -272,6 +284,11 @@ module Rswag
               basic: { type: :basic },
               api_key: { type: :apiKey, name: 'api_key', in: :query }
             }
+            ## OA3
+            # swagger_doc[:components] = { securitySchemes: {
+            #     basic: { type: :basic },
+            #     api_key: { type: :apiKey, name: 'api_key', in: :query }
+            # } }
             metadata[:operation][:security] = [ { basic: [], api_key: [] } ]
             allow(example).to receive(:Authorization).and_return('Basic foobar')
             allow(example).to receive(:api_key).and_return('foobar')
@@ -327,6 +344,8 @@ module Rswag
         context "global security requirements" do
           before do
             swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: :query } }
+            ## OA3
+            # swagger_doc[:components] = { securitySchemes: { apiKey: { type: :apiKey, name: 'api_key', in: :query } } }
             swagger_doc[:security] = [ apiKey: [] ]
             allow(example).to receive(:api_key).and_return('foobar')
           end

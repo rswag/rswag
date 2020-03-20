@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rswag
   module Specs
     class Railtie < ::Rails::Railtie

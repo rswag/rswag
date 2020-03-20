@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/response_validator'
 
 module Rswag
@@ -22,6 +24,16 @@ module Rswag
               properties: { text: { type: :string } },
               required: [ 'text' ]
             }
+            ## OA3
+            # content: {
+            #   'application/json' => {
+            #     schema: {
+            #       type: :object,
+            #       properties: { text: { type: :string } },
+            #       required: ['text']
+            #     }
+            #   }
+            # }
           }
         }
       end
@@ -65,6 +77,16 @@ module Rswag
               }
             }
             metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
+            ## OA3
+            # swagger_doc[:components] = {}
+            # swagger_doc[:components][:schemas] = {
+            #     'blog' => {
+            #         type: :object,
+            #         properties: { foo: { type: :string } },
+            #         required: ['foo']
+            #     }
+            # }
+            # metadata[:response][:content]['application/json'][:schema] = { '$ref' => '#/components/schemas/blog' }
           end
 
           it 'uses the referenced schema to validate the response body' do

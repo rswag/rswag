@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/specs/example_group_helpers'
 
 module Rswag
@@ -86,6 +88,40 @@ module Rswag
         end
       end
 
+      ## OA3
+      # describe '#request_body_json(schema)' do
+      #   let(:api_metadata) { { path_item: {}, operation: {} } } # i.e. operation defined
+      #   context 'when required is not supplied' do
+      #     before { subject.request_body_json(schema: { type: 'object' }) }
+
+      #     it 'adds required true by default' do
+      #       expect(api_metadata[:operation][:requestBody]).to match(
+      #                                                             required: true, content: { 'application/json' => { schema: { type: 'object' } } }
+      #                                                         )
+      #     end
+      #   end
+
+      #   context 'when required is supplied' do
+      #     before { subject.request_body_json(schema: { type: 'object' }, required: false) }
+
+      #     it 'adds required false' do
+      #       expect(api_metadata[:operation][:requestBody]).to match(
+      #                                                             required: false, content: { 'application/json' => { schema: { type: 'object' } } }
+      #                                                         )
+      #     end
+      #   end
+
+      #   context 'when required is supplied' do
+      #     before { subject.request_body_json(schema: { type: 'object' }, description: 'my description') }
+
+      #     it 'adds description' do
+      #       expect(api_metadata[:operation][:requestBody]).to match(
+      #                                                             description: 'my description', required: true, content: { 'application/json' => { schema: { type: 'object' } } }
+      #                                                         )
+      #     end
+      #   end
+      # end
+
       describe '#parameter(attributes)' do
 
         context "when called at the 'path' level" do
@@ -147,6 +183,8 @@ module Rswag
 
         it "adds to the 'response' metadata" do
           expect(api_metadata[:response][:schema]).to match(type: 'object')
+          ## OA3
+          # expect(api_metadata[:response][:content]['application/json'][:schema]).to match(type: 'object')
         end
       end
 
