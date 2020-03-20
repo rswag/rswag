@@ -32,63 +32,39 @@ RSpec.configure do |config|
           }
         }
       ],
-
-      components: {
-        schemas: {
-          errors_object: {
-            type: 'object',
-            properties: {
-              errors: { '$ref' => '#/components/schemas/errors_map' }
-            }
-          },
-          errors_map: {
-            type: 'object',
-            additionalProperties: {
-              type: 'array',
-              items: { type: 'string' }
-            }
-          },
-          blog: {
-            type: 'object',
-            properties: {
-              id: { type: 'integer' },
-              title: { type: 'string' },
-              content: { type: 'string', nullable: true },
-              thumbnail: { type: 'string', nullable: true }
-            },
-            required: %w[id title]
-          },
-          flexible_blog: {
-              type: 'object',
-              properties: {
-                  id: { type: 'integer' },
-                  headline: { type: 'string' },
-                  text: { type: 'string', nullable: true },
-                  thumbnail: { type: 'string', nullable:true }
-              },
-              required: %w[id headline]
+      definitions: {
+        errors_object: {
+          type: 'object',
+          properties: {
+            errors: { '$ref' => '#/definitions/errors_map' }
           }
         },
-        examples: {
-            flexible_blog_example: {
-                summary: 'Sample example of a flexible blog',
-                value: {
-                    id:  1,
-                    headline: 'This is a headline',
-                    text: 'Some sample text'
-                }
-            }
-        },
-        securitySchemes: {
-          basic_auth: {
-            type: :http,
-            scheme: :basic
-          },
-          api_key: {
-            type: :apiKey,
-            name: 'api_key',
-            in: :query
+        errors_map: {
+          type: 'object',
+          additionalProperties: {
+            type: 'array',
+            items: { type: 'string' }
           }
+        },
+        blog: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            title: { type: 'string' },
+            content: { type: 'string', 'x-nullable': true },
+            thumbnail: { type: 'string'}
+          },
+          required: [ 'id', 'title', 'content', 'thumbnail' ]
+        }
+      },
+      securityDefinitions: {
+        basic_auth: {
+          type: :basic
+        },
+        api_key: {
+          type: :apiKey,
+          name: 'api_key',
+          in: :query
         }
       }
     }

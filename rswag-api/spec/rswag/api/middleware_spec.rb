@@ -61,7 +61,7 @@ module Rswag
           it 'locates files at the provided swagger_root' do
             expect(response.length).to eql(3)
             expect(response[1]).to include( 'Content-Type' => 'application/json')
-            expect(response[2].join).to include('"swagger":"2.0"')
+            expect(response[2].join).to include('"openapi":"3.0.1"')
           end
         end
 
