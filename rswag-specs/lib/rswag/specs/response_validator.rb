@@ -70,7 +70,7 @@ module Rswag
           swagger_doc.slice(:definitions)
         else # Openapi3
           if swagger_doc.has_key?(:definitions)
-            warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
             return swagger_doc.slice(:definitions)
           else
             components = swagger_doc[:components] || {}
