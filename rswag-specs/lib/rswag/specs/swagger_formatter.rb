@@ -34,7 +34,7 @@ module Rswag
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
-        if doc_version(swagger_doc).starts_with?('3')
+        if !doc_version(swagger_doc).start_with?('2')
           upgrade_request_type!(metadata)
         end
 

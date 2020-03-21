@@ -66,7 +66,7 @@ module Rswag
       # end
 
       def definitions_or_component_schemas(swagger_doc, version)
-        if version.starts_with?('2')
+        if version.start_with?('2')
           swagger_doc.slice(:definitions)
         else # Openapi3
           if swagger_doc.has_key?(:definitions)

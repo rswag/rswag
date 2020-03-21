@@ -12,7 +12,7 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
       let(:config) { double('config') }
-      let(:swagger_doc) { {} }
+      let(:swagger_doc) { { swagger: '2.0' } }
       let(:example) { double('example') }
       let(:metadata) do
         {
@@ -314,14 +314,45 @@ module Rswag
         end
 
         context 'referenced parameters' do
-          before do
-            swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
-            metadata[:operation][:parameters] = [ { '$ref' => '#/parameters/q1' } ]
-            allow(example).to receive(:q1).and_return('foo')
+          context 'swagger 2.0' do
+            before do
+              swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
+              metadata[:operation][:parameters] = [ { '$ref' => '#/parameters/q1' } ]
+              allow(example).to receive(:q1).and_return('foo')
+            end
+
+            it 'uses the referenced metadata to build the request' do
+              expect(request[:path]).to eq('/blogs?q1=foo')
+            end
           end
 
-          it 'uses the referenced metadata to build the request' do
-            expect(request[:path]).to eq('/blogs?q1=foo')
+          context 'openapi 3.0.1' do
+            let(:swagger_doc) { { openapi: '3.0.1' } }
+            before do
+              swagger_doc[:components] = { parameters: { q1: { name: 'q1', in: :query, type: :string } } }
+              metadata[:operation][:parameters] = [ { '$ref' => '#/components/parameters/q1' } ]
+              allow(example).to receive(:q1).and_return('foo')
+            end
+
+            it 'uses the referenced metadata to build the request' do
+              expect(request[:path]).to eq('/blogs?q1=foo')
+            end
+          end
+
+          context 'openapi 3.0.1 upgrade notice' do
+            let(:swagger_doc) { { openapi: '3.0.1' } }
+            before do
+              allow(ActiveSupport::Deprecation).to receive(:warn)
+              swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
+              metadata[:operation][:parameters] = [ { '$ref' => '#/parameters/q1' } ]
+              allow(example).to receive(:q1).and_return('foo')
+            end
+
+            it 'warns the user to upgrade' do
+              expect(request[:path]).to eq('/blogs?q1=foo')
+              expect(ActiveSupport::Deprecation).to have_received(:warn)
+                .with('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+            end
           end
         end
 

@@ -3,6 +3,7 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
+require 'byebug'
 
 module Rswag
   module Specs
@@ -54,10 +55,37 @@ module Rswag
       end
 
       def resolve_parameter(ref, swagger_doc)
-        key = ref.sub('#/parameters/', '').to_sym
-        definitions = swagger_doc[:parameters]
+        key = key_version(ref, swagger_doc)
+        definitions = definition_version(swagger_doc)
+
         raise "Referenced parameter '#{ref}' must be defined" unless definitions && definitions[key]
         definitions[key]
+      end
+
+      def key_version(ref, swagger_doc)
+        if doc_version(swagger_doc).start_with?('2')
+          ref.sub('#/parameters/', '').to_sym
+        else # Openapi3
+          if ref.start_with?('#/parameters/')
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+            ref.sub('#/parameters/', '').to_sym
+          else
+            ref.sub('#/components/parameters/', '').to_sym
+          end
+        end
+      end
+
+      def definition_version(swagger_doc)
+        if doc_version(swagger_doc).start_with?('2')
+          swagger_doc[:parameters]
+        else # Openapi3
+          if swagger_doc.has_key?(:parameters)
+            swagger_doc[:parameters]
+          else
+            components = swagger_doc[:components] || {}
+            components[:parameters]
+          end
+        end
       end
 
       def add_verb(request, metadata)
@@ -167,6 +195,10 @@ module Rswag
       #   source_body_param ||= body_param[:param_value]
       #   source_body_param ? source_body_param.to_json : nil
       # end
+
+      def doc_version(doc)
+        doc[:openapi] || doc[:swagger] || '3'
+      end
     end
   end
 end
