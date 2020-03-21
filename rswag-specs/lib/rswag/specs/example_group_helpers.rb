@@ -157,12 +157,6 @@ module Rswag
       def header(name, attributes)
         metadata[:response][:headers] ||= {}
 
-        ## OA3
-        # if attributes[:type] && attributes[:schema].nil?
-        #   attributes[:schema] = { type: attributes[:type] }
-        #   attributes.delete(:type)
-        # end
-
         metadata[:response][:headers][name] = attributes
       end
 

@@ -28,7 +28,7 @@ module Rswag
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
-            response: { code: '201', description: 'blog created' },
+            response: { code: '201', description: 'blog created', headers: { type: :string } },
             document: document
           }
         end
@@ -55,7 +55,10 @@ module Rswag
                     parameters: [{ type: :string }],
                     summary: 'Creates a blog',
                     responses: {
-                      '201' => { description: 'blog created' }
+                      '201' => {
+                        description: 'blog created',
+                        headers: { type: :string }
+                      }
                     }
                   }
                 }
@@ -78,7 +81,10 @@ module Rswag
                     parameters: [{ schema: { type: :string } }],
                     summary: 'Creates a blog',
                     responses: {
-                      '201' => { description: 'blog created' }
+                      '201' => {
+                        description: 'blog created',
+                        headers: { schema: { type: :string } }
+                      }
                     }
                   }
                 }

@@ -27,20 +27,6 @@ module Rswag
           }
         }
       end
-      ## OA3
-      # let(:swagger_doc) do
-      #   {
-      #     components: {
-      #       securitySchemes: {
-      #         api_key: {
-      #           type: :apiKey,
-      #           name: 'api_key',
-      #           in: :query
-      #         }
-      #       }
-      #     }
-      #   }
-      # end
 
       let(:metadata) do
         {
