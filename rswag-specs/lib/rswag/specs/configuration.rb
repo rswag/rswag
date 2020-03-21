@@ -46,6 +46,11 @@ module Rswag
         raise ConfigurationError, "Unknown swagger_doc '#{name}'" unless swagger_docs[name]
         swagger_docs[name]
       end
+
+      def get_swagger_doc_version(name)
+        doc = get_swagger_doc(name)
+        doc[:openapi] || doc[:swagger]
+      end
     end
 
     class ConfigurationError < StandardError; end

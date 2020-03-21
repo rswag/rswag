@@ -44,17 +44,13 @@ module Rswag
         ## OA3
         # test_schemas = extract_schemas(metadata)
         # return if test_schemas.nil? || test_schemas.empty?
-
-        # OA3
-        # components = swagger_doc[:components] || {}
-        # components_schemas = { components: { schemas: components[:schemas] } }
+        version = @config.get_swagger_doc_version(metadata[:swagger_doc])
+        schemas = definitions_or_component_schemas(swagger_doc, version)
 
         # validation_schema = test_schemas[:schema] # response_schema
         validation_schema = response_schema
           .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(swagger_doc.slice(:definitions))
-          ## OA3
-          # .merge(components_schemas)
+          .merge(schemas)
 
         errors = JSON::Validator.fully_validate(validation_schema, body)
         raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
@@ -68,6 +64,20 @@ module Rswag
       #   response_content = metadata[:response][:content] || {producer_content => {}}
       #   response_content[producer_content]
       # end
+
+      def definitions_or_component_schemas(swagger_doc, version)
+        if version.starts_with?('2')
+          swagger_doc.slice(:definitions)
+        else # Openapi3
+          if swagger_doc.has_key?(:definitions)
+            warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+            return swagger_doc.slice(:definitions)
+          else
+            components = swagger_doc[:components] || {}
+            return { components: { schemas: components[:schemas] } }
+          end
+        end
+      end
     end
 
     class UnexpectedResponse < StandardError; end
