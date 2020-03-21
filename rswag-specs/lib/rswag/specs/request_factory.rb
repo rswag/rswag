@@ -41,16 +41,26 @@ module Rswag
 
       def derive_security_params(metadata, swagger_doc)
         requirements = metadata[:operation][:security] || swagger_doc[:security] || []
-        scheme_names = requirements.flat_map { |r| r.keys }
-        ## OA3
-        # scheme_names = requirements.flat_map(&:keys)
-        # components = swagger_doc[:components] || {}
-        # schemes = (components[:securitySchemes] || {}).slice(*scheme_names).values
-        schemes = (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
+        scheme_names = requirements.flat_map(&:keys)
+        schemes = security_version(scheme_names, swagger_doc)
 
         schemes.map do |scheme|
           param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(type: :string, required: requirements.one?)
+        end
+      end
+
+      def security_version(scheme_names, swagger_doc)
+        if doc_version(swagger_doc).start_with?('2')
+          (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
+        else # Openapi3
+          if swagger_doc.has_key?(:securityDefinitions)
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
+            (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
+          else
+            components = swagger_doc[:components] || {}
+            (components[:securitySchemes] || {}).slice(*scheme_names).values
+          end
         end
       end
 
@@ -80,6 +90,7 @@ module Rswag
           swagger_doc[:parameters]
         else # Openapi3
           if swagger_doc.has_key?(:parameters)
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
             swagger_doc[:parameters]
           else
             components = swagger_doc[:components] || {}

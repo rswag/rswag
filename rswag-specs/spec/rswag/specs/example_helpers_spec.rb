@@ -17,6 +17,7 @@ module Rswag
       let(:config) { double('config') }
       let(:swagger_doc) do
         {
+          swagger: '2.0',
           securityDefinitions: {
             api_key: {
               type: :apiKey,

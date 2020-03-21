@@ -204,16 +204,45 @@ module Rswag
         end
 
         context 'basic auth' do
-          before do
-            swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
-            ## OA3
-            # swagger_doc[:components] = { securitySchemes: { basic: { type: :basic } } }
-            metadata[:operation][:security] = [ basic: [] ]
-            allow(example).to receive(:Authorization).and_return('Basic foobar')
+          context 'swagger 2.0' do
+            before do
+              swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+              metadata[:operation][:security] = [ basic: [] ]
+              allow(example).to receive(:Authorization).and_return('Basic foobar')
+            end
+
+            it "sets 'HTTP_AUTHORIZATION' header to example value" do
+              expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+            end
           end
 
-          it "sets 'HTTP_AUTHORIZATION' header to example value" do
-            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+          context 'openapi 3.0.1' do
+            let(:swagger_doc) { { openapi: '3.0.1' } }
+            before do
+              swagger_doc[:components] = { securitySchemes: { basic: { type: :basic } } }
+              metadata[:operation][:security] = [ basic: [] ]
+              allow(example).to receive(:Authorization).and_return('Basic foobar')
+            end
+
+            it "sets 'HTTP_AUTHORIZATION' header to example value" do
+              expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+            end
+          end
+
+          context 'openapi 3.0.1 upgrade notice' do
+            let(:swagger_doc) { { openapi: '3.0.1' } }
+            before do
+              allow(ActiveSupport::Deprecation).to receive(:warn)
+              swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+              metadata[:operation][:security] = [ basic: [] ]
+              allow(example).to receive(:Authorization).and_return('Basic foobar')
+            end
+
+            it 'warns the user to upgrade' do
+              expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
+              expect(ActiveSupport::Deprecation).to have_received(:warn)
+                .with('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
+            end
           end
         end
 
@@ -352,6 +381,8 @@ module Rswag
               expect(request[:path]).to eq('/blogs?q1=foo')
               expect(ActiveSupport::Deprecation).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+              expect(ActiveSupport::Deprecation).to have_received(:warn)
+                .with('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
             end
           end
         end
