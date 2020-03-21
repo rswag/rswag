@@ -22,12 +22,12 @@ module Rswag
           allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
           subject.example_group_finished(notification)
         end
-        let(:swagger_doc) { {} }
+        let(:swagger_doc) { { swagger: '2.0' } }
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
           {
-            path_item: { template: '/blogs' },
-            operation: { verb: :post, summary: 'Creates a blog' },
+            path_item: { template: '/blogs', parameters: [{ type: :string }] },
+            operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
             response: { code: '201', description: 'blog created' },
             document: document
           }
@@ -37,7 +37,7 @@ module Rswag
           let(:document) { false }
 
           it 'does not update the swagger doc' do
-            expect(swagger_doc).to be_empty
+            expect(swagger_doc).to match({ swagger: '2.0' })
           end
         end
 
@@ -47,9 +47,35 @@ module Rswag
 
           it 'converts to swagger and merges into the corresponding swagger doc' do
             expect(swagger_doc).to match(
+              swagger: '2.0',
               paths: {
                 '/blogs' => {
+                  parameters: [{ type: :string }],
                   post: {
+                    parameters: [{ type: :string }],
+                    summary: 'Creates a blog',
+                    responses: {
+                      '201' => { description: 'blog created' }
+                    }
+                  }
+                }
+              }
+            )
+          end
+        end
+
+        context 'upgrades to 3.0' do
+          let(:swagger_doc) { { openapi: '3.0.1'} }
+          let(:document) { nil }
+
+          it 'converts query and path params, type: to schema: { type: }' do
+            expect(swagger_doc).to match(
+              openapi: '3.0.1',
+              paths: {
+                '/blogs' => {
+                  parameters: [{ schema: { type: :string } }],
+                  post: {
+                    parameters: [{ schema: { type: :string } }],
                     summary: 'Creates a blog',
                     responses: {
                       '201' => { description: 'blog created' }

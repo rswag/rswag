@@ -33,12 +33,16 @@ module Rswag
         return unless metadata.has_key?(:response)
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+
+        if doc_version(swagger_doc).starts_with?('3')
+          upgrade_request_type!(metadata)
+        end
+
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
 
       def stop(_notification=nil)
         @config.swagger_docs.each do |url_path, doc|
-
           ## OA3
           # # remove 2.0 parameters
           # doc[:paths]&.each_pair do |_k, v|
@@ -114,6 +118,22 @@ module Rswag
           .merge(verb => operation)
 
         { paths: { path_template => path_item } }
+      end
+
+      def doc_version(doc)
+        doc[:openapi] || doc[:swagger] || '3'
+      end
+
+      def upgrade_request_type!(metadata)
+        operation_nodes = metadata[:operation][:parameters] || []
+        path_nodes = metadata[:path_item][:parameters] || []
+
+        (operation_nodes + path_nodes).each do |node|
+          if node && node[:type] && node[:schema].nil?
+            node[:schema] = { type: node[:type] }
+            node.delete(:type)
+          end
+        end
       end
     end
   end

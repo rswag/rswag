@@ -131,11 +131,6 @@ module Rswag
           attributes[:required] = true
         end
 
-        ## IF OA3
-        # if attributes[:type] && attributes[:schema].nil?
-        #   attributes[:schema] = {type: attributes[:type]}
-        # end
-
         if metadata.has_key?(:operation)
           metadata[:operation][:parameters] ||= []
           metadata[:operation][:parameters] << attributes
@@ -164,7 +159,7 @@ module Rswag
 
         ## OA3
         # if attributes[:type] && attributes[:schema].nil?
-        #   attributes[:schema] = {type: attributes[:type]}
+        #   attributes[:schema] = { type: attributes[:type] }
         #   attributes.delete(:type)
         # end
 

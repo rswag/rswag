@@ -129,7 +129,9 @@
           {
             "name": "keywords",
             "in": "query",
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -144,8 +146,10 @@
         {
           "name": "id",
           "in": "path",
-          "type": "string",
-          "required": true
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -195,8 +199,10 @@
         {
           "name": "id",
           "in": "path",
-          "type": "string",
-          "required": true
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "put": {
@@ -213,8 +219,10 @@
           {
             "name": "file",
             "in": "formData",
-            "type": "file",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "file"
+            }
           }
         ],
         "responses": {
