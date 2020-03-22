@@ -36,6 +36,7 @@ module Rswag
 
         if !doc_version(swagger_doc).start_with?('2')
           upgrade_request_type!(metadata)
+          upgrade_servers!(swagger_doc)
         end
 
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
@@ -134,6 +135,20 @@ module Rswag
             node[:schema] = { type: node[:type] }
             node.delete(:type)
           end
+        end
+      end
+
+      def upgrade_servers!(swagger_doc)
+        if swagger_doc[:servers].nil? && swagger_doc.has_key?(:schemes)
+
+          swagger_doc[:servers] = { urls: [] }
+          swagger_doc[:schemes].each do |scheme|
+            swagger_doc[:servers][:urls] << scheme + '://' + swagger_doc[:host] + swagger_doc[:basePath]
+          end
+
+          swagger_doc.delete(:schemes)
+          swagger_doc.delete(:host)
+          swagger_doc.delete(:basePath)
         end
       end
     end

@@ -21,10 +21,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "headers": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "headers": {
+            }
           }
         }
       }
@@ -45,10 +49,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "headers": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "headers": {
+            }
           }
         }
       }
@@ -72,10 +80,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "headers": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "headers": {
+            }
           }
         }
       }
@@ -105,12 +117,16 @@
         ],
         "responses": {
           "201": {
-            "description": "blog created"
+            "description": "blog created",
+            "headers": {
+            }
           },
           "422": {
             "description": "invalid request",
             "schema": {
               "$ref": "#/definitions/errors_object"
+            },
+            "headers": {
             }
           }
         }
@@ -136,7 +152,9 @@
         ],
         "responses": {
           "406": {
-            "description": "unsupported accept header"
+            "description": "unsupported accept header",
+            "headers": {
+            }
           }
         }
       }
@@ -189,7 +207,9 @@
             }
           },
           "404": {
-            "description": "blog not found"
+            "description": "blog not found",
+            "headers": {
+            }
           }
         }
       }
@@ -227,7 +247,9 @@
         ],
         "responses": {
           "200": {
-            "description": "blog updated"
+            "description": "blog updated",
+            "headers": {
+            }
           }
         }
       }

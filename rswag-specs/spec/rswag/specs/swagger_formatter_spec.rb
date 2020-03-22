@@ -22,7 +22,6 @@ module Rswag
           allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
           subject.example_group_finished(notification)
         end
-        let(:swagger_doc) { { swagger: '2.0' } }
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
           {
@@ -34,6 +33,7 @@ module Rswag
         end
 
         context 'with the document tag set to false' do
+          let(:swagger_doc) { { swagger: '2.0' } }
           let(:document) { false }
 
           it 'does not update the swagger doc' do
@@ -42,6 +42,7 @@ module Rswag
         end
 
         context 'with the document tag set to anything but false' do
+          let(:swagger_doc) { { swagger: '2.0' } }
           # anything works, including its absence when specifying responses.
           let(:document) { nil }
 
@@ -67,13 +68,21 @@ module Rswag
           end
         end
 
-        context 'upgrades to 3.0' do
-          let(:swagger_doc) { { openapi: '3.0.1'} }
+        context 'with metadata upgrades for 3.0' do
+          let(:swagger_doc) { {
+            openapi: '3.0.1',
+            basePath: '/foo',
+            schemes: ['http', 'https'],
+            host: 'api.example.com'
+          } }
           let(:document) { nil }
 
           it 'converts query and path params, type: to schema: { type: }' do
             expect(swagger_doc).to match(
               openapi: '3.0.1',
+              servers: {
+                urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
+              },
               paths: {
                 '/blogs' => {
                   parameters: [{ schema: { type: :string } }],
