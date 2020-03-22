@@ -128,7 +128,7 @@ module Rswag
       def upgrade_request_type!(metadata)
         operation_nodes = metadata[:operation][:parameters] || []
         path_nodes = metadata[:path_item][:parameters] || []
-        header_node = metadata[:response][:headers] ||= {}
+        header_node = metadata[:response][:headers] || {}
 
         (operation_nodes + path_nodes + [header_node]).each do |node|
           if node && node[:type] && node[:schema].nil?

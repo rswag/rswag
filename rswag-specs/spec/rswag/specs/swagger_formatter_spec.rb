@@ -78,11 +78,7 @@ module Rswag
           let(:document) { nil }
 
           it 'converts query and path params, type: to schema: { type: }' do
-            expect(swagger_doc).to match(
-              openapi: '3.0.1',
-              servers: {
-                urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
-              },
+            expect(swagger_doc.slice(:paths)).to match(
               paths: {
                 '/blogs' => {
                   parameters: [{ schema: { type: :string } }],
@@ -97,6 +93,14 @@ module Rswag
                     }
                   }
                 }
+              }
+            )
+          end
+
+          it 'converts basePath, schemas and host to urls' do
+            expect(swagger_doc.slice(:servers)).to match(
+              servers: {
+                urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
               }
             )
           end
