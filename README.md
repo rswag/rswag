@@ -94,7 +94,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
         get 'Retrieves a blog' do
           tags 'Blogs'
           produces 'application/json', 'application/xml'
-          parameter name: :id, :in => :path, :type => :string
+          parameter name: :id, in: :path, schema: { type: :string }
 
           response '200', 'blog found' do
             schema type: :object,
