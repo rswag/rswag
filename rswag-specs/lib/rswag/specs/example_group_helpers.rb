@@ -55,6 +55,8 @@ module Rswag
       end
 
       def schema(value)
+        content = metadata[:operation][:produces].first
+        metadata[:response][:content] = { content => { schema: value } }
         metadata[:response][:schema] = value
       end
 
