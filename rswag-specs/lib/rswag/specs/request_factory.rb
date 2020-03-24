@@ -75,19 +75,27 @@ module Rswag
 
       def build_query_string_part(param, value)
         name = param[:name]
-        return "#{name}=#{value.to_s}" unless param[:type].to_sym == :array
 
-        case param[:collectionFormat]
-        when :ssv
-          "#{name}=#{value.join(' ')}"
-        when :tsv
-          "#{name}=#{value.join('\t')}"
-        when :pipes
-          "#{name}=#{value.join('|')}"
-        when :multi
-          value.map { |v| "#{name}=#{v}" }.join('&')
+        case param[:type].to_sym 
+        when :array
+          case param[:collectionFormat].to_sym 
+          when :ssv
+            "#{name}=#{value.join(' ')}"
+          when :tsv
+            "#{name}=#{value.join('\t')}"
+          when :pipes
+            "#{name}=#{value.join('|')}"
+          when :multi
+            value.map { |v| "#{name}=#{v}" }.join('&')
+          else
+            "#{name}=#{value.join(',')}" # csv is default
+          end
+        when :hash
+          query_hash = {}
+          query_hash[name] = value
+          query_hash.to_query
         else
-          "#{name}=#{value.join(',')}" # csv is default
+          "#{name}=#{value.to_s}"
         end
       end
 
