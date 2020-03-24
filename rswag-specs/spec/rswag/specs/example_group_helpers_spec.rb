@@ -143,10 +143,26 @@ module Rswag
 
       describe '#schema(value)' do
         before { subject.schema(type: 'object') }
-        let(:api_metadata) { { response: {} } }
+        let(:api_metadata) do
+          {
+            response: {},
+            operation: {
+              produces: ['application/json']
+            }
+          }
+        end
+        let(:response_metadata) do
+          {
+            'application/json' =>  {
+              schema: {
+                type: 'object'
+              }
+            }
+          }
+        end
 
         it "adds to the 'response' metadata" do
-          expect(api_metadata[:response][:schema]).to match(type: 'object')
+          expect(api_metadata[:response][:content]).to match(response_metadata)
         end
       end
 
