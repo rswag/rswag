@@ -37,6 +37,7 @@ module Rswag
         if !doc_version(swagger_doc).start_with?('2')
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
+          upgrade_oauth!(swagger_doc)
         end
 
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
@@ -126,6 +127,7 @@ module Rswag
       end
 
       def upgrade_request_type!(metadata)
+        # No deprecation here as it seems valid to allow type as a shorthand
         operation_nodes = metadata[:operation][:parameters] || []
         path_nodes = metadata[:path_item][:parameters] || []
         header_node = metadata[:response][:headers] || {}
@@ -140,6 +142,7 @@ module Rswag
 
       def upgrade_servers!(swagger_doc)
         if swagger_doc[:servers].nil? && swagger_doc.has_key?(:schemes)
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: schemes, host, and basePath are replaced in OpenAPI3! Rename to array of servers[{url}] (in swagger_helper.rb)')
 
           swagger_doc[:servers] = { urls: [] }
           swagger_doc[:schemes].each do |scheme|
@@ -149,6 +152,20 @@ module Rswag
           swagger_doc.delete(:schemes)
           swagger_doc.delete(:host)
           swagger_doc.delete(:basePath)
+        end
+      end
+
+      def upgrade_oauth!(swagger_doc)
+        # find flow in securitySchemes (securityDefinitions will have been re-written)
+        schemes = swagger_doc.dig(:components, :securitySchemes)
+        if schemes && schemes.any?{ |_k, v| v.has_key?(:flow) }
+          schemes.each do |name, v|
+            if v.has_key?(:flow)
+              ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
+              flow = swagger_doc[:components][:securitySchemes][name].delete(:flow)
+              swagger_doc[:components][:securitySchemes][name].merge!(flows: [flow])
+            end
+          end
         end
       end
     end

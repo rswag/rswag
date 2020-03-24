@@ -73,7 +73,14 @@ module Rswag
             openapi: '3.0.1',
             basePath: '/foo',
             schemes: ['http', 'https'],
-            host: 'api.example.com'
+            host: 'api.example.com',
+            components: {
+              securitySchemes: {
+                my_oauth: {
+                  flow: :anything
+                }
+              }
+            }
           } }
           let(:document) { nil }
 
@@ -101,6 +108,18 @@ module Rswag
             expect(swagger_doc.slice(:servers)).to match(
               servers: {
                 urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
+              }
+            )
+          end
+
+          it 'upgrades oauth flow to flows' do
+            expect(swagger_doc.slice(:components)).to match(
+              components: {
+                securitySchemes: {
+                  my_oauth: {
+                    flows: [:anything]
+                  }
+                }
               }
             )
           end
