@@ -4,7 +4,6 @@ require 'rswag/specs/response_validator'
 
 module Rswag
   module Specs
-
     RSpec.describe ResponseValidator do
       subject { ResponseValidator.new(config) }
 
@@ -23,7 +22,7 @@ module Rswag
             schema: {
               type: :object,
               properties: { text: { type: :string } },
-              required: [ 'text' ]
+              required: ['text']
             }
             ## OA3
             # content: {
@@ -49,21 +48,21 @@ module Rswag
           )
         end
 
-        context "response matches metadata" do
+        context 'response matches metadata' do
           it { expect { call }.to_not raise_error }
         end
 
-        context "response code differs from metadata" do
+        context 'response code differs from metadata' do
           before { response.code = '400' }
           it { expect { call }.to raise_error(/Expected response code/) }
         end
 
-        context "response headers differ from metadata" do
+        context 'response headers differ from metadata' do
           before { response.headers = {} }
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
-        context "response body differs from metadata" do
+        context 'response body differs from metadata' do
           before { response.body = '{"foo":"Some comment"}' }
           it { expect { call }.to raise_error(/Expected response body/) }
         end
@@ -75,7 +74,7 @@ module Rswag
                 'blog' => {
                   type: :object,
                   properties: { foo: { type: :string } },
-                  required: [ 'foo' ]
+                  required: ['foo']
                 }
               }
               metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
@@ -96,7 +95,7 @@ module Rswag
                     'blog' => {
                       type: :object,
                       properties: { foo: { type: :string } },
-                      required: [ 'foo' ]
+                      required: ['foo']
                     }
                   }
                 }
@@ -116,7 +115,7 @@ module Rswag
                   'blog' => {
                     type: :object,
                     properties: { foo: { type: :string } },
-                    required: [ 'foo' ]
+                    required: ['foo']
                   }
                 }
                 metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }

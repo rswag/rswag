@@ -4,7 +4,6 @@ require 'rswag/specs/example_group_helpers'
 
 module Rswag
   module Specs
-
     RSpec.describe ExampleGroupHelpers do
       subject { double('example_group') }
 
@@ -50,12 +49,12 @@ module Rswag
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: [ 'Blogs', 'Admin' ],
+            tags: ['Blogs', 'Admin'],
             description: 'Some description',
             operationId: 'createBlog',
-            consumes: [ 'application/json', 'application/xml' ],
-            produces: [ 'application/json', 'application/xml' ],
-            schemes: [ 'http', 'https' ],
+            consumes: ['application/json', 'application/xml'],
+            produces: ['application/json', 'application/xml'],
+            schemes: ['http', 'https'],
             deprecated: true
           )
         end
@@ -76,12 +75,12 @@ module Rswag
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: [ 'Blogs', 'Admin' ],
+            tags: ['Blogs', 'Admin'],
             description: 'Some description',
             operationId: 'createBlog',
-            consumes: [ 'application/json', 'application/xml' ],
-            produces: [ 'application/json', 'application/xml' ],
-            schemes: [ 'http', 'https' ],
+            consumes: ['application/json', 'application/xml'],
+            produces: ['application/json', 'application/xml'],
+            schemes: ['http', 'https'],
             deprecated: true,
             security: { api_key: [] }
           )
@@ -123,14 +122,13 @@ module Rswag
       # end
 
       describe '#parameter(attributes)' do
-
         context "when called at the 'path' level" do
           before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
           let(:api_metadata) { { path_item: {} } } # i.e. operation not defined yet
 
           it "adds to the 'path_item parameters' metadata" do
             expect(api_metadata[:path_item][:parameters]).to match(
-              [ name: :blog, in: :body, schema: { type: 'object' } ]
+              [name: :blog, in: :body, schema: { type: 'object' }]
             )
           end
         end
@@ -141,7 +139,7 @@ module Rswag
 
           it "adds to the 'operation parameters' metadata" do
             expect(api_metadata[:operation][:parameters]).to match(
-              [ name: :blog, in: :body, schema: { type: 'object' } ]
+              [name: :blog, in: :body, schema: { type: 'object' }]
             )
           end
         end
@@ -152,7 +150,7 @@ module Rswag
 
           it "automatically sets the 'required' flag" do
             expect(api_metadata[:operation][:parameters]).to match(
-              [ name: :id, in: :path, required: true ]
+              [name: :id, in: :path, required: true]
             )
           end
         end
@@ -162,7 +160,7 @@ module Rswag
           let(:api_metadata) { { operation: {} } }
 
           it "does not require the 'in' parameter key" do
-            expect(api_metadata[:operation][:parameters]).to match([ name: :id ])
+            expect(api_metadata[:operation][:parameters]).to match([name: :id])
           end
         end
       end

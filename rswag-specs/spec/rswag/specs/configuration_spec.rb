@@ -4,7 +4,6 @@ require 'rswag/specs/configuration'
 
 module Rswag
   module Specs
-
     RSpec.describe Configuration do
       subject { described_class.new(rspec_config) }
 

@@ -6,7 +6,6 @@ require 'swagger_helper'
 module Rswag
   module Specs
     class SwaggerFormatter
-
       # NOTE: rspec 2.x support
       if RSPEC_VERSION > 2
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
@@ -30,11 +29,11 @@ module Rswag
         # !metadata[:document] won't work, since nil means we should generate
         # docs.
         return if metadata[:document] == false
-        return unless metadata.has_key?(:response)
+        return unless metadata.key?(:response)
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
-        if !doc_version(swagger_doc).start_with?('2')
+        unless doc_version(swagger_doc).start_with?('2')
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
@@ -43,7 +42,7 @@ module Rswag
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
 
-      def stop(_notification=nil)
+      def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           ## OA3
           # # remove 2.0 parameters
@@ -68,7 +67,7 @@ module Rswag
 
           file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
-          FileUtils.mkdir_p dirname unless File.exists?(dirname)
+          FileUtils.mkdir_p dirname unless File.exist?(dirname)
 
           File.open(file_path, 'w') do |file|
             file.write(pretty_generate(doc))
@@ -96,7 +95,7 @@ module Rswag
 
       def metadata_to_swagger(metadata)
         response_code = metadata[:response][:code]
-        response = metadata[:response].reject { |k,v| k == :code }
+        response = metadata[:response].reject { |k, _v| k == :code }
         ## OA3
         # content_type = metadata[:response][:content].present? ? metadata[:response][:content].keys.first : 'application/json'
         # # need to merge in to response
@@ -111,12 +110,12 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k,v| k == :verb }
+          .reject { |k, _v| k == :verb }
           .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k,v| k == :template }
+          .reject { |k, _v| k == :template }
           .merge(verb => operation)
 
         { paths: { path_template => path_item } }
@@ -141,31 +140,31 @@ module Rswag
       end
 
       def upgrade_servers!(swagger_doc)
-        if swagger_doc[:servers].nil? && swagger_doc.has_key?(:schemes)
-          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: schemes, host, and basePath are replaced in OpenAPI3! Rename to array of servers[{url}] (in swagger_helper.rb)')
+        return unless swagger_doc[:servers].nil? && swagger_doc.key?(:schemes)
 
-          swagger_doc[:servers] = { urls: [] }
-          swagger_doc[:schemes].each do |scheme|
-            swagger_doc[:servers][:urls] << scheme + '://' + swagger_doc[:host] + swagger_doc[:basePath]
-          end
+        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: schemes, host, and basePath are replaced in OpenAPI3! Rename to array of servers[{url}] (in swagger_helper.rb)')
 
-          swagger_doc.delete(:schemes)
-          swagger_doc.delete(:host)
-          swagger_doc.delete(:basePath)
+        swagger_doc[:servers] = { urls: [] }
+        swagger_doc[:schemes].each do |scheme|
+          swagger_doc[:servers][:urls] << scheme + '://' + swagger_doc[:host] + swagger_doc[:basePath]
         end
+
+        swagger_doc.delete(:schemes)
+        swagger_doc.delete(:host)
+        swagger_doc.delete(:basePath)
       end
 
       def upgrade_oauth!(swagger_doc)
         # find flow in securitySchemes (securityDefinitions will have been re-written)
         schemes = swagger_doc.dig(:components, :securitySchemes)
-        if schemes && schemes.any?{ |_k, v| v.has_key?(:flow) }
-          schemes.each do |name, v|
-            if v.has_key?(:flow)
-              ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
-              flow = swagger_doc[:components][:securitySchemes][name].delete(:flow)
-              swagger_doc[:components][:securitySchemes][name].merge!(flows: [flow])
-            end
-          end
+        return unless schemes&.any? { |_k, v| v.key?(:flow) }
+
+        schemes.each do |name, v|
+          next unless v.key?(:flow)
+
+          ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
+          flow = swagger_doc[:components][:securitySchemes][name].delete(:flow)
+          swagger_doc[:components][:securitySchemes][name].merge!(flows: [flow])
         end
       end
     end

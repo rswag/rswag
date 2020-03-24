@@ -5,7 +5,6 @@ require 'ostruct'
 
 module Rswag
   module Specs
-
     RSpec.describe SwaggerFormatter do
       subject { described_class.new(output, config) }
 
@@ -15,7 +14,7 @@ module Rswag
       end
       let(:config) { double('config') }
       let(:output) { double('output').as_null_object }
-      let(:swagger_root) { File.expand_path('../tmp/swagger', __FILE__) }
+      let(:swagger_root) { File.expand_path('tmp/swagger', __dir__) }
 
       describe '#example_group_finished(notification)' do
         before do
@@ -69,19 +68,21 @@ module Rswag
         end
 
         context 'with metadata upgrades for 3.0' do
-          let(:swagger_doc) { {
-            openapi: '3.0.1',
-            basePath: '/foo',
-            schemes: ['http', 'https'],
-            host: 'api.example.com',
-            components: {
-              securitySchemes: {
-                my_oauth: {
-                  flow: :anything
+          let(:swagger_doc) do
+            {
+              openapi: '3.0.1',
+              basePath: '/foo',
+              schemes: ['http', 'https'],
+              host: 'api.example.com',
+              components: {
+                securitySchemes: {
+                  my_oauth: {
+                    flow: :anything
+                  }
                 }
               }
             }
-          } }
+          end
           let(:document) { nil }
 
           it 'converts query and path params, type: to schema: { type: }' do
@@ -128,7 +129,7 @@ module Rswag
 
       describe '#stop' do
         before do
-          FileUtils.rm_r(swagger_root) if File.exists?(swagger_root)
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
           allow(config).to receive(:swagger_docs).and_return(
             'v1/swagger.json' => { info: { version: 'v1' } },
             'v2/swagger.json' => { info: { version: 'v2' } }
@@ -160,7 +161,7 @@ module Rswag
         end
 
         after do
-          FileUtils.rm_r(swagger_root) if File.exists?(swagger_root)
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end
       end
     end

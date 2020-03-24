@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+$LOAD_PATH.push File.expand_path('lib', __dir__)
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Simplify API integration testing with a succinct rspec DSL and generate Swagger files directly from your rspecs'
   s.license     = 'MIT'
 
-  s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile' ]
+  s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile']
 
   s.add_dependency 'activesupport', '>= 3.1', '< 7.0'
   s.add_dependency 'railties', '>= 3.1', '< 7.0'

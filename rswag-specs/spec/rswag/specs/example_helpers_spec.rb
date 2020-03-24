@@ -4,7 +4,6 @@ require 'rswag/specs/example_helpers'
 
 module Rswag
   module Specs
-
     RSpec.describe ExampleHelpers do
       subject { double('example') }
 
@@ -34,7 +33,7 @@ module Rswag
           operation: {
             verb: :put,
             summary: 'Updates a blog',
-            consumes: [ 'application/json' ],
+            consumes: ['application/json'],
             parameters: [
               { name: :blog_id, in: :path, type: 'integer' },
               { name: 'id', in: :path, type: 'integer' },
