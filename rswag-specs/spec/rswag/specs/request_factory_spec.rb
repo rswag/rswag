@@ -242,6 +242,7 @@ module Rswag
               expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
               expect(ActiveSupport::Deprecation).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
+              expect(swagger_doc[:components]).to have_key(:securitySchemes)
             end
           end
         end

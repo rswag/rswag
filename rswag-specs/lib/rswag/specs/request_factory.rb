@@ -56,11 +56,11 @@ module Rswag
         else # Openapi3
           if swagger_doc.has_key?(:securityDefinitions)
             ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
-            (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
-          else
-            components = swagger_doc[:components] || {}
-            (components[:securitySchemes] || {}).slice(*scheme_names).values
+            swagger_doc[:components] ||= { securitySchemes: swagger_doc[:securityDefinitions] }
+            swagger_doc.delete(:securityDefinitions)
           end
+          components = swagger_doc[:components] || {}
+          (components[:securitySchemes] || {}).slice(*scheme_names).values
         end
       end
 
