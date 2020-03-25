@@ -452,14 +452,15 @@ after do |example|
   example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
 end
 ```
-You need to disable --dry-run option for Rspec > 3
+You need to disable `--dry-run` option for Rspec > 3. You can do one of the following:
 
-Add to application.rb:
-```ruby
-RSpec.configure do |config|
-  config.swagger_dry_run = false
-end
-```
+- use environment varible `SWAGGER_DRY_RUN` set to `1` during generation command
+- or add the following to your `application.rb`:
+  ```ruby
+  RSpec.configure do |config|
+    config.swagger_dry_run = false
+  end
+  ```
 
 ### Running tests without documenting ###
 
