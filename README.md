@@ -455,7 +455,7 @@ end
 You need to disable `--dry-run` option for Rspec > 3. You can do one of the following:
 
 - use environment varible `SWAGGER_DRY_RUN` set to `1` during generation command
-- or add the following to your `application.rb`:
+- or add the following to your `config/environments/test.rb`:
   ```ruby
   RSpec.configure do |config|
     config.swagger_dry_run = false
