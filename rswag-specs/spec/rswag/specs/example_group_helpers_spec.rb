@@ -35,31 +35,6 @@ module Rswag
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated(value)' do
-        before do
-          subject.tags('Blogs', 'Admin')
-          subject.description('Some description')
-          subject.operationId('createBlog')
-          subject.consumes('application/json', 'application/xml')
-          subject.produces('application/json', 'application/xml')
-          subject.schemes('http', 'https')
-          subject.deprecated(true)
-        end
-        let(:api_metadata) { { operation: {} } }
-
-        it "adds to the 'operation' metadata" do
-          expect(api_metadata[:operation]).to match(
-            tags: ['Blogs', 'Admin'],
-            description: 'Some description',
-            operationId: 'createBlog',
-            consumes: ['application/json', 'application/xml'],
-            produces: ['application/json', 'application/xml'],
-            schemes: ['http', 'https'],
-            deprecated: true
-          )
-        end
-      end
-
       describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
         before do
           subject.tags('Blogs', 'Admin')
@@ -179,10 +154,16 @@ module Rswag
         before { subject.schema(type: 'object') }
         let(:api_metadata) { { response: {} } }
 
-        it "adds to the 'response' metadata" do
-          expect(api_metadata[:response][:schema]).to match(type: 'object')
-          ## OA3
-          # expect(api_metadata[:response][:content]['application/json'][:schema]).to match(type: 'object')
+        context 'swagger 2.0' do
+          it "adds to the 'response' metadata" do
+            expect(api_metadata[:response][:schema]).to match(type: 'object')
+          end
+        end
+
+        context 'openapi 3.0' do
+          it "adds to the 'response' metadata" do
+            expect(api_metadata[:response][:content]['application/json'][:schema]).to match(type: 'object')
+          end
         end
       end
 
