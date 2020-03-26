@@ -154,16 +154,8 @@ module Rswag
         before { subject.schema(type: 'object') }
         let(:api_metadata) { { response: {} } }
 
-        context 'swagger 2.0' do
-          it "adds to the 'response' metadata" do
-            expect(api_metadata[:response][:schema]).to match(type: 'object')
-          end
-        end
-
-        context 'openapi 3.0' do
-          it "adds to the 'response' metadata" do
-            expect(api_metadata[:response][:content]['application/json'][:schema]).to match(type: 'object')
-          end
+        it "adds to the 'response' metadata" do
+          expect(api_metadata[:response][:schema]).to match(type: 'object')
         end
       end
 

@@ -149,11 +149,6 @@ module Rswag
       def schema(value)
         metadata[:response][:schema] = value
       end
-      ## OA3
-      # def schema(value, content_type: 'application/json')
-      #   content_hash = {content_type => {schema: value}}
-      #   metadata[:response][:content] = content_hash
-      # end
 
       def header(name, attributes)
         metadata[:response][:headers] ||= {}

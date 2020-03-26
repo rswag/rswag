@@ -26,7 +26,7 @@ module Rswag
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
-            response: { code: '201', description: 'blog created', headers: { type: :string } },
+            response: { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } },
             document: document
           }
         end
@@ -57,7 +57,8 @@ module Rswag
                     responses: {
                       '201' => {
                         description: 'blog created',
-                        headers: { type: :string }
+                        headers: { type: :string },
+                        schema: { '$ref' => '#/definitions/blog' }
                       }
                     }
                   }
@@ -74,6 +75,7 @@ module Rswag
               basePath: '/foo',
               schemes: ['http', 'https'],
               host: 'api.example.com',
+              produces: ['application/vnd.my_mime', 'application/json'],
               components: {
                 securitySchemes: {
                   my_oauth: {
@@ -95,6 +97,14 @@ module Rswag
                     summary: 'Creates a blog',
                     responses: {
                       '201' => {
+                        content: {
+                          'application/vnd.my_mime' => {
+                            schema: { '$ref' => '#/definitions/blog' }
+                          },
+                          'application/json' => {
+                            schema: { '$ref' => '#/definitions/blog' }
+                          }
+                        },
                         description: 'blog created',
                         headers: { schema: { type: :string } }
                       }

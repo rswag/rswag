@@ -37,6 +37,8 @@ module Rswag
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
+          upgrade_request_consumes!(swagger_doc, metadata)
+          upgrade_response_produces!(swagger_doc, metadata)
         end
 
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
@@ -78,6 +80,32 @@ module Rswag
       end
 
       private
+
+      def upgrade_request_consumes!(swagger_doc, metadata)
+        # Content-Type header
+        mime_list = Array(metadata[:operation].delete(:consumes) || swagger_doc[:consumes])
+        target_node = metadata[:response]
+        upgrade_content!(mime_list, target_node)
+      end
+
+      def upgrade_response_produces!(swagger_doc, metadata)
+        # Accept header
+        mime_list = Array(metadata[:operation].delete(:produces) || swagger_doc[:produces])
+        target_node = metadata[:response]
+        upgrade_content!(mime_list, target_node)
+        metadata[:response].delete(:schema)
+      end
+
+      def upgrade_content!(mime_list, target_node)
+        target_node.merge!(content: {})
+        schema = target_node[:schema]
+        return if mime_list.empty?
+
+        mime_list.each do |mime_type|
+          # TODO upgrade to have content-type specific schema
+          target_node[:content][mime_type] = { schema: schema }
+        end
+      end
 
       def pretty_generate(doc)
         if @config.swagger_format == :yaml
