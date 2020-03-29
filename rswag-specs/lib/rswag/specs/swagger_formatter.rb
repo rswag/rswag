@@ -34,9 +34,9 @@ module Rswag
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
         unless doc_version(swagger_doc).start_with?('2')
-          # This is called once PER EXAMPLE ('it' block) not on group finished.
-          # metadata[:operation] is also re-used between examples so be careful
-          # NOT to modify its content here.
+          # This is called multiple times per file!
+          # metadata[:operation] is also re-used between examples within file
+          # therefore be careful NOT to modify its content here.
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
