@@ -21,10 +21,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "content": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "content": {
+            }
           }
         }
       }
@@ -45,10 +49,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "content": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "content": {
+            }
           }
         }
       }
@@ -72,10 +80,14 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials"
+            "description": "Valid credentials",
+            "content": {
+            }
           },
           "401": {
-            "description": "Invalid credentials"
+            "description": "Invalid credentials",
+            "content": {
+            }
           }
         }
       }
@@ -105,12 +117,18 @@
         ],
         "responses": {
           "201": {
-            "description": "blog created"
+            "description": "blog created",
+            "content": {
+            }
           },
           "422": {
             "description": "invalid request",
-            "schema": {
-              "$ref": "#/definitions/errors_object"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errors_object"
+                }
+              }
             }
           }
         }
@@ -136,7 +154,9 @@
         ],
         "responses": {
           "406": {
-            "description": "unsupported accept header"
+            "description": "unsupported accept header",
+            "content": {
+            }
           }
         }
       }
@@ -176,9 +196,6 @@
                 "type": "string"
               }
             },
-            "schema": {
-              "$ref": "#/definitions/blog"
-            },
             "examples": {
               "application/json": {
                 "id": 1,
@@ -186,10 +203,19 @@
                 "content": "Hello world and hello universe. Thank you all very much!!!",
                 "thumbnail": "thumbnail.png"
               }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/blog"
+                }
+              }
             }
           },
           "404": {
-            "description": "blog not found"
+            "description": "blog not found",
+            "content": {
+            }
           }
         }
       }
@@ -227,7 +253,9 @@
         ],
         "responses": {
           "200": {
-            "description": "blog updated"
+            "description": "blog updated",
+            "content": {
+            }
           }
         }
       }

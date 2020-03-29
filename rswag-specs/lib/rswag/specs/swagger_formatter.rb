@@ -34,6 +34,9 @@ module Rswag
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
         unless doc_version(swagger_doc).start_with?('2')
+          # This is called once PER EXAMPLE ('it' block) not on group finished.
+          # metadata[:operation] is also re-used between examples so be careful
+          # NOT to modify its content here.
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
@@ -83,14 +86,14 @@ module Rswag
 
       def upgrade_request_consumes!(swagger_doc, metadata)
         # Content-Type header
-        mime_list = Array(metadata[:operation].delete(:consumes) || swagger_doc[:consumes])
+        mime_list = Array(metadata[:operation][:consumes] || swagger_doc[:consumes])
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
       end
 
       def upgrade_response_produces!(swagger_doc, metadata)
         # Accept header
-        mime_list = Array(metadata[:operation].delete(:produces) || swagger_doc[:produces])
+        mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
         metadata[:response].delete(:schema)
@@ -99,7 +102,7 @@ module Rswag
       def upgrade_content!(mime_list, target_node)
         target_node.merge!(content: {})
         schema = target_node[:schema]
-        return if mime_list.empty?
+        return if mime_list.empty? || schema.nil?
 
         mime_list.each do |mime_type|
           # TODO upgrade to have content-type specific schema
