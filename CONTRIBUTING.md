@@ -1,5 +1,11 @@
 # Contributing
 
+🎉 Thanks for taking the time to contribute! 🎉
+
+We put forward the philosophy put forward by the [react community](https://reactcommunity.org/) about ownership, responsibility and avoiding burnout.
+
+We also strive to achieve [semantic versioning](https://semver.org/) for this repo.
+
 ## Fork, then clone the repo:
 ```
 git clone git@github.com:rswag/rswag.git

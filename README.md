@@ -558,7 +558,7 @@ This is one of the more powerful features of rswag. When rswag runs your integra
 These integration tests are usually written with ```let``` variables for post body parameters, and since its an integration test the service is returning actual values. 
 We might as well re-use these values and embed them into the generated swagger to provide a more real world example for request/response examples.
 
-Add to application.rb:
+Add to config/environments/test.rb:
 ```ruby
 RSpec.configure do |config|
   config.swagger_dry_run = false
@@ -776,6 +776,17 @@ You can update the _rswag-ui.rb_ initializer, installed with rswag-ui, to specif
 Rswag::Ui.configure do |c|
   c.swagger_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
   c.swagger_endpoint '/api-docs/v2/swagger.json', 'API V2 Docs'
+end
+```
+
+### Enable Simple Basic Auth for swagger-ui
+
+You can also update the _rswag-ui.rb_ initializer, installed with rswag-ui to specify a username and password should you want to keep your documentation private.
+
+```ruby
+Rswag::Ui.configure do |c|
+  c.basic_auth_enabled = true
+  c.basic_auth_credentials 'username', 'password'
 end
 ```
 
