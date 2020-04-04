@@ -79,7 +79,9 @@ module Rswag
               components: {
                 securitySchemes: {
                   my_oauth: {
-                    flow: :anything
+                    type: :oauth2,
+                    flow: :anything,
+                    token_url: :somewhere
                   }
                 }
               }
@@ -128,7 +130,12 @@ module Rswag
               components: {
                 securitySchemes: {
                   my_oauth: {
-                    flows: [:anything]
+                    type: :oauth2,
+                    flows: {
+                      anything: {
+                        token_url: :somewhere
+                      }
+                    }
                   }
                 }
               }

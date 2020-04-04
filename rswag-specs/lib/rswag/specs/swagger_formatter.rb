@@ -197,7 +197,10 @@ module Rswag
 
           ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
           flow = swagger_doc[:components][:securitySchemes][name].delete(:flow)
-          swagger_doc[:components][:securitySchemes][name].merge!(flows: [flow])
+          flow_elements = swagger_doc[:components][:securitySchemes][name].except(:type).each_with_object({}) do |(k, _v), a|
+            a[k] = swagger_doc[:components][:securitySchemes][name].delete(k)
+          end
+          swagger_doc[:components][:securitySchemes][name].merge!(flows: { flow => flow_elements })
         end
       end
     end
