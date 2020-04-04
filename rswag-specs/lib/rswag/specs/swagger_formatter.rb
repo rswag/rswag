@@ -51,6 +51,9 @@ module Rswag
 
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
+          unless doc_version(doc).start_with?('2')
+            remove_invalid_operation_keys!(doc)
+          end
           ## OA3
           # # remove 2.0 parameters
           # doc[:paths]&.each_pair do |_k, v|
@@ -209,6 +212,16 @@ module Rswag
             a[k] = swagger_doc[:components][:securitySchemes][name].delete(k)
           end
           swagger_doc[:components][:securitySchemes][name].merge!(flows: { flow => flow_elements })
+        end
+      end
+
+      def remove_invalid_operation_keys!(swagger_doc)
+        swagger_doc[:paths]&.each_pair do |_k, v|
+          v.each_pair do |_verb, value|
+            is_hash = value.is_a?(Hash)
+            value.delete(:consumes) if is_hash && value.dig(:consumes)
+            value.delete(:produces) if is_hash && value.dig(:produces)
+          end
         end
       end
     end

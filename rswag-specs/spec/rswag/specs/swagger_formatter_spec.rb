@@ -174,17 +174,19 @@ module Rswag
         before do
           FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
           allow(config).to receive(:swagger_docs).and_return(
-            'v1/swagger.json' => { info: { version: 'v1' } },
-            'v2/swagger.json' => { info: { version: 'v2' } }
+            'v1/swagger.json' => doc_1,
+            'v2/swagger.json' => doc_2
           )
           allow(config).to receive(:swagger_format).and_return(swagger_format)
           subject.stop(notification)
         end
 
+        let(:doc_1) { { info: { version: 'v1' } } }
+        let(:doc_2) { { info: { version: 'v2' } } }
+        let(:swagger_format) { :json }
+
         let(:notification) { double('notification') }
         context 'with default format' do
-          let(:swagger_format) { :json }
-
           it 'writes the swagger_doc(s) to file' do
             expect(File).to exist("#{swagger_root}/v1/swagger.json")
             expect(File).to exist("#{swagger_root}/v2/swagger.json")
@@ -200,6 +202,24 @@ module Rswag
             expect { JSON.parse(File.read("#{swagger_root}/v1/swagger.json")) }.to raise_error(JSON::ParserError)
             # Psych::DisallowedClass would be raised if we do not pre-process ruby symbols
             expect { YAML.safe_load(File.read("#{swagger_root}/v1/swagger.json")) }.not_to raise_error
+          end
+        end
+
+        context 'with oauth3 upgrades' do
+          let(:doc_2) do
+            { paths: { '/paths/{path_id}/nested_paths' => { get: {
+              summary: 'Retrieve Nested Paths',
+              tags: ['nested Paths'],
+              produces: ['application/json'],
+              consumes: ['application/xml']
+            } } } }
+          end
+
+          it 'removes remaining consumes/produces' do
+            expect(doc_2).to eql({ paths: { '/paths/{path_id}/nested_paths' => { get: {
+              summary: 'Retrieve Nested Paths',
+              tags: ['nested Paths']
+            } } } })
           end
         end
 
