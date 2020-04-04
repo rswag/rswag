@@ -174,10 +174,10 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/blog"
+                      "$ref": "#/definitions/blog"
                     },
                     {
-                      "$ref": "#/components/schemas/flexible_blog"
+                      "$ref": "#/definitions/flexible_blog"
                     }
                   ]
                 }
@@ -191,10 +191,10 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/blog"
+                    "$ref": "#/definitions/blog"
                   },
                   {
-                    "$ref": "#/components/schemas/flexible_blog"
+                    "$ref": "#/definitions/flexible_blog"
                   }
                 ]
               }
@@ -341,14 +341,36 @@
           "x-nullable": true
         },
         "thumbnail": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [
         "id",
-        "title",
-        "content",
-        "thumbnail"
+        "title"
+      ]
+    },
+    "flexible_blog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "nullable": true
+        },
+        "thumbnail": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "required": [
+        "id",
+        "headline"
       ]
     }
   },

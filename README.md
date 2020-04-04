@@ -22,6 +22,45 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+**Table of Contents**
+
+- [rswag](#rswag)
+  - [Compatibility](#compatibility)
+  - [Getting Started](#getting-started)
+  - [The rspec DSL](#the-rspec-dsl)
+    - [Paths, Operations and Responses](#paths-operations-and-responses)
+    - [Null Values](#null-values)
+    - [Support for oneOf, anyOf or AllOf schemas](#support-for-oneof-anyof-or-allof-schemas)
+    - [Global Metadata](#global-metadata)
+      - [Supporting multiple versions of API](#supporting-multiple-versions-of-api)
+      - [Formatting the description literals:](#formatting-the-description-literals)
+    - [Specifying/Testing API Security](#specifyingtesting-api-security)
+  - [Configuration & Customization](#configuration--customization)
+    - [Output Location for Generated Swagger Files](#output-location-for-generated-swagger-files)
+    - [Input Location for Rspec Tests](#input-location-for-rspec-tests)
+    - [Referenced Parameters and Schema Definitions](#referenced-parameters-and-schema-definitions)
+    - [Response headers](#response-headers)
+    - [Response examples](#response-examples)
+    - [Enable auto generation examples from responses](#enable-auto-generation-examples-from-responses)
+      - [Running tests without documenting](#running-tests-without-documenting)
+        - [rswag helper methods](#rswag-helper-methods)
+        - [rswag response examples](#rswag-response-examples)
+    - [Route Prefix for Swagger JSON Endpoints](#route-prefix-for-swagger-json-endpoints)
+    - [Root Location for Swagger Files](#root-location-for-swagger-files)
+    - [Dynamic Values for Swagger JSON](#dynamic-values-for-swagger-json)
+    - [Custom Headers for Swagger Files](#custom-headers-for-swagger-files)
+    - [Enable Swagger Endpoints for swagger-ui](#enable-swagger-endpoints-for-swagger-ui)
+    - [Enable Simple Basic Auth for swagger-ui](#enable-simple-basic-auth-for-swagger-ui)
+    - [Route Prefix for the swagger-ui](#route-prefix-for-the-swagger-ui)
+    - [Customizing the swagger-ui](#customizing-the-swagger-ui)
+    - [Serve UI Assets Directly from your Web Server](#serve-ui-assets-directly-from-your-web-server)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+
 ## Getting Started ##
 
 1. Add this line to your applications _Gemfile_:
