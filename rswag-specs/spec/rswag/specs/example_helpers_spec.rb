@@ -63,8 +63,6 @@ module Rswag
             '/blogs/1/comments/2?q1=foo&api_key=fookey',
             '{"text":"Some comment"}',
             { 'CONTENT_TYPE' => 'application/json' }
-            ## OA3
-            # 'CONTENT_TYPE' => 'application/json'
           )
         end
       end

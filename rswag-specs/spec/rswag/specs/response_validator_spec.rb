@@ -24,16 +24,6 @@ module Rswag
               properties: { text: { type: :string } },
               required: ['text']
             }
-            ## OA3
-            # content: {
-            #   'application/json' => {
-            #     schema: {
-            #       type: :object,
-            #       properties: { text: { type: :string } },
-            #       required: ['text']
-            #     }
-            #   }
-            # }
           }
         }
       end

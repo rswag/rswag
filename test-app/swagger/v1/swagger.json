@@ -100,20 +100,8 @@
         ],
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
         "parameters": [
-          {
-            "name": "blog",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/blog"
-            }
-          }
+
         ],
         "responses": {
           "201": {
@@ -131,6 +119,15 @@
               }
             }
           }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/blog"
+              }
+            }
+          }
         }
       },
       "get": {
@@ -140,9 +137,6 @@
         ],
         "description": "Searches blogs by keywords",
         "operationId": "searchBlogs",
-        "produces": [
-          "application/json"
-        ],
         "parameters": [
           {
             "name": "keywords",
@@ -179,9 +173,6 @@
         ],
         "description": "Retrieves a specific blog by id",
         "operationId": "getBlog",
-        "produces": [
-          "application/json"
-        ],
         "responses": {
           "200": {
             "description": "blog found",
@@ -238,23 +229,22 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
-        "consumes": [
-          "multipart/form-data"
-        ],
         "parameters": [
-          {
-            "name": "file",
-            "in": "formData",
-            "required": true,
-            "schema": {
-              "type": "file"
-            }
-          }
+
         ],
         "responses": {
           "200": {
             "description": "blog updated",
             "content": {
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "file"
+              }
             }
           }
         }
