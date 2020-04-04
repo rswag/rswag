@@ -42,7 +42,6 @@ module Rswag
           upgrade_request_type!(metadata)
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
-          upgrade_request_consumes!(swagger_doc, metadata)
           upgrade_response_produces!(swagger_doc, metadata)
         end
 
@@ -52,28 +51,25 @@ module Rswag
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           unless doc_version(doc).start_with?('2')
-            remove_invalid_operation_keys!(doc)
+            doc[:paths]&.each_pair do |_k, v|
+              v.each_pair do |_verb, value|
+                is_hash = value.is_a?(Hash)
+                if is_hash && value.dig(:parameters)
+                  schema_param = value.dig(:parameters)&.find { |p| p[:in] == :body && p[:schema] }
+                  mime_list = value.dig(:consumes)
+                  if value && schema_param && mime_list
+                    value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
+                    mime_list.each do |mime|
+                      value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
+                    end
+                  end
+
+                  value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
+                end
+                remove_invalid_operation_keys!(value)
+              end
+            end
           end
-          ## OA3
-          # # remove 2.0 parameters
-          # doc[:paths]&.each_pair do |_k, v|
-          #   v.each_pair do |_verb, value|
-          #     is_hash = value.is_a?(Hash)
-          #     if is_hash && value.dig(:parameters)
-          #       schema_param = value&.dig(:parameters)&.find{|p| p[:in] == :body && p[:schema] }
-          #       if value &&  schema_param && value&.dig(:requestBody, :content, 'application/json')
-          #         value[:requestBody][:content]['application/json'].merge!(schema: schema_param[:schema])
-          #       end
-
-          #       value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
-          #       value[:parameters].each { |p| p.delete(:type) }
-          #       value[:headers].each { |p| p.delete(:type)}  if value[:headers]
-          #     end
-
-          #     value.delete(:consumes) if is_hash && value.dig(:consumes)
-          #     value.delete(:produces) if is_hash && value.dig(:produces)
-          #   end
-          # end
 
           file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
@@ -88,32 +84,6 @@ module Rswag
       end
 
       private
-
-      def upgrade_request_consumes!(swagger_doc, metadata)
-        # Content-Type header
-        mime_list = Array(metadata[:operation][:consumes] || swagger_doc[:consumes])
-        target_node = metadata[:response]
-        upgrade_content!(mime_list, target_node)
-      end
-
-      def upgrade_response_produces!(swagger_doc, metadata)
-        # Accept header
-        mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
-        target_node = metadata[:response]
-        upgrade_content!(mime_list, target_node)
-        metadata[:response].delete(:schema)
-      end
-
-      def upgrade_content!(mime_list, target_node)
-        target_node.merge!(content: {})
-        schema = target_node[:schema]
-        return if mime_list.empty? || schema.nil?
-
-        mime_list.each do |mime_type|
-          # TODO upgrade to have content-type specific schema
-          target_node[:content][mime_type] = { schema: schema }
-        end
-      end
 
       def pretty_generate(doc)
         if @config.swagger_format == :yaml
@@ -159,6 +129,25 @@ module Rswag
 
       def doc_version(doc)
         doc[:openapi] || doc[:swagger] || '3'
+      end
+
+      def upgrade_response_produces!(swagger_doc, metadata)
+        # Accept header
+        mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
+        target_node = metadata[:response]
+        upgrade_content!(mime_list, target_node)
+        metadata[:response].delete(:schema)
+      end
+
+      def upgrade_content!(mime_list, target_node)
+        target_node.merge!(content: {})
+        schema = target_node[:schema]
+        return if mime_list.empty? || schema.nil?
+
+        mime_list.each do |mime_type|
+          # TODO upgrade to have content-type specific schema
+          target_node[:content][mime_type] = { schema: schema }
+        end
       end
 
       def upgrade_request_type!(metadata)
@@ -215,14 +204,10 @@ module Rswag
         end
       end
 
-      def remove_invalid_operation_keys!(swagger_doc)
-        swagger_doc[:paths]&.each_pair do |_k, v|
-          v.each_pair do |_verb, value|
-            is_hash = value.is_a?(Hash)
-            value.delete(:consumes) if is_hash && value.dig(:consumes)
-            value.delete(:produces) if is_hash && value.dig(:produces)
-          end
-        end
+      def remove_invalid_operation_keys!(value)
+        is_hash = value.is_a?(Hash)
+        value.delete(:consumes) if is_hash && value.dig(:consumes)
+        value.delete(:produces) if is_hash && value.dig(:produces)
       end
     end
   end

@@ -207,19 +207,36 @@ module Rswag
 
         context 'with oauth3 upgrades' do
           let(:doc_2) do
-            { paths: { '/paths/{path_id}/nested_paths' => { get: {
-              summary: 'Retrieve Nested Paths',
-              tags: ['nested Paths'],
-              produces: ['application/json'],
-              consumes: ['application/xml']
-            } } } }
+            {
+              paths: {
+                '/path/' => {
+                  get: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['application/xml', 'application/json'],
+                    parameters: [{
+                      in: :body,
+                      schema: { foo: :bar }
+                    }, {
+                      in: :headers
+                    }]
+                  }
+                }
+              }
+            }
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_2).to eql({ paths: { '/paths/{path_id}/nested_paths' => { get: {
-              summary: 'Retrieve Nested Paths',
-              tags: ['nested Paths']
-            } } } })
+            expect(doc_2[:paths]['/path/'][:get].keys).to eql([:summary, :tags, :parameters, :requestBody])
+          end
+
+          it 'duplicates params in: :body to requestBody from consumes list' do
+            expect(doc_2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers }])
+            expect(doc_2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
+              'application/xml' => { schema: { foo: :bar } },
+              'application/json' => { schema: { foo: :bar } }
+            })
           end
         end
 
