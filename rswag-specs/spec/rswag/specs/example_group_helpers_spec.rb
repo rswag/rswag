@@ -3,7 +3,7 @@ require 'rswag/specs/example_group_helpers'
 module Rswag
   module Specs
 
-    describe ExampleGroupHelpers do
+    RSpec.describe ExampleGroupHelpers do
       subject { double('example_group') }
 
       before do
@@ -24,7 +24,7 @@ module Rswag
         end
       end
 
-      describe '#get|post|patch|put|delete|head(verb, summary)' do
+      describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
         before { subject.post('Creates a blog') }
 
         it "delegates to 'describe' with 'operation' metadata" do

@@ -5,7 +5,10 @@ namespace :rswag do
 
     desc 'Generate Swagger JSON files from integration specs'
     RSpec::Core::RakeTask.new('swaggerize') do |t|
-      t.pattern = 'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
+      t.pattern = ENV.fetch(
+        'PATTERN',
+        'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
+      )
 
       # NOTE: rspec 2.x support
       if Rswag::Specs::RSPEC_VERSION > 2 && Rswag::Specs.config.swagger_dry_run
@@ -16,3 +19,5 @@ namespace :rswag do
     end
   end
 end
+
+task :rswag => ['rswag:specs:swaggerize']

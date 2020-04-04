@@ -54,7 +54,7 @@ module Rswag
         definitions[key]
       end
 
-      def add_verb(request, metadata) 
+      def add_verb(request, metadata)
         request[:verb] = metadata[:operation][:verb]
       end
 
@@ -104,7 +104,7 @@ module Rswag
         end
 
         # Content-Type header
-        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes] 
+        consumes = metadata[:operation][:consumes] || swagger_doc[:consumes]
         if consumes
           content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
           tuples << [ 'Content-Type', content_type ]

@@ -1,9 +1,10 @@
 require 'active_support/core_ext/hash/deep_merge'
+require 'rspec/core/formatters/base_text_formatter'
 require 'swagger_helper'
 
 module Rswag
   module Specs
-    class SwaggerFormatter
+    class SwaggerFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
 
       # NOTE: rspec 2.x support
       if RSPEC_VERSION > 2
@@ -25,7 +26,11 @@ module Rswag
           metadata = notification.metadata
         end
 
+        # !metadata[:document] won't work, since nil means we should generate
+        # docs.
+        return if metadata[:document] == false
         return unless metadata.has_key?(:response)
+
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
@@ -37,7 +42,7 @@ module Rswag
           FileUtils.mkdir_p dirname unless File.exists?(dirname)
 
           File.open(file_path, 'w') do |file|
-            file.write(JSON.pretty_generate(doc))
+            file.write(pretty_generate(doc))
           end
 
           @output.puts "Swagger doc generated at #{file_path}"
@@ -45,6 +50,20 @@ module Rswag
       end
 
       private
+
+      def pretty_generate(doc)
+        if @config.swagger_format == :yaml
+          clean_doc = yaml_prepare(doc)
+          YAML.dump(clean_doc)
+        else # config errors are thrown in 'def swagger_format', no throw needed here
+          JSON.pretty_generate(doc)
+        end
+      end
+
+      def yaml_prepare(doc)
+        json_doc = JSON.pretty_generate(doc)
+        clean_doc = JSON.parse(json_doc)
+      end
 
       def metadata_to_swagger(metadata)
         response_code = metadata[:response][:code]

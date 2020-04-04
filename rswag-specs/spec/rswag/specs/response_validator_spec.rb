@@ -3,13 +3,13 @@ require 'rswag/specs/response_validator'
 module Rswag
   module Specs
 
-    describe ResponseValidator do
+    RSpec.describe ResponseValidator do
       subject { ResponseValidator.new(config) }
 
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
-      let(:config) { double('config') } 
+      let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
       let(:metadata) do
