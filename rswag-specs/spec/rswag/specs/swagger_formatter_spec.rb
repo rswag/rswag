@@ -240,6 +240,40 @@ module Rswag
           end
         end
 
+        context 'with oauth3 formData' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['multipart/form-data'],
+                    parameters: [{
+                      in: :formData,
+                      schema: { type: :file }
+                    },{
+                      in: :headers
+                    }]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'removes remaining consumes/produces' do
+            expect(doc_2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+          end
+
+          it 'duplicates params in: :formData to requestBody from consumes list' do
+            expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'multipart/form-data' => { schema: { type: :file } }
+            })
+          end
+        end
+
         after do
           FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end
