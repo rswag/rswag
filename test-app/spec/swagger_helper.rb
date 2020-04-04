@@ -52,9 +52,19 @@ RSpec.configure do |config|
             id: { type: 'integer' },
             title: { type: 'string' },
             content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string'}
+            thumbnail: { type: 'string', 'x-nullable': true}
           },
-          required: [ 'id', 'title', 'content', 'thumbnail' ]
+          required: [ 'id', 'title' ]
+        },
+        flexible_blog: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            headline: { type: 'string' },
+            text: { type: 'string', nullable: true },
+            thumbnail: { type: 'string', nullable: true }
+          },
+          required: ['id', 'headline']
         }
       },
       securityDefinitions: {

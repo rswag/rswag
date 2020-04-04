@@ -155,6 +155,54 @@
         }
       }
     },
+    "/blogs/flexible": {
+      "post": {
+        "summary": "Creates a blog flexible body",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Creates a flexible blog from provided data",
+        "operationId": "createFlexibleBlog",
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "flexible blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/blog"
+                    },
+                    {
+                      "$ref": "#/components/schemas/flexible_blog"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/blog"
+                  },
+                  {
+                    "$ref": "#/components/schemas/flexible_blog"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/blogs/{id}": {
       "parameters": [
         {

@@ -49,6 +49,30 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
+  path '/blogs/flexible' do
+    post 'Creates a blog flexible body' do
+      tags 'Blogs'
+      description 'Creates a flexible blog from provided data'
+      operationId 'createFlexibleBlog'
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :flexible_blog, in: :body, schema: {
+        oneOf: [
+          { '$ref' => '#/definitions/blog' },
+          { '$ref' => '#/definitions/flexible_blog' }
+        ]
+      }
+
+      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
+
+      response '201', 'flexible blog created' do
+        schema oneOf: [{ '$ref' => '#/definitions/blog' }, { '$ref' => '#/definitions/flexible_blog' }]
+        run_test!
+      end
+    end
+  end
+
   path '/blogs/{id}' do
     parameter name: :id, in: :path, type: :string
 

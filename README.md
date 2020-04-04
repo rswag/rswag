@@ -18,7 +18,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|3.0|3.18.2|
+|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.23.11|
 |[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
 
@@ -59,6 +59,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```
 
 3. Create an integration spec to describe and test your API.
+There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
 
     ```ruby
     # spec/integration/blogs_spec.rb
@@ -71,7 +72,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
         post 'Creates a blog' do
           tags 'Blogs'
           consumes 'application/json'
-          request_body_json schema: {
+          parameter name: :blog, in: :body, schema: {
             type: :object,
             properties: {
               title: { type: :string },
@@ -97,7 +98,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
         get 'Retrieves a blog' do
           tags 'Blogs'
           produces 'application/json', 'application/xml'
-          parameter name: :id, :in => :path, :type => :string
+          parameter name: :id, in: :path, type: :string
 
           response '200', 'blog found' do
             schema type: :object,
@@ -126,8 +127,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     end
     ```
 
-    There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
-
 
 4. Generate the Swagger JSON file(s)
 
@@ -136,6 +135,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```
 
     This common command is also aliased as `rake rswag`.
+
+    Or if you installed your gems separately:
+    ```
+    RAILS_ENV=test rails rswag
+    ```
 
 5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
@@ -197,14 +201,13 @@ describe 'Blogs API' do
 end
 ```
 
-### Support for anyOf or AllOf schemas ###
+### Support for oneOf, anyOf or AllOf schemas ###
 
-Open API 3.0 now supports more flexible schema validation with the ```anyOf``` and ```allOf``` directives. rswag will handle these definitions and validate them properly.
+Open API 3.0 now supports more flexible schema validation with the ```oneOf```, ```anyOf``` and ```allOf``` directives. rswag will handle these definitions and validate them properly.
 
 
 Notice the ```schema``` inside the ```response``` section. Placing a ```schema``` method inside the response will validate (and fail the tests)
-if during the integration test run the endpoint response does not match the response schema. This test validation can handle 
-anyOf and allOf as well. See below:
+if during the integration test run the endpoint response does not match the response schema. This test validation can handle anyOf and allOf as well. See below:
 
 ```ruby
 
@@ -216,18 +219,15 @@ anyOf and allOf as well. See below:
       consumes 'application/json'
       produces 'application/json'
 
-      request_body_json schema: {
-          :oneOf => [
+      parameter name: :blog, in: :body, schema: {
+          oneOf: [
             { '$ref' => '#/components/schemas/blog' },
             { '$ref' => '#/components/schemas/flexible_blog' }
           ]
-        },
-        examples: :flexible_blog
-
-      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
+        }
 
       response '201', 'flexible blog created' do
-        schema :oneOf => [{ '$ref' => '#/components/schemas/blog' }, { '$ref' => '#/components/schemas/flexible_blog' }]
+        schema oneOf: [{ '$ref' => '#/components/schemas/blog' }, { '$ref' => '#/components/schemas/flexible_blog' }]
         run_test!
       end
     end
