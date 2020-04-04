@@ -545,6 +545,17 @@ Rswag::Ui.configure do |c|
 end
 ```
 
+### Enable Simple Basic Auth for swagger-ui
+
+You can also update the _rswag-ui.rb_ initializer, installed with rswag-ui to specify a username and password should you want to keep your documentation private.
+
+```ruby
+Rswag::Ui.configure do |c|
+  c.basic_auth_enabled = true
+  c.basic_auth_credentials 'username', 'password'
+end
+```
+
 ### Route Prefix for the swagger-ui ###
 
 Similar to rswag-api, you can customize the swagger-ui path by changing it's mount prefix in _routes.rb_:
