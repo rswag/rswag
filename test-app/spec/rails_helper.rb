@@ -62,6 +62,3 @@ RSpec.configure do |config|
 
   Capybara.javascript_driver = :firefox_headless
 end
-
-Capybara::Webkit.configure(&:block_unknown_urls)
-
