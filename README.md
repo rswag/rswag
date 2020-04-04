@@ -534,6 +534,21 @@ end
 
 Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
+### Custom Headers for Swagger Files ###
+
+You can specify custom headers for serving your generated Swagger JSON. For example you may want to force a specific charset for the 'Content-Type' header. You can configure a hash of headers to be sent with the request:
+
+```ruby
+Rswag::Api.configure do |c|
+  ...
+  
+  c.swagger_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
+end
+```
+
+Take care when overriding Content-Type if you serve both YAML and JSON files as it will no longer switch the Content-Type header correctly.
+
+
 ### Enable Swagger Endpoints for swagger-ui ###
 
 You can update the _rswag-ui.rb_ initializer, installed with rswag-ui, to specify which Swagger endpoints should be available to power the documentation UI. If you're using rswag-api, these should correspond to the Swagger endpoints it exposes. When the UI is rendered, you'll see these listed in a drop-down to the top right of the page:
