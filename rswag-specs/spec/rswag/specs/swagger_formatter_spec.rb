@@ -80,12 +80,12 @@ module Rswag
                 securitySchemes: {
                   myClientCredentials: {
                     type: :oauth2,
-                    flow: :accessCode,
+                    flow: :application,
                     token_url: :somewhere
                   },
                   myAuthorizationCode: {
                     type: :oauth2,
-                    flow: :application,
+                    flow: :accessCode,
                     token_url: :somewhere
                   },
                   myImplicit: {
@@ -142,7 +142,7 @@ module Rswag
                   myClientCredentials: {
                     type: :oauth2,
                     flows: {
-                      clientCredentials: {
+                      'clientCredentials' => {
                         token_url: :somewhere
                       }
                     }
@@ -150,7 +150,7 @@ module Rswag
                   myAuthorizationCode: {
                     type: :oauth2,
                     flows: {
-                      authorizationCode: {
+                      'authorizationCode' => {
                         token_url: :somewhere
                       }
                     }
@@ -158,7 +158,7 @@ module Rswag
                   myImplicit: {
                     type: :oauth2,
                     flows: {
-                      implicit: {
+                      'implicit' => {
                         token_url: :somewhere
                       }
                     }
