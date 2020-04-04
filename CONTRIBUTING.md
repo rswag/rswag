@@ -50,6 +50,19 @@ Push to your fork and [submit a Pull Request][pr].
 
 [pr]: https://github.com/rswag/rswag/compare/
 
+## Updating Swagger UI
+
+Find the latest versions of swagger-ui here:  
+https://github.com/swagger-api/swagger-ui/releases
+
+Update the swagger-ui-dist version in the rswag-ui dependencies
+```  
+./rswag-ui/package.json
+```
+
+Navigate to the rswag-ui folder and run npm install to update the package-lock.json
+
+
 ## Release
 (for maintainers)
 
