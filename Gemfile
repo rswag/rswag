@@ -27,9 +27,10 @@ gem 'rswag-ui', path: './rswag-ui'
 
 group :test do
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'geckodriver-helper'
   gem 'generator_spec'
   gem 'rspec-rails'
+  gem 'selenium-webdriver'
   gem 'rswag-specs', path: './rswag-specs'
   gem 'test-unit'
 end
