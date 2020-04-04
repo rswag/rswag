@@ -78,9 +78,19 @@ module Rswag
               produces: ['application/vnd.my_mime', 'application/json'],
               components: {
                 securitySchemes: {
-                  my_oauth: {
+                  myClientCredentials: {
                     type: :oauth2,
-                    flow: :anything,
+                    flow: :accessCode,
+                    token_url: :somewhere
+                  },
+                  myAuthorizationCode: {
+                    type: :oauth2,
+                    flow: :application,
+                    token_url: :somewhere
+                  },
+                  myImplicit: {
+                    type: :oauth2,
+                    flow: :implicit,
                     token_url: :somewhere
                   }
                 }
@@ -129,10 +139,26 @@ module Rswag
             expect(swagger_doc.slice(:components)).to match(
               components: {
                 securitySchemes: {
-                  my_oauth: {
+                  myClientCredentials: {
                     type: :oauth2,
                     flows: {
-                      anything: {
+                      clientCredentials: {
+                        token_url: :somewhere
+                      }
+                    }
+                  },
+                  myAuthorizationCode: {
+                    type: :oauth2,
+                    flows: {
+                      authorizationCode: {
+                        token_url: :somewhere
+                      }
+                    }
+                  },
+                  myImplicit: {
+                    type: :oauth2,
+                    flows: {
+                      implicit: {
                         token_url: :somewhere
                       }
                     }
