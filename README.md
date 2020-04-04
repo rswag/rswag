@@ -546,6 +546,8 @@ Rswag::Api.configure do |c|
 end
 ```
 
+Take care when overriding Content-Type if you serve both YAML and JSON files as it will no longer switch the Content-Type header correctly.
+
 
 ### Enable Swagger Endpoints for swagger-ui ###
 
