@@ -30,6 +30,11 @@ cd -
 ```
 
 ## Test
+Initialize the rswag-ui repo with assets.
+```
+ci/build.sh
+```
+
 Make sure the tests pass:
 ```
 ./ci/test.sh

@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
-
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do
       tags 'Auth Tests'
       operationId 'testBasicAuth'
-      security [ basic_auth: [] ]
+      security [basic_auth: []]
 
       response '204', 'Valid credentials' do
         let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
@@ -24,7 +25,7 @@ RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' 
     post 'Authenticates with an api key' do
       tags 'Auth Tests'
       operationId 'testApiKey'
-      security [ api_key: [] ]
+      security [api_key: []]
 
       response '204', 'Valid credentials' do
         let(:api_key) { 'foobar' }
@@ -42,7 +43,7 @@ RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' 
     post 'Authenticates with basic auth and api key' do
       tags 'Auth Tests'
       operationId 'testBasicAndApiKey'
-      security [ { basic_auth: [], api_key: [] } ]
+      security [{ basic_auth: [], api_key: [] }]
 
       response '204', 'Valid credentials' do
         let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }

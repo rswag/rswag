@@ -15,6 +15,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:blog) { { title: 'foo', content: 'bar' } }
 
       response '201', 'blog created' do
+        # schema '$ref' => '#/definitions/blog'
         run_test!
       end
 
@@ -48,6 +49,30 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
+  path '/blogs/flexible' do
+    post 'Creates a blog flexible body' do
+      tags 'Blogs'
+      description 'Creates a flexible blog from provided data'
+      operationId 'createFlexibleBlog'
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :flexible_blog, in: :body, schema: {
+        oneOf: [
+          { '$ref' => '#/definitions/blog' },
+          { '$ref' => '#/definitions/flexible_blog' }
+        ]
+      }
+
+      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
+
+      response '201', 'flexible blog created' do
+        schema oneOf: [{ '$ref' => '#/definitions/blog' }, { '$ref' => '#/definitions/flexible_blog' }]
+        run_test!
+      end
+    end
+  end
+
   path '/blogs/{id}' do
     parameter name: :id, in: :path, type: :string
 
@@ -68,11 +93,11 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         schema '$ref' => '#/definitions/blog'
 
         examples 'application/json' => {
-            id: 1,
-            title: 'Hello world!',
-            content: 'Hello world and hello universe. Thank you all very much!!!',
-            thumbnail: "thumbnail.png"
-          }
+          id: 1,
+          title: 'Hello world!',
+          content: 'Hello world and hello universe. Thank you all very much!!!',
+          thumbnail: 'thumbnail.png'
+        }
 
         let(:id) { blog.id }
         run_test!

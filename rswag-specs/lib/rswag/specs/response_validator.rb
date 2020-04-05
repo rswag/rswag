@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash/slice'
 require 'json-schema'
 require 'json'
@@ -6,7 +8,6 @@ require 'rswag/specs/extended_schema'
 module Rswag
   module Specs
     class ResponseValidator
-
       def initialize(config = ::Rswag::Specs.config)
         @config = config
       end
@@ -25,8 +26,8 @@ module Rswag
         expected = metadata[:response][:code].to_s
         if response.code != expected
           raise UnexpectedResponse,
-                "Expected response code '#{response.code}' to match '#{expected}'\n" \
-                "Response body: #{response.body}"
+            "Expected response code '#{response.code}' to match '#{expected}'\n" \
+              "Response body: #{response.body}"
         end
       end
 
@@ -41,11 +42,29 @@ module Rswag
         response_schema = metadata[:response][:schema]
         return if response_schema.nil?
 
+        version = @config.get_swagger_doc_version(metadata[:swagger_doc])
+        schemas = definitions_or_component_schemas(swagger_doc, version)
+
         validation_schema = response_schema
           .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(swagger_doc.slice(:definitions))
+          .merge(schemas)
+
         errors = JSON::Validator.fully_validate(validation_schema, body)
         raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
+      end
+
+      def definitions_or_component_schemas(swagger_doc, version)
+        if version.start_with?('2')
+          swagger_doc.slice(:definitions)
+        else # Openapi3
+          if swagger_doc.key?(:definitions)
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+            swagger_doc.slice(:definitions)
+          else
+            components = swagger_doc[:components] || {}
+            { components: { schemas: components[:schemas] } }
+          end
+        end
       end
     end
 
