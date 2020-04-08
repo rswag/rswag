@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [2.3.1] - 2020-04-08
+### Fixed
+- Remove require for byebug [#295](https://github.com/rswag/rswag/issues/295)
+
 ## [2.3.0] - 2020-04-05
 ### Added
 - Support for OpenAPI 3.0 ! [#286](https://github.com/rswag/rswag/pull/286)
