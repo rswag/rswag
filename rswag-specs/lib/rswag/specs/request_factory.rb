@@ -3,7 +3,6 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
-require 'byebug'
 
 module Rswag
   module Specs
