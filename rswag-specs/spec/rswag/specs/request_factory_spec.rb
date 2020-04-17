@@ -178,6 +178,20 @@ module Rswag
               )
             end
           end
+
+          context 'smart form payload' do
+            before do
+              metadata[:operation][:consumes] = ['multipart/form-data']
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :formData, schema: { type: 'object' } }]
+              allow(example).to receive(:comment).and_return(text: 'Some comment')
+            end
+
+            it 'sets payload to hash of names and example values' do
+              expect(request[:payload]).to eq(
+                :text => 'Some comment'
+              )
+            end
+          end
         end
 
         context 'produces content' do
