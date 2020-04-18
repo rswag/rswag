@@ -35,7 +35,7 @@ module Rswag
         end
       end
 
-      describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
+      describe '#tags|description|operationId|consumes|produces|schemes|deprecated(value)' do
         before do
           subject.tags('Blogs', 'Admin')
           subject.description('Some description')
@@ -44,7 +44,6 @@ module Rswag
           subject.produces('application/json', 'application/xml')
           subject.schemes('http', 'https')
           subject.deprecated(true)
-          subject.security(api_key: [])
         end
         let(:api_metadata) { { operation: {} } }
 
@@ -57,6 +56,17 @@ module Rswag
             produces: ['application/json', 'application/xml'],
             schemes: ['http', 'https'],
             deprecated: true,
+          )
+        end
+      end
+
+      describe '#security(value)' do
+        let(:api_metadata) { { operation: {} } }
+
+        it "adds to the 'operation' metadata" do
+          expect { subject.security(api_key: []) }.to change { api_metadata[:operation].object_id }
+
+          expect(api_metadata[:operation]).to match(
             security: { api_key: [] }
           )
         end

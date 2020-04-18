@@ -15,10 +15,14 @@ module Rswag
         end
       end
 
-      [:operationId, :deprecated, :security].each do |attr_name|
+      [:operationId, :deprecated].each do |attr_name|
         define_method(attr_name) do |value|
           metadata[:operation][attr_name] = value
         end
+      end
+
+      def security(value)
+        metadata[:operation] = metadata[:operation].merge(security: value)
       end
 
       # NOTE: 'description' requires special treatment because ExampleGroup already

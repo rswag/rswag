@@ -92,6 +92,34 @@
         }
       }
     },
+    "/auth-tests/basic-and-no-api-key": {
+      "post": {
+        "summary": "Authenticates with basic auth and no api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testBasicAndApiKey",
+        "security": [
+          {
+            "basic_auth": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+            }
+          },
+          "204": {
+            "description": "Valid basic auth",
+            "content": {
+            }
+          }
+        }
+      }
+    },
     "/blogs": {
       "post": {
         "summary": "Creates a blog",

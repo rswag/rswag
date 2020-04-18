@@ -18,6 +18,12 @@ class AuthTestsController < ApplicationController
     head :no_content
   end
 
+  # POST /auth-tests/basic-and-no-api-key
+  def basic_and_no_api_key
+    return head :unauthorized unless authenticate_basic and not authenticate_api_key
+    head :no_content
+  end
+
   private
 
   def authenticate_basic
