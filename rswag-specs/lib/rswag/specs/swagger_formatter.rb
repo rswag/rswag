@@ -137,10 +137,9 @@ module Rswag
 
         mime_list.each do |mime_type|
           # TODO upgrade to have content-type specific schema
-          target_node[:content][mime_type] = {
-            schema: schema,
-            examples: examples,
-          }
+          target_node[:content][mime_type] = {}
+          target_node[:content][mime_type][:schema] = schema if schema
+          target_node[:content][mime_type][:examples] = examples if examples
         end
       end
 

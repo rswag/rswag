@@ -167,6 +167,85 @@ module Rswag
               }
             )
           end
+
+          context "with examples" do
+            let(:api_metadata) do
+              {
+                path_item: { template: '/blogs', parameters: [{ type: :string }] },
+                operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
+                response: {
+                  code: '201',
+                  description: 'blog created',
+                  headers: { type: :string },
+                  schema: { '$ref' => '#/definitions/blog' },
+                  examples: {
+                    one: {
+                      value: {
+                        'data' => {
+                          'id' => '1',
+                          'type' => 'record'
+                        }
+                      }
+                    },
+                    two: {
+                      value: {
+                        'data' => {
+                          'id' => '2',
+                          'type' => 'record'
+                        }
+                      }
+                    }
+                  }
+                },
+                document: document
+              }
+            end
+
+            it 'adds params to mime_type' do
+              expect(swagger_doc.slice(:paths)).to match(
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          content: {
+                            'application/vnd.my_mime' => {
+                              schema: { '$ref' => '#/definitions/blog' },
+                              examples: {
+                                one: {
+                                  value: {"data"=>{"id"=>"1", "type"=>"record"}}
+                                },
+                                two: {
+                                  value: {"data"=>{"id"=>"2", "type"=>"record"}}
+                                }
+                              }
+                            },
+                            'application/json' => {
+                              schema: { '$ref' => '#/definitions/blog' },
+                              examples: {
+                                one: {
+                                  value: {"data"=>{"id"=>"1", "type"=>"record"}}
+                                },
+                                two: {
+                                  value: {"data"=>{"id"=>"2", "type"=>"record"}}
+                                }
+                              }
+                            }
+                          },
+                          description: 'blog created',
+                          headers: { schema: { type: :string } }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+            end
+
+          end
         end
       end
 
