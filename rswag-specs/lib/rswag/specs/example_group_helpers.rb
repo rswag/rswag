@@ -70,7 +70,7 @@ module Rswag
       # being invoked with no params to avoid overriding 'examples' method of
       # rspec-core ExampleGroup
       def examples(examples = nil)
-        return super() if example.nil?
+        return super() if examples.nil?
 
         metadata[:response][:examples] = examples
       end

@@ -154,6 +154,25 @@ module Rswag
           expect(api_metadata[:response][:examples]).to eq(json_example)
         end
       end
+
+      describe '#example(example)' do
+        let(:json_example) do
+          {
+            'application/json' => {
+              foo: 'bar'
+            }
+          }
+        end
+        let(:api_metadata) { { response: {} } }
+
+        before do
+          subject.example(json_example)
+        end
+
+        it "adds to the 'response example' metadata" do
+          expect(api_metadata[:response][:example]).to eq(json_example)
+        end
+      end
     end
   end
 end
