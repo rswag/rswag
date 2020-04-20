@@ -69,10 +69,16 @@ module Rswag
       # NOTE: Similar to 'description', 'examples' need to handle the case when
       # being invoked with no params to avoid overriding 'examples' method of
       # rspec-core ExampleGroup
-      def examples(example = nil)
+      def examples(examples = nil)
         return super() if example.nil?
 
-        metadata[:response][:examples] = example
+        metadata[:response][:examples] = examples
+      end
+
+      def example(example = nil)
+        return super() if example.nil?
+
+        metadata[:response][:example] = example
       end
 
       def run_test!(&block)

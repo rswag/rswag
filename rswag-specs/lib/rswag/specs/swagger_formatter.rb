@@ -124,23 +124,44 @@ module Rswag
         # Accept header
         mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
         target_node = metadata[:response]
-        upgrade_content!(mime_list, target_node)
+        target_node.merge!(content: {})
+        upgrade_schema!(mime_list, target_node)
+        upgrade_examples!(mime_list, target_node)
         metadata[:response].delete(:schema)
+        metadata[:response].delete(:example)
         metadata[:response].delete(:examples)
       end
 
-      def upgrade_content!(mime_list, target_node)
-        target_node.merge!(content: {})
+      def upgrade_schema!(mime_list, target_node)
         schema = target_node[:schema]
-        examples = target_node[:examples]
         return if mime_list.empty? || schema.nil?
 
-        mime_list.each do |mime_type|
-          # TODO upgrade to have content-type specific schema
-          target_node[:content][mime_type] = {}
-          target_node[:content][mime_type][:schema] = schema if schema
-          target_node[:content][mime_type][:examples] = examples if examples
+        set_mime_list_contents!(target_node, mime_list, :schema, schema)
+      end
+
+      def upgrade_examples!(mime_list, target_node)
+        example = target_node[:example]
+        examples = target_node[:examples]
+
+        if example
+          set_mime_list_contents!(target_node, mime_list, :example, example)
+        elsif examples
+          set_mime_list_contents!(target_node, mime_list, :examples, examples)
         end
+      end
+
+      def set_mime_list_contents!(target_node, mime_list, key, value)
+        # TODO: upgrade to have content-type specific schema and examples
+        mime_list.each do |mime_type|
+          set_mime_type_content!(target_node, mime_type, key, value)
+        end
+      end
+
+      def set_mime_type_content!(target_node, mime_type, key, value)
+        if target_node[:content][mime_type].nil?
+          target_node[:content][mime_type] = {}
+        end
+        target_node[:content][mime_type][key] = value
       end
 
       def upgrade_request_type!(metadata)
@@ -160,7 +181,7 @@ module Rswag
       def upgrade_servers!(swagger_doc)
         return unless swagger_doc[:servers].nil? && swagger_doc.key?(:schemes)
 
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: schemes, host, and basePath are replaced in OpenAPI3! Rename to array of servers[{url}] (in swagger_helper.rb)')
+        #ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: schemes, host, and basePath are replaced in OpenAPI3! Rename to array of servers[{url}] (in swagger_helper.rb)')
 
         swagger_doc[:servers] = { urls: [] }
         swagger_doc[:schemes].each do |scheme|
@@ -180,14 +201,14 @@ module Rswag
         schemes.each do |name, v|
           next unless v.key?(:flow)
 
-          ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
+          #ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
           flow = swagger_doc[:components][:securitySchemes][name].delete(:flow).to_s
           if flow == 'accessCode'
-            ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)")
+            #ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)")
             flow = 'authorizationCode'
           end
           if flow == 'application'
-            ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)")
+            #ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)")
             flow = 'clientCredentials'
           end
           flow_elements = swagger_doc[:components][:securitySchemes][name].except(:type).each_with_object({}) do |(k, _v), a|
