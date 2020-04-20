@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/hash/deep_merge'
+require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/object/blank'
 require 'rspec/core/formatters/base_text_formatter'
 require 'swagger_helper'
 
@@ -31,7 +33,7 @@ module Rswag
         # !metadata[:document] won't work, since nil means we should generate
         # docs.
         return if metadata[:document] == false
-        return unless metadata.key?(:response)
+        return unless metadata.key?(:response) && !metadata[:skip_formatter]
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
 
@@ -125,17 +127,16 @@ module Rswag
         mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
-        metadata[:response].delete(:schema)
       end
 
       def upgrade_content!(mime_list, target_node)
         target_node.merge!(content: {})
-        schema = target_node[:schema]
-        return if mime_list.empty? || schema.nil?
+        per_mime_data = target_node.extract!(:schema, :example, :examples).reject { |_, v| v.blank? }
+        return if mime_list.empty? || per_mime_data.empty?
 
         mime_list.each do |mime_type|
-          # TODO upgrade to have content-type specific schema
-          target_node[:content][mime_type] = { schema: schema }
+          # TODO upgrade to have content-type specific data
+          target_node[:content][mime_type] = per_mime_data
         end
       end
 

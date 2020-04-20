@@ -111,7 +111,7 @@ module Rswag
 
         it "delegates to 'context' with 'response' metadata" do
           expect(subject).to have_received(:context).with(
-            'success', response: { code: '201', description: 'success' }
+            'success', response: { code: '201', description: 'success', examples: {} }
           )
         end
       end
