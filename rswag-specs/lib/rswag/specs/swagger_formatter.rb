@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/hash/deep_merge'
+require 'active_support/core_ext/hash/slice'
 require 'rspec/core/formatters/base_text_formatter'
 require 'swagger_helper'
 
@@ -55,16 +56,39 @@ module Rswag
               v.each_pair do |_verb, value|
                 is_hash = value.is_a?(Hash)
                 if is_hash && value.dig(:parameters)
-                  schema_param = value.dig(:parameters)&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                  mime_list = value.dig(:consumes)
-                  if value && schema_param && mime_list
-                    value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
-                    mime_list.each do |mime|
-                      value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
+                  body_param = nil
+                  form_params = []
+
+                  value.dig(:parameters).reject! do |p|
+                    case p[:in]
+                    when :body
+                      body_param = p
+                    when :formData
+                      form_params << p
                     end
                   end
 
-                  value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
+                  if (body_param || form_params.any?) && (mime_list = value.dig(:consumes))
+                    value[:requestBody] ||= {}
+                    value[:requestBody][:content] ||= {}
+                    value[:requestBody].merge! body_param.slice(:description, :required) if body_param
+
+                    mime_list.each do |mime|
+                      case mime
+                      when 'application/x-www-form-urlencoded', 'multipart/form-data'
+                        properties = form_params.each_with_object({}) do |p, hash|
+                          hash[p[:name]] = p.except(:in, :name, :required, :schema)
+                          hash[p[:name]].merge! p[:schema] if p[:schema]
+                        end
+                        required = form_params.select { |p| p[:required] }.map { |p| p[:name] }
+                        schema = { type: :object, properties: properties }
+                        schema[:required] = required unless required.empty?
+                        value[:requestBody][:content][mime] = { schema: schema }
+                      else
+                        value[:requestBody][:content][mime] = body_param.slice(:example, :examples, :schema) if body_param
+                      end
+                    end
+                  end
                 end
                 remove_invalid_operation_keys!(value)
               end
