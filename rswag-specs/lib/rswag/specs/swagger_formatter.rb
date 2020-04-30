@@ -126,17 +126,29 @@ module Rswag
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
         metadata[:response].delete(:schema)
+        metadata[:response].delete(:examples)
       end
 
       def upgrade_content!(mime_list, target_node)
         target_node.merge!(content: {})
         schema = target_node[:schema]
-        return if mime_list.empty? || schema.nil?
+        examples = upgrade_examples(target_node[:examples])
+        return if mime_list.empty? || (schema.nil? && examples.nil?)
 
+        content = { schema: schema, examples: examples }.select { |_, v| v.present? }
         mime_list.each do |mime_type|
           # TODO upgrade to have content-type specific schema
-          target_node[:content][mime_type] = { schema: schema }
+          target_node[:content][mime_type] = content
         end
+      end
+
+      def upgrade_examples(examples)
+        return unless examples.present?
+        examples.map do |k, v| 
+          [k, {
+            value: v
+          }]
+        end.to_h
       end
 
       def upgrade_request_type!(metadata)
