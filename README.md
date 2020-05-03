@@ -516,6 +516,15 @@ config.swagger_docs = {
             thumbnail: { type: 'string', nullable: true }
           },
           required: %w[id title]
+        },
+        new_blog: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            content: { type: 'string', nullable: true },
+            thumbnail: { type: 'string', format: 'binary', nullable: true }
+          },
+          required: %w[title]
         }
       }
     }
@@ -528,6 +537,8 @@ describe 'Blogs API' do
   path '/blogs' do
 
     post 'Creates a blog' do
+
+      parameter name: :new_blog, in: :body, schema: { '$ref' => '#/components/schemas/new_blog' }
 
       response 422, 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'
