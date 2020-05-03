@@ -103,6 +103,44 @@ module Rswag
           end
         end
 
+        context "'query' parameters of type 'object'" do
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'things', in: :query,
+                style: style,
+                explode: explode,
+                schema: { type: :object, additionalProperties: { type: :string } }
+              }
+            ]
+            allow(example).to receive(:things).and_return({'foo': 'bar'})
+          end
+
+          context 'deepObject' do
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things[foo]=bar')
+            end
+          end
+
+          context 'form explode=false' do
+            let(:style) { :form }
+            let(:explode) { false }
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?things=foo,bar')
+            end
+          end
+
+          context 'form explode=true' do
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?foo=bar')
+            end
+          end
+        end
+
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
