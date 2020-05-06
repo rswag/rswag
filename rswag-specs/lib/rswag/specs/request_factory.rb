@@ -120,17 +120,22 @@ module Rswag
         name = param[:name]
 
         # OAS 3: https://swagger.io/docs/specification/serialization/
-        if param.has_key? :schema
+        if param.has_key?(:schema)
           return "#{name}=#{value}" unless param[:schema][:type].to_sym == :object
 
-          style = (param[:style] || :form).to_sym
+          style = param[:style]&.to_sym || :form
           explode = param[:explode].nil? ? true : param[:explode]
 
-          return value.map{ |k,v| "#{name}[#{k}]=#{v}" }.join('&') if style == :deepObject
-
-          return value.map{ |k,v| "#{k}=#{v}" }.join('&') if style == :form && explode
-
-          return "#{name}=" + value.to_a.flatten.join(',') if style == :form && !explode
+          case style
+          when :deepObject
+            return { name => value }.to_query
+          when :form
+            if explode
+              return value.to_query#.map{ |k,v| "#{k}=#{v}" }.join('&')
+            else
+              return "#{CGI.escape(name)}=" + value.to_a.flatten.map{|v| CGI.escape(v) }.join(',')
+            end
+          end
         end
 
         return "#{name}=#{value}" unless param[:type].to_sym == :array
