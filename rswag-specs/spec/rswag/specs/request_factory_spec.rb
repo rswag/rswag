@@ -150,6 +150,15 @@ module Rswag
               expect(request[:path]).to eq('/blogs?foo=bar')
             end
           end
+
+          context 'form explode=true with nesting and uri encodable output' do
+            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
+            end
+          end
         end
 
         context "'header' parameters" do

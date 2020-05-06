@@ -133,7 +133,7 @@ module Rswag
             if explode
               return value.to_query#.map{ |k,v| "#{k}=#{v}" }.join('&')
             else
-              return "#{CGI.escape(name)}=" + value.to_a.flatten.map{|v| CGI.escape(v) }.join(',')
+              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
             end
           end
         end
