@@ -104,6 +104,8 @@ module Rswag
         end
 
         context "'query' parameters of type 'object'" do
+          let(:things) { {'foo': 'bar'} }
+
           before do
             metadata[:operation][:parameters] = [
               {
@@ -113,14 +115,23 @@ module Rswag
                 schema: { type: :object, additionalProperties: { type: :string } }
               }
             ]
-            allow(example).to receive(:things).and_return({'foo': 'bar'})
+            allow(example).to receive(:things).and_return(things)
           end
 
           context 'deepObject' do
             let(:style) { :deepObject }
             let(:explode) { true }
             it 'formats as deep object' do
-              expect(request[:path]).to eq('/blogs?things[foo]=bar')
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D=bar')
+            end
+          end
+
+          context 'deepObject with nested objects' do
+            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
             end
           end
 
