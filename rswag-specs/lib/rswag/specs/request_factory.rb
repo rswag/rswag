@@ -131,7 +131,7 @@ module Rswag
             return { name => value }.to_query
           when :form
             if explode
-              return value.to_query#.map{ |k,v| "#{k}=#{v}" }.join('&')
+              return value.to_query
             else
               return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
             end
