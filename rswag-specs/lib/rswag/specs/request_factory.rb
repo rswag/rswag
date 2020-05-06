@@ -123,7 +123,7 @@ module Rswag
         if param.has_key? :schema
           return "#{name}=#{value}" unless param[:schema][:type].to_sym == :object
 
-          style = param[:style] || :form
+          style = (param[:style] || :form).to_sym
           explode = param[:explode].nil? ? true : param[:explode]
 
           return value.map{ |k,v| "#{name}[#{k}]=#{v}" }.join('&') if style == :deepObject
