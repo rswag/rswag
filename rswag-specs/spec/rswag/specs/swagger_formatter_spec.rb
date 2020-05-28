@@ -12,41 +12,55 @@ module Rswag
       before do
         allow(config).to receive(:swagger_root).and_return(swagger_root)
       end
-      let(:config) { double('config') }
+      let(:config) {
+        Configuration.new(
+          OpenStruct.new(
+            swagger_root: swagger_root,
+            swagger_docs: config_swagger_docs,
+            swagger_format: swagger_format
+          )
+        )
+      }
+      let(:swagger_format) { :json }
       let(:output) { double('output').as_null_object }
       let(:swagger_root) { File.expand_path('tmp/swagger', __dir__) }
 
       describe '#example_group_finished(notification)' do
         before do
-          allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
           subject.example_group_finished(notification)
         end
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
+        let(:config_swagger_docs) { {} }
         let(:api_metadata) do
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
             response: { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } },
-            document: document
+            document: document,
+            swagger_docs: swagger_docs
           }
         end
 
         context 'with the document tag set to false' do
-          let(:swagger_doc) { { swagger: '2.0' } }
+          let(:config_swagger_docs) { { 'doc_1' => { swagger: '2.0' } } }
+          let(:swagger_doc) { 'doc_1' }
           let(:document) { false }
+          let(:swagger_docs) { nil }
 
           it 'does not update the swagger doc' do
-            expect(swagger_doc).to match({ swagger: '2.0' })
+            expect(config_swagger_docs[swagger_doc]).to match({ swagger: '2.0' })
           end
         end
 
         context 'with the document tag set to anything but false' do
-          let(:swagger_doc) { { swagger: '2.0' } }
+          let(:config_swagger_docs) { { 'doc_1' => { swagger: '2.0' } } }
+          let(:swagger_doc) { 'doc_1' }
           # anything works, including its absence when specifying responses.
           let(:document) { nil }
+          let(:swagger_docs) { nil }
 
           it 'converts to swagger and merges into the corresponding swagger doc' do
-            expect(swagger_doc).to match(
+            expect(config_swagger_docs[swagger_doc]).to match(
               swagger: '2.0',
               paths: {
                 '/blogs' => {
@@ -69,38 +83,43 @@ module Rswag
         end
 
         context 'with metadata upgrades for 3.0' do
-          let(:swagger_doc) do
-            {
-              openapi: '3.0.1',
-              basePath: '/foo',
-              schemes: ['http', 'https'],
-              host: 'api.example.com',
-              produces: ['application/vnd.my_mime', 'application/json'],
-              components: {
-                securitySchemes: {
-                  myClientCredentials: {
-                    type: :oauth2,
-                    flow: :application,
-                    token_url: :somewhere
-                  },
-                  myAuthorizationCode: {
-                    type: :oauth2,
-                    flow: :accessCode,
-                    token_url: :somewhere
-                  },
-                  myImplicit: {
-                    type: :oauth2,
-                    flow: :implicit,
-                    token_url: :somewhere
+          let(:openapi_documents) {
+            (0..2).map { |idx|
+              {
+                openapi: '3.0.1',
+                basePath: '/foo',
+                title: "Doc #{idx}",
+                schemes: ['http', 'https'],
+                host: 'api.example.com',
+                produces: ['application/vnd.my_mime', 'application/json'],
+                components: {
+                  securitySchemes: {
+                    myClientCredentials: {
+                      type: :oauth2,
+                      flow: :application,
+                      token_url: :somewhere
+                    },
+                    myAuthorizationCode: {
+                      type: :oauth2,
+                      flow: :accessCode,
+                      token_url: :somewhere
+                    },
+                    myImplicit: {
+                      type: :oauth2,
+                      flow: :implicit,
+                      token_url: :somewhere
+                    }
                   }
                 }
               }
             }
-          end
+          }
+          let(:config_swagger_docs) { { 'doc_1' => openapi_documents[0] } }
+          let(:swagger_doc) { 'doc_1' }
           let(:document) { nil }
-
-          it 'converts query and path params, type: to schema: { type: }' do
-            expect(swagger_doc.slice(:paths)).to match(
+          let(:swagger_docs) { nil }
+          let(:expected_paths) {
+            {
               paths: {
                 '/blogs' => {
                   parameters: [{ schema: { type: :string } }],
@@ -124,11 +143,47 @@ module Rswag
                   }
                 }
               }
-            )
+            }
+          }
+
+          it 'converts query and path params, type: to schema: { type: }' do
+            expect(config_swagger_docs[swagger_doc].slice(:paths)).to match(expected_paths)
+          end
+
+          context 'when swagger_docs contains one of the docs' do
+            let(:config_swagger_docs) {
+              {
+                'doc_1' => openapi_documents[0],
+                'doc_2' => openapi_documents[1]
+              }
+            }
+            let(:swagger_doc) { nil }
+            let(:swagger_docs) { ['doc_1'] }
+
+            it 'ads the paths to the document' do
+              expect(config_swagger_docs['doc_1'].slice(:paths)).to match(expected_paths)
+              expect(config_swagger_docs['doc_2'].slice(:paths)).not_to match(expected_paths)
+            end
+          end
+
+          context 'when swagger_docs contains multiple docs' do
+            let(:config_swagger_docs) {
+              {
+                'doc_1' => openapi_documents[0],
+                'doc_2' => openapi_documents[1]
+              }
+            }
+            let(:swagger_doc) { nil }
+            let(:swagger_docs) { ['doc_1', 'doc_2'] }
+
+            it 'ads the paths to the document' do
+              expect(config_swagger_docs['doc_1'].slice(:paths)).to match(expected_paths)
+              expect(config_swagger_docs['doc_2'].slice(:paths)).to match(expected_paths)
+            end
           end
 
           it 'converts basePath, schemas and host to urls' do
-            expect(swagger_doc.slice(:servers)).to match(
+            expect(config_swagger_docs[swagger_doc].slice(:servers)).to match(
               servers: {
                 urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
               }
@@ -136,7 +191,7 @@ module Rswag
           end
 
           it 'upgrades oauth flow to flows' do
-            expect(swagger_doc.slice(:components)).to match(
+            expect(config_swagger_docs[swagger_doc].slice(:components)).to match(
               components: {
                 securitySchemes: {
                   myClientCredentials: {
@@ -171,13 +226,14 @@ module Rswag
       end
 
       describe '#stop' do
-        before do
-          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
-          allow(config).to receive(:swagger_docs).and_return(
+        let(:config_swagger_docs) {
+          {
             'v1/swagger.json' => doc_1,
             'v2/swagger.json' => doc_2
-          )
-          allow(config).to receive(:swagger_format).and_return(swagger_format)
+          }
+        }
+        before do
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
           subject.stop(notification)
         end
 
