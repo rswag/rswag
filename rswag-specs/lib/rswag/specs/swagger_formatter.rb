@@ -33,19 +33,30 @@ module Rswag
         return if metadata[:document] == false
         return unless metadata.key?(:response)
 
-        swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+        swagger_docs = (metadata[:swagger_docs] || [metadata[:swagger_doc]])
+                       .map { |doc| @config.get_swagger_doc(doc) }
 
-        unless doc_version(swagger_doc).start_with?('2')
-          # This is called multiple times per file!
-          # metadata[:operation] is also re-used between examples within file
-          # therefore be careful NOT to modify its content here.
-          upgrade_request_type!(metadata)
-          upgrade_servers!(swagger_doc)
-          upgrade_oauth!(swagger_doc)
-          upgrade_response_produces!(swagger_doc, metadata)
-        end
+        swagger_docs.each { |swagger_doc|
+          # Get a deep copy of these metadata sub-hashes as any further processing done on them
+          # will then be isolated to each swagger doc file
+          response, operation, path_item = [
+            metadata[:response],
+            metadata[:operation],
+            metadata[:path_item]
+          ].map { |node| Marshal.load(Marshal.dump(node)) }
 
-        swagger_doc.deep_merge!(metadata_to_swagger(metadata))
+          if doc_version(swagger_doc).start_with?('3')
+            # This is called multiple times per file!
+            # metadata[:operation] is also re-used between examples within file
+            # therefore be careful NOT to modify its content here.
+            upgrade_request_type!(operation, response, path_item)
+            upgrade_servers!(swagger_doc)
+            upgrade_oauth!(swagger_doc)
+            upgrade_response_produces!(swagger_doc, operation, response)
+          end
+
+          swagger_doc.deep_merge!(swagger_path(response, operation, path_item))
+        }
       end
 
       def stop(_notification = nil)
@@ -99,17 +110,17 @@ module Rswag
         JSON.parse(json_doc)
       end
 
-      def metadata_to_swagger(metadata)
-        response_code = metadata[:response][:code]
-        response = metadata[:response].reject { |k, _v| k == :code }
+      def swagger_path(response, operation, path_item)
+        response_code = response[:code]
+        response = response.reject { |k, _v| k == :code }
 
-        verb = metadata[:operation][:verb]
-        operation = metadata[:operation]
+        verb = operation[:verb]
+        operation = operation
           .reject { |k, _v| k == :verb }
           .merge(responses: { response_code => response })
 
-        path_template = metadata[:path_item][:template]
-        path_item = metadata[:path_item]
+        path_template = path_item[:template]
+        path_item = path_item
           .reject { |k, _v| k == :template }
           .merge(verb => operation)
 
@@ -120,12 +131,12 @@ module Rswag
         doc[:openapi] || doc[:swagger] || '3'
       end
 
-      def upgrade_response_produces!(swagger_doc, metadata)
+      def upgrade_response_produces!(swagger_doc, operation, response)
         # Accept header
-        mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
-        target_node = metadata[:response]
+        mime_list = Array(operation[:produces] || swagger_doc[:produces])
+        target_node = response
         upgrade_content!(mime_list, target_node)
-        metadata[:response].delete(:schema)
+        response.delete(:schema)
       end
 
       def upgrade_content!(mime_list, target_node)
@@ -139,11 +150,12 @@ module Rswag
         end
       end
 
-      def upgrade_request_type!(metadata)
+      def upgrade_request_type!(operation, response, path_item)
+
         # No deprecation here as it seems valid to allow type as a shorthand
-        operation_nodes = metadata[:operation][:parameters] || []
-        path_nodes = metadata[:path_item][:parameters] || []
-        header_node = metadata[:response][:headers] || {}
+        operation_nodes = operation[:parameters] || []
+        path_nodes = path_item[:parameters] || []
+        header_node = response[:headers] || {}
 
         (operation_nodes + path_nodes + [header_node]).each do |node|
           if node && node[:type] && node[:schema].nil?
