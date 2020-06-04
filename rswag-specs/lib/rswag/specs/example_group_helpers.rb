@@ -78,10 +78,6 @@ module Rswag
           end
       end
 
-      # example.metadata[:response][:content] = {
-      #   'application/json' => { example: json }
-      # }
-
       def run_test!(&block)
         # NOTE: rspec 2.x support
         if RSPEC_VERSION < 3
