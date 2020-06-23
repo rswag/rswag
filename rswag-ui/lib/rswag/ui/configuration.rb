@@ -24,7 +24,7 @@ module Rswag
         @config_object = {}
         @oauth_config_object = {}
         @basic_auth_enabled = false
-        @index = "index.html"
+        @index = "/index.html"
       end
 
       def swagger_endpoint(url, name)
