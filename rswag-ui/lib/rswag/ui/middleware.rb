@@ -9,7 +9,7 @@ module Rswag
 
       def call(env)
         if base_path?(env)
-          redirect_uri = env['SCRIPT_NAME'].chomp('/') + '/index.html'
+          redirect_uri = env['SCRIPT_NAME'].chomp('/') + @config.index
           return [ 301, { 'Location' => redirect_uri }, [ ] ]
         end
 
@@ -27,7 +27,7 @@ module Rswag
       end
 
       def index_path?(env)
-        env['REQUEST_METHOD'] == "GET" && env['PATH_INFO'] == "/index.html"
+        env['REQUEST_METHOD'] == "GET" && env['PATH_INFO'] == @config.index
       end
 
       def render_template

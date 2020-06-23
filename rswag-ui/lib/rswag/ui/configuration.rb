@@ -9,6 +9,7 @@ module Rswag
       attr_accessor :config_object
       attr_accessor :oauth_config_object
       attr_reader :assets_root
+      attr_accessor :index
 
       def initialize
         @template_locations = [
@@ -23,6 +24,7 @@ module Rswag
         @config_object = {}
         @oauth_config_object = {}
         @basic_auth_enabled = false
+        @index = "index.html"
       end
 
       def swagger_endpoint(url, name)

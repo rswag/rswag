@@ -48,5 +48,13 @@ RSpec.describe Rswag::Ui::Configuration do
     end
   end
 
+  decribe '#set_index_path' do
+    it 'sets the index path' do
+      configuration = described_class.new
+      configuration.index = "some_path"
+      index = configuration.index
+
+      expect(index).to eq("some_path")
+
   describe '#get_binding'
 end
