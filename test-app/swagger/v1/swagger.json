@@ -294,7 +294,8 @@
                 "type": "file"
               }
             }
-          }
+          },
+          "required": true
         }
       }
     }
