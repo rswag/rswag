@@ -12,6 +12,6 @@ RSpec.describe 'rswag:specs:swaggerize' do
 
   it 'generates Swagger JSON files from integration specs' do
     Rake::Task['rswag:specs:swaggerize'].invoke
-    expect(File).to exist("#{swagger_root}/v1/swagger.json")
+    expect(File).to exist("#{swagger_root}/v1/swagger.yaml")
   end
 end

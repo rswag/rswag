@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
   let(:api_key) { 'fake_key' }
 
   path '/blogs' do

@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Allow the rails version to come from an ENV setting so Travis can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '5.2.4.2'
+rails_version = ENV['RAILS_VERSION'] || '6.0.3.2'
 
 gem 'rails', rails_version.to_s
 

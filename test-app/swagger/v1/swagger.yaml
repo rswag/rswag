@@ -1,0 +1,230 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/auth-tests/basic":
+    post:
+      summary: Authenticates with basic auth
+      tags:
+      - Auth Tests
+      operationId: testBasicAuth
+      security:
+      - basic_auth: []
+      responses:
+        '204':
+          description: Valid credentials
+          content: {}
+        '401':
+          description: Invalid credentials
+          content: {}
+  "/auth-tests/api-key":
+    post:
+      summary: Authenticates with an api key
+      tags:
+      - Auth Tests
+      operationId: testApiKey
+      security:
+      - api_key: []
+      responses:
+        '204':
+          description: Valid credentials
+          content: {}
+        '401':
+          description: Invalid credentials
+          content: {}
+  "/auth-tests/basic-and-api-key":
+    post:
+      summary: Authenticates with basic auth and api key
+      tags:
+      - Auth Tests
+      operationId: testBasicAndApiKey
+      security:
+      - basic_auth: []
+        api_key: []
+      responses:
+        '204':
+          description: Valid credentials
+          content: {}
+        '401':
+          description: Invalid credentials
+          content: {}
+  "/blogs":
+    post:
+      summary: Creates a blog
+      tags:
+      - Blogs
+      description: Creates a new blog from provided data
+      operationId: createBlog
+      parameters: []
+      responses:
+        '201':
+          description: blog created
+          content: {}
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/errors_object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/definitions/blog"
+    get:
+      summary: Searches blogs
+      tags:
+      - Blogs
+      description: Searches blogs by keywords
+      operationId: searchBlogs
+      parameters:
+      - name: keywords
+        in: query
+        schema:
+          type: string
+      responses:
+        '406':
+          description: unsupported accept header
+          content: {}
+  "/blogs/flexible":
+    post:
+      summary: Creates a blog flexible body
+      tags:
+      - Blogs
+      description: Creates a flexible blog from provided data
+      operationId: createFlexibleBlog
+      parameters: []
+      responses:
+        '201':
+          description: flexible blog created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - "$ref": "#/definitions/blog"
+                - "$ref": "#/definitions/flexible_blog"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - "$ref": "#/definitions/blog"
+              - "$ref": "#/definitions/flexible_blog"
+  "/blogs/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieves a blog
+      tags:
+      - Blogs
+      description: Retrieves a specific blog by id
+      operationId: getBlog
+      responses:
+        '200':
+          description: blog found
+          headers:
+            ETag:
+              type: string
+            Last-Modified:
+              type: string
+            Cache-Control:
+              type: string
+          examples:
+            application/json:
+              id: 1
+              title: Hello world!
+              content: Hello world and hello universe. Thank you all very much!!!
+              thumbnail: thumbnail.png
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/blog"
+        '404':
+          description: blog not found
+          content: {}
+  "/blogs/{id}/upload":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    put:
+      summary: Uploads a blog thumbnail
+      tags:
+      - Blogs
+      description: Upload a thumbnail for specific blog by id
+      operationId: uploadThumbnailBlog
+      parameters: []
+      responses:
+        '200':
+          description: blog updated
+          content: {}
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com
+definitions:
+  errors_object:
+    type: object
+    properties:
+      errors:
+        "$ref": "#/definitions/errors_map"
+  errors_map:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        type: string
+  blog:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      content:
+        type: string
+        x-nullable: true
+      thumbnail:
+        type: string
+        x-nullable: true
+    required:
+    - id
+    - title
+  flexible_blog:
+    type: object
+    properties:
+      id:
+        type: integer
+      headline:
+        type: string
+      text:
+        type: string
+        nullable: true
+      thumbnail:
+        type: string
+        nullable: true
+    required:
+    - id
+    - headline
+components:
+  securitySchemes:
+    basic_auth:
+      type: basic
+    api_key:
+      type: apiKey
+      name: api_key
+      in: query

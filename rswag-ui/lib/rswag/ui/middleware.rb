@@ -14,13 +14,23 @@ module Rswag
         end
 
         if index_path?(env)
-          return [ 200, { 'Content-Type' => 'text/html' }, [ render_template ] ]
+          return [ 200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [ render_template ] ]
         end
 
         super
       end
 
       private
+
+      def csp
+        <<~POLICY.gsub "\n", ' '
+          default-src 'self';
+          img-src 'self' data: https://online.swagger.io;
+          font-src 'self' https://fonts.gstatic.com;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          script-src 'self' 'unsafe-inline';
+        POLICY
+      end
 
       def base_path?(env)
         env['REQUEST_METHOD'] == "GET" && env['PATH_INFO'] == "/"
