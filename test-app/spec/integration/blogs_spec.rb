@@ -10,19 +10,40 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
-
-      let(:blog) { { title: 'foo', content: 'bar' } }
+      parameter name: :params, in: :body, schema: { #'$ref' => '#/definitions/blog' }
+        type: :object,
+        properties: {
+          blog: {
+            type: :object,
+            properties: {
+              title: { type: 'string', 'x-nullable': true },
+              content: { type: 'string' }
+            },
+            required: ['content']
+          }
+        },
+        required: ['blog']
+      }
 
       response '201', 'blog created' do
-        # schema '$ref' => '#/definitions/blog'
+        schema '$ref' => '#/definitions/blog'
+        let!(:params) { { blog: { title: 'foo', content: 'bar' } } }
+
+        after do |example|
+          example.metadata[:response][:content] = {
+            'application/json' => {
+              example: JSON.parse(response.body, symbolize_names: true)
+            }
+          }
+        end
+
         run_test!
       end
 
       response '422', 'invalid request' do
         schema '$ref' => '#/definitions/errors_object'
 
-        let(:blog) { { title: 'foo' } }
+        let(:params) { { blog: { title: 'foo' } } }
         run_test! do |response|
           expect(response.body).to include("can't be blank")
         end

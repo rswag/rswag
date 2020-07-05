@@ -8,6 +8,8 @@ RSpec.configure do |config|
   # to ensure that it's configured to serve Swagger from the same folder
   config.swagger_root = Rails.root.join('swagger').to_s
 
+  config.swagger_dry_run = false
+
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
   # be generated at the provided relative path under swagger_root
@@ -24,10 +26,10 @@ RSpec.configure do |config|
       paths: {},
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: 'http://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: 'localhost:3000'
             }
           }
         }

@@ -61,7 +61,15 @@ paths:
       responses:
         '201':
           description: blog created
-          content: {}
+          content:
+            application/json:
+              example:
+                id: 1
+                title: foo
+                content: bar
+                thumbnail:
+              schema:
+                "$ref": "#/definitions/blog"
         '422':
           description: invalid request
           content:
@@ -72,7 +80,20 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/definitions/blog"
+              type: object
+              properties:
+                blog:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      x-nullable: true
+                    content:
+                      type: string
+                  required:
+                  - content
+              required:
+              - blog
     get:
       summary: Searches blogs
       tags:
@@ -135,14 +156,13 @@ paths:
               type: string
             Cache-Control:
               type: string
-          examples:
-            application/json:
-              id: 1
-              title: Hello world!
-              content: Hello world and hello universe. Thank you all very much!!!
-              thumbnail: thumbnail.png
           content:
             application/json:
+              example:
+                id: 1
+                title: Hello world!
+                content: Hello world and hello universe. Thank you all very much!!!
+                thumbnail: thumbnail.png
               schema:
                 "$ref": "#/definitions/blog"
         '404':
@@ -172,10 +192,10 @@ paths:
             schema:
               type: file
 servers:
-- url: https://{defaultHost}
+- url: http://{defaultHost}
   variables:
     defaultHost:
-      default: www.example.com
+      default: localhost:3000
 definitions:
   errors_object:
     type: object

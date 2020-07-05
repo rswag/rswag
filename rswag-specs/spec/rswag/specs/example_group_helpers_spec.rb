@@ -151,7 +151,11 @@ module Rswag
         end
 
         it "adds to the 'response examples' metadata" do
-          expect(api_metadata[:response][:examples]).to eq(json_example)
+          expect(api_metadata[:response][:content]).to match(
+            mime => {
+              example: json_example[mime]
+            }
+          )
         end
       end
     end
