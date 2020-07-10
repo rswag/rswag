@@ -34,45 +34,46 @@ RSpec.configure do |config|
           }
         }
       ],
-      definitions: {
-        errors_object: {
-          type: 'object',
-          properties: {
-            errors: { '$ref' => '#/definitions/errors_map' }
-          }
-        },
-        errors_map: {
-          type: 'object',
-          additionalProperties: {
-            type: 'array',
-            items: { type: 'string' }
-          }
-        },
-        blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            title: { type: 'string' },
-            content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string', 'x-nullable': true}
-          },
-          required: [ 'id', 'title' ]
-        },
-        flexible_blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            headline: { type: 'string' },
-            text: { type: 'string', nullable: true },
-            thumbnail: { type: 'string', nullable: true }
-          },
-          required: ['id', 'headline']
-        }
-      },
       components: {
+        schemas: {
+          errors_object: {
+            type: 'object',
+            properties: {
+              errors: { '$ref' => '#/components/schemas/errors_map' }
+            }
+          },
+          errors_map: {
+            type: 'object',
+            additionalProperties: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              title: { type: 'string' },
+              content: { type: 'string', 'x-nullable': true },
+              thumbnail: { type: 'string', 'x-nullable': true}
+            },
+            required: [ 'id', 'title' ]
+          },
+          flexible_blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              headline: { type: 'string' },
+              text: { type: 'string', nullable: true },
+              thumbnail: { type: 'string', nullable: true }
+            },
+            required: ['id', 'headline']
+          }
+        },
         securitySchemes: {
           basic_auth: {
-            type: :basic
+            type: :http,
+            scheme: :basic
           },
           api_key: {
             type: :apiKey,
