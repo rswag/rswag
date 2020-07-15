@@ -10,16 +10,11 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :params, in: :body, schema: { #'$ref' => '#/definitions/blog' }
+      parameter name: :params, in: :body, schema: {
         type: :object,
         properties: {
           blog: {
-            type: :object,
-            properties: {
-              title: { type: 'string', 'x-nullable': true },
-              content: { type: 'string' }
-            },
-            required: ['content']
+            '$ref' => '#/components/schemas/blog'
           }
         },
         required: ['blog']
@@ -60,7 +55,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
       let(:keywords) { 'foo bar' }
 
       response '200', 'success' do
-        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
       end
 
       response '406', 'unsupported accept header' do

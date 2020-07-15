@@ -83,15 +83,7 @@ paths:
               type: object
               properties:
                 blog:
-                  type: object
-                  properties:
-                    title:
-                      type: string
-                      x-nullable: true
-                    content:
-                      type: string
-                  required:
-                  - content
+                  "$ref": "#/components/schemas/blog"
               required:
               - blog
     get:
