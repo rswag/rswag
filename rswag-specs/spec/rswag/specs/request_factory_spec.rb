@@ -105,6 +105,7 @@ module Rswag
 
         context "'query' parameters of type 'object'" do
           let(:things) { {'foo': 'bar'} }
+          let(:swagger_doc) { { swagger: '3.0' } }
 
           before do
             metadata[:operation][:parameters] = [
@@ -116,7 +117,6 @@ module Rswag
               }
             ]
             allow(example).to receive(:things).and_return(things)
-            let(:swagger_doc) { { swagger: '3.0' } }
           end
 
           context 'deepObject' do

@@ -111,16 +111,16 @@ module Rswag
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(p[:name])))
+            path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
           end
         end
       end
 
-      def build_query_string_part(param, value)
+      def build_query_string_part(param, value, swagger_doc)
         name = param[:name]
 
         # OAS 3: https://swagger.io/docs/specification/serialization/
-        if doc_version(swagger_doc).start_with?('3')
+        if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
           return "#{name}=#{value}" unless param[:schema][:type].to_sym == :object
 
           style = param[:style]&.to_sym || :form
