@@ -120,7 +120,7 @@ module Rswag
         name = param[:name]
 
         # OAS 3: https://swagger.io/docs/specification/serialization/
-        if param.has_key?(:schema)
+        if doc_version(swagger_doc).start_with?('3')
           return "#{name}=#{value}" unless param[:schema][:type].to_sym == :object
 
           style = param[:style]&.to_sym || :form
