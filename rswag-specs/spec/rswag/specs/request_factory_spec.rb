@@ -183,9 +183,9 @@ module Rswag
 
             it 'sets payload to hash of names and example values' do
               expect(request[:payload]).to eq(
-                                             'f1' => 'foo blah',
-                                             'f2' => 'bar blah'
-                                           )
+                'f1' => 'foo blah',
+                'f2' => 'bar blah'
+              )
             end
           end
         end
@@ -250,7 +250,7 @@ module Rswag
             it 'warns the user to upgrade' do
               expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
               expect(ActiveSupport::Deprecation).to have_received(:warn)
-                                                      .with('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
+                .with('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
               expect(swagger_doc[:components]).to have_key(:securitySchemes)
             end
           end
@@ -377,9 +377,9 @@ module Rswag
             it 'warns the user to upgrade' do
               expect(request[:path]).to eq('/blogs?q1=foo')
               expect(ActiveSupport::Deprecation).to have_received(:warn)
-                                                      .with('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+                .with('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
               expect(ActiveSupport::Deprecation).to have_received(:warn)
-                                                      .with('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
+                 .with('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
             end
           end
         end
