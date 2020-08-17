@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update swagger-ui version to 3.23.11 [#239](https://github.com/rswag/rswag/pull/239)
 - Rails constraint moved from < 6.1 to < 7 [#253](https://github.com/rswag/rswag/pull/253)
 - Swaggerize now outputs base RSpec text on completion to avoid silent failures [#293](https://github.com/rswag/rswag/pull/293)
+- Update swagger-ui version to 3.28.0
 
 ## [2.2.0] - 2019-11-01
 ### Added
