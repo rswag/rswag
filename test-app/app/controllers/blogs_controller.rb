@@ -32,7 +32,7 @@ class BlogsController < ApplicationController
     @blog = Blog.find_by_id(params[:id])
     return head :not_found if @blog.nil?
     @blog.thumbnail = save_uploaded_file params[:file]
-    head @blog.save ? :ok : :unprocsessible_entity
+    head @blog.save ? :ok : :unprocessable_entity
   end
 
   # GET /blogs
