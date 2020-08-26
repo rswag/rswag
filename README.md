@@ -18,7 +18,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.23.11|
+|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.28.0|
 |[2.3.0](https://github.com/rswag/rswag/tree/2.3.0)|3.0.3|3.23.11|
 |[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
@@ -516,6 +516,15 @@ config.swagger_docs = {
             thumbnail: { type: 'string', nullable: true }
           },
           required: %w[id title]
+        },
+        new_blog: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            content: { type: 'string', nullable: true },
+            thumbnail: { type: 'string', format: 'binary', nullable: true }
+          },
+          required: %w[title]
         }
       }
     }
@@ -528,6 +537,8 @@ describe 'Blogs API' do
   path '/blogs' do
 
     post 'Creates a blog' do
+
+      parameter name: :new_blog, in: :body, schema: { '$ref' => '#/components/schemas/new_blog' }
 
       response 422, 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'
@@ -900,4 +911,3 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 ```
 This will run the swagger editor in the docker daemon and can be accessed 
 at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
-
