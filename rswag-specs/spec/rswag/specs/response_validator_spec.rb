@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rswag/specs/response_validator'
-
+require 'pry'
 module Rswag
   module Specs
     RSpec.describe ResponseValidator do
@@ -94,6 +94,55 @@ module Rswag
 
               it 'uses the referenced schema to validate the response body' do
                 expect { call }.to raise_error(/Expected response body/)
+              end
+            end
+
+            context 'components/responses' do
+              before do
+                allow(ActiveSupport::Deprecation).to receive(:warn)
+                allow(config).to receive(:get_swagger_doc_version).and_return('3.0.1')
+                swagger_doc[:components] = {
+                  responses: {
+                    'GenericErrors' => {
+                      type: :object,
+                      properties: {
+                        errors: {
+                          type: :array,
+                          items: {
+                            type: :string
+                          }
+                        }
+                      },
+                      required: ['errors']
+                    }
+                  }
+                }
+                metadata[:response][:code] = 400
+                metadata[:response][:schema] = { '$ref' => '#/components/responses/GenericErrors' }
+              end
+
+              context 'response body matches metadata' do
+                let(:response) do
+                  OpenStruct.new(
+                    code: '400',
+                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    body: '{"errors": ["Some error"]}'
+                  )
+                end
+
+                it { expect { call }.to_not raise_error(/Expected response body/) }
+              end
+
+              context 'response body differs from metadata' do
+                let(:response) do
+                  OpenStruct.new(
+                    code: '400',
+                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    body: '{"errors":"Some single error"}'
+                  )
+
+                end
+                it { expect { call }.to raise_error(/Expected response body/) }
               end
             end
 
