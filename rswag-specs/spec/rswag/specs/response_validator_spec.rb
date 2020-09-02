@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rswag/specs/response_validator'
-require 'pry'
+
 module Rswag
   module Specs
     RSpec.describe ResponseValidator do
