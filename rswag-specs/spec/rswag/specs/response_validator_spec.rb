@@ -122,26 +122,20 @@ module Rswag
               end
 
               context 'response body matches metadata' do
-                let(:response) do
-                  OpenStruct.new(
-                    code: '400',
-                    headers: { 'X-Rate-Limit-Limit' => '10' },
-                    body: '{"errors": ["Some error"]}'
-                  )
+                before do
+                  response[:code] = '400'
+                  response[:body] = '{"errors": ["Some error"]}'
                 end
 
                 it { expect { call }.to_not raise_error(/Expected response body/) }
               end
 
               context 'response body differs from metadata' do
-                let(:response) do
-                  OpenStruct.new(
-                    code: '400',
-                    headers: { 'X-Rate-Limit-Limit' => '10' },
-                    body: '{"errors":"Some single error"}'
-                  )
-
+                before do
+                  response[:code] = '400'
+                  response[:body] = '{"errors":"Some single error"}'
                 end
+
                 it { expect { call }.to raise_error(/Expected response body/) }
               end
             end

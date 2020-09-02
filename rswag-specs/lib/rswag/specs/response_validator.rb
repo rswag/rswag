@@ -65,14 +65,7 @@ module Rswag
             {
               components: {
                 schemas: components[:schemas],
-                parameters: components[:parameters],
-                securitySchemes: components[:securitySchemes],
-                requestBodies: components[:requestBodies],
-                responses: components[:responses],
-                headers: components[:headers],
-                examples: components[:examples],
-                links: components[:links],
-                callbacks: components[:callbacks]
+                responses: components[:responses]
               }
             }
           end
