@@ -89,6 +89,7 @@ module Rswag
         else
           subject do |example|
             submit_request(example.metadata)
+            response
           end
 
           it "returns a #{metadata[:response][:code]} response" do |example|
