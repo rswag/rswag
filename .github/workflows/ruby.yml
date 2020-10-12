@@ -27,7 +27,7 @@ jobs:
         path: |
           rswag-ui/node_modules
           vendor/bundle
-        key: ${{ runner.os }}-ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-${{ hashFiles('**/Gemfile.lock', '**/yarn.lock') }}
+        key: ${{ runner.os }}-ruby_${{ matrix.ruby }}-rails_${{ matrix.rails }}-${{ hashFiles('Gemfile', '**/package-lock.json') }}
 
     - name: Install dependencies
       run: |
