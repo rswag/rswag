@@ -47,19 +47,19 @@ jobs:
         bundle exec rspec
 
     - name: rswag-specs
-      if: succeeded() || failed()
+      if: success() || failure()
       run: |
         cd rswag-specs
         bundle exec rspec
 
     - name: rswag-ui
-      if: succeeded() || failed()
+      if: success() || failure()
       run: |
         cd rswag-ui
         bundle exec rspec
 
     - name: test-app
-      if: succeeded() || failed()
+      if: success() || failure()
       run: |
         cd test-app
         bundle exec rake db:migrate db:test:prepare
