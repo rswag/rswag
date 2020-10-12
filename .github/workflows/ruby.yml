@@ -31,6 +31,27 @@ jobs:
         key: ${{ runner.os }}-deps-${{ hashFiles('**/Gemfile.lock', '**/yarn.lock') }}
 
     - name: Install dependencies
-      run: ./ci/build.sh
-    - name: Run tests
-      run: ./ci/test.sh
+      run: |
+        bundle install
+        cd rswag-ui && npm install
+
+    - name: rswag-api
+      run: |
+        cd rswag-api
+        bundle exec rspec
+
+    - name: rswag-specs
+      run: |
+        cd rswag-specs
+        bundle exec rspec
+
+    - name: rswag-ui
+      run: |
+        cd rswag-ui
+        bundle exec rspec
+
+    - name: test-app
+      run: |
+        cd test-app
+        bundle exec rake db:migrate db:test:prepare
+        bundle exec rspec
