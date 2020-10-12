@@ -19,13 +19,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+    - uses: ruby/setup-ruby@v1
+      with: { ruby-version: 2.6 }
+
+    - uses: actions/cache@v2
+      id: cache
       with:
-        ruby-version: 2.6
+        path: |
+          rswag-ui/node_modules
+          vendor/bundle
+        key: ${{ runner.os }}-deps-${{ hashFiles('**/Gemfile.lock', '**/yarn.lock') }}
+
     - name: Install dependencies
       run: ./ci/build.sh
     - name: Run tests
