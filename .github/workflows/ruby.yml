@@ -16,6 +16,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      ruby: [2.6, 2.7]
+      rails: [5.2.4.4, 6.0.3.4]
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
 
     steps:
     - uses: actions/checkout@v2
@@ -28,7 +33,7 @@ jobs:
         path: |
           rswag-ui/node_modules
           vendor/bundle
-        key: ${{ runner.os }}-deps-${{ hashFiles('**/Gemfile.lock', '**/yarn.lock') }}
+        key: ${{ runner.os }}-ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-${{ hashFiles('**/Gemfile.lock', '**/yarn.lock') }}
 
     - name: Install dependencies
       run: |
