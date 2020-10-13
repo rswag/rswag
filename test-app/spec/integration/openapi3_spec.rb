@@ -27,7 +27,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
       components: api_components
     }
   end
-  let(:api_openapi) { '3.0.1' }
+  let(:api_openapi) { '3.0.3' }
   let(:api_base_path) { '/foo' }
   let(:api_schemes) { ['https'] }
   let(:api_host) { 'api.example.com' }
