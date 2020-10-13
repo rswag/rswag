@@ -20,22 +20,77 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
   let(:swagger_doc) do
     { # That which would be defined in swagger_helper.rb
       openapi: api_openapi,
-      basePath: api_base_path,
-      schemes: api_schemes,
-      host: api_host,
+      info: {},
+      servers: api_servers,
       produces: api_produces,
       components: api_components
     }
   end
   let(:api_openapi) { '3.0.3' }
-  let(:api_base_path) { '/foo' }
-  let(:api_schemes) { ['https'] }
-  let(:api_host) { 'api.example.com' }
+  let(:api_servers) {[{ url: "https://api.example.com/foo" }]}
   let(:api_produces) { ['application/json'] }
   let(:api_components) { {} }
 
   describe 'Basic Structure'
-  describe 'API Server and Base Path'
+
+  describe 'API Server and Base Path' do
+    path '/stubs' do
+      get 'a summary' do
+        tags 'Server and Path'
+
+        response '200', 'OK' do
+          run_test!
+
+          it 'lists server' do
+            tree = swagger_doc.dig(:servers)
+            expect(tree).to eq([
+              { url: "https://api.example.com/foo" }
+            ])
+          end
+
+          context "multiple" do
+            let(:api_servers) {[
+              { url: "https://api.example.com/foo" },
+              { url: "http://api.example.com/foo" },
+            ]}
+
+            it 'lists servers' do
+              tree = swagger_doc.dig(:servers)
+              expect(tree).to eq([
+                { url: "https://api.example.com/foo" },
+                { url: "http://api.example.com/foo" }
+              ])
+            end
+          end
+
+          context "with variables" do
+            let(:api_servers) {[{
+              url: "https://{defaultHost}/foo",
+              variables: {
+                defaultHost: {
+                  default: "api.example.com" 
+                }
+              }
+            }]}
+
+            it 'lists server and variables' do
+              tree = swagger_doc.dig(:servers)
+              expect(tree).to eq([{
+                url: "https://{defaultHost}/foo",
+                variables: {
+                  defaultHost: {
+                    default: "api.example.com" 
+                  }
+                }
+              }])
+            end
+          end
+
+          # TODO: Enum variables, defaults, override at path/operation
+        end
+      end
+    end
+  end
 
   describe 'Media Types' do
     path '/stubs' do
