@@ -70,7 +70,8 @@ RSpec.configure do |config|
       components: {
         securitySchemes: {
           basic_auth: {
-            type: :basic
+            type: :http,
+            scheme: :basic
           },
           api_key: {
             type: :apiKey,
@@ -135,7 +136,8 @@ RSpec.configure do |config|
       components: {
         securitySchemes: {
           basic_auth: {
-            type: :basic
+            type: :http,
+            scheme: :basic
           },
           api_key: {
             type: :apiKey,

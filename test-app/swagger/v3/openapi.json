@@ -127,7 +127,8 @@
   "components": {
     "securitySchemes": {
       "basic_auth": {
-        "type": "basic"
+        "type": "http",
+        "scheme": "basic"
       },
       "api_key": {
         "type": "apiKey",
