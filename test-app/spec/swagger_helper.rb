@@ -67,14 +67,16 @@ RSpec.configure do |config|
           required: ['id', 'headline']
         }
       },
-      securityDefinitions: {
-        basic_auth: {
-          type: :basic
-        },
-        api_key: {
-          type: :apiKey,
-          name: 'api_key',
-          in: :query
+      components: {
+        securitySchemes: {
+          basic_auth: {
+            type: :basic
+          },
+          api_key: {
+            type: :apiKey,
+            name: 'api_key',
+            in: :query
+          }
         }
       }
     },
@@ -130,14 +132,16 @@ RSpec.configure do |config|
           required: ['id', 'headline']
         }
       },
-      securityDefinitions: {
-        basic_auth: {
-          type: :basic
-        },
-        api_key: {
-          type: :apiKey,
-          name: 'api_key',
-          in: :query
+      components: {
+        securitySchemes: {
+          basic_auth: {
+            type: :basic
+          },
+          api_key: {
+            type: :apiKey,
+            name: 'api_key',
+            in: :query
+          }
         }
       }
     }
