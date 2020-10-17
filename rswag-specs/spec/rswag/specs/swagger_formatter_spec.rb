@@ -127,6 +127,56 @@ module Rswag
             )
           end
 
+          context 'with empty content' do
+            let(:swagger_doc) do
+              {
+                openapi: '3.0.1',
+                basePath: '/foo',
+                schemes: ['http', 'https'],
+                host: 'api.example.com',
+                components: {
+                  securitySchemes: {
+                    myClientCredentials: {
+                      type: :oauth2,
+                      flow: :application,
+                      token_url: :somewhere
+                    },
+                    myAuthorizationCode: {
+                      type: :oauth2,
+                      flow: :accessCode,
+                      token_url: :somewhere
+                    },
+                    myImplicit: {
+                      type: :oauth2,
+                      flow: :implicit,
+                      token_url: :somewhere
+                    }
+                  }
+                }
+              }
+            end
+
+            it 'converts query and path params, type: to schema: { type: }' do
+              expect(swagger_doc.slice(:paths)).to match(
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          description: 'blog created',
+                          headers: { schema: { type: :string } }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+            end
+          end
+
           it 'converts basePath, schemas and host to urls' do
             expect(swagger_doc.slice(:servers)).to match(
               servers: {

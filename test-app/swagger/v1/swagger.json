@@ -21,14 +21,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -49,14 +45,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -80,14 +72,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -105,9 +93,7 @@
         ],
         "responses": {
           "201": {
-            "description": "blog created",
-            "content": {
-            }
+            "description": "blog created"
           },
           "422": {
             "description": "invalid request",
@@ -148,9 +134,7 @@
         ],
         "responses": {
           "406": {
-            "description": "unsupported accept header",
-            "content": {
-            }
+            "description": "unsupported accept header"
           }
         }
       }
@@ -237,12 +221,6 @@
             },
             "content": {
               "application/json": {
-                "example": {
-                  "id": 1,
-                  "title": "Hello world!",
-                  "content": "Hello world and hello universe. Thank you all very much!!!",
-                  "thumbnail": "thumbnail.png"
-                },
                 "schema": {
                   "$ref": "#/definitions/blog"
                 }
@@ -250,9 +228,7 @@
             }
           },
           "404": {
-            "description": "blog not found",
-            "content": {
-            }
+            "description": "blog not found"
           }
         }
       }
@@ -280,9 +256,7 @@
         ],
         "responses": {
           "200": {
-            "description": "blog updated",
-            "content": {
-            }
+            "description": "blog updated"
           }
         },
         "requestBody": {
