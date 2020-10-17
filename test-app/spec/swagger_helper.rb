@@ -67,14 +67,83 @@ RSpec.configure do |config|
           required: ['id', 'headline']
         }
       },
-      securityDefinitions: {
-        basic_auth: {
-          type: :basic
+      components: {
+        securitySchemes: {
+          basic_auth: {
+            type: :http,
+            scheme: :basic
+          },
+          api_key: {
+            type: :apiKey,
+            name: 'api_key',
+            in: :query
+          }
+        }
+      }
+    },
+    'v3/openapi.json' => {
+      openapi: '3.0.0',
+      info: {
+        title: 'API V1',
+        version: 'v1'
+      },
+      paths: {},
+      servers: [
+        {
+          url: 'https://{defaultHost}',
+          variables: {
+            defaultHost: {
+              default: 'www.example.com'
+            }
+          }
+        }
+      ],
+      definitions: {
+        errors_object: {
+          type: 'object',
+          properties: {
+            errors: { '$ref' => '#/definitions/errors_map' }
+          }
         },
-        api_key: {
-          type: :apiKey,
-          name: 'api_key',
-          in: :query
+        errors_map: {
+          type: 'object',
+          additionalProperties: {
+            type: 'array',
+            items: { type: 'string' }
+          }
+        },
+        blog: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            title: { type: 'string' },
+            content: { type: 'string', 'x-nullable': true },
+            thumbnail: { type: 'string', 'x-nullable': true}
+          },
+          required: [ 'id', 'title' ]
+        },
+        flexible_blog: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            headline: { type: 'string' },
+            text: { type: 'string', nullable: true },
+            thumbnail: { type: 'string', nullable: true }
+          },
+          required: ['id', 'headline']
+        }
+      },
+      components: {
+        securitySchemes: {
+          basic_auth: {
+            type: :http,
+            scheme: :basic
+          },
+          api_key: {
+            type: :apiKey,
+            name: 'api_key',
+            in: :query
+          }
         }
       }
     }
