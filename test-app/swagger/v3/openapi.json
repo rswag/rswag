@@ -13,9 +13,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-            }
+            "description": "OK"
           }
         },
         "parameters": [
@@ -41,9 +39,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-            }
+            "description": "OK"
           }
         }
       }
