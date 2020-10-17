@@ -235,16 +235,14 @@
                 "type": "string"
               }
             },
-            "examples": {
-              "application/json": {
-                "id": 1,
-                "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!",
-                "thumbnail": "thumbnail.png"
-              }
-            },
             "content": {
               "application/json": {
+                "example": {
+                  "id": 1,
+                  "title": "Hello world!",
+                  "content": "Hello world and hello universe. Thank you all very much!!!",
+                  "thumbnail": "thumbnail.png"
+                },
                 "schema": {
                   "$ref": "#/definitions/blog"
                 }
