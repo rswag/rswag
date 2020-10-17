@@ -266,7 +266,8 @@
                 "type": "file"
               }
             }
-          }
+          },
+          "required": true
         }
       }
     }
