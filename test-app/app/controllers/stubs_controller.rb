@@ -3,6 +3,10 @@ class StubsController < ApplicationController
     render plain: 'OK'
   end
 
+  def create
+    render plain: 'OK'
+  end
+
   def show
     render plain: 'OK'
   end

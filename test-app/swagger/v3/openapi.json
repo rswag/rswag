@@ -22,6 +22,30 @@
             "in": "query"
           }
         ]
+      },
+      "post": {
+        "summary": "body is required",
+        "tags": [
+          "Media Types"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "file"
+              }
+            }
+          },
+          "required": true
+        }
       }
     },
     "/stubs/{a_param}": {

@@ -181,7 +181,28 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
     # TODO: Common Parameters
   end
 
-  describe 'Request Body'
+  describe 'Request Body' do
+    path '/stubs' do
+      post 'body is required' do
+        tags 'Media Types'
+        consumes 'multipart/form-data'
+        parameter name: :file, :in => :formData, :type => :file, required: true
+
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+
+        response '200', 'OK' do
+          run_test!
+
+          it 'declares requestBody is required' do
+            pending "This output is massaged in SwaggerFormatter#stop, and isn't quite ready here to assert"
+            tree = swagger_doc.dig(:paths, "/stubs", :post, :requestBody)
+            expect(tree[:required]).to eq(true)
+          end
+        end
+      end
+    end
+  end
+
   describe 'Responses'
   describe 'Data Models (Schemas)'
   describe 'Examples'
