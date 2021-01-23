@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'generator_spec'
 require 'generators/rspec/swagger_generator'
 require 'tmpdir'
@@ -9,12 +11,11 @@ module Rspec
 
     before(:all) do
       prepare_destination
-      fixtures_dir = File.expand_path('../fixtures', __FILE__)
+      fixtures_dir = File.expand_path('fixtures', __dir__)
       FileUtils.cp_r("#{fixtures_dir}/spec", destination_root)
     end
 
     after(:all) do
-
     end
 
     it 'installs the swagger_helper for rspec' do
@@ -31,11 +32,11 @@ module Rspec
 
     def fake_routes
       {
-        "/posts/{post_id}/comments/{id}" => {
-          :params => ["post_id", "id"],
-          :actions => {
-            "get" => { :summary=>"show comment" },
-            "patch" => { :summary=>"update_comments comment" }
+        '/posts/{post_id}/comments/{id}' => {
+          params: ['post_id', 'id'],
+          actions: {
+            'get' => { summary: 'show comment' },
+            'patch' => { summary: 'update_comments comment' }
           }
         }
       }

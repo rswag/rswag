@@ -22,7 +22,7 @@ module Rswag
       end
 
       it 'installs initializer for rswag-api' do
-        assert_file('config/rswag-api.rb')
+        assert_file('config/rswag_api.rb')
       end
 
       it 'installs initializer for rswag-ui' do

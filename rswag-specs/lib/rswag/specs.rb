@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/core'
 require 'rswag/specs/example_group_helpers'
 require 'rswag/specs/example_helpers'
@@ -6,7 +8,6 @@ require 'rswag/specs/railtie' if defined?(Rails::Railtie)
 
 module Rswag
   module Specs
-
     # Extend RSpec with a swagger-based DSL
     ::RSpec.configure do |c|
       c.add_setting :swagger_root

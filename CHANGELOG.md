@@ -12,6 +12,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 
+## [2.3.1] - 2020-04-08
+### Fixed
+- Remove require for byebug [#295](https://github.com/rswag/rswag/issues/295)
+
+## [2.3.0] - 2020-04-05
+### Added
+- Support for OpenAPI 3.0 ! [#286](https://github.com/rswag/rswag/pull/286)
+- Custom headers in rswag-api [#187](https://github.com/rswag/rswag/pull/187)
+- Allow document: false rspec metatag [#255](https://github.com/rswag/rswag/pull/255)
+- Add parameterized pattern for spec files [#254](https://github.com/rswag/rswag/pull/254)
+- Support Basic Auth on rswag-ui [#167](https://github.com/rswag/rswag/pull/167)
+
+### Changed
+- Update swagger-ui version to 3.23.11 [#239](https://github.com/rswag/rswag/pull/239)
+- Rails constraint moved from < 6.1 to < 7 [#253](https://github.com/rswag/rswag/pull/253)
+- Swaggerize now outputs base RSpec text on completion to avoid silent failures [#293](https://github.com/rswag/rswag/pull/293)
+- Update swagger-ui version to 3.28.0
+
 ## [2.2.0] - 2019-11-01
 ### Added
 - New swagger_format config option for setting YAML output [#251](https://github.com/rswag/rswag/pull/251)

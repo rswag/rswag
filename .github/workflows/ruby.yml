@@ -1,0 +1,59 @@
+name: Ruby
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: [2.6, 2.7]
+        rails: [5.2.4.4, 6.0.3.4]
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with: { ruby-version: 2.6 }
+
+    - uses: actions/cache@v2
+      id: cache
+      with:
+        path: |
+          rswag-ui/node_modules
+          vendor/bundle
+        key: ${{ runner.os }}-ruby_${{ matrix.ruby }}-rails_${{ matrix.rails }}-${{ hashFiles('Gemfile', '**/package-lock.json') }}
+
+    - name: Install dependencies
+      run: |
+        bundle install
+        cd rswag-ui && npm install
+
+    - name: rswag-api
+      run: |
+        cd rswag-api
+        bundle exec rspec
+
+    - name: rswag-specs
+      if: success() || failure()
+      run: |
+        cd rswag-specs
+        bundle exec rspec
+
+    - name: rswag-ui
+      if: success() || failure()
+      run: |
+        cd rswag-ui
+        bundle exec rspec
+
+    - name: test-app
+      if: success() || failure()
+      run: |
+        cd test-app
+        bundle exec rake db:migrate db:test:prepare
+        bundle exec rspec
