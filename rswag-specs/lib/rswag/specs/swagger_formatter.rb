@@ -129,7 +129,7 @@ module Rswag
       end
 
       def upgrade_content!(mime_list, target_node)
-        target_node.merge!(content: {})
+        target_node.merge!(content: {}) if target_node[:content].nil?
         schema = target_node[:schema]
         return if mime_list.empty? || schema.nil?
 
