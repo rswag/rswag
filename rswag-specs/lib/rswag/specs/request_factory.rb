@@ -118,7 +118,7 @@ module Rswag
 
       def build_query_string_part(param, value)
         name = param[:name]
-        return "#{name}=#{value}" unless param[:type].to_sym == :array
+        return "#{name}=#{value}" unless param[:type]&.to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
