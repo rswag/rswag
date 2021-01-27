@@ -21,14 +21,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -49,14 +45,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -80,14 +72,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Valid credentials",
-            "content": {
-            }
+            "description": "Valid credentials"
           },
           "401": {
-            "description": "Invalid credentials",
-            "content": {
-            }
+            "description": "Invalid credentials"
           }
         }
       }
@@ -105,9 +93,7 @@
         ],
         "responses": {
           "201": {
-            "description": "blog created",
-            "content": {
-            }
+            "description": "blog created"
           },
           "422": {
             "description": "invalid request",
@@ -148,9 +134,7 @@
         ],
         "responses": {
           "406": {
-            "description": "unsupported accept header",
-            "content": {
-            }
+            "description": "unsupported accept header"
           }
         }
       }
@@ -235,14 +219,6 @@
                 "type": "string"
               }
             },
-            "examples": {
-              "application/json": {
-                "id": 1,
-                "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!",
-                "thumbnail": "thumbnail.png"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -252,9 +228,7 @@
             }
           },
           "404": {
-            "description": "blog not found",
-            "content": {
-            }
+            "description": "blog not found"
           }
         }
       }
@@ -282,9 +256,7 @@
         ],
         "responses": {
           "200": {
-            "description": "blog updated",
-            "content": {
-            }
+            "description": "blog updated"
           }
         },
         "requestBody": {
@@ -294,7 +266,8 @@
                 "type": "file"
               }
             }
-          }
+          },
+          "required": true
         }
       }
     }
@@ -377,7 +350,8 @@
   "components": {
     "securitySchemes": {
       "basic_auth": {
-        "type": "basic"
+        "type": "http",
+        "scheme": "basic"
       },
       "api_key": {
         "type": "apiKey",

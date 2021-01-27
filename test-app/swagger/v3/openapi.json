@@ -1,0 +1,160 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API V1",
+    "version": "v1"
+  },
+  "paths": {
+    "/stubs": {
+      "get": {
+        "summary": "a summary",
+        "tags": [
+          "Parameter Serialization: Query String"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "a_param",
+            "in": "query"
+          }
+        ]
+      },
+      "post": {
+        "summary": "body is required",
+        "tags": [
+          "Media Types"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "file"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/stubs/{a_param}": {
+      "get": {
+        "summary": "a summary",
+        "tags": [
+          "Parameter Serialization: Query String"
+        ],
+        "parameters": [
+          {
+            "name": "a_param",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "www.example.com"
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "errors_object": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "$ref": "#/definitions/errors_map"
+        }
+      }
+    },
+    "errors_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "blog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "thumbnail": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "flexible_blog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "nullable": true
+        },
+        "thumbnail": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "required": [
+        "id",
+        "headline"
+      ]
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "query"
+      }
+    }
+  }
+}
