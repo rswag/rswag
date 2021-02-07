@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 - Include response examples [#394](https://github.com/rswag/rswag/pull/394)
 
+### Changed
+- Update swagger-ui to 3.42.0
+
 ## [2.3.2] - 2021-01-27
 ### Added
 - RequestBody now supports the `required` flag [#342](https://github.com/rswag/rswag/pull/342)
