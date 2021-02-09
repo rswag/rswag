@@ -616,15 +616,12 @@ after do |example|
 end
 ```
 
-You need to disable --dry-run option for Rspec > 3
+#### Dry Run Option ####
 
-<!-- This is now enabled by default in rswag.
-You need to set the ``` config.swagger_dry_run = false``` value in the spec/spec_helper.rb file.
-This is one of the more powerful features of rswag. When rswag runs your integration test suite via ```bundle exec rspec```, it will capture the request and response bodies and output those values in the examples section.
-These integration tests are usually written with ```let``` variables for post body parameters, and since its an integration test the service is returning actual values.
-We might as well re-use these values and embed them into the generated swagger to provide a more real world example for request/response examples. -->
+The `--dry-run` option is enabled by default for Rspec 3, but if you need to
+disable it you can use the environment varible `SWAGGER_DRY_RUN=0` during the
+generation command or add the following to your `config/environments/test.rb`:
 
-Add to config/environments/test.rb:
 ```ruby
 RSpec.configure do |config|
   config.swagger_dry_run = false
