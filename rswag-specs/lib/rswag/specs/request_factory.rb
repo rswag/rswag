@@ -102,7 +102,15 @@ module Rswag
       end
 
       def add_path(request, metadata, swagger_doc, parameters, example)
-        template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        template = ''
+        if doc_version(swagger_doc).start_with?('2')
+          template = (swagger_doc[:basePath] || '')
+        else
+          template = base_path_from_servers(swagger_doc)
+        end
+
+        template +=  metadata[:path_item][:template]
+
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
@@ -117,6 +125,14 @@ module Rswag
             path_template.concat(i.zero? ? '?' : '&')
             path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
           end
+        end
+      end
+
+      def base_path_from_servers(swagger_doc)
+        if swagger_doc[:servers].count == 1
+          URI(swagger_doc[:servers].first[:url]).path
+        else
+          URI(swagger_doc[:servers].first[:url]).path
         end
       end
 
@@ -150,7 +166,7 @@ module Rswag
                           when :spaceDelimited then '%20'
                           when :pipeDelimited then '|'
                           end
-              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator) 
+              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{name}=#{value}"
