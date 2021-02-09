@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [2.4.0] - 2021-02-09
+### Added
+- Added `SWAGGER_DRY_RUN` env variable [#274](https://github.com/rswag/rswag/pull/274)
+
 ## [2.3.3] - 2021-02-07
 
 ### Fixed
