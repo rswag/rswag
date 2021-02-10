@@ -129,11 +129,17 @@ module Rswag
       end
 
       def base_path_from_servers(swagger_doc)
-        if swagger_doc[:servers].count == 1
-          URI(swagger_doc[:servers].first[:url]).path
-        else
-          URI(swagger_doc[:servers].first[:url]).path
+        return '' unless swagger_doc.has_key?(:servers)
+
+        server = swagger_doc[:servers].firstt
+
+        variables = {}
+        server[:variables].each_pair do |k,v|
+          variables[k] = v[:default]
         end
+
+        url = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym]  }
+        URI(url).path
       end
 
       def build_query_string_part(param, value, swagger_doc)
