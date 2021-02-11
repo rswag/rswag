@@ -7,7 +7,7 @@ module Rswag
   module Specs
     module ExampleHelpers
       def submit_request(metadata)
-        request = RequestFactory.new.build_request(metadata, self)
+        request = RequestFactory.new(metadata, self).build_request
 
         send(
           request[:verb],
