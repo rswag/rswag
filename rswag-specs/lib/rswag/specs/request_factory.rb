@@ -7,11 +7,16 @@ require 'json'
 module Rswag
   module Specs
     class RequestFactory
-      def initialize(config = ::Rswag::Specs.config)
+      attr_accessor :example, :metadata, :params, :headers
+      def initialize(metadata, example, config = ::Rswag::Specs.config)
         @config = config
+        @example = example
+        @metadata = metadata
+        @params = example.respond_to?(:request_params) ? example.request_params : {}
+        @headers = example.respond_to?(:request_headers) ? example.request_headers : {}
       end
 
-      def build_request(metadata, example)
+      def build_request
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
         parameters = expand_parameters(metadata, swagger_doc, example)
 
@@ -34,7 +39,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
+          .reject { |p| p[:required] == false && !headers.key?(p[:name]) }
       end
 
       def derive_security_params(metadata, swagger_doc)
@@ -106,12 +111,12 @@ module Rswag
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
-            path_template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
+            path_template.gsub!("{#{p[:name]}}", params.fetch(p[:name]).to_s)
           end
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(p[:name])))
+            path_template.concat(build_query_string_part(p, params.fetch(p[:name])))
           end
         end
       end
@@ -138,19 +143,19 @@ module Rswag
       def add_headers(request, metadata, swagger_doc, parameters, example)
         tuples = parameters
           .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], example.send(p[:name]).to_s] }
+          .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
         if produces
-          accept = example.respond_to?(:Accept) ? example.send(:Accept) : produces.first
+          accept = headers.fetch("Accept", produces.first)
           tuples << ['Accept', accept]
         end
 
         # Content-Type header
         consumes = metadata[:operation][:consumes] || swagger_doc[:consumes]
         if consumes
-          content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
+          content_type = headers.fetch('Content-Type', consumes.first)
           tuples << ['Content-Type', content_type]
         end
 
@@ -175,31 +180,32 @@ module Rswag
         return if content_type.nil?
 
         if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
-          request[:payload] = build_form_payload(parameters, example)
+          request[:payload] = build_form_payload(parameters)
         else
-          request[:payload] = build_json_payload(parameters, example)
+          request[:payload] = build_json_payload(parameters)
         end
       end
 
-      def build_form_payload(parameters, example)
+      def build_form_payload(parameters)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
           .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], example.send(p[:name])] }
+          .map { |p| [p[:name], params.fetch(p[:name])] }
         Hash[tuples]
       end
 
-      def build_json_payload(parameters, example)
+      def build_json_payload(parameters)
         body_param = parameters.select { |p| p[:in] == :body }.first
-        body_param ? example.send(body_param[:name]).to_json : nil
+        body_param ? params.fetch(body_param[:name]).to_json : nil
       end
 
       def doc_version(doc)
         doc[:openapi] || doc[:swagger] || '3'
       end
+
     end
   end
 end

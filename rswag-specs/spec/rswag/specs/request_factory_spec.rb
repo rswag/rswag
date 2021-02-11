@@ -5,14 +5,15 @@ require 'rswag/specs/request_factory'
 module Rswag
   module Specs
     RSpec.describe RequestFactory do
-      subject { RequestFactory.new(config) }
+      subject { RequestFactory.new(metadata, example, config) }
 
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
       end
       let(:config) { double('config') }
       let(:swagger_doc) { { swagger: '2.0' } }
-      let(:example) { double('example') }
+      MockExample = Struct.new(:request_headers, :request_params)
+      let(:example) { MockExample.new({}, {}) }
       let(:metadata) do
         {
           path_item: { template: '/blogs' },
@@ -20,8 +21,8 @@ module Rswag
         }
       end
 
-      describe '#build_request(metadata, example)' do
-        let(:request) { subject.build_request(metadata, example) }
+      describe '#build_request' do
+        let(:request) { subject.build_request }
 
         it 'builds request hash for given example' do
           expect(request[:verb]).to eq(:get)
@@ -35,8 +36,8 @@ module Rswag
               { name: 'blog_id', in: :path, type: :number },
               { name: 'id', in: :path, type: :number }
             ]
-            allow(example).to receive(:blog_id).and_return(1)
-            allow(example).to receive(:id).and_return(2)
+            example.request_params["blog_id"] = 1
+            example.request_params["id"] = 2
           end
 
           it 'builds the path from example values' do
@@ -50,8 +51,8 @@ module Rswag
               { name: 'q1', in: :query, type: :string },
               { name: 'q2', in: :query, type: :string }
             ]
-            allow(example).to receive(:q1).and_return('foo')
-            allow(example).to receive(:q2).and_return('bar')
+            example.request_params["q1"] = 'foo'
+            example.request_params["q2"] = 'bar'
           end
 
           it 'builds the query string from example values' do
@@ -64,7 +65,7 @@ module Rswag
             metadata[:operation][:parameters] = [
               { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
             ]
-            allow(example).to receive(:things).and_return(['foo', 'bar'])
+            example.request_params["things"] = ['foo', 'bar']
           end
 
           context 'collectionFormat = csv' do
@@ -106,7 +107,7 @@ module Rswag
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
-            allow(example).to receive(:'Api-Key').and_return('foobar')
+            example.request_headers["Api-Key"] = 'foobar'
           end
 
           it 'adds names and example values to headers' do
@@ -141,7 +142,7 @@ module Rswag
 
           context "explicit 'Content-Type' provided" do
             before do
-              allow(example).to receive(:'Content-Type').and_return('application/xml')
+              example.request_headers["Content-Type"] = 'application/xml'
             end
 
             it "sets 'CONTENT_TYPE' header to example value" do
@@ -152,7 +153,7 @@ module Rswag
           context 'JSON payload' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              allow(example).to receive(:comment).and_return(text: 'Some comment')
+              example.request_params["comment"] = { text: 'Some comment' }
             end
 
             it "serializes first 'body' parameter to JSON string" do
@@ -167,8 +168,8 @@ module Rswag
                 { name: 'f1', in: :formData, type: :string },
                 { name: 'f2', in: :formData, type: :string }
               ]
-              allow(example).to receive(:f1).and_return('foo blah')
-              allow(example).to receive(:f2).and_return('bar blah')
+              example.request_params["f1"] = 'foo blah'
+              example.request_params["f2"] = 'bar blah'
             end
 
             it 'sets payload to hash of names and example values' do
@@ -193,7 +194,7 @@ module Rswag
 
           context "explicit 'Accept' value provided" do
             before do
-              allow(example).to receive(:Accept).and_return('application/xml')
+              example.request_headers["Accept"] = 'application/xml'
             end
 
             it "sets 'HTTP_ACCEPT' header to example value" do
@@ -207,7 +208,7 @@ module Rswag
             before do
               swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
               metadata[:operation][:security] = [basic: []]
-              allow(example).to receive(:Authorization).and_return('Basic foobar')
+              example.request_headers["Authorization"] = 'Basic foobar'
             end
 
             it "sets 'HTTP_AUTHORIZATION' header to example value" do
@@ -220,7 +221,7 @@ module Rswag
             before do
               swagger_doc[:components] = { securitySchemes: { basic: { type: :basic } } }
               metadata[:operation][:security] = [basic: []]
-              allow(example).to receive(:Authorization).and_return('Basic foobar')
+              example.request_headers["Authorization"] = 'Basic foobar'
             end
 
             it "sets 'HTTP_AUTHORIZATION' header to example value" do
@@ -234,7 +235,7 @@ module Rswag
               allow(ActiveSupport::Deprecation).to receive(:warn)
               swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
               metadata[:operation][:security] = [basic: []]
-              allow(example).to receive(:Authorization).and_return('Basic foobar')
+              example.request_headers["Authorization"] = 'Basic foobar'
             end
 
             it 'warns the user to upgrade' do
@@ -250,13 +251,13 @@ module Rswag
           before do
             swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
             metadata[:operation][:security] = [apiKey: []]
-            allow(example).to receive(:api_key).and_return('foobar')
           end
 
           context 'in query' do
             let(:key_location) { :query }
 
             it 'adds name and example value to the query string' do
+              example.request_params["api_key"] = 'foobar'
               expect(request[:path]).to eq('/blogs?api_key=foobar')
             end
           end
@@ -265,6 +266,7 @@ module Rswag
             let(:key_location) { :header }
 
             it 'adds name and example value to the headers' do
+              example.request_headers["api_key"] = 'foobar'
               expect(request[:headers]).to eq('api_key' => 'foobar')
             end
           end
@@ -276,8 +278,8 @@ module Rswag
                 { name: 'q1', in: :query, type: :string },
                 { name: 'api_key', in: :header, type: :string }
               ]
-              allow(example).to receive(:q1).and_return('foo')
-              allow(example).to receive(:api_key).and_return('foobar')
+              example.request_params["q1"] = 'foo'
+              example.request_headers["api_key"] = 'foobar'
             end
 
             it 'adds authorization parameter only once' do
@@ -291,7 +293,7 @@ module Rswag
           before do
             swagger_doc[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: ['read:blogs'] } }
             metadata[:operation][:security] = [oauth2: ['read:blogs']]
-            allow(example).to receive(:Authorization).and_return('Bearer foobar')
+            example.request_headers["Authorization"] = 'Bearer foobar'
           end
 
           it "sets 'HTTP_AUTHORIZATION' header to example value" do
@@ -306,8 +308,8 @@ module Rswag
               api_key: { type: :apiKey, name: 'api_key', in: :query }
             }
             metadata[:operation][:security] = [{ basic: [], api_key: [] }]
-            allow(example).to receive(:Authorization).and_return('Basic foobar')
-            allow(example).to receive(:api_key).and_return('foobar')
+            example.request_headers["Authorization"] = 'Basic foobar'
+            example.request_params["api_key"] = 'foobar'
           end
 
           it 'sets both params to example values' do
@@ -320,8 +322,8 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [{ name: 'q1', in: :query, type: :string }]
             metadata[:path_item][:parameters] = [{ name: 'q2', in: :query, type: :string }]
-            allow(example).to receive(:q1).and_return('foo')
-            allow(example).to receive(:q2).and_return('bar')
+            example.request_params["q1"] = 'foo'
+            example.request_params["q2"] = 'bar'
           end
 
           it 'populates operation and path level parameters' do
@@ -334,7 +336,7 @@ module Rswag
             before do
               swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/parameters/q1' }]
-              allow(example).to receive(:q1).and_return('foo')
+              example.request_params["q1"] = 'foo'
             end
 
             it 'uses the referenced metadata to build the request' do
@@ -347,7 +349,7 @@ module Rswag
             before do
               swagger_doc[:components] = { parameters: { q1: { name: 'q1', in: :query, type: :string } } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/components/parameters/q1' }]
-              allow(example).to receive(:q1).and_return('foo')
+              example.request_params["q1"] = 'foo'
             end
 
             it 'uses the referenced metadata to build the request' do
@@ -361,7 +363,7 @@ module Rswag
               allow(ActiveSupport::Deprecation).to receive(:warn)
               swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/parameters/q1' }]
-              allow(example).to receive(:q1).and_return('foo')
+              example.request_params["q1"] = 'foo'
             end
 
             it 'warns the user to upgrade' do
@@ -394,7 +396,7 @@ module Rswag
           before do
             swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: :query } }
             swagger_doc[:security] = [apiKey: []]
-            allow(example).to receive(:api_key).and_return('foobar')
+            example.request_params["api_key"] = 'foobar'
           end
 
           it 'applieds the scheme by default' do

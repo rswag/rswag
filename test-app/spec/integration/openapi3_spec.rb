@@ -123,7 +123,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
             name: 'a_param',
             in: :path,
           )
-          let(:a_param) { "42" }
+          let(:request_params) { { 'a_param' => '42' } }
 
           response '200', 'OK' do
             run_test!
@@ -153,7 +153,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
             name: 'a_param',
             in: :query,
           )
-          let(:a_param) { "a foo" }
+          let(:request_params) { { 'a_param' => 'a foo' } }
 
           response '200', 'OK' do
             run_test!
@@ -186,9 +186,10 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
       post 'body is required' do
         tags 'Media Types'
         consumes 'multipart/form-data'
-        parameter name: :file, :in => :formData, :type => :file, required: true
+        parameter name: 'file', :in => :formData, :type => :file, required: true
 
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:request_params) {
+          { 'file' => Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) } }
 
         response '200', 'OK' do
           run_test!

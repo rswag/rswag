@@ -5,7 +5,8 @@ require 'rswag/specs/example_helpers'
 module Rswag
   module Specs
     RSpec.describe ExampleHelpers do
-      subject { double('example') }
+      mock_example = Struct.new(:request_headers, :request_params)
+      subject { mock_example.new({}, {}) }
 
       before do
         subject.extend(ExampleHelpers)
@@ -35,10 +36,10 @@ module Rswag
             summary: 'Updates a blog',
             consumes: ['application/json'],
             parameters: [
-              { name: :blog_id, in: :path, type: 'integer' },
+              { name: "blog_id", in: :path, type: 'integer' },
               { name: 'id', in: :path, type: 'integer' },
               { name: 'q1', in: :query, type: 'string' },
-              { name: :blog, in: :body, schema: { type: 'object' } }
+              { name: "blog", in: :body, schema: { type: 'object' } }
             ],
             security: [
               { api_key: [] }
@@ -49,11 +50,11 @@ module Rswag
 
       describe '#submit_request(metadata)' do
         before do
-          allow(subject).to receive(:blog_id).and_return(1)
-          allow(subject).to receive(:id).and_return(2)
-          allow(subject).to receive(:q1).and_return('foo')
-          allow(subject).to receive(:api_key).and_return('fookey')
-          allow(subject).to receive(:blog).and_return(text: 'Some comment')
+          subject.request_params["blog_id"] = 1
+          subject.request_params["id"] = 2
+          subject.request_params["q1"] = 'foo'
+          subject.request_params["api_key"] = 'fookey'
+          subject.request_params["blog"] = { text: 'Some comment' }
           allow(subject).to receive(:put)
           subject.submit_request(metadata)
         end
