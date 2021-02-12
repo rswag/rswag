@@ -131,7 +131,7 @@ module Rswag
       def base_path_from_servers(swagger_doc)
         return '' unless swagger_doc.has_key?(:servers)
 
-        server = swagger_doc[:servers].firstt
+        server = swagger_doc[:servers].first
 
         variables = {}
         server[:variables].each_pair do |k,v|
