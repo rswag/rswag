@@ -62,7 +62,7 @@ module Rswag
             swagger_doc.slice(:definitions)
           else
             components = swagger_doc[:components] || {}
-            { components: { schemas: components[:schemas] } }
+            { components: components }
           end
         end
       end
