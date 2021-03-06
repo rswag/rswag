@@ -139,52 +139,6 @@
         }
       }
     },
-    "/blogs/multipart": {
-      "post": {
-        "summary": "Creates a blog using multipart",
-        "tags": [
-          "Blogs"
-        ],
-        "description": "Creates a new blog from provided data",
-        "operationId": "createBlogWithMultipart",
-        "parameters": [
-
-        ],
-        "responses": {
-          "201": {
-            "description": "blog created",
-            "content": {
-            }
-          },
-          "422": {
-            "description": "invalid request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/definitions/errors_object"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": "blog",
-                  "type": "object",
-                  "properties": {
-                    "$ref": "#/definitions/blog"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/blogs/flexible": {
       "post": {
         "summary": "Creates a blog flexible body",

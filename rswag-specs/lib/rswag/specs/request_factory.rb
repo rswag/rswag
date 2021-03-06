@@ -186,22 +186,8 @@ module Rswag
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
-        smart_payload = build_smart_form_payload(parameters, example)
-        raw_payload = build_raw_form_payload(parameters, example)
-
-        smart_payload.merge(raw_payload)
-      end
-
-      def build_smart_form_payload(parameters, example)
-        smart_tuples = parameters
-          .select { |p| p[:in] == :formData && p[:schema] }
-          .map { |p| example.send(p[:name]) }
-          .reduce({}, :merge)
-      end
-
-      def build_raw_form_payload(parameters, example)
         tuples = parameters
-          .select { |p| p[:in] == :formData && !p[:schema] }
+          .select { |p| p[:in] == :formData }
           .map { |p| [p[:name], example.send(p[:name])] }
         Hash[tuples]
       end

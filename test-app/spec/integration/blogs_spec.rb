@@ -53,33 +53,6 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
-  path '/blogs/multipart' do
-    post 'Creates a blog using multipart' do
-      tags 'Blogs'
-      description 'Creates a new blog from provided data'
-      operationId 'createBlogWithMultipart'
-      consumes 'multipart/form-data'
-      produces 'application/json'
-      parameter name: :blog, in: :formData, schema: { type: :object, properties: { name: :blog, type: :object, properties: { '$ref' => '#/definitions/blog' } } }
-
-      let(:blog) { { blog: { title: 'foo', content: 'bar' } } }
-
-      response '201', 'blog created' do
-        # schema '$ref' => '#/definitions/blog'
-        run_test!
-      end
-
-      response '422', 'invalid request' do
-        schema '$ref' => '#/definitions/errors_object'
-
-        let(:blog) { { blog: { title: 'foo' } } }
-        run_test! do |response|
-          expect(response.body).to include("can't be blank")
-        end
-      end
-    end
-  end
-
   path '/blogs/flexible' do
     post 'Creates a blog flexible body' do
       tags 'Blogs'
