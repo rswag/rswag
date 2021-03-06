@@ -8,6 +8,12 @@ class BlogsController < ApplicationController
     respond_with @blog
   end
 
+  # POST /blogs/multipart
+  def multipart_create
+    @blog = Blog.create(params.require(:blog).permit(:title, :content))
+    respond_with @blog
+  end
+
   # POST /blogs/flexible
   def flexible_create
 
