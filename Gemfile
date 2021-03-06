@@ -25,18 +25,20 @@ end
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 
+group :development, :test do
+  gem 'rswag-specs', path: './rswag-specs'
+end
+
 group :test do
   gem 'capybara'
   gem 'geckodriver-helper'
   gem 'generator_spec'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'rswag-specs', path: './rswag-specs'
   gem 'test-unit'
 end
 
 group :development do
-  gem 'rswag-specs', path: './rswag-specs'
   gem 'rubocop'
 end
 
