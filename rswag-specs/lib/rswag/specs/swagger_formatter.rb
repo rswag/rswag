@@ -3,6 +3,7 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'rspec/core/formatters/base_text_formatter'
 require 'swagger_helper'
+require 'set'
 
 module Rswag
   module Specs
@@ -16,6 +17,7 @@ module Rswag
       def initialize(output, config = Rswag::Specs.config)
         @output = output
         @config = config
+        @swagger_docs_affected = Set.new
 
         @output.puts 'Generating Swagger docs ...'
       end
@@ -34,6 +36,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+        @swagger_docs_affected.add(swagger_doc)
 
         unless doc_version(swagger_doc).start_with?('2')
           # This is called multiple times per file!
@@ -50,6 +53,8 @@ module Rswag
 
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
+          next unless @swagger_docs_affected.include? doc
+
           unless doc_version(doc).start_with?('2')
             doc[:paths]&.each_pair do |_k, v|
               v.each_pair do |_verb, value|
