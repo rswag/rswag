@@ -17,7 +17,7 @@ module Rswag
       def initialize(output, config = Rswag::Specs.config)
         @output = output
         @config = config
-        @swagger_docs_affected = Set.new
+        @swagger_docs_affected = []
 
         @output.puts 'Generating Swagger docs ...'
       end
@@ -36,7 +36,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
-        @swagger_docs_affected.add(swagger_doc)
+        @swagger_docs_affected << swagger_doc unless @swagger_docs_affected.include? swagger_doc
 
         unless doc_version(swagger_doc).start_with?('2')
           # This is called multiple times per file!
