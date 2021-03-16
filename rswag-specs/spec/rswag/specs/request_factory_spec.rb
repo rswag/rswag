@@ -45,17 +45,32 @@ module Rswag
         end
 
         context "'query' parameters" do
-          before do
-            metadata[:operation][:parameters] = [
-              { name: 'q1', in: :query, type: :string },
-              { name: 'q2', in: :query, type: :string }
-            ]
-            allow(example).to receive(:q1).and_return('foo')
-            allow(example).to receive(:q2).and_return('bar')
+          context "with multiple query parameters" do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string },
+                { name: 'q2', in: :query, type: :string }
+              ]
+              allow(example).to receive(:q1).and_return('foo')
+              allow(example).to receive(:q2).and_return('bar')
+            end
+
+            it 'builds the concatenated query string from example values' do
+              expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
+            end
           end
 
-          it 'builds the query string from example values' do
-            expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
+          context 'with URL-encoded query parameters' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string }
+              ]
+              allow(example).to receive(:q1).and_return('+url encoded')
+            end
+
+            it 'builds the concatenated query string from example values' do
+              expect(request[:path]).to eq('/blogs?q1=%2Burl+encoded')
+            end
           end
         end
 
