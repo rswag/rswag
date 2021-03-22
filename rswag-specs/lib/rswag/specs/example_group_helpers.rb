@@ -55,6 +55,18 @@ module Rswag
         end
       end
 
+
+      def request_body_example(name:, summary:, value:, mime:) 
+        if metadata.key?(:operation) 
+          metadata[:operation][:request_examples] ||= {}
+          metadata[:operation][:request_examples][mime] ||= {}
+          metadata[:operation][:request_examples][mime][name] = {
+            value: value, 
+            summary: summary,
+          }
+        end 
+      end 
+
       def response(code, description, metadata = {}, &block)
         metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)
