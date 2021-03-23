@@ -23,11 +23,16 @@ module Rswag
           allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
           subject.example_group_finished(notification)
         end
+        let(:request_examples) { nil }
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
+          operation = { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] }
+          if request_examples
+            operation[:request_examples] = request_examples
+          end
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
-            operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
+            operation: operation,
             response: response_metadata,
             document: document
           }
@@ -389,6 +394,91 @@ module Rswag
 
           it 'puts the description in the doc' do
             expect(doc_2[:paths]['/path/'][:post][:requestBody][:description]).to eql('description')
+          end
+        end
+
+        after do
+          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
+        end
+
+
+        context 'with request examples' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['application/json'],
+                    parameters: [{
+                      in: :body,
+                      schema: {
+                        '$ref': '#/components/schemas/BlogPost'
+                      }
+                    },{
+                      in: :headers
+                    }],
+                    request_examples: [
+                      {
+                        name: 'basic',
+                        value: {
+                          some_field: 'Foo'
+                        },
+                        summary: 'An example'
+                      },
+                      {
+                        name: 'another_basic',
+                        value: {
+                          some_field: 'Bar'
+                        }
+                      }
+                    ],
+                  }
+                }
+              },
+              components: {
+                schemas: {
+                  'BlogPost' => {
+                    type: 'object',
+                    properties: {
+                      some_field: {
+                        type: 'string',
+                        description: 'description'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          end
+
+          it 'removes remaining request_examples' do
+            expect(doc_2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+          end
+
+          it 'creates requestBody examples' do
+            expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'application/json' => {
+                schema: { '$ref': '#/components/schemas/BlogPost' },
+                examples: {
+                  'basic' => {
+                    value: {
+                      some_field: 'Foo'
+                    },
+                    summary: 'An example'
+                  },
+                  'another_basic' => {
+                    value: {
+                      some_field: 'Bar'
+                    },
+                    summary: 'Retrieve Nested Paths'
+                  }
+                }
+              }
+            })
           end
         end
 

@@ -56,14 +56,14 @@ module Rswag
       end
 
 
-      def request_body_example(name:, summary:, value:, mime:) 
+      def request_body_example(value:, summary: nil, name: nil) 
         if metadata.key?(:operation) 
-          metadata[:operation][:request_examples] ||= {}
-          metadata[:operation][:request_examples][mime] ||= {}
-          metadata[:operation][:request_examples][mime][name] = {
-            value: value, 
-            summary: summary,
-          }
+          metadata[:operation][:request_examples] ||= []
+          example = { value: value } 
+          example[:summary] = summary if summary 
+          # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
+          example[:name] = name || metadata[:operation][:request_examples].length()
+          metadata[:operation][:request_examples] << example
         end 
       end 
 
