@@ -134,7 +134,7 @@ module Rswag
         server = swagger_doc[:servers].first
 
         variables = {}
-        server[:variables].each_pair do |k,v|
+        server.fetch(:variables, {}).each_pair do |k,v|
           variables[k] = v[:default]
         end
 
