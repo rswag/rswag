@@ -136,7 +136,7 @@ There is also a generator which can help get you started `rails generate rspec:s
       path '/blogs/{id}' do
 
         get 'Retrieves a blog' do
-          tags 'Blogs'
+          tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
           parameter name: :id, in: :path, type: :string
 
