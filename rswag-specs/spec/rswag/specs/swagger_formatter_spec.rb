@@ -368,6 +368,30 @@ module Rswag
           end
         end
 
+        context 'with descriptions on the body param' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    produces: ['application/json'],
+                    consumes: ['application/json'],
+                    parameters: [{
+                      in: :body,
+                      description: "description",
+                      schema: { type: :number }
+                    }]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'puts the description in the doc' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody][:description]).to eql('description')
+          end
+        end
+
         after do
           FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end

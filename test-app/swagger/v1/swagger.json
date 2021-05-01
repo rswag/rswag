@@ -273,7 +273,8 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "description": "description"
         }
       }
     }
