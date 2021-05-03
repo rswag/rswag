@@ -127,7 +127,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       consumes 'multipart/form-data'
       parameter(
         name: :file,
-        description: "description",
+        description: "The content of the blog thumbnail",
         in: :formData,
         type: :file,
         required: true
