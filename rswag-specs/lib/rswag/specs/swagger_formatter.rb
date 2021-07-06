@@ -55,6 +55,7 @@ module Rswag
               v.each_pair do |_verb, value|
                 is_hash = value.is_a?(Hash)
                 if is_hash && value.dig(:parameters)
+                  value.dig(:parameters).each{|p| remove_invalid_parameters_keys!(p)}
                   schema_param = value.dig(:parameters)&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
                   mime_list = value.dig(:consumes) || doc[:consumes]
                   if value && schema_param && mime_list
@@ -198,6 +199,11 @@ module Rswag
         is_hash = value.is_a?(Hash)
         value.delete(:consumes) if is_hash && value.dig(:consumes)
         value.delete(:produces) if is_hash && value.dig(:produces)
+      end
+
+      def remove_invalid_parameters_keys!(value)
+        is_hash = value.is_a?(Hash)
+        value.delete(:getter) if is_hash && value.dig(:getter)
       end
     end
   end
