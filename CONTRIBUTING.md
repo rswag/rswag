@@ -29,24 +29,6 @@ npm install
 cd -
 ```
 
-### Troubleshooting:
-- `libv8` or `therubyracer` MacOS Catalina/Big Sur install issues:
-  ```
-  An error occurred while installing libv8 (3.16.14.19), and Bundler cannot continue.
-  Make sure that `gem install libv8 -v '3.16.14.19' --source 'https://rubygems.org/'` succeeds before bundling.
-
-  An error occurred while installing therubyracer (0.12.3), and Bundler cannot continue.
-  Make sure that `gem install therubyracer -v '0.12.3' --source 'https://rubygems.org/'` succeeds before bundling.
-  ```
-
-  Try, [reference](https://stackoverflow.com/a/62413041/7477016):
-  ```
-  brew install v8@3.15
-  bundle config build.libv8 --with-system-v8
-  bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)
-  bundle
-  ```
-
 ## Test
 Initialize the rswag-ui repo with assets.
 ```
@@ -75,11 +57,11 @@ Push to your fork and [submit a Pull Request][pr].
 
 ## Updating Swagger UI
 
-Find the latest versions of swagger-ui here:  
+Find the latest versions of swagger-ui here:
 https://github.com/swagger-api/swagger-ui/releases
 
 Update the swagger-ui-dist version in the rswag-ui dependencies
-```  
+```
 ./rswag-ui/package.json
 ```
 
