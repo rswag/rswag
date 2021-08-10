@@ -43,7 +43,7 @@ group :development do
 end
 
 group :assets do
-  gem 'therubyracer'
+  gem 'mini_racer'
   gem 'uglifier'
 end
 
