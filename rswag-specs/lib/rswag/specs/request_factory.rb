@@ -39,7 +39,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], openapi_spec) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !headers.key?(extract_getter(p)) }
+          .reject { |p| p[:required] == false && !headers.key?(extract_getter(p)) && !params.key?(extract_getter(p)) }
       end
 
       def derive_security_params(metadata, openapi_spec)
@@ -100,7 +100,7 @@ module Rswag
             path_template.gsub!("{#{p[:name]}}", params.fetch(extract_getter(p)).to_s)
           end
 
-          parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
+          parameters.select { |p| p[:in] == :query && params[p[:name]] }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
             path_template.concat(build_query_string_part(p, params.fetch(extract_getter(p)), openapi_spec))
           end

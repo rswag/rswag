@@ -81,7 +81,8 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [
               { name: 'q1', in: :query, type: :string },
-              { name: 'q2', in: :query, type: :string }
+              { name: 'q2', in: :query, type: :string },
+              { name: 'q3', in: :query, type: :string },
             ]
             example.request_params["q1"] = 'foo'
             example.request_params["q2"] = 'bar'
