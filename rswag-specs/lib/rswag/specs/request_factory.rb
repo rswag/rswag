@@ -39,7 +39,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !headers.key?(p[:name]) }
+          .reject { |p| p[:required] == false && !headers.key?(p[:name]) && !params.key?(p[:name]) }
       end
 
       def derive_security_params(metadata, swagger_doc)
@@ -114,7 +114,7 @@ module Rswag
             path_template.gsub!("{#{p[:name]}}", params.fetch(p[:name]).to_s)
           end
 
-          parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
+          parameters.select { |p| p[:in] == :query && params[p[:name]] }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
             path_template.concat(build_query_string_part(p, params.fetch(p[:name])))
           end
