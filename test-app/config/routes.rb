@@ -9,6 +9,8 @@ TestApp::Application.routes.draw do
   post 'auth-tests/api-key', to: 'auth_tests#api_key'
   post 'auth-tests/basic-and-api-key', to: 'auth_tests#basic_and_api_key'
 
+  resources :stubs
+
   mount  Rswag::Api::Engine => 'api-docs'
   mount  Rswag::Ui::Engine => 'api-docs'
 end

@@ -1,16 +1,28 @@
 # rswag
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.4.0] - 2021-02-09
 ### Added
-### Changed
-### Deprecated
-### Removed
+- Added `SWAGGER_DRY_RUN` env variable [#274](https://github.com/rswag/rswag/pull/274)
+
+## [2.3.3] - 2021-02-07
+
 ### Fixed
-### Security
+- Include response examples [#394](https://github.com/rswag/rswag/pull/394)
+
+### Changed
+- Update swagger-ui to 3.42.0
+
+## [2.3.2] - 2021-01-27
+### Added
+- RequestBody now supports the `required` flag [#342](https://github.com/rswag/rswag/pull/342)
+### Fixed
+- Fix response example rendering [#330](https://github.com/rswag/rswag/pull/330)
+- Fix empty content block [#347](https://github.com/rswag/rswag/pull/347)
 
 ## [2.3.1] - 2020-04-08
 ### Fixed
@@ -28,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update swagger-ui version to 3.23.11 [#239](https://github.com/rswag/rswag/pull/239)
 - Rails constraint moved from < 6.1 to < 7 [#253](https://github.com/rswag/rswag/pull/253)
 - Swaggerize now outputs base RSpec text on completion to avoid silent failures [#293](https://github.com/rswag/rswag/pull/293)
+- Update swagger-ui version to 3.28.0
 
 ## [2.2.0] - 2019-11-01
 ### Added

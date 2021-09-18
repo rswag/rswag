@@ -50,7 +50,11 @@ module Rswag
           .merge(schemas)
 
         errors = JSON::Validator.fully_validate(validation_schema, body)
-        raise UnexpectedResponse, "Expected response body to match schema: #{errors[0]}" if errors.any?
+        return unless errors.any?
+
+        raise UnexpectedResponse,
+              "Expected response body to match schema: #{errors[0]}\n" \
+              "Response body: #{JSON.pretty_generate(JSON.parse(body))}"
       end
 
       def definitions_or_component_schemas(swagger_doc, version)
@@ -62,7 +66,7 @@ module Rswag
             swagger_doc.slice(:definitions)
           else
             components = swagger_doc[:components] || {}
-            { components: { schemas: components[:schemas] } }
+            { components: components }
           end
         end
       end

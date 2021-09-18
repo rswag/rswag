@@ -5,6 +5,8 @@ rswag
 
 OpenApi 3.0 and Swagger 2.0 compatible!
 
+Seeking maintainers! Got a pet-bug that needs fixing? Just let us know in your issue/pr that you'd like to step up to help.
+
 Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
 
 Api Rswag creates [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
@@ -18,7 +20,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.23.11|
+|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.42.0|
 |[2.3.0](https://github.com/rswag/rswag/tree/2.3.0)|3.0.3|3.23.11|
 |[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
@@ -136,7 +138,7 @@ There is also a generator which can help get you started `rails generate rspec:s
       path '/blogs/{id}' do
 
         get 'Retrieves a blog' do
-          tags 'Blogs'
+          tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
           parameter name: :id, in: :path, type: :string
 
@@ -363,8 +365,8 @@ you should use the folowing syntax, making sure there are no whitespaces at the 
 
 ### Specifying/Testing API Security ###
 
-Swagger allows for the specification of different security schemes and their applicability to operations in an API. 
-To leverage this in rswag, you define the schemes globally in _swagger_helper.rb_ and then use the "security" attribute at the operation level to specify which schemes, if any, are applicable to that operation. 
+Swagger allows for the specification of different security schemes and their applicability to operations in an API.
+To leverage this in rswag, you define the schemes globally in _swagger_helper.rb_ and then use the "security" attribute at the operation level to specify which schemes, if any, are applicable to that operation.
 Swagger supports :basic, :bearer, :apiKey and :oauth2 and :openIdConnect scheme types. See [the spec](https://swagger.io/docs/specification/authentication/) for more info, as this underwent major changes between Swagger 2.0 and Open API 3.0
 
 ```ruby
@@ -416,7 +418,7 @@ describe 'Blogs API' do
 end
 
 # example of documenting an endpoint that handles basic auth and api key based security
-describe 'Auth examples API' do 
+describe 'Auth examples API' do
   path '/auth-tests/basic-and-api-key' do
     post 'Authenticates with basic auth and api key' do
       tags 'Auth Tests'
@@ -437,11 +439,11 @@ describe 'Auth examples API' do
     end
   end
 end
- 
+
 
 ```
 
-__NOTE:__ Depending on the scheme types, you'll be required to assign a corresponding parameter value with each example. 
+__NOTE:__ Depending on the scheme types, you'll be required to assign a corresponding parameter value with each example.
 For example, :basic auth is required above and so the :Authorization (header) parameter must be set accordingly
 
 ## Configuration & Customization ##
@@ -479,9 +481,9 @@ rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
 
 ### Referenced Parameters and Schema Definitions ###
 
-Swagger allows you to describe JSON structures inline with your operation descriptions OR as referenced globals. 
+Swagger allows you to describe JSON structures inline with your operation descriptions OR as referenced globals.
 For example, you might have a standard response structure for all failed operations.
-Again, this is a structure that changed since swagger 2.0. Notice the new "schemas" section for these. 
+Again, this is a structure that changed since swagger 2.0. Notice the new "schemas" section for these.
 Rather than repeating the schema in every operation spec, you can define it globally and provide a reference to it in each spec:
 
 ```ruby
@@ -516,6 +518,15 @@ config.swagger_docs = {
             thumbnail: { type: 'string', nullable: true }
           },
           required: %w[id title]
+        },
+        new_blog: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            content: { type: 'string', nullable: true },
+            thumbnail: { type: 'string', format: 'binary', nullable: true }
+          },
+          required: %w[title]
         }
       }
     }
@@ -528,6 +539,8 @@ describe 'Blogs API' do
   path '/blogs' do
 
     post 'Creates a blog' do
+
+      parameter name: :new_blog, in: :body, schema: { '$ref' => '#/components/schemas/new_blog' }
 
       response 422, 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'
@@ -549,7 +562,7 @@ end
 
 ### Response headers ###
 
-In Rswag, you could use `header` method inside the response block to specify header objects for this response. 
+In Rswag, you could use `header` method inside the response block to specify header objects for this response.
 Rswag will validate your response headers with those header objects and inject them into the generated swagger file:
 
 ```ruby
@@ -597,19 +610,20 @@ To enable examples generation from responses add callback above run_test! like:
 
 ```
 after do |example|
-  example.metadata[:response][:examples] = { 'application/json' => JSON.parse(response.body, symbolize_names: true) }
+  example.metadata[:response][:content] = {
+    'application/json' => {
+      example: JSON.parse(response.body, symbolize_names: true)
+    }
+  }
 end
 ```
 
-You need to disable --dry-run option for Rspec > 3
+#### Dry Run Option ####
 
-<!-- This is now enabled by default in rswag. 
-You need to set the ``` config.swagger_dry_run = false``` value in the spec/spec_helper.rb file.
-This is one of the more powerful features of rswag. When rswag runs your integration test suite via ```bundle exec rspec```, it will capture the request and response bodies and output those values in the examples section.
-These integration tests are usually written with ```let``` variables for post body parameters, and since its an integration test the service is returning actual values. 
-We might as well re-use these values and embed them into the generated swagger to provide a more real world example for request/response examples. -->
+The `--dry-run` option is enabled by default for Rspec 3, but if you need to
+disable it you can use the environment varible `SWAGGER_DRY_RUN=0` during the
+generation command or add the following to your `config/environments/test.rb`:
 
-Add to config/environments/test.rb:
 ```ruby
 RSpec.configure do |config|
   config.swagger_dry_run = false
@@ -645,8 +659,8 @@ describe 'Blogs API', document: false do
 ```
 
 ##### rswag helper methods #####
-<!-- 
-There are some helper methods to help with documenting request bodies. 
+<!--
+There are some helper methods to help with documenting request bodies.
 ```ruby
 describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
@@ -682,7 +696,7 @@ describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
     end
   end
-end    
+end
 ```
 
 In the above example, we see methods ```request_body_json``` ```request_body_plain``` ```request_body_xml```.
@@ -692,7 +706,7 @@ and the examples: :blog which will create a named example "blog" under the "requ
 Again, documenting request response examples changed in Open API 3.0. The example above would generate a swagger.json snippet that looks like this:
 
 ```json
-        ... 
+        ...
         {"requestBody": {
           "required": true,
           "content": {
@@ -726,9 +740,9 @@ Again, documenting request response examples changed in Open API 3.0. The exampl
         }
 ```
 
-*NOTE:* for this example request body to work in the tests properly, you need to ``let`` a variable named *blog*. 
+*NOTE:* for this example request body to work in the tests properly, you need to ``let`` a variable named *blog*.
 The variable with the matching name (blog in this case) is eval-ed and captured to be placed in the examples section.
-This ```let``` value is used in the integration test to run the test AND captured and injected into the requestBody section. 
+This ```let``` value is used in the integration test to run the test AND captured and injected into the requestBody section.
 
 ##### rswag response examples #####
 
@@ -826,7 +840,7 @@ You can specify custom headers for serving your generated Swagger JSON. For exam
 ```ruby
 Rswag::Api.configure do |c|
   ...
-  
+
   c.swagger_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
 end
 ```
@@ -898,6 +912,5 @@ docker pull swaggerapi/swagger-editor
 ```
 docker run -d -p 80:8080 swaggerapi/swagger-editor
 ```
-This will run the swagger editor in the docker daemon and can be accessed 
+This will run the swagger editor in the docker daemon and can be accessed
 at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
-

@@ -3,6 +3,10 @@ require 'swagger_helper'
 RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
 
+  before do
+    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+  end
+
   path '/blogs' do
     post 'Creates a blog' do
       tags 'Blogs'

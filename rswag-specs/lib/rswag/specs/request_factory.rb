@@ -138,7 +138,8 @@ module Rswag
           end
         end
 
-        return "#{name}=#{value}" unless param[:type].to_sym == :array
+        type = param[:type] || param.dig(:schema, :type)
+        return "#{name}=#{value}" unless type&.to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
