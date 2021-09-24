@@ -216,7 +216,7 @@ module Rswag
 
       def message
         <<~MSG
-          Missing parameter #{body_param}
+          Missing parameter '#{body_param}'
 
           Please check your spec. It looks like you defined a body parameter,
           but did not declare usage via let. Try adding:

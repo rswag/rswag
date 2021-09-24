@@ -171,7 +171,7 @@ module Rswag
             it 'uses the referenced metadata to build the request' do
               expect do
                 request[:payload]
-              end.to raise_error(Rswag::Specs::MissingParameterError, /Missing parameter comment/)
+              end.to raise_error(Rswag::Specs::MissingParameterError, /Missing parameter 'comment'/)
             end
           end
 
