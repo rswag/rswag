@@ -344,19 +344,12 @@ module Rswag
           context 'form payload' do
             before do
               metadata[:operation][:consumes] = ['multipart/form-data']
-              metadata[:operation][:parameters] = [
-                { name: 'f1', in: :formData, type: :string },
-                { name: 'f2', in: :formData, type: :string }
-              ]
-              allow(example).to receive(:f1).and_return('foo blah')
-              allow(example).to receive(:f2).and_return('bar blah')
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :formData, schema: { type: 'object' } }]
+              allow(example).to receive(:comment).and_return(text: 'Some comment')
             end
 
-            it 'sets payload to hash of names and example values' do
-              expect(request[:payload]).to eq(
-                'f1' => 'foo blah',
-                'f2' => 'bar blah'
-              )
+            it "sets payload to hash of names from first 'formData' parameter" do
+              expect(request[:payload]).to eq(text: 'Some comment')
             end
           end
         end
