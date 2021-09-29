@@ -11,7 +11,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
     swagger_root = File.expand_path('tmp/swagger', __dir__)
     config = double('config', swagger_root: swagger_root, get_swagger_doc: swagger_doc )
     formatter = Rswag::Specs::SwaggerFormatter.new(output, config)
-    
+
     example_group = OpenStruct.new(group: OpenStruct.new(metadata: example.metadata))
     formatter.example_group_finished(example_group)
   end
@@ -68,7 +68,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
               url: "https://{defaultHost}/foo",
               variables: {
                 defaultHost: {
-                  default: "api.example.com" 
+                  default: "api.example.com"
                 }
               }
             }]}
@@ -79,7 +79,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
                 url: "https://{defaultHost}/foo",
                 variables: {
                   defaultHost: {
-                    default: "api.example.com" 
+                    default: "api.example.com"
                   }
                 }
               }])
@@ -186,16 +186,22 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
       post 'body is required' do
         tags 'Media Types'
         consumes 'multipart/form-data'
-        parameter name: :file, :in => :formData, :type => :file, required: true
+        parameter name: :form_data, in: :formData, schema: {
+          type: :object,
+          properties: {
+            file: { type: :file }
+          }
+        }
 
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:form_data) { { file: file } }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
 
         response '200', 'OK' do
           run_test!
 
           it 'declares requestBody is required' do
             pending "This output is massaged in SwaggerFormatter#stop, and isn't quite ready here to assert"
-            tree = swagger_doc.dig(:paths, "/stubs", :post, :requestBody)
+            tree = swagger_doc.dig(:paths, '/stubs', :post, :requestBody)
             expect(tree[:required]).to eq(true)
           end
         end

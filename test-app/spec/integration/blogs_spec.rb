@@ -141,15 +141,19 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
       parameter(
-        name: :file,
+        name: :form_data,
         description: "The content of the blog thumbnail",
         in: :formData,
-        type: :file,
+        type: :object,
+        properties: {
+          file: { type: :file },
+        },
         required: true
       )
 
       response '200', 'blog updated' do
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:form_data) { { file: file } }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
         run_test!
       end
     end
