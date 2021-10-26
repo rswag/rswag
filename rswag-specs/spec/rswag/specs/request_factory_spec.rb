@@ -29,18 +29,36 @@ module Rswag
         end
 
         context "'path' parameters" do
-          before do
-            metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
-            metadata[:operation][:parameters] = [
-              { name: 'blog_id', in: :path, type: :number },
-              { name: 'id', in: :path, type: :number }
-            ]
-            allow(example).to receive(:blog_id).and_return(1)
-            allow(example).to receive(:id).and_return(2)
+          context 'when `name` parameter key is required, but not defined within example group' do
+            before do
+              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+              metadata[:operation][:parameters] = [
+                { name: 'blog_id', in: :path, type: :number },
+                { name: 'id', in: :path, type: :number }
+              ]
+            end
+
+            it "explicitly warns user about missing parameter, instead of giving generic error" do
+              expect { request[:path] }.not_to raise_error(/undefined method/)
+              expect { request[:path] }.not_to raise_error(/is not available from within an example/)
+              expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
+            end
           end
 
-          it 'builds the path from example values' do
-            expect(request[:path]).to eq('/blogs/1/comments/2')
+          context 'when `name` is defined' do
+            before do
+              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+              metadata[:operation][:parameters] = [
+                { name: 'blog_id', in: :path, type: :number },
+                { name: 'id', in: :path, type: :number }
+              ]
+              allow(example).to receive(:blog_id).and_return(1)
+              allow(example).to receive(:id).and_return(2)
+            end
+
+            it 'builds the path from example values' do
+              expect(request[:path]).to eq('/blogs/1/comments/2')
+            end
           end
         end
 

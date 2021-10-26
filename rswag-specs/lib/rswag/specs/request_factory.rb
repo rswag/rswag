@@ -106,6 +106,10 @@ module Rswag
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
+            unless example.respond_to?(p[:name])
+              raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
+                "(i. e `it` or `let` block)")
+            end
             path_template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
           end
 
