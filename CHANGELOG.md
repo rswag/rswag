@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+- Update swagger-ui to 3.52.5
+
 ## [2.4.0] - 2021-02-09
 ### Added
 - Added `SWAGGER_DRY_RUN` env variable [#274](https://github.com/rswag/rswag/pull/274)
