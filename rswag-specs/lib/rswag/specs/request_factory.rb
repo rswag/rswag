@@ -194,11 +194,35 @@ module Rswag
 
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-        body_param ? example.send(body_param[:name]).to_json : nil
+
+        return nil unless body_param
+
+        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
+
+        example.send(body_param[:name]).to_json
       end
 
       def doc_version(doc)
         doc[:openapi] || doc[:swagger] || '3'
+      end
+    end
+
+    class MissingParameterError < StandardError
+      attr_reader :body_param
+
+      def initialize(body_param)
+        @body_param = body_param
+      end
+
+      def message
+        <<~MSG
+          Missing parameter '#{body_param}'
+
+          Please check your spec. It looks like you defined a body parameter,
+          but did not declare usage via let. Try adding:
+
+              let(:#{body_param}) {}
+        MSG
       end
     end
   end

@@ -160,6 +160,21 @@ module Rswag
             end
           end
 
+          context 'missing body parameter' do
+            before do
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
+              allow(example).to receive(:comment).and_raise(NoMethodError, "undefined method 'comment'")
+              allow(example).to receive(:respond_to?).with(:'Content-Type')
+              allow(example).to receive(:respond_to?).with('comment').and_return(false)
+            end
+
+            it 'uses the referenced metadata to build the request' do
+              expect do
+                request[:payload]
+              end.to raise_error(Rswag::Specs::MissingParameterError, /Missing parameter 'comment'/)
+            end
+          end
+
           context 'form payload' do
             before do
               metadata[:operation][:consumes] = ['multipart/form-data']
