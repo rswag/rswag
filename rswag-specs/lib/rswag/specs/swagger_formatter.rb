@@ -56,9 +56,10 @@ module Rswag
                 is_hash = value.is_a?(Hash)
                 if is_hash && value.dig(:parameters)
                   schema_param = value.dig(:parameters)&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                  mime_list = value.dig(:consumes)
+                  mime_list = value.dig(:consumes) || doc[:consumes]
                   if value && schema_param && mime_list
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
+                    value[:requestBody][:required] = true if schema_param[:required]
                     mime_list.each do |mime|
                       value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
                     end
@@ -130,11 +131,11 @@ module Rswag
       end
 
       def upgrade_content!(mime_list, target_node)
-        target_node.merge!(content: {})
         schema = target_node[:schema]
         examples = upgrade_examples(target_node[:examples])
         return if mime_list.empty? || (schema.nil? && examples.nil?)
 
+        target_node[:content] ||= {}
         content = { schema: schema, examples: examples }.select { |_, v| v.present? }
         mime_list.each do |mime_type|
           # TODO upgrade to have content-type specific schema
@@ -144,7 +145,7 @@ module Rswag
 
       def upgrade_examples(examples)
         return unless examples.present?
-        examples.map do |k, v| 
+        examples.map do |k, v|
           [k, {
             value: v
           }]

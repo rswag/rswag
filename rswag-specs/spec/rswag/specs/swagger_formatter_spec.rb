@@ -11,6 +11,8 @@ module Rswag
       # Mock out some infrastructure
       before do
         allow(config).to receive(:swagger_root).and_return(swagger_root)
+
+        allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
       end
       let(:config) { double('config') }
       let(:output) { double('output').as_null_object }
@@ -22,15 +24,15 @@ module Rswag
           subject.example_group_finished(notification)
         end
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
-        let(:api_response) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } } }
         let(:api_metadata) do
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] },
-            response: api_response,
+            response: response_metadata,
             document: document
           }
         end
+        let(:response_metadata) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } } }
 
         context 'with the document tag set to false' do
           let(:swagger_doc) { { swagger: '2.0' } }
@@ -102,16 +104,16 @@ module Rswag
 
           context 'when response contains examples' do
             let(:api_response) do
-              { 
-                 code: '201', 
-                 description: 'blog created', 
-                 headers: { type: :string }, 
+              {
+                 code: '201',
+                 description: 'blog created',
+                 headers: { type: :string },
                  examples: {
                    success: {
                       id: 12345,
                       name: "10 reasons to stop using ruby"
                    }
-                } 
+                }
               }
             end
 
@@ -149,10 +151,10 @@ module Rswag
 
           context 'when example contains schema and examples' do
             let(:api_response) do
-              { 
-                 code: '201', 
-                 description: 'blog created', 
-                 headers: { type: :string }, 
+              {
+                 code: '201',
+                 description: 'blog created',
+                 headers: { type: :string },
                  schema: {
                    type: :object,
                    properties: {
@@ -166,7 +168,7 @@ module Rswag
                       id: 12345,
                       name: "10 reasons to stop using ruby"
                    }
-                } 
+                }
               }
             end
 
@@ -216,7 +218,7 @@ module Rswag
                 }
               )
             end
-          end 
+          end
 
           it 'converts query and path params, type: to schema: { type: }' do
             expect(swagger_doc.slice(:paths)).to match(
@@ -244,6 +246,97 @@ module Rswag
                 }
               }
             )
+          end
+
+          context 'with response example' do
+            let(:response_metadata) do
+              {
+                code: '201',
+                description: 'blog created',
+                headers: { type: :string },
+                content: { 'application/json' => { example: { foo: :bar } } },
+                schema: { '$ref' => '#/definitions/blog' }
+              }
+            end
+
+            it 'adds example to definition' do
+              expect(swagger_doc.slice(:paths)).to match(
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          content: {
+                            'application/vnd.my_mime' => {
+                              schema: { '$ref' => '#/definitions/blog' }
+                            },
+                            'application/json' => {
+                              schema: { '$ref' => '#/definitions/blog' },
+                              example: { foo: :bar }
+                            }
+                          },
+                          description: 'blog created',
+                          headers: { schema: { type: :string } }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+            end
+          end
+
+          context 'with empty content' do
+            let(:swagger_doc) do
+              {
+                openapi: '3.0.1',
+                basePath: '/foo',
+                schemes: ['http', 'https'],
+                host: 'api.example.com',
+                components: {
+                  securitySchemes: {
+                    myClientCredentials: {
+                      type: :oauth2,
+                      flow: :application,
+                      token_url: :somewhere
+                    },
+                    myAuthorizationCode: {
+                      type: :oauth2,
+                      flow: :accessCode,
+                      token_url: :somewhere
+                    },
+                    myImplicit: {
+                      type: :oauth2,
+                      flow: :implicit,
+                      token_url: :somewhere
+                    }
+                  }
+                }
+              }
+            end
+
+            it 'converts query and path params, type: to schema: { type: }' do
+              expect(swagger_doc.slice(:paths)).to match(
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          description: 'blog created',
+                          headers: { schema: { type: :string } }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+            end
           end
 
           it 'converts basePath, schemas and host to urls' do
