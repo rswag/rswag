@@ -72,7 +72,10 @@ module Rswag
       def examples(example = nil)
         return super() if example.nil?
 
-        metadata[:response][:examples] = example
+        metadata[:response][:content] =
+          example.each_with_object({}) do |(mime, example_object), memo|
+            memo[mime] = { example: example_object }
+          end
       end
 
       def run_test!(&block)

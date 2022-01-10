@@ -57,11 +57,11 @@ Push to your fork and [submit a Pull Request][pr].
 
 ## Updating Swagger UI
 
-Find the latest versions of swagger-ui here:  
+Find the latest versions of swagger-ui here:
 https://github.com/swagger-api/swagger-ui/releases
 
 Update the swagger-ui-dist version in the rswag-ui dependencies
-```  
+```
 ./rswag-ui/package.json
 ```
 

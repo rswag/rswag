@@ -9,13 +9,13 @@ Gem::Specification.new do |s|
   s.authors     = ['Richie Morris', 'Greg Myers', 'Jay Danielian']
   s.email       = ['domaindrivendev@gmail.com']
   s.homepage    = 'https://github.com/rswag/rswag'
-  s.summary     = 'A Swagger-based DSL for rspec-rails & accompanying rake task for generating Swagger files'
-  s.description = 'Simplify API integration testing with a succinct rspec DSL and generate Swagger files directly from your rspecs'
+  s.summary     = 'An OpenAPI-based (formerly called Swagger) DSL for rspec-rails & accompanying rake task for generating OpenAPI specification files'
+  s.description = 'Simplify API integration testing with a succinct rspec DSL and generate OpenAPI specification files directly from your rspecs. More about the OpenAPI initiative here: http://spec.openapis.org/'
   s.license     = 'MIT'
 
   s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile']
 
-  s.add_dependency 'activesupport', '>= 3.1', '< 7.0'
-  s.add_dependency 'railties', '>= 3.1', '< 7.0'
+  s.add_dependency 'activesupport', '>= 3.1', '< 7.1'
+  s.add_dependency 'railties', '>= 3.1', '< 7.1'
   s.add_dependency 'json-schema', '~> 2.2'
 end
