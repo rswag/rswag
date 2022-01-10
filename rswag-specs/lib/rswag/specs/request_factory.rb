@@ -111,12 +111,16 @@ module Rswag
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(p[:name])))
+            path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
           end
         end
       end
 
-      def build_query_string_part(param, value)
+      def param_is_array?(param)
+        param[:type]&.to_sym == :array || param.dig(:schema, :type)&.to_sym == :array
+      end
+
+      def build_query_string_part(param, value, swagger_doc)
         name = param[:name]
         type = param[:type] || param.dig(:schema, :type)
         return "#{name}=#{value}" unless type&.to_sym == :array

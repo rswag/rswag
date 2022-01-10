@@ -102,6 +102,124 @@ module Rswag
           end
           let(:document) { nil }
 
+          context 'when response contains examples' do
+            let(:api_response) do
+              {
+                 code: '201',
+                 description: 'blog created',
+                 headers: { type: :string },
+                 examples: {
+                   success: {
+                      id: 12345,
+                      name: "10 reasons to stop using ruby"
+                   }
+                }
+              }
+            end
+
+            it 'converts examples to match spec' do
+              expect(swagger_doc.dig(:paths, '/blogs',:post, :responses)).to match(
+                '201' => {
+                  content: {
+                    'application/vnd.my_mime' => {
+                      examples: {
+                        success: {
+                          value: {
+                            id: 12345,
+                            name: "10 reasons to stop using ruby"
+                          }
+                        }
+                      }
+                    },
+                    'application/json' => {
+                      examples: {
+                        success: {
+                          value: {
+                            id: 12345,
+                            name: "10 reasons to stop using ruby"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  description: 'blog created',
+                  headers: { schema: { type: :string } }
+                }
+              )
+            end
+          end
+
+          context 'when example contains schema and examples' do
+            let(:api_response) do
+              {
+                 code: '201',
+                 description: 'blog created',
+                 headers: { type: :string },
+                 schema: {
+                   type: :object,
+                   properties: {
+                     id: { type: :number },
+                     name: { type: :string}
+                   },
+                   required: ['id', 'name']
+                 },
+                 examples: {
+                   success: {
+                      id: 12345,
+                      name: "10 reasons to stop using ruby"
+                   }
+                }
+              }
+            end
+
+            it 'converts schema and examples to match spec' do
+              expect(swagger_doc.dig(:paths, '/blogs',:post, :responses)).to match(
+                '201' => {
+                  content: {
+                    'application/vnd.my_mime' => {
+                      schema: {
+                        type: :object,
+                        properties: {
+                          id: { type: :number },
+                          name: { type: :string}
+                        },
+                        required: ['id', 'name']
+                      },
+                      examples: {
+                        success: {
+                          value: {
+                            id: 12345,
+                            name: "10 reasons to stop using ruby"
+                          }
+                        }
+                      }
+                    },
+                    'application/json' => {
+                      schema: {
+                        type: :object,
+                        properties: {
+                          id: { type: :number },
+                          name: { type: :string}
+                        },
+                        required: ['id', 'name']
+                      },
+                      examples: {
+                        success: {
+                          value: {
+                            id: 12345,
+                            name: "10 reasons to stop using ruby"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  description: 'blog created',
+                  headers: { schema: { type: :string } }
+                }
+              )
+            end
+          end
+
           it 'converts query and path params, type: to schema: { type: }' do
             expect(swagger_doc.slice(:paths)).to match(
               paths: {
