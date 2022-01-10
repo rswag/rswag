@@ -103,16 +103,16 @@ module Rswag
           let(:document) { nil }
 
           context 'when response contains examples' do
-            let(:api_response) do
+            let(:response_metadata) do
               {
-                 code: '201',
-                 description: 'blog created',
-                 headers: { type: :string },
-                 examples: {
-                   success: {
-                      id: 12345,
-                      name: "10 reasons to stop using ruby"
-                   }
+                code: '201',
+                description: 'blog created',
+                headers: { type: :string },
+                examples: {
+                  success: {
+                    id: 12345,
+                    name: "10 reasons to love ruby"
+                  }
                 }
               }
             end
@@ -126,7 +126,7 @@ module Rswag
                         success: {
                           value: {
                             id: 12345,
-                            name: "10 reasons to stop using ruby"
+                            name: "10 reasons to love ruby"
                           }
                         }
                       }
@@ -136,7 +136,7 @@ module Rswag
                         success: {
                           value: {
                             id: 12345,
-                            name: "10 reasons to stop using ruby"
+                            name: "10 reasons to love ruby"
                           }
                         }
                       }
@@ -150,24 +150,24 @@ module Rswag
           end
 
           context 'when example contains schema and examples' do
-            let(:api_response) do
+            let(:response_metadata) do
               {
-                 code: '201',
-                 description: 'blog created',
-                 headers: { type: :string },
-                 schema: {
-                   type: :object,
-                   properties: {
-                     id: { type: :number },
-                     name: { type: :string}
-                   },
-                   required: ['id', 'name']
-                 },
-                 examples: {
-                   success: {
-                      id: 12345,
-                      name: "10 reasons to stop using ruby"
-                   }
+                code: '201',
+                description: 'blog created',
+                headers: { type: :string },
+                schema: {
+                  type: :object,
+                  properties: {
+                    id: { type: :number },
+                    name: { type: :string}
+                  },
+                  required: ['id', 'name']
+                },
+                examples: {
+                  success: {
+                    id: 12345,
+                    name: "10 reasons to love ruby"
+                  }
                 }
               }
             end
@@ -189,7 +189,7 @@ module Rswag
                         success: {
                           value: {
                             id: 12345,
-                            name: "10 reasons to stop using ruby"
+                            name: "10 reasons to love ruby"
                           }
                         }
                       }
@@ -207,7 +207,7 @@ module Rswag
                         success: {
                           value: {
                             id: 12345,
-                            name: "10 reasons to stop using ruby"
+                            name: "10 reasons to love ruby"
                           }
                         }
                       }
@@ -254,7 +254,7 @@ module Rswag
                 code: '201',
                 description: 'blog created',
                 headers: { type: :string },
-                content: { 'application/json' => { example: { foo: :bar } } },
+                examples: { foo: :bar },
                 schema: { '$ref' => '#/definitions/blog' }
               }
             end
@@ -271,11 +271,16 @@ module Rswag
                         '201' => {
                           content: {
                             'application/vnd.my_mime' => {
-                              schema: { '$ref' => '#/definitions/blog' }
+                              schema: { '$ref' => '#/definitions/blog' },
+                              examples: { foo: {
+                                value: :bar,
+                              } }
                             },
                             'application/json' => {
                               schema: { '$ref' => '#/definitions/blog' },
-                              example: { foo: :bar }
+                              examples: { foo: {
+                                value: :bar,
+                              } }
                             }
                           },
                           description: 'blog created',
