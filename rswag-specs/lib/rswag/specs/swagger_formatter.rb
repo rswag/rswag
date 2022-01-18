@@ -61,7 +61,7 @@ module Rswag
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
                     mime_list.each do |mime|
-                      value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
+                      (value[:requestBody][:content][mime] ||= {})[:schema] = schema_param[:schema]
                     end
                   end
 
