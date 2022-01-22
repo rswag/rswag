@@ -31,6 +31,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        gem update --system
         bundle install
         cd rswag-ui && npm install
 
