@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         ruby: [2.6, 2.7, truffleruby-head]
-        rails: [5.2.4.4, 6.0.3.4]
+        rails: [5.2.6, 6.1.4.4, 7.0.1] # Tested against latest of every Rails version since 5.x
     env:
       RAILS_VERSION: ${{ matrix.rails }}
 
