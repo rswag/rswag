@@ -19,7 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
-      with: { ruby-version: 2.6 }
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
     - uses: actions/cache@v2
       id: cache
