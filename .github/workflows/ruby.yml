@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [2.6, 2.7, truffleruby-head]
+        ruby: [2.6, 2.7, 3.0, 3.1, truffleruby-head] # 2.6 is EOL March 31, 2022
         rails: [5.2.6, 6.1.4.4, 7.0.1] # Tested against latest of every Rails version since 5.x
     env:
       RAILS_VERSION: ${{ matrix.rails }}
