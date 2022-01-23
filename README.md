@@ -1,6 +1,6 @@
 rswag
 =========
-[![Build Status](https://travis-ci.org/rswag/rswag.svg?branch=master)](https://travis-ci.org/rswag/rswag)
+[![Build Status](https://github.com/rswag/rswag/actions/workflows/ruby.yml/badge.svg?branch=master)](https://github.com/rswag/rswag/actions/workflows/ruby.yml?query=branch%3Amaster+)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1175b984edc4610f82ab/maintainability)](https://codeclimate.com/github/rswag/rswag/maintainability)
 
 OpenApi 3.0 and Swagger 2.0 compatible!
