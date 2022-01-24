@@ -11,8 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [2.6, 2.7, 3.0, 3.1, truffleruby-head] # 2.6 is EOL March 31, 2022
-        rails: [5.2.6, 6.1.4.4, 7.0.1] # Tested against latest of every Rails version since 5.x
+        ruby: [2.6, 2.7, 3.0, 3.1, truffleruby-head] # 2.6 is EOL March 31, 2022.
+        rails: [5.2.6, 6.1.4.4, 7.0.1] # 5.2 EOL in 01 Jun 2022
+        exclude:
+        # excludes Rails 5.2.x on Ruby 3.0 and on 3.1 
+        # Note that 6.0.x should also exclude 3.0 and 3.1 but we're not testing it.
+        - rails: 5.2.6
+          ruby: 3.0
+        - rails: 5.2.6
+          ruby: 3.1
     env:
       RAILS_VERSION: ${{ matrix.rails }}
 
