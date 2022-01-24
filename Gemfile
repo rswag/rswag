@@ -17,6 +17,11 @@ when  '6', '7'
   gem 'sqlite3', '~> 1.4.1'
 end
 
+case RUBY_VERSION.split('.').first
+when '3'
+  gem 'net-smtp', require: false
+end
+
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 
