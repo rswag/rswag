@@ -20,6 +20,9 @@ jobs:
           ruby: 3.0
         - rails: 5.2.6
           ruby: 3.1
+        # Rails 7.0.1 requires >= 2.7.0, so excluding 2.6
+        - rails: 7.0.1
+          ruby: 2.6
     env:
       RAILS_VERSION: ${{ matrix.rails }}
 
