@@ -7,10 +7,6 @@ on:
         description: "gem version to publish"
         type: string
         required: true
-      rubygems-opt:
-        description: "otp for rubygems"
-        type: string
-        required: true
 
 jobs:
   build:
@@ -35,11 +31,10 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
           cd rswag-api
           gem build rswag-api.gemspec
-          gem push *.gem --otp ${OTP}
+          gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag-specs
         run: |
@@ -49,11 +44,10 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
           cd rswag-specs
           gem build rswag-specs.gemspec
-          gem push *.gem --otp ${OTP}
+          gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag-ui
         run: |
@@ -63,11 +57,10 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
           cd rswag-ui
           gem build rswag-ui.gemspec
-          gem push *.gem --otp ${OTP}
+          gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag
         run: |
@@ -78,8 +71,7 @@ jobs:
           cd rswag
           gem build rswag.gemspec
           echo $RUBYGEMS_VERSION
-          gem push *.gem --otp ${OTP}
+          gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.event.inputs.rubygems-opt}}"
