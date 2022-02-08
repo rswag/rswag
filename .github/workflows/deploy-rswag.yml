@@ -39,7 +39,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.events.inputs.rubygems-opt}}"
+          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag-specs
         run: |
@@ -53,7 +53,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.events.inputs.rubygems-opt}}"
+          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag-ui
         run: |
@@ -67,7 +67,7 @@ jobs:
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.events.inputs.rubygems-opt}}"
+          OTP: "${{github.event.inputs.rubygems-opt}}"
 
       - name: Publish rswag
         run: |
@@ -82,4 +82,4 @@ jobs:
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
           RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
-          OTP: "${{github.events.inputs.rubygems-opt}}"
+          OTP: "${{github.event.inputs.rubygems-opt}}"
