@@ -34,7 +34,7 @@ jobs:
           # gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
-          TRAVIS_TAG: "${{github.event.inputs.version}}"
+          RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
 
       - name: Publish rswag-specs
         run: |
@@ -47,7 +47,7 @@ jobs:
           # gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
-          TRAVIS_TAG: "${{github.event.inputs.version}}"
+          RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
 
       - name: Publish rswag-ui
         run: |
@@ -60,7 +60,7 @@ jobs:
           # gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
-          TRAVIS_TAG: "${{github.event.inputs.version}}"
+          RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
 
       - name: Publish rswag
         run: |
@@ -70,8 +70,8 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
           cd rswag
           gem build rswag.gemspec
-          echo $TRAVIS_TAG
+          echo $RUBYGEMS_VERSION
           # gem push *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.BOOKOFGREG_RUBYGEMS_API_KEY}}"
-          TRAVIS_TAG: "${{github.event.inputs.version}}"
+          RUBYGEMS_VERSION: "${{github.event.inputs.version}}"
