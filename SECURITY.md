@@ -1,0 +1,23 @@
+# Security Policy
+
+## Supported Versions
+
+Use this section to tell people about which versions of your project are
+currently being supported with security updates.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 2.5.x   | :white_check_mark: |
+| < 2.5.0 | :x:                |
+| < 1.x.x | :x:                |
+
+## Reporting a Vulnerability
+
+
+<!-- Use this section to tell people how to report a vulnerability. -->
+The Rswag team currently does not have a mailbox for security vulnerabilities. Please report discovered issues in the GitHub issues section, tagging public members.
+
+<!-- Tell them where to go, how often they can expect to get an update on a
+reported vulnerability, what to expect if the vulnerability is accepted or
+declined, etc. -->
+We will get back to the issue as soon as possible.
