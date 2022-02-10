@@ -2,14 +2,16 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Only the latest feature level of the latest major version is supported.
+This is due to the size of the team.
+At the current point in time this means 2.5.x
 
+<!--
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.5.x   | :white_check_mark: |
 | < 2.5.0 | :x:                |
-| < 1.x.x | :x:                |
+-->
 
 ## Reporting a Vulnerability
 
