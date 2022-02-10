@@ -21,6 +21,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|
 |[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.52.5|
+|[2.5.1](https://github.com/rswag/rswag/tree/2.5.0)|3.0.3|3.52.5|
 |[2.3.0](https://github.com/rswag/rswag/tree/2.3.0)|3.0.3|3.23.11|
 |[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
 |[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
