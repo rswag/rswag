@@ -1,4 +1,5 @@
 # Number of days of inactivity before an issue becomes stale
+# ToDo: reduce to 90 days once issue backlog is under control
 daysUntilStale: 365
 # Number of days of inactivity before a stale issue is closed
 daysUntilClose: 14
