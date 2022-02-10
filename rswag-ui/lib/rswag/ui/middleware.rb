@@ -8,7 +8,7 @@ module Rswag
       end
 
       def call(env)
-        if base_path?(env) 
+        if base_path?(env)
           redirect_uri = env['SCRIPT_NAME'].chomp('/') + '/index.html'
           return [ 301, { 'Location' => redirect_uri }, [ ] ]
         end
@@ -37,7 +37,7 @@ module Rswag
       end
 
       def template_filename
-        @config.template_locations.find { |filename| File.exists?(filename) }
+        @config.template_locations.find { |filename| File.exist?(filename) }
       end
     end
   end

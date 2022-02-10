@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "API V1",
     "version": "v1"
@@ -88,20 +88,8 @@
         ],
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
         "parameters": [
-          {
-            "name": "blog",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/blog"
-            }
-          }
+
         ],
         "responses": {
           "201": {
@@ -109,8 +97,21 @@
           },
           "422": {
             "description": "invalid request",
-            "schema": {
-              "$ref": "#/definitions/errors_object"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errors_object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/blog"
+              }
             }
           }
         }
@@ -122,14 +123,13 @@
         ],
         "description": "Searches blogs by keywords",
         "operationId": "searchBlogs",
-        "produces": [
-          "application/json"
-        ],
         "parameters": [
           {
             "name": "keywords",
             "in": "query",
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -139,13 +139,63 @@
         }
       }
     },
+    "/blogs/flexible": {
+      "post": {
+        "summary": "Creates a blog flexible body",
+        "tags": [
+          "Blogs"
+        ],
+        "description": "Creates a flexible blog from provided data",
+        "operationId": "createFlexibleBlog",
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "flexible blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/blog"
+                    },
+                    {
+                      "$ref": "#/definitions/flexible_blog"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/blog"
+                  },
+                  {
+                    "$ref": "#/definitions/flexible_blog"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/blogs/{id}": {
       "parameters": [
         {
           "name": "id",
           "in": "path",
-          "type": "string",
-          "required": true
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -155,9 +205,6 @@
         ],
         "description": "Retrieves a specific blog by id",
         "operationId": "getBlog",
-        "produces": [
-          "application/json"
-        ],
         "responses": {
           "200": {
             "description": "blog found",
@@ -172,15 +219,17 @@
                 "type": "string"
               }
             },
-            "schema": {
-              "$ref": "#/definitions/blog"
-            },
-            "examples": {
+            "content": {
               "application/json": {
-                "id": 1,
-                "title": "Hello world!",
-                "content": "Hello world and hello universe. Thank you all very much!!!",
-                "thumbnail": "thumbnail.png"
+                "example": {
+                  "id": 1,
+                  "title": "Hello world!",
+                  "content": "Hello world and hello universe. Thank you all very much!!!",
+                  "thumbnail": "thumbnail.png"
+                },
+                "schema": {
+                  "$ref": "#/definitions/blog"
+                }
               }
             }
           },
@@ -195,8 +244,10 @@
         {
           "name": "id",
           "in": "path",
-          "type": "string",
-          "required": true
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "put": {
@@ -206,25 +257,37 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
-        "consumes": [
-          "multipart/form-data"
-        ],
         "parameters": [
-          {
-            "name": "file",
-            "in": "formData",
-            "type": "file",
-            "required": true
-          }
+
         ],
         "responses": {
           "200": {
             "description": "blog updated"
           }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "file"
+              }
+            }
+          },
+          "required": true
         }
       }
     }
   },
+  "servers": [
+    {
+      "url": "https://{defaultHost}",
+      "variables": {
+        "defaultHost": {
+          "default": "www.example.com"
+        }
+      }
+    }
+  ],
   "definitions": {
     "errors_object": {
       "type": "object",
@@ -257,25 +320,50 @@
           "x-nullable": true
         },
         "thumbnail": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "required": [
         "id",
-        "title",
-        "content",
-        "thumbnail"
+        "title"
+      ]
+    },
+    "flexible_blog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "nullable": true
+        },
+        "thumbnail": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "required": [
+        "id",
+        "headline"
       ]
     }
   },
-  "securityDefinitions": {
-    "basic_auth": {
-      "type": "basic"
-    },
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "query"
+  "components": {
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "query"
+      }
     }
   }
 }
