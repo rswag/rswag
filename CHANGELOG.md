@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+## [2.5.1] - 2022-02-10
+
+### Fixed
+
+- Fixed missing assets in rswag-ui [#493](https://github.com/rswag/rswag/pull/493)
+
 ## [2.5.0] - 2022-02-08
 
 ### Added
