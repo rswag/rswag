@@ -103,6 +103,65 @@ module Rswag
           end
         end
 
+        context "'query' parameters of type 'object'" do
+          let(:things) { {'foo': 'bar'} }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'things', in: :query,
+                style: style,
+                explode: explode,
+                schema: { type: :object, additionalProperties: { type: :string } }
+              }
+            ]
+            allow(example).to receive(:things).and_return(things)
+          end
+
+          context 'deepObject' do
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D=bar')
+            end
+          end
+
+          context 'deepObject with nested objects' do
+            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
+            end
+          end
+
+          context 'form explode=false' do
+            let(:style) { :form }
+            let(:explode) { false }
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?things=foo,bar')
+            end
+          end
+
+          context 'form explode=true' do
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?foo=bar')
+            end
+          end
+
+          context 'form explode=true with nesting and uri encodable output' do
+            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
+            end
+          end
+        end
+
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
