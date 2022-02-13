@@ -10,8 +10,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 ## Steps to Test or Reproduce
-Please provide an examp
-le repo or the steps to reproduce the behavior.
+Please provide an example repo or the steps to reproduce the behavior.
 
 ## Expected behavior
 A clear and concise description of what you expected to happen.
