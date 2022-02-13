@@ -2,7 +2,7 @@
 name: 🐛 Bug
 about: File a bug/issue with Rswag that is not working
 title: '[BUG] <title>'
-labels: Needs Triage
+labels: Bug, Needs Triage
 assignees: ''
 ---
 
