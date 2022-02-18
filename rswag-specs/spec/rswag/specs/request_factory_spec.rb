@@ -77,12 +77,14 @@ module Rswag
           end
         end
 
-        context "'query' parameters of type 'array'" do
+        context "swagger 2.0 'query' parameters of type 'array'" do
+          let(:parameter) do
+            { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
+          end
+
           before do
-            metadata[:operation][:parameters] = [
-              { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
-            ]
-            allow(example).to receive(:things).and_return(['foo', 'bar'])
+            metadata[:operation][:parameters] = [parameter]
+            allow(example).to receive(parameter[:name]).and_return(['foo', 'bar'])
           end
 
           context 'collectionFormat = csv' do
@@ -117,6 +119,101 @@ module Rswag
             let(:collection_format) { :multi }
             it 'formats as multiple parameter instances' do
               expect(request[:path]).to eq('/blogs?things=foo&things=bar')
+            end
+          end
+
+          context 'using style option' do
+            let(:parameter) do
+              { name: 'things', in: :query, type: :array, style: :form }
+            end
+
+            it 'raises an error' do
+              expect { request[:path] }.to raise_error(/style is only supported in OpenAPI 3 or higher/)
+            end
+          end
+        end
+
+        context "openapi 3.0.1 'query' parameters of type 'array'" do
+          let(:swagger_doc) { { openapi: '3.0.1' } }
+
+          let(:parameter) do
+            {
+              name: 'things', in: :query,
+              style: style,
+              explode: explode,
+              schema: { type: :array, items: { type: :string } }
+            }
+          end
+
+          before do
+            metadata[:operation][:parameters] = [parameter]
+            allow(example).to receive(parameter[:name]).and_return(['foo', 'bar'])
+          end
+
+          context 'form explode=false' do
+            let(:style) { :form }
+            let(:explode) { false }
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?things=foo,bar')
+            end
+          end
+
+          context 'form explode=true' do
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as exploded form' do
+              expect(request[:path]).to eq('/blogs?things=foo&things=bar')
+            end
+          end
+
+          context 'spaceDelimited explode=false' do
+            let(:style) { :spaceDelimited }
+            let(:explode) { false }
+            it 'formats as exploded spaceDelimited' do
+              expect(request[:path]).to eq('/blogs?things=foo bar')
+            end
+          end
+
+          context 'spaceDelimited explode=true' do
+            let(:style) { :spaceDelimited }
+            let(:explode) { true }
+            it 'formats as exploded spaceDelimited' do
+              expect(request[:path]).to eq('/blogs?things=foo bar')
+            end
+          end
+
+          context 'pipeDelimited explode=false' do
+            let(:style) { :pipeDelimited }
+            let(:explode) { false }
+            it 'formats as exploded pipeDelimited' do
+              expect(request[:path]).to eq('/blogs?things=foo|bar')
+            end
+          end
+
+          context 'pipeDelimited explode=true' do
+            let(:style) { :pipeDelimited }
+            let(:explode) { true }
+            it 'formats as exploded pipeDelimited' do
+              expect(request[:path]).to eq('/blogs?things=foo|bar')
+            end
+          end
+
+          context "not providing 'form' and 'explode' option" do
+            let(:style) { nil }
+            let(:explode) { nil }
+
+            it 'formats as style=form and explode=true' do
+              expect(request[:path]).to eq('/blogs?things=foo&things=bar')
+            end
+          end
+
+          context 'using collectionFormat option' do
+            let(:parameter) do
+              {name: 'things', in: :query, schema: { type: :array, items: { type: :string } }, collectionFormat: :multi}
+            end
+
+            it 'raises an error' do
+              expect { request[:path] }.to raise_error(/collectionFormat is not supported in OpenAPI 3, use "style" and "format" instead/)
             end
           end
         end

@@ -121,29 +121,83 @@ module Rswag
       end
 
       def build_query_string_part(param, value, swagger_doc)
-        name = param[:name]
-
         # OAS 3: https://swagger.io/docs/specification/serialization/
         if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
-          return "#{name}=#{value}" unless param[:schema][:type].to_sym == :object
-
-          style = param[:style]&.to_sym || :form
-          explode = param[:explode].nil? ? true : param[:explode]
-
-          case style
-          when :deepObject
-            return { name => value }.to_query
-          when :form
-            if explode
-              return value.to_query
-            else
-              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
-            end
-          end
+          oas3_build_query_string_part(param, value, swagger_doc)
+        else
+          oas2_build_query_string_part(param, value)
         end
+      end
 
+      def oas3_build_query_string_part(param, value, swagger_doc)
+        type = param[:schema][:type]
+        return "#{name}=#{value}" unless type&.to_sym == :array || type&.to_sym == :object
+
+        raise 'collectionFormat is not supported in OpenAPI 3, use "style" and "format" instead' if param.key?(:collectionFormat)
+
+        style = param[:style]&.to_sym || :form
+        explode = param[:explode].nil? ? true : param[:explode]
+
+        case type
+        when :array
+          oas3_build_query_string_part_for_array(param[:name], value, style, explode)
+        when :object
+          oas3_build_query_string_part_for_object(param[:name], value, style, explode, swagger_doc)
+        end
+      end
+
+      def oas3_build_query_string_part_for_array(name, value, style, explode)
+        case style
+        when :form
+          if explode
+            value.map { |v| "#{CGI.escape(name.to_s)}=#{CGI.escape(v.to_s)}" }.join('&')
+          else
+            "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
+          end
+        when :spaceDelimited
+          "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(' ')
+        when :pipeDelimited
+          "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join('|')
+        when :deepObject
+          raise '`deepObject` is not supported for parameters of type :array'
+        else
+          raise "Unknown value #{style.inspect} for option `style of parameter #{name.inspect}"
+        end
+      end
+
+      def oas3_build_query_string_part_for_object(name, value, style, explode, swagger_doc)
+        case style
+        when :form
+          if explode
+            value.to_query
+          else
+            "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
+          end
+        when :spaceDelimited
+          if swagger_doc && !doc_version(swagger_doc).start_with?('3.1')
+            raise '`spaceDelimited` is not supported for parameters of type :object for OpenAPI version < 3.1'
+          end
+
+          "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(' ')
+        when :pipeDelimited
+          if swagger_doc && !doc_version(swagger_doc).start_with?('3.1')
+            raise '`pipeDelimited` is not supported for parameters of type :object for OpenAPI version < 3.1'
+          end
+
+          "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join('|')
+        when :deepObject
+          { name => value }.to_query
+        else
+          raise "Unknown value #{style.inspect} for option `style of parameter #{name.inspect}"
+        end
+      end
+
+      def oas2_build_query_string_part(param, value)
+        name = param[:name]
         type = param[:type] || param.dig(:schema, :type)
         return "#{name}=#{value}" unless type&.to_sym == :array
+
+        raise 'style is only supported in OpenAPI 3 or higher' if param.key?(:style)
 
         case param[:collectionFormat]
         when :ssv
