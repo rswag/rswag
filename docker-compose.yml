@@ -8,7 +8,7 @@ services:
     build:
       context: .
     volumes:
-       - ./test-app:/rswag/test-app
+       - .:/rswag
   test:
     <<: *base-test
-    command: sh -c 'bundle exec rake db:setup && bundle exec rspec'
+    command: sh -c 'cd .. && ./ci/test.sh'
