@@ -78,9 +78,6 @@ module Rswag
       end
 
       def example(mime, name, value, summary=nil, description=nil)
-
-
-
         mime_example_group = metadata[:response][:examples][mime] || {}
         example_object = {
           value: value,
