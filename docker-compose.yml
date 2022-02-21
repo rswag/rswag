@@ -11,4 +11,4 @@ services:
        - .:/rswag
   test:
     <<: *base-test
-    command: sh -c 'cd .. && ./ci/build.sh && cd test-app && bundle exec rake db:setup && bundle exec rspec'
+    command: sh -c 'cd .. && ./ci/test.sh'
