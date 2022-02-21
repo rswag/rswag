@@ -136,7 +136,7 @@ module Rswag
                 code: '201',
                 description: 'blog created',
                 headers: { type: :string },
-                content: { 'application/json' => { example: { foo: :bar } } },
+                examples: { 'application/json' => { foo: { value: :bar } } },
                 schema: { '$ref' => '#/definitions/blog' }
               }
             end

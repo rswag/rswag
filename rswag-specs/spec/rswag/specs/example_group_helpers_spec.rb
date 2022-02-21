@@ -138,23 +138,24 @@ module Rswag
 
       describe '#examples(example)' do
         let(:mime) { 'application/json' }
+        let(:example_name) { :example }
         let(:json_example) do
           {
-            mime => {
               foo: 'bar'
-            }
           }
         end
         let(:api_metadata) { { response: {} } }
 
         before do
-          subject.examples(json_example)
+          subject.example(mime, example_name, json_example)
         end
 
         it "adds to the 'response examples' metadata" do
-          expect(api_metadata[:response][:content]).to match(
+          expect(api_metadata[:response][:examples]).to match(
             mime => {
-              example: json_example[mime]
+              example_name => {
+                value: json_example
+              }
             }
           )
         end

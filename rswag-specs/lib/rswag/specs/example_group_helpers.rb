@@ -52,7 +52,7 @@ module Rswag
       end
 
       def response(code, description, metadata = {}, &block)
-        metadata[:response] = { code: code, description: description, examples: {}}
+        metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)
       end
 
@@ -78,6 +78,9 @@ module Rswag
       end
 
       def example(mime, name, value, summary=nil, description=nil)
+        if metadata[:response][:examples].blank?
+          metadata[:response][:examples] = {}
+        end
         mime_example_group = metadata[:response][:examples][mime] || {}
         example_object = {
           value: value,
