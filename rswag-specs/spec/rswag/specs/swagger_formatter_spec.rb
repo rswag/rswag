@@ -157,7 +157,11 @@ module Rswag
                             },
                             'application/json' => {
                               schema: { '$ref' => '#/definitions/blog' },
-                              example: { foo: :bar }
+                              examples: { 
+                                foo: {
+                                  value: :bar
+                                }
+                              }
                             }
                           },
                           description: 'blog created',

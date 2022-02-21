@@ -594,11 +594,16 @@ describe 'Blogs API' do
     get 'Retrieves a blog' do
 
       response 200, 'blog found' do
-        examples 'application/json' => {
+        example 'application/json', :example_key, {
             id: 1,
             title: 'Hello world!',
             content: '...'
           }
+        example 'application/json', :example_key_2, {
+            id: 1,
+            title: 'Hello world!',
+            content: '...'
+          }, "Summary of the example", "Longer description of the example"
   ...
 end
 ```
@@ -611,9 +616,12 @@ To enable examples generation from responses add callback above run_test! like:
 
 ```
 after do |example|
-  example.metadata[:response][:content] = {
-    'application/json' => {
-      example: JSON.parse(response.body, symbolize_names: true)
+  example.metadata[:response][:examples]['application/json'] = {
+      example_1: {
+        value: JSON.parse(response.body, symbolize_names: true)
+        summary: "Summary (optional)"
+        description: "Description (Optional)"
+      }
     }
   }
 end

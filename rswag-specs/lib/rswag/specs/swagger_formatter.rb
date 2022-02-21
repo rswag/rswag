@@ -43,6 +43,7 @@ module Rswag
           upgrade_servers!(swagger_doc)
           upgrade_oauth!(swagger_doc)
           upgrade_response_produces!(swagger_doc, metadata)
+
         end
 
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
@@ -127,16 +128,23 @@ module Rswag
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
         metadata[:response].delete(:schema)
+        metadata[:response].delete(:examples)
       end
 
       def upgrade_content!(mime_list, target_node)
         schema = target_node[:schema]
+        examples =  target_node[:examples]
         return if mime_list.empty? || schema.nil?
 
         target_node[:content] ||= {}
         mime_list.each do |mime_type|
           # TODO upgrade to have content-type specific schema
-          (target_node[:content][mime_type] ||= {}).merge!(schema: schema)
+          (target_node[:content][mime_type] ||= {}).merge!(
+            {
+              schema: schema,
+              examples: examples[mime_type]
+            }.select { |_, v| v.present? }
+          )
         end
       end
 

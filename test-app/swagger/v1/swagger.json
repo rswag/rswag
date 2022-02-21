@@ -221,14 +221,36 @@
             },
             "content": {
               "application/json": {
-                "example": {
-                  "id": 1,
-                  "title": "Hello world!",
-                  "content": "Hello world and hello universe. Thank you all very much!!!",
-                  "thumbnail": "thumbnail.png"
-                },
                 "schema": {
                   "$ref": "#/definitions/blog"
+                },
+                "examples": {
+                  "example_0": {
+                    "value": {
+                      "id": 1,
+                      "title": "Hello legay world!",
+                      "content": "Hello legacy world and hello universe. Thank you all very much!!!",
+                      "thumbnail": "legacy-thumbnail.png"
+                    }
+                  },
+                  "blog_example_1": {
+                    "value": {
+                      "id": 1,
+                      "title": "Hello world!",
+                      "content": "Hello world and hello universe. Thank you all very much!!!",
+                      "thumbnail": "thumbnail.png"
+                    },
+                    "summary": "Summary of the example",
+                    "description": "A longer description of a fine blog post about a wonderfull universe!"
+                  },
+                  "blog_example_2": {
+                    "value": {
+                      "id": 1,
+                      "title": "Another fine example!",
+                      "content": "Oh... what a fine example this is, indeed, a fine example!",
+                      "thumbnail": "thumbnail.png"
+                    }
+                  }
                 }
               }
             }

@@ -52,7 +52,7 @@ module Rswag
       end
 
       def response(code, description, metadata = {}, &block)
-        metadata[:response] = { code: code, description: description }
+        metadata[:response] = { code: code, description: description, examples: {}}
         context(description, metadata, &block)
       end
 
@@ -69,13 +69,28 @@ module Rswag
       # NOTE: Similar to 'description', 'examples' need to handle the case when
       # being invoked with no params to avoid overriding 'examples' method of
       # rspec-core ExampleGroup
-      def examples(example = nil)
-        return super() if example.nil?
+      def examples(examples = nil)
+        return super() if examples.nil?
+        # should we add a deprecation warning?
+        examples.each_with_index do |(mime, example_object), index|
+          example(mime, "example_#{index}", example_object)
+        end
+      end
 
-        metadata[:response][:content] =
-          example.each_with_object({}) do |(mime, example_object), memo|
-            memo[mime] = { example: example_object }
-          end
+      def example(mime, name, value, summary=nil, description=nil)
+
+
+
+        mime_example_group = metadata[:response][:examples][mime] || {}
+        example_object = {
+          value: value,
+          summary: summary,
+          description: description
+        }.select { |_, v| v.present? }
+        # TODO, issue a warning if example is being overrindn with the same key
+        metadata[:response][:examples][mime] = mime_example_group.merge!(
+          { name => example_object }
+        )
       end
 
       def run_test!(&block)
