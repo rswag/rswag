@@ -133,8 +133,8 @@ module Rswag
 
       def upgrade_content!(mime_list, target_node)
         schema = target_node[:schema]
-        examples =  target_node[:examples]
         return if mime_list.empty? || schema.nil?
+        examples =  target_node[:examples] || {}
 
         target_node[:content] ||= {}
         mime_list.each do |mime_type|
