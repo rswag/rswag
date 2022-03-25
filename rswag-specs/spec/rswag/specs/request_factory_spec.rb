@@ -180,6 +180,74 @@ module Rswag
           end
         end
 
+        context "'query' parameters of type 'object'" do
+          let(:id) { [3, 4, 5] }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'id', in: :query,
+                style: style,
+                explode: explode,
+                schema: { type: :array, items: { type: :integer } }
+              }
+            ]
+            allow(example).to receive(:id).and_return(id)
+          end
+
+          context 'form' do
+            let(:style) { :form }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3,4,5')
+              end
+            end
+          end
+
+          context "spaceDelimited" do
+            let(:style) { :spaceDelimited }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3%204%205')
+              end
+            end
+          end
+
+          context "pipeDelimited" do
+            let(:style) { :pipeDelimited }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3|4|5')
+              end
+            end
+          end
+        end
+
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
