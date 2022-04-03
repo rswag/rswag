@@ -851,7 +851,7 @@ Take care when overriding Content-Type if you serve both YAML and JSON files as 
 
 ### Enable Swagger Endpoints for swagger-ui ###
 
-You can update the _rswag-ui.rb_ initializer, installed with rswag-ui, to specify which Swagger endpoints should be available to power the documentation UI. If you're using rswag-api, these should correspond to the Swagger endpoints it exposes. When the UI is rendered, you'll see these listed in a drop-down to the top right of the page:
+You can update the _rswag_ui.rb_ initializer, installed with rswag-ui, to specify which Swagger endpoints should be available to power the documentation UI. If you're using rswag-api, these should correspond to the Swagger endpoints it exposes. When the UI is rendered, you'll see these listed in a drop-down to the top right of the page:
 
 ```ruby
 Rswag::Ui.configure do |c|
@@ -862,7 +862,7 @@ end
 
 ### Enable Simple Basic Auth for swagger-ui
 
-You can also update the _rswag-ui.rb_ initializer, installed with rswag-ui to specify a username and password should you want to keep your documentation private.
+You can also update the _rswag_ui.rb_ initializer, installed with rswag-ui to specify a username and password should you want to keep your documentation private.
 
 ```ruby
 Rswag::Ui.configure do |c|
