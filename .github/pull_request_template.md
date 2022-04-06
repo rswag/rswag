@@ -6,7 +6,7 @@ A clear and concise description of what the solution is.
 
 ### This concerns this parts of the Open API Specification:
 * [LINK TO RELEVANT OPEN API SPECS PAGE](https://spec.openapis.org/oas/v3.1.0#data-types)
-* [ANOTHR LINK TO RELEVANT OPEN API SPECS PAGE](https://spec.openapis.org/oas/v3.1.0#schema)
+* [ANOTHER LINK TO RELEVANT OPEN API SPECS PAGE](https://spec.openapis.org/oas/v3.1.0#schema)
 
 ### The changes I made are compatible with:
 - [ ] OAS2
