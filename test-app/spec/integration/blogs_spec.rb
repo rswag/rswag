@@ -96,10 +96,25 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         schema '$ref' => '#/definitions/blog'
 
+        #Legacy
         examples 'application/json' => {
+          id: 1,
+          title: 'Hello legay world!',
+          content: 'Hello legacy world and hello universe. Thank you all very much!!!',
+          thumbnail: 'legacy-thumbnail.png'
+        }
+
+        example 'application/json', :blog_example_1, {
           id: 1,
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
+          thumbnail: 'thumbnail.png'
+        }, "Summary of the example", "A longer description of a fine blog post about a wonderfull universe!"
+
+        example 'application/json', :blog_example_2, {
+          id: 1,
+          title: 'Another fine example!',
+          content: 'Oh... what a fine example this is, indeed, a fine example!',
           thumbnail: 'thumbnail.png'
         }
 
