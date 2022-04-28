@@ -615,16 +615,19 @@ end
 To enable examples generation from responses add callback above run_test! like:
 
 ```
-after do |example|
-  example.metadata[:response][:content]['application/json'][:examples] = {
-      example_1: {
-        value: JSON.parse(response.body, symbolize_names: true)
-        summary: "Summary (optional)"
-        description: "Description (Optional)"
+  after do |example|
+    content = example.metadata[:response][:content] || {}
+    example_spec = {
+      "application/json"=>{
+        examples: {
+          test_example: {
+            value: JSON.parse(response.body, symbolize_names: true)
+          }
+        }
       }
     }
-  }
-end
+    example.metadata[:response][:content] = content.deep_merge(example_spec)
+  end
 ```
 
 #### Dry Run Option ####
