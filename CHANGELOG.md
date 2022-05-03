@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Fixes examples for OAS3 specification, allowing multiple examples
+- Fixes examples for OAS3 specification, allowing multiple examples (https://github.com/rswag/rswag/pull/501)
+- Add query parameter serialization styles (OAS3) (https://github.com/rswag/rswag/pull/507)
+- Fix array parameter serialization on OAS3 (https://github.com/rswag/rswag/pull/507)
+- Rename generated `rswag-ui.rb` file to match Ruby style (https://github.com/rswag/rswag/pull/508)
 
 ### Changed
 
