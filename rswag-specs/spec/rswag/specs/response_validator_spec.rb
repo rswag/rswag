@@ -95,6 +95,84 @@ module Rswag
               it 'uses the referenced schema to validate the response body' do
                 expect { call }.to raise_error(/Expected response body/)
               end
+
+              context 'nullable referenced schema' do
+                let(:response) do
+                  OpenStruct.new(
+                    code: '200',
+                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    body: '{ "blog": null }'
+                  )
+                end
+
+                before do
+                  metadata[:response][:schema] = {
+                    properties: { blog: { '$ref' => '#/components/schema/blog' } },
+                    required: ['blog']
+                  }
+                end
+
+                context 'using x-nullable attribute' do
+                  before do
+                    metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
+                  end
+
+                  context 'response matches metadata' do
+                    it { expect { call }.to_not raise_error }
+                  end
+                end
+
+                context 'using nullable attrtibute' do
+                  before do
+                    metadata[:response][:schema][:properties][:blog]['nullable'] = true
+                  end
+
+                  context 'response matches metadata' do
+                    it { expect { call }.to_not raise_error }
+                  end
+                end
+              end
+
+              context 'nullable oneOf wtih referenced schema' do
+                let(:response) do
+                  OpenStruct.new(
+                    code: '200',
+                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    body: '{ "blog": null }'
+                  )
+                end
+
+                before do
+                  metadata[:response][:schema] = {
+                    properties: {
+                      blog: {
+                        oneOf: [{ '$ref' => '#/components/schema/blog' }]
+                      }
+                    },
+                    required: ['blog']
+                  }
+                end
+
+                context 'using x-nullable attribute' do
+                  before do
+                    metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
+                  end
+
+                  context 'response matches metadata' do
+                    it { expect { call }.to_not raise_error }
+                  end
+                end
+
+                context 'using nullable attrtibute' do
+                  before do
+                    metadata[:response][:schema][:properties][:blog]['nullable'] = true
+                  end
+
+                  context 'response matches metadata' do
+                    it { expect { call }.to_not raise_error }
+                  end
+                end
+              end
             end
 
             context 'deprecated definitions' do
