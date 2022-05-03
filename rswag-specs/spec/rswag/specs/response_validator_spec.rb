@@ -21,8 +21,11 @@ module Rswag
             headers: { 'X-Rate-Limit-Limit' => { type: :integer } },
             schema: {
               type: :object,
-              properties: { text: { type: :string } },
-              required: ['text']
+              properties: {
+                text: { type: :string },
+                number: { type: :integer }
+              },
+              required: ['text', 'number']
             }
           }
         }
@@ -34,7 +37,7 @@ module Rswag
           OpenStruct.new(
             code: '200',
             headers: { 'X-Rate-Limit-Limit' => '10' },
-            body: '{"text":"Some comment"}'
+            body: '{"text":"Some comment", "number": 3}'
           )
         end
 

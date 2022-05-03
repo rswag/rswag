@@ -53,7 +53,7 @@ module Rswag
         return unless errors.any?
 
         raise UnexpectedResponse,
-              "Expected response body to match schema: #{errors[0]}\n" \
+              "Expected response body to match schema: #{errors.join("\n")}\n" \
               "Response body: #{JSON.pretty_generate(JSON.parse(body))}"
       end
 
