@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add query parameter serialization styles (OAS3) (https://github.com/rswag/rswag/pull/507)
 - Fix array parameter serialization on OAS3 (https://github.com/rswag/rswag/pull/507)
 - Rename generated `rswag-ui.rb` file to match Ruby style (https://github.com/rswag/rswag/pull/508)
+- Examples generated with `run_test!` now have the rspec tag `rswag` 
 
 ### Changed
 

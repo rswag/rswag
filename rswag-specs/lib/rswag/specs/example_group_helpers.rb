@@ -106,7 +106,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response" do
+          it "returns a #{metadata[:response][:code]} response", rswag: true do
             assert_response_matches_metadata(metadata)
             block.call(response) if block_given?
           end
@@ -115,7 +115,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response" do |example|
+          it "returns a #{metadata[:response][:code]} response", rswag: true do |example|
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end
