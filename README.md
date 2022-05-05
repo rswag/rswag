@@ -221,7 +221,7 @@ response '201', 'blog created' do
 end
 ```
 
-Also note that the examples generated with __run_test!__ are tagged with the `:rspec` so they can easily be filtered. E.g. `rspec --tag rswag`
+Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
 
 ### Null Values ###
 
