@@ -614,7 +614,7 @@ end
 
 To enable examples generation from responses add callback above run_test! like:
 
-```
+```ruby
   after do |example|
     content = example.metadata[:response][:content] || {}
     example_spec = {
