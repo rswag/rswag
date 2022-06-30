@@ -18,7 +18,21 @@ module Rswag
         {
           response: {
             code: 200,
-            headers: { 'X-Rate-Limit-Limit' => { type: :integer } },
+            headers: { 
+              'X-Rate-Limit-Limit' => { type: :integer },
+              'X-Cursor' => { 
+                schema: { 
+                  type: :string
+                },
+                required: false
+              },
+              'X-Per-Page' => { 
+                schema: { 
+                  type: :string,
+                  nullable: true
+                }
+              } 
+            },
             schema: {
               type: :object,
               properties: {
@@ -36,7 +50,11 @@ module Rswag
         let(:response) do
           OpenStruct.new(
             code: '200',
-            headers: { 'X-Rate-Limit-Limit' => '10' },
+            headers: { 
+              'X-Rate-Limit-Limit' => '10',
+              'X-Cursor' => 'test_cursor',
+              'X-Per-Page' => 25
+            },
             body: '{"text":"Some comment", "number": 3}'
           )
         end
@@ -52,6 +70,37 @@ module Rswag
 
         context 'response headers differ from metadata' do
           before { response.headers = {} }
+          it { expect { call }.to raise_error(/Expected response header/) }
+        end
+
+        context 'response headers do not include optional header' do
+          before { 
+            response.headers = { 
+              'X-Rate-Limit-Limit' => '10',
+              'X-Per-Page' => 25
+            }
+          }
+          it { expect { call }.to_not raise_error }
+        end
+
+        context 'response headers include nullable header' do
+          before { 
+            response.headers = { 
+              'X-Rate-Limit-Limit' => '10',
+              'X-Cursor' => 'test_cursor',
+              'X-Per-Page' => nil
+            }
+          }
+          it { expect { call }.to_not raise_error }
+        end
+
+        context 'response headers missing nullable header' do
+          before { 
+            response.headers = { 
+              'X-Rate-Limit-Limit' => '10',
+              'X-Cursor' => 'test_cursor'
+            }
+          }
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
@@ -103,7 +152,11 @@ module Rswag
                 let(:response) do
                   OpenStruct.new(
                     code: '200',
-                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    headers: { 
+                      'X-Rate-Limit-Limit' => '10',
+                      'X-Cursor' => 'test_cursor',
+                      'X-Per-Page' => 25
+                    },
                     body: '{ "blog": null }'
                   )
                 end
@@ -140,7 +193,11 @@ module Rswag
                 let(:response) do
                   OpenStruct.new(
                     code: '200',
-                    headers: { 'X-Rate-Limit-Limit' => '10' },
+                    headers: { 
+                      'X-Rate-Limit-Limit' => '10',
+                      'X-Cursor' => 'test_cursor',
+                      'X-Per-Page' => 25
+                    },
                     body: '{ "blog": null }'
                   )
                 end
