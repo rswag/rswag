@@ -32,9 +32,22 @@ module Rswag
       end
 
       def validate_headers!(metadata, headers)
-        expected = (metadata[:response][:headers] || {}).keys
+        header_schemas = (metadata[:response][:headers] || {})
+        expected = header_schemas.keys
         expected.each do |name|
-          raise UnexpectedResponse, "Expected response header #{name} to be present" if headers[name.to_s].nil?
+          nullable_attribute = header_schemas.dig(name.to_s, :schema, :nullable)
+          required_attribute = header_schemas.dig(name.to_s, :required)
+
+          is_nullable = nullable_attribute.nil? ? false : nullable_attribute
+          is_required = required_attribute.nil? ? true : required_attribute
+
+          if headers.exclude?(name.to_s) && is_required
+            raise UnexpectedResponse, "Expected response header #{name} to be present"
+          end
+
+          if headers.include?(name.to_s) && headers[name.to_s].nil? && !is_nullable
+            raise UnexpectedResponse, "Expected response header #{name} to not be null"
+          end
         end
       end
 
