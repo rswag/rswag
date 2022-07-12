@@ -236,7 +236,7 @@ module Rswag
         if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
           request[:payload] = build_form_payload(parameters, example)
         else
-          request[:payload] = build_json_payload(parameters, example)
+          request[:payload] = build_json_payload(parameters, example, verb = request[:verb])
         end
       end
 
@@ -251,14 +251,15 @@ module Rswag
         Hash[tuples]
       end
 
-      def build_json_payload(parameters, example)
+      def build_json_payload(parameters, example, verb = :post)
         body_param = parameters.select { |p| p[:in] == :body }.first
 
         return nil unless body_param
 
         raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
 
-        example.send(body_param[:name]).to_json
+        payload = example.send(body_param[:name])
+        verb == :post ? payload.to_json : payload
       end
 
       def doc_version(doc)
