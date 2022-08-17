@@ -99,7 +99,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         #Legacy
         examples 'application/json' => {
           id: 1,
-          title: 'Hello legay world!',
+          title: 'Hello legacy world!',
           content: 'Hello legacy world and hello universe. Thank you all very much!!!',
           thumbnail: 'legacy-thumbnail.png'
         }

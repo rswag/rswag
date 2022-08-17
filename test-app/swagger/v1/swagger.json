@@ -213,7 +213,7 @@
                   "example_0": {
                     "value": {
                       "id": 1,
-                      "title": "Hello legay world!",
+                      "title": "Hello legacy world!",
                       "content": "Hello legacy world and hello universe. Thank you all very much!!!",
                       "thumbnail": "legacy-thumbnail.png"
                     }
