@@ -633,7 +633,7 @@ To enable examples generation from responses add callback above run_test! like:
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
-disable it you can use the environment varible `SWAGGER_DRY_RUN=0` during the
+disable it you can use the environment variable `SWAGGER_DRY_RUN=0` during the
 generation command or add the following to your `config/environments/test.rb`:
 
 ```ruby
