@@ -354,7 +354,7 @@ __NOTE:__ There is one difference between the official Markdown syntax and Swagg
 | ------- | ------- |
 | cell1   | cell2   |
 
-you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
+you should use the following syntax, making sure there are no whitespaces at the start of any of the lines:
 
 ```
 &#13;
