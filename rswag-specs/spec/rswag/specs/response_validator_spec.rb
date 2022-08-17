@@ -125,7 +125,7 @@ module Rswag
                   end
                 end
 
-                context 'using nullable attrtibute' do
+                context 'using nullable attribute' do
                   before do
                     metadata[:response][:schema][:properties][:blog]['nullable'] = true
                   end
@@ -166,7 +166,7 @@ module Rswag
                   end
                 end
 
-                context 'using nullable attrtibute' do
+                context 'using nullable attribute' do
                   before do
                     metadata[:response][:schema][:properties][:blog]['nullable'] = true
                   end
