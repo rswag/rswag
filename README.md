@@ -7,7 +7,7 @@ OpenApi 3.0 and Swagger 2.0 compatible!
 
 Seeking maintainers! Got a pet-bug that needs fixing? Just let us know in your issue/pr that you'd like to step up to help.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automatically runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
 
 Api Rswag creates [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
@@ -18,13 +18,13 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 ## Compatibility ##
 
-|Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
-|----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.52.5|
-|[2.5.1](https://github.com/rswag/rswag/tree/2.5.0)|3.0.3|3.52.5|
-|[2.3.0](https://github.com/rswag/rswag/tree/2.3.0)|3.0.3|3.23.11|
-|[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
-|[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
+| Rswag Version                                        | Swagger (OpenAPI) Spec. | swagger-ui |
+| ---------------------------------------------------- | ----------------------- | ---------- |
+| [master](https://github.com/rswag/rswag/tree/master) | 3.0.3                   | 3.52.5     |
+| [2.5.1](https://github.com/rswag/rswag/tree/2.5.0)   | 3.0.3                   | 3.52.5     |
+| [2.3.0](https://github.com/rswag/rswag/tree/2.3.0)   | 3.0.3                   | 3.23.11    |
+| [2.2.0](https://github.com/rswag/rswag/tree/2.2.0)   | 2.0                     | 3.18.2     |
+| [1.6.0](https://github.com/rswag/rswag/tree/1.6.0)   | 2.0                     | 2.2.5      |
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -358,7 +358,7 @@ you should use the folowing syntax, making sure there are no whitespaces at the 
 
 ```
 &#13;
-| Column1 | Collumn2 |&#13;
+| Column1 | Collumn2 | &#13; |
 | ------- | -------- |&#13;
 | cell1   | cell2    |&#13;
 &#13;
@@ -451,11 +451,11 @@ For example, :basic auth is required above and so the :Authorization (header) pa
 
 The steps described above will get you up and running with minimal setup. However, rswag offers a lot of flexibility to customize as you see fit. Before exploring the various options, you'll need to be aware of it's different components. The following table lists each of them and the files that get added/updated as part of a standard install.
 
-|Gem|Description|Added/Updated|
-|---------|-----------|-------------|
-|__rswag-specs__|Swagger-based DSL for rspec & accompanying rake task for generating Swagger files|_spec/swagger_helper.rb_|
-|__rswag-api__  |Rails Engine that exposes your Swagger files as JSON endpoints|_config/initializers/rswag_api.rb, config/routes.rb_|
-|__rswag-ui__   |Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints|_config/initializers/rswag-ui.rb, config/routes.rb_|
+| Gem             | Description                                                                                                                  | Added/Updated                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| __rswag-specs__ | Swagger-based DSL for rspec & accompanying rake task for generating Swagger files                                            | _spec/swagger_helper.rb_                             |
+| __rswag-api__   | Rails Engine that exposes your Swagger files as JSON endpoints                                                               | _config/initializers/rswag_api.rb, config/routes.rb_ |
+| __rswag-ui__    | Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints | _config/initializers/rswag-ui.rb, config/routes.rb_  |
 
 ### Output Location for Generated Swagger Files ###
 
