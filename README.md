@@ -350,16 +350,16 @@ Swagger supports the Markdown syntax to format strings. This can be especially h
 
 __NOTE:__ There is one difference between the official Markdown syntax and Swagger interpretation, namely tables. To create a table like this:
 
-| Column1 | Collumn2 |
-| ------- | -------- |
-| cell1   | cell2    |
+| Column1 | Column2 |
+| ------- | ------- |
+| cell1   | cell2   |
 
 you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
 
 ```
 &#13;
-| Column1 | Collumn2 | &#13; |
-| ------- | -------- |&#13;
+| Column1 | Column2 | &#13; |
+| ------- | ------- |&#13;
 | cell1   | cell2    |&#13;
 &#13;
 ```
