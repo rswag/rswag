@@ -136,7 +136,7 @@ module Rswag
                 end
               end
 
-              context 'nullable oneOf wtih referenced schema' do
+              context 'nullable oneOf with referenced schema' do
                 let(:response) do
                   OpenStruct.new(
                     code: '200',
