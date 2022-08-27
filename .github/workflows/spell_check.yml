@@ -1,0 +1,13 @@
+name: SpellCheck
+on:
+  - pull_request
+jobs:
+  codespell:
+    name: CodeSpell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: CodeSpell
+        uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
