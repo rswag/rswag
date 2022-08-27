@@ -52,7 +52,7 @@ module Rswag
           allow(subject).to receive(:blog_id).and_return(1)
           allow(subject).to receive(:id).and_return(2)
           allow(subject).to receive(:q1).and_return('foo')
-          allow(subject).to receive(:api_key).and_return('fookey')
+          allow(subject).to receive(:api_key).and_return('fooKey')
           allow(subject).to receive(:blog).and_return(text: 'Some comment')
           allow(subject).to receive(:put)
           subject.submit_request(metadata)
@@ -60,7 +60,7 @@ module Rswag
 
         it "submits a request built from metadata and 'let' values" do
           expect(subject).to have_received(:put).with(
-            '/blogs/1/comments/2?q1=foo&api_key=fookey',
+            '/blogs/1/comments/2?q1=foo&api_key=fooKey',
             '{"text":"Some comment"}',
             { 'CONTENT_TYPE' => 'application/json' }
           )

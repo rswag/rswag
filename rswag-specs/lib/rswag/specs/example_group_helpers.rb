@@ -78,7 +78,7 @@ module Rswag
       end
 
       def example(mime, name, value, summary=nil, description=nil)
-        # Todo - move initialization of metadatada somehwere else.
+        # Todo - move initialization of metadata somewhere else.
         if metadata[:response][:content].blank?
           metadata[:response][:content] = {}
         end

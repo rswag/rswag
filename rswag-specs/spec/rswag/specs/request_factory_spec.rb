@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# cspell:ignore Bfoo Bbar
+
 require 'rswag/specs/request_factory'
 
 module Rswag
@@ -557,7 +559,7 @@ module Rswag
             allow(example).to receive(:api_key).and_return('foobar')
           end
 
-          it 'applieds the scheme by default' do
+          it 'applies the scheme by default' do
             expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end
