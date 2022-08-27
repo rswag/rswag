@@ -93,7 +93,7 @@ module Rswag
           summary: summary,
           description: description
         }.select { |_, v| v.present? }
-        # TODO, issue a warning if example is being overrindn with the same key
+        # TODO, issue a warning if example is being overridden with the same key
         metadata[:response][:content][mime][:examples].merge!(
           { name.to_sym => example_object }
         )
