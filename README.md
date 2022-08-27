@@ -575,8 +575,8 @@ describe 'Blogs API' do
     post 'Creates a comment' do
 
       response 422, 'invalid request' do
-        header 'X-Rate-Limit-Limit', type: :integer, description: 'The number of allowed requests in the current period'
-        header 'X-Rate-Limit-Remaining', type: :integer, description: 'The number of remaining requests in the current period'
+        header 'X-Rate-Limit-Limit', schema: { type: :integer }, description: 'The number of allowed requests in the current period'
+        header 'X-Rate-Limit-Remaining', schema: { type: :integer }, description: 'The number of remaining requests in the current period'
   ...
 end
 ```
