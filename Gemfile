@@ -2,20 +2,15 @@
 
 source 'https://rubygems.org'
 
-# Allow the rails version to come from an ENV setting so Travis can test multiple versions.
+# Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '5.2.6'
+rails_version = ENV['RAILS_VERSION'] || '6.1.6.1'
 
 gem 'rails', rails_version.to_s
 
 gem 'responders'
 
-case rails_version.split('.').first
-when '5'
-  gem 'sqlite3', '~> 1.3.6'
-when  '6', '7'
-  gem 'sqlite3', '~> 1.4.1'
-end
+gem 'sqlite3', '~> 1.4.1'
 
 case RUBY_VERSION.split('.').first
 when '3'
