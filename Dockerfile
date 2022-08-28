@@ -5,6 +5,7 @@ RUN apt-get update -qq && apt-get install -y nodejs npm
 WORKDIR /rswag
 COPY . /rswag
 
+RUN gem update --system
 RUN "./ci/build.sh"
 
 # Configure the main process to run when running the image
