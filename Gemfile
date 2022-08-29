@@ -10,7 +10,12 @@ gem 'rails', rails_version.to_s
 
 gem 'responders'
 
-gem 'sqlite3', '~> 1.4.1'
+case rails_version.split('.').first
+when '5'
+  gem 'sqlite3', '~> 1.3.6'
+when  '6', '7'
+  gem 'sqlite3', '~> 1.4.1'
+end
 
 case RUBY_VERSION.split('.').first
 when '3'
