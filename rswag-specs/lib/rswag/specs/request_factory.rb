@@ -114,7 +114,7 @@ module Rswag
             path_template.gsub!("{#{p[:name]}}", params.fetch(p[:name]).to_s)
           end
 
-          parameters.select { |p| p[:in] == :query && params[p[:name]] }.each_with_index do |p, i|
+          parameters.select { |p| p[:in] == :query && params.key?(p[:name]) }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
             path_template.concat(build_query_string_part(p, params.fetch(p[:name])))
           end
