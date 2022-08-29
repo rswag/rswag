@@ -193,8 +193,8 @@ module Rswag
           tuples << ['Content-Type', content_type]
         end
 
-        # Rails test infrastructure requires rackified headers
-        rackified_tuples = tuples.map do |pair|
+        # Rails test infrastructure requires rack-formatted headers
+        rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
             when 'Accept' then 'HTTP_ACCEPT'
@@ -206,7 +206,7 @@ module Rswag
           ]
         end
 
-        request[:headers] = Hash[rackified_tuples]
+        request[:headers] = Hash[rack_formatted_tuples]
       end
 
       def add_payload(request, parameters, example)

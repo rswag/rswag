@@ -1,0 +1,53 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "patterns": [
+    {
+      "name": "Url",
+      "pattern": "[\\w]+.com*[\\w]+"
+    },
+    {
+      "name": "QueryParam",
+      "pattern": "[?&][a-zA-z0-9_-|]+=[a-zA-Z0-9_-%]*"
+    }
+  ],
+  "ignoreRegExpList": [
+    "Url",
+    "QueryParam"
+  ],
+  "words": [
+    "actionpack",
+    "autoload",
+    "autoloadable",
+    "byebug",
+    "cacher",
+    "codegen",
+    "danielian",
+    "datetime",
+    "doctoc",
+    "domaindrivendev",
+    "fdescribe",
+    "fcontext",
+    "jsmith",
+    "jspass",
+    "geckodriver",
+    "libv8",
+    "openapi",
+    "pathing",
+    "railtie",
+    "railties",
+    "Rakefile",
+    "rdoc",
+    "rdoctask",
+    "rswag",
+    "srand",
+    "scrollbars",
+    "stylesheet",
+    "swaggerapi",
+    "swaggerize",
+    "tempuri",
+    "tmpdir",
+    "xlink"
+  ]
+}

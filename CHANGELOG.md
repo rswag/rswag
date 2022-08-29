@@ -84,7 +84,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Support for OpenAPI 3.0 ! [#286](https://github.com/rswag/rswag/pull/286)
 - Custom headers in rswag-api [#187](https://github.com/rswag/rswag/pull/187)
-- Allow document: false rspec metatag [#255](https://github.com/rswag/rswag/pull/255)
+- Allow document: false rspec meta-tag [#255](https://github.com/rswag/rswag/pull/255)
 - Add parameterized pattern for spec files [#254](https://github.com/rswag/rswag/pull/254)
 - Support Basic Auth on rswag-ui [#167](https://github.com/rswag/rswag/pull/167)
 

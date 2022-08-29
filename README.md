@@ -1,3 +1,5 @@
+<!-- cspell:ignore allof anyof oneof specifyingtesting -->
+
 rswag
 =========
 [![Build Status](https://github.com/rswag/rswag/actions/workflows/ruby.yml/badge.svg?branch=master)](https://github.com/rswag/rswag/actions/workflows/ruby.yml?query=branch%3Amaster+)
@@ -7,7 +9,7 @@ OpenApi 3.0 and Swagger 2.0 compatible!
 
 Seeking maintainers! Got a pet-bug that needs fixing? Just let us know in your issue/pr that you'd like to step up to help.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automatically runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automatically runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which you're probably doing in some form already, to living documentation for your API consumers.
 
 Api Rswag creates [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
@@ -356,7 +358,7 @@ __NOTE:__ There is one difference between the official Markdown syntax and Swagg
 | ------- | ------- |
 | cell1   | cell2   |
 
-you should use the following syntax, making sure there are no whitespaces at the start of any of the lines:
+you should use the following syntax, making sure there is no whitespace at the start of any of the lines:
 
 ```
 &#13;
@@ -436,7 +438,7 @@ describe 'Auth examples API' do
 
       response '401', 'Invalid credentials' do
         let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
-        let(:api_key) { 'barfoo' }
+        let(:api_key) { 'bar-foo' }
         run_test!
       end
     end
@@ -845,7 +847,7 @@ Rswag::Api.configure do |c|
 end
 ```
 
-Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
+Note how the filter is passed the rack env for the current request. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
 ### Custom Headers for Swagger Files ###
 
