@@ -1,5 +1,5 @@
 FROM ruby:2.7
-ENV RAILS_VERSION 7.0.1
+ENV RAILS_VERSION 7.0.3.1
 
 RUN apt-get update -qq && apt-get install -y nodejs npm
 WORKDIR /rswag
