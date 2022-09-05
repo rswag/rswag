@@ -101,16 +101,28 @@ module Rswag
         request[:verb] = metadata[:operation][:verb]
       end
 
+      def base_path_from_servers(swagger_doc, use_server = :default)
+        return '' if swagger_doc[:servers].nil? || swagger_doc[:servers].empty?
+        server = swagger_doc[:servers].first
+        variables = {}
+        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { |name| variables[name.to_sym] }
+        URI(base_path).path
+      end
+
       def add_path(request, metadata, swagger_doc, parameters, example)
-        template = ''
-        if doc_version(swagger_doc).start_with?('2')
-          template = (swagger_doc[:basePath] || '')
-        else
-          template = base_path_from_servers(swagger_doc)
+        open_api_3_doc = doc_version(swagger_doc).start_with?('3')
+        uses_base_path = swagger_doc[:basePath].present?
+
+        if open_api_3_doc && uses_base_path
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
         end
 
-        template +=  metadata[:path_item][:template]
-
+        if uses_base_path
+          template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        else # OpenAPI 3
+          template = base_path_from_servers(swagger_doc) + metadata[:path_item][:template]
+        end
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
@@ -126,20 +138,6 @@ module Rswag
             path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
           end
         end
-      end
-
-      def base_path_from_servers(swagger_doc)
-        return '' unless swagger_doc.has_key?(:servers)
-
-        server = swagger_doc[:servers].first
-
-        variables = {}
-        server.fetch(:variables, {}).each_pair do |k,v|
-          variables[k] = v[:default]
-        end
-
-        url = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym]  }
-        URI(url).path
       end
 
       def build_query_string_part(param, value, swagger_doc)
