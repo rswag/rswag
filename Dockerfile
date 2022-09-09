@@ -1,10 +1,11 @@
 FROM ruby:2.7
-ENV RAILS_VERSION 7.0.1
+ENV RAILS_VERSION 7.0.3.1
 
 RUN apt-get update -qq && apt-get install -y nodejs npm
 WORKDIR /rswag
 COPY . /rswag
 
+RUN gem update --system
 RUN "./ci/build.sh"
 
 # Configure the main process to run when running the image
