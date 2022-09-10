@@ -17,4 +17,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'actionpack', '>=3.1', '< 7.1'
   s.add_dependency 'railties', '>= 3.1', '< 7.1'
+
+  s.add_development_dependency 'simplecov', '=0.21.2'
 end

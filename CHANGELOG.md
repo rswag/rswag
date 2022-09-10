@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Add tooling for measuring test coverage so that changes are safer (https://github.com/rswag/rswag/pull/551)
+
 ### Changed
 
 - Change default dev tooling setup to Ruby 2.7 and Rails 6 (https://github.com/rswag/rswag/pull/542)
