@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Change default dev tooling setup to Ruby 2.7 and Rails 6 (https://github.com/rswag/rswag/pull/542)
 - Make the development docker user non-root for easier volume sharing (https://github.com/rswag/rswag/pull/550)
+- Add deprecation notice for intent to drop support for Ruby 2.6 and RSpec 2 (https://github.com/rswag/rswag/pull/552)
 
 ### Fixed
 
