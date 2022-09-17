@@ -13,8 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Change default dev tooling setup to Ruby 2.7 and Rails 6 (https://github.com/rswag/rswag/pull/542)
+- Make the development docker user non-root for easier volume sharing (https://github.com/rswag/rswag/pull/550)
+- Update `json-schema` dependency version constraint (https://github.com/rswag/rswag/pull/517)
 
 ### Fixed
+
+* Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
 
 ### Documentation
 

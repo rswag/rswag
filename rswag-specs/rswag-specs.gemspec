@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 3.1', '< 7.1'
   s.add_dependency 'railties', '>= 3.1', '< 7.1'
-  s.add_dependency 'json-schema', '~> 2.2'
+  s.add_dependency 'json-schema', '>= 2.2', '< 4.0'
   
   s.add_development_dependency 'simplecov', '=0.21.2'
 end
