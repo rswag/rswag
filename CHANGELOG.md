@@ -16,7 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-* Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
+- Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
+- Fix base path for OAS3 specification (https://github.com/rswag/rswag/pull/547)
 
 ### Documentation
 
@@ -25,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Examples generated with `run_test!` now have the rspec tag `rswag` 
+- Examples generated with `run_test!` now have the rspec tag `rswag`
 - Add query parameter serialization styles (OAS3) (https://github.com/rswag/rswag/pull/507)
 - Support for adding descriptions in body params (https://github.com/rswag/rswag/pull/422)
 - Display all validation errors instead of only the first (https://github.com/rswag/rswag/pull/461)

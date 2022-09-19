@@ -536,11 +536,44 @@ module Rswag
           end
         end
 
-        context 'global basePath' do
-          before { swagger_doc[:basePath] = '/api' }
+        context 'base path' do
+          context 'openapi 2.0' do
+            before { swagger_doc[:basePath] = '/api' }
 
-          it 'prepends to the path' do
-            expect(request[:path]).to eq('/api/blogs')
+            it 'prepends to the path' do
+              expect(request[:path]).to eq('/api/blogs')
+            end
+          end
+
+          context 'openapi 3.0' do
+            before do
+              swagger_doc[:servers] = [{
+                :url => "https://{defaultHost}",
+                :variables => {
+                  :defaultHost => {
+                    :default => "www.example.com"
+                  }
+                }
+              }]
+            end
+
+            it 'generates the path' do
+              expect(request[:path]).to eq('/blogs')
+            end
+          end
+
+          context 'openapi 3.0 with old config' do
+            let(:swagger_doc) { {:openapi => '3.0', :basePath => '/blogs' } }
+
+            before do
+              allow(ActiveSupport::Deprecation).to receive(:warn)
+            end
+
+            it 'generates the path' do
+              expect(request[:headers]).to eq({})
+              expect(ActiveSupport::Deprecation).to have_received(:warn)
+                .with('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
+            end
           end
         end
 
