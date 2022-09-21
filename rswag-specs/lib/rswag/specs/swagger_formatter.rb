@@ -7,10 +7,12 @@ require 'swagger_helper'
 module Rswag
   module Specs
     class SwaggerFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
+      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
 
-      # NOTE: rspec 2.x support
       if RSPEC_VERSION > 2
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
+      else
+        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
       end
 
       def initialize(output, config = Rswag::Specs.config)
@@ -21,7 +23,6 @@ module Rswag
       end
 
       def example_group_finished(notification)
-        # NOTE: rspec 2.x support
         metadata = if RSPEC_VERSION > 2
           notification.group.metadata
         else
