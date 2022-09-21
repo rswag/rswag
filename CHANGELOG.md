@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
+- Make dependency on rspec-core explicit instead of implied (https://github.com/rswag/rswag/pull/554)
 - Fix base path for OAS3 specification (https://github.com/rswag/rswag/pull/547)
 
 ### Documentation
