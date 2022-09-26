@@ -3,6 +3,10 @@ require 'swagger_helper'
 RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
 
+  before do
+    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+  end
+
   path '/blogs' do
     post 'Creates a blog' do
       tags 'Blogs'
@@ -15,6 +19,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:blog) { { title: 'foo', content: 'bar' } }
 
       response '201', 'blog created' do
+        # schema '$ref' => '#/definitions/blog'
         run_test!
       end
 
@@ -48,6 +53,30 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
     end
   end
 
+  path '/blogs/flexible' do
+    post 'Creates a blog flexible body' do
+      tags 'Blogs'
+      description 'Creates a flexible blog from provided data'
+      operationId 'createFlexibleBlog'
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :flexible_blog, in: :body, schema: {
+        oneOf: [
+          { '$ref' => '#/definitions/blog' },
+          { '$ref' => '#/definitions/flexible_blog' }
+        ]
+      }
+
+      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
+
+      response '201', 'flexible blog created' do
+        schema oneOf: [{ '$ref' => '#/definitions/blog' }, { '$ref' => '#/definitions/flexible_blog' }]
+        run_test!
+      end
+    end
+  end
+
   path '/blogs/{id}' do
     parameter name: :id, in: :path, type: :string
 
@@ -67,12 +96,27 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         schema '$ref' => '#/definitions/blog'
 
+        #Legacy
         examples 'application/json' => {
-            id: 1,
-            title: 'Hello world!',
-            content: 'Hello world and hello universe. Thank you all very much!!!',
-            thumbnail: "thumbnail.png"
-          }
+          id: 1,
+          title: 'Hello legacy world!',
+          content: 'Hello legacy world and hello universe. Thank you all very much!!!',
+          thumbnail: 'legacy-thumbnail.png'
+        }
+
+        example 'application/json', :blog_example_1, {
+          id: 1,
+          title: 'Hello world!',
+          content: 'Hello world and hello universe. Thank you all very much!!!',
+          thumbnail: 'thumbnail.png'
+        }, "Summary of the example", "A longer description of a fine blog post about a wonderful universe!"
+
+        example 'application/json', :blog_example_2, {
+          id: 1,
+          title: 'Another fine example!',
+          content: 'Oh... what a fine example this is, indeed, a fine example!',
+          thumbnail: 'thumbnail.png'
+        }
 
         let(:id) { blog.id }
         run_test!
@@ -96,7 +140,13 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
-      parameter name: :file, :in => :formData, :type => :file, required: true
+      parameter(
+        name: :file,
+        description: "The content of the blog thumbnail",
+        in: :formData,
+        type: :file,
+        required: true
+      )
 
       response '200', 'blog updated' do
         let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'generator_spec'
 require 'generators/rswag/install/install_generator'
 
@@ -22,11 +24,11 @@ module Rswag
       end
 
       it 'installs initializer for rswag-api' do
-        assert_file('config/rswag-api.rb')
+        assert_file('config/rswag_api.rb')
       end
 
       it 'installs initializer for rswag-ui' do
-        assert_file('config/rswag-ui.rb')
+        assert_file('config/rswag_ui.rb')
       end
     end
   end

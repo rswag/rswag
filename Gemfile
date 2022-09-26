@@ -1,40 +1,51 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-# Allow the rails version to come from an ENV setting so Travis can test multiple versions.
+source 'https://rubygems.org'
+
+# Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '5.1.2'
+rails_version = ENV['RAILS_VERSION'] || '6.1.6.1'
 
-gem 'rails', "#{rails_version}"
+gem 'rails', rails_version.to_s
+
+gem 'responders'
 
 case rails_version.split('.').first
-when '3'
-  gem 'strong_parameters'
-when '4', '5', '6'
-  gem 'responders'
+when '5'
+  gem 'sqlite3', '~> 1.3.6'
+when  '6', '7'
+  gem 'sqlite3', '~> 1.4.1'
 end
 
-case rails_version.split('.').first
-when '3', '4', '5'
-  gem 'sqlite3', '~> 1.3.6'
-when  '6'
-  gem 'sqlite3', '~> 1.4.1'
+case RUBY_VERSION.split('.').first
+when '3'
+  gem 'net-smtp', require: false
 end
 
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 
-group :test do
-  gem 'test-unit'
-  gem 'rspec-rails'
-  gem 'generator_spec'
-  gem 'capybara'
-  gem 'capybara-webkit'
+group :development, :test do
   gem 'rswag-specs', path: './rswag-specs'
 end
 
+group :test do
+  gem 'capybara'
+  gem 'geckodriver-helper'
+  gem 'generator_spec'
+  gem 'rspec-rails'
+  gem 'selenium-webdriver'
+  gem 'test-unit'
+  gem 'simplecov', '=0.21.2'
+end
+
+group :development do
+  gem 'rubocop'
+end
+
 group :assets do
+  gem 'mini_racer'
   gem 'uglifier'
-  gem 'therubyracer'
 end
 
 gem 'byebug'
