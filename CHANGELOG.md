@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Add tooling for measuring test coverage so that changes are safer (https://github.com/rswag/rswag/pull/551)
+- Add CSP compatible with rswag in case the Rails one is not compatible (https://github.com/rswag/rswag/pull/263)
 
 ### Changed
 
