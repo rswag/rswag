@@ -107,7 +107,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
 
     ```ruby
-    # spec/integration/blogs_spec.rb
+    # spec/requests/blogs_spec.rb
     require 'swagger_helper'
 
     describe 'Blogs API' do
@@ -338,7 +338,7 @@ end
 By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
 
 ```ruby
-# spec/integration/v2/blogs_spec.rb
+# spec/requests/v2/blogs_spec.rb
 describe 'Blogs API', swagger_doc: 'v2/swagger.yaml' do
 
   path '/blogs' do
@@ -399,7 +399,7 @@ RSpec.configure do |config|
   }
 end
 
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs' do
@@ -538,7 +538,7 @@ config.swagger_docs = {
   }
 }
 
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs' do
@@ -552,7 +552,7 @@ describe 'Blogs API' do
   ...
 end
 
-# spec/integration/comments_spec.rb
+# spec/requests/comments_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}/comments' do
@@ -571,7 +571,7 @@ In Rswag, you could use `header` method inside the response block to specify hea
 Rswag will validate your response headers with those header objects and inject them into the generated swagger file:
 
 ```ruby
-# spec/integration/comments_spec.rb
+# spec/requests/comments_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}/comments' do
@@ -590,7 +590,7 @@ end
 You can provide custom response examples to the generated swagger file by calling the method `examples` inside the response block:
 However, auto generated example responses are now enabled by default in rswag. See below.
 ```ruby
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}' do
