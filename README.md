@@ -484,6 +484,15 @@ By default, rswag will search for integration tests in _spec/requests_, _spec/ap
 rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
 ```
 
+### Additional rspec options
+
+You can add additional rspec parameters using the ADDITIONAL_RSPEC_OPTS env variable:
+
+```ruby
+# Only include tests tagged "rswag"
+rake rswag:specs:swaggerize ADDITIONAL_RSPEC_OPTS="--tag rswag"
+```
+
 ### Referenced Parameters and Schema Definitions ###
 
 Swagger allows you to describe JSON structures inline with your operation descriptions OR as referenced globals.
