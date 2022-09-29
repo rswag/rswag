@@ -5,11 +5,11 @@
   "patterns": [
     {
       "name": "Url",
-      "pattern": "[\\w]+.com*[\\w]+"
+      "pattern": "/\\b\\w+\\.(com|org)(\\/[\\w.-]+)*?/g"
     },
     {
       "name": "QueryParam",
-      "pattern": "[?&][a-zA-z0-9_-|]+=[a-zA-Z0-9_-%]*"
+      "pattern": "/[?&][a-zA-z0-9_|-]+=[a-zA-Z0-9_%-]*/g"
     }
   ],
   "ignoreRegExpList": [
