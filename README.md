@@ -47,6 +47,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     - [Output Location for Generated Swagger Files](#output-location-for-generated-swagger-files)
     - [Input Location for Rspec Tests](#input-location-for-rspec-tests)
     - [Referenced Parameters and Schema Definitions](#referenced-parameters-and-schema-definitions)
+    - [Request examples](#request-examples)
     - [Response headers](#response-headers)
     - [Response examples](#response-examples)
     - [Enable auto generation examples from responses](#enable-auto-generation-examples-from-responses)
@@ -144,6 +145,7 @@ There is also a generator which can help get you started `rails generate rspec:s
           tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
           parameter name: :id, in: :path, type: :string
+          request_example value: { some_field: 'Foo' }, name: 'basic', summary: 'Request example description'
 
           response '200', 'blog found' do
             schema type: :object,
@@ -574,6 +576,38 @@ describe 'Blogs API' do
 end
 ```
 
+### Request examples ###
+
+```ruby
+# spec/integration/blogs_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs/{blog_id}' do
+
+    get 'Retrieves a blog' do
+
+      request_example value: { some_field: 'Foo' }, name: 'request_example_1', summary: 'A request example'
+
+      response 200, 'blog found' do
+        ...
+```
+
+to use the actual request from the spec as the example:
+
+```ruby
+config.after(:each, operation: true, use_as_request_example: true) do |spec|
+  spec.metadata[:operation][:request_examples] ||= []
+
+  example = {
+    value: JSON.parse(request.body.string, symbolize_names: true),
+    name: 'request_example_1',
+    summary: 'A request example'
+  }
+
+  spec.metadata[:operation][:request_examples] << example
+end
+```
+
 ### Response headers ###
 
 In Rswag, you could use `header` method inside the response block to specify header objects for this response.
@@ -598,6 +632,7 @@ end
 
 You can provide custom response examples to the generated swagger file by calling the method `examples` inside the response block:
 However, auto generated example responses are now enabled by default in rswag. See below.
+
 ```ruby
 # spec/requests/blogs_spec.rb
 describe 'Blogs API' do
@@ -628,19 +663,19 @@ end
 To enable examples generation from responses add callback above run_test! like:
 
 ```ruby
-  after do |example|
-    content = example.metadata[:response][:content] || {}
-    example_spec = {
-      "application/json"=>{
-        examples: {
-          test_example: {
-            value: JSON.parse(response.body, symbolize_names: true)
-          }
+after do |example|
+  content = example.metadata[:response][:content] || {}
+  example_spec = {
+    "application/json"=>{
+      examples: {
+        test_example: {
+          value: JSON.parse(response.body, symbolize_names: true)
         }
       }
     }
-    example.metadata[:response][:content] = content.deep_merge(example_spec)
-  end
+  }
+  example.metadata[:response][:content] = content.deep_merge(example_spec)
+end
 ```
 
 #### Dry Run Option ####
