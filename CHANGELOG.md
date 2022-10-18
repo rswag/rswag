@@ -5,12 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Fixes examples for OAS3 specification, allowing multiple examples (https://github.com/rswag/rswag/pull/501)
-- Add query parameter serialization styles (OAS3) (https://github.com/rswag/rswag/pull/507)
-- Fix array parameter serialization on OAS3 (https://github.com/rswag/rswag/pull/507)
-- Rename generated `rswag-ui.rb` file to match Ruby style (https://github.com/rswag/rswag/pull/508)
+
+### Added
+
+- Add tooling for measuring test coverage so that changes are safer (https://github.com/rswag/rswag/pull/551)
+- Add CSP compatible with rswag in case the Rails one is not compatible (https://github.com/rswag/rswag/pull/263)
+- Add ADDITIONAL_RSPEC_OPTS env variable (https://github.com/rswag/rswag/pull/556)
 
 ### Changed
+
+- Change default dev tooling setup to Ruby 2.7 and Rails 6 (https://github.com/rswag/rswag/pull/542)
+- Make the development docker user non-root for easier volume sharing (https://github.com/rswag/rswag/pull/550)
+- Update `json-schema` dependency version constraint (https://github.com/rswag/rswag/pull/517)
+- Add deprecation notice for intent to drop support for Ruby 2.6 and RSpec 2 (https://github.com/rswag/rswag/pull/552)
+
+### Fixed
+
+- Fix request body examples (https://github.com/rswag/pull/555)
+- Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
+- Make dependency on rspec-core explicit instead of implied (https://github.com/rswag/rswag/pull/554)
+- Fix base path for OAS3 specification (https://github.com/rswag/rswag/pull/547)
+
+### Documentation
+
+
+## [2.6.0] - 2022-09-09
+
+### Added
+
+- Examples generated with `run_test!` now have the rspec tag `rswag`
+- Add query parameter serialization styles (OAS3) (https://github.com/rswag/rswag/pull/507)
+- Support for adding descriptions in body params (https://github.com/rswag/rswag/pull/422)
+- Display all validation errors instead of only the first (https://github.com/rswag/rswag/pull/461)
+
+## Fixed
+
+- Fixes examples for OAS3 specification, allowing multiple examples (https://github.com/rswag/rswag/pull/501)
+- Fix array parameter serialization on OAS3 (https://github.com/rswag/rswag/pull/507)
+- Fix assorted spelling errors (https://github.com/rswag/rswag/pull/535)
+- Fix null-checking when using a referenced property (https://github.com/rswag/rswag/pull/515)
+
+### Changed
+
+- Rename generated `rswag-ui.rb` file to match Ruby style (https://github.com/rswag/rswag/pull/508)
+- Code comment formatting changes (https://github.com/rswag/rswag/pull/487)
+
+### Documentation
+
+- Add Syntax Highlighting to ReadMe (https://github.com/rswag/rswag/pull/525/files)
+- Fix ReadMe response headers example for OpenApi3.0 (https://github.com/rswag/rswag/pull/518)
+- Update TOC in the ReadMe (https://github.com/rswag/rswag/pull/536/files)
+- Fix incorrect sample code for example generation (https://github.com/rswag/rswag/pull/513)
 
 ## [2.5.1] - 2022-02-10
 
@@ -83,7 +128,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Support for OpenAPI 3.0 ! [#286](https://github.com/rswag/rswag/pull/286)
 - Custom headers in rswag-api [#187](https://github.com/rswag/rswag/pull/187)
-- Allow document: false rspec metatag [#255](https://github.com/rswag/rswag/pull/255)
+- Allow document: false rspec meta-tag [#255](https://github.com/rswag/rswag/pull/255)
 - Add parameterized pattern for spec files [#254](https://github.com/rswag/rswag/pull/254)
 - Support Basic Auth on rswag-ui [#167](https://github.com/rswag/rswag/pull/167)
 

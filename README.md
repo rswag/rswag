@@ -1,3 +1,5 @@
+<!-- cspell:ignore allof anyof oneof specifyingtesting -->
+
 rswag
 =========
 [![Build Status](https://github.com/rswag/rswag/actions/workflows/ruby.yml/badge.svg?branch=master)](https://github.com/rswag/rswag/actions/workflows/ruby.yml?query=branch%3Amaster+)
@@ -7,7 +9,7 @@ OpenApi 3.0 and Swagger 2.0 compatible!
 
 Seeking maintainers! Got a pet-bug that needs fixing? Just let us know in your issue/pr that you'd like to step up to help.
 
-Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automaticaly runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which youre probably doing in some form already, to living documentation for your API consumers.
+Rswag extends rspec-rails "request specs" with a Swagger-based DSL for describing and testing API operations. You describe your API operations with a succinct, intuitive syntax, and it automatically runs the tests. Once you have green tests, run a rake task to auto-generate corresponding Swagger files and expose them as YAML or JSON endpoints. Rswag also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the exposed file. This toolchain makes it seamless to go from integration specs, which you're probably doing in some form already, to living documentation for your API consumers.
 
 Api Rswag creates [Swagger](http://swagger.io) tooling for Rails API's. Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests.
 
@@ -18,13 +20,13 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 ## Compatibility ##
 
-|Rswag Version|Swagger (OpenAPI) Spec.|swagger-ui|
-|----------|----------|----------|
-|[master](https://github.com/rswag/rswag/tree/master)|3.0.3|3.52.5|
-|[2.5.1](https://github.com/rswag/rswag/tree/2.5.0)|3.0.3|3.52.5|
-|[2.3.0](https://github.com/rswag/rswag/tree/2.3.0)|3.0.3|3.23.11|
-|[2.2.0](https://github.com/rswag/rswag/tree/2.2.0)|2.0|3.18.2|
-|[1.6.0](https://github.com/rswag/rswag/tree/1.6.0)|2.0|2.2.5|
+| Rswag Version                                        | Swagger (OpenAPI) Spec. | swagger-ui |
+| ---------------------------------------------------- | ----------------------- | ---------- |
+| [master](https://github.com/rswag/rswag/tree/master) | 3.0.3                   | 3.52.5     |
+| [2.5.1](https://github.com/rswag/rswag/tree/2.5.0)   | 3.0.3                   | 3.52.5     |
+| [2.3.0](https://github.com/rswag/rswag/tree/2.3.0)   | 3.0.3                   | 3.23.11    |
+| [2.2.0](https://github.com/rswag/rswag/tree/2.2.0)   | 2.0                     | 3.18.2     |
+| [1.6.0](https://github.com/rswag/rswag/tree/1.6.0)   | 2.0                     | 2.2.5      |
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -45,13 +47,14 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     - [Output Location for Generated Swagger Files](#output-location-for-generated-swagger-files)
     - [Input Location for Rspec Tests](#input-location-for-rspec-tests)
     - [Referenced Parameters and Schema Definitions](#referenced-parameters-and-schema-definitions)
+    - [Request examples](#request-examples)
     - [Response headers](#response-headers)
       - [Nullable or Optional Response Headers](#nullable-or-optional-response-headers)
     - [Response examples](#response-examples)
     - [Enable auto generation examples from responses](#enable-auto-generation-examples-from-responses)
+      - [Dry Run Option](#dry-run-option)
       - [Running tests without documenting](#running-tests-without-documenting)
         - [rswag helper methods](#rswag-helper-methods)
-        - [rswag response examples](#rswag-response-examples)
     - [Route Prefix for Swagger JSON Endpoints](#route-prefix-for-swagger-json-endpoints)
     - [Root Location for Swagger Files](#root-location-for-swagger-files)
     - [Dynamic Values for Swagger JSON](#dynamic-values-for-swagger-json)
@@ -106,7 +109,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
 
     ```ruby
-    # spec/integration/blogs_spec.rb
+    # spec/requests/blogs_spec.rb
     require 'swagger_helper'
 
     describe 'Blogs API' do
@@ -143,6 +146,7 @@ There is also a generator which can help get you started `rails generate rspec:s
           tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
           parameter name: :id, in: :path, type: :string
+          request_example value: { some_field: 'Foo' }, name: 'basic', summary: 'Request example description'
 
           response '200', 'blog found' do
             schema type: :object,
@@ -221,6 +225,8 @@ response '201', 'blog created' do
   end
 end
 ```
+
+Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
 
 ### Null Values ###
 
@@ -335,7 +341,7 @@ end
 By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
 
 ```ruby
-# spec/integration/v2/blogs_spec.rb
+# spec/requests/v2/blogs_spec.rb
 describe 'Blogs API', swagger_doc: 'v2/swagger.yaml' do
 
   path '/blogs' do
@@ -351,16 +357,16 @@ Swagger supports the Markdown syntax to format strings. This can be especially h
 
 __NOTE:__ There is one difference between the official Markdown syntax and Swagger interpretation, namely tables. To create a table like this:
 
-| Column1 | Collumn2 |
-| ------- | -------- |
-| cell1   | cell2    |
+| Column1 | Column2 |
+| ------- | ------- |
+| cell1   | cell2   |
 
-you should use the folowing syntax, making sure there are no whitespaces at the start of any of the lines:
+you should use the following syntax, making sure there is no whitespace at the start of any of the lines:
 
 ```
 &#13;
-| Column1 | Collumn2 |&#13;
-| ------- | -------- |&#13;
+| Column1 | Column2 | &#13; |
+| ------- | ------- |&#13;
 | cell1   | cell2    |&#13;
 &#13;
 ```
@@ -396,7 +402,7 @@ RSpec.configure do |config|
   }
 end
 
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs' do
@@ -435,7 +441,7 @@ describe 'Auth examples API' do
 
       response '401', 'Invalid credentials' do
         let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
-        let(:api_key) { 'barfoo' }
+        let(:api_key) { 'bar-foo' }
         run_test!
       end
     end
@@ -452,11 +458,11 @@ For example, :basic auth is required above and so the :Authorization (header) pa
 
 The steps described above will get you up and running with minimal setup. However, rswag offers a lot of flexibility to customize as you see fit. Before exploring the various options, you'll need to be aware of it's different components. The following table lists each of them and the files that get added/updated as part of a standard install.
 
-|Gem|Description|Added/Updated|
-|---------|-----------|-------------|
-|__rswag-specs__|Swagger-based DSL for rspec & accompanying rake task for generating Swagger files|_spec/swagger_helper.rb_|
-|__rswag-api__  |Rails Engine that exposes your Swagger files as JSON endpoints|_config/initializers/rswag_api.rb, config/routes.rb_|
-|__rswag-ui__   |Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints|_config/initializers/rswag-ui.rb, config/routes.rb_|
+| Gem             | Description                                                                                                                  | Added/Updated                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| __rswag-specs__ | Swagger-based DSL for rspec & accompanying rake task for generating Swagger files                                            | _spec/swagger_helper.rb_                             |
+| __rswag-api__   | Rails Engine that exposes your Swagger files as JSON endpoints                                                               | _config/initializers/rswag_api.rb, config/routes.rb_ |
+| __rswag-ui__    | Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints | _config/initializers/rswag-ui.rb, config/routes.rb_  |
 
 ### Output Location for Generated Swagger Files ###
 
@@ -479,6 +485,15 @@ By default, rswag will search for integration tests in _spec/requests_, _spec/ap
 ```ruby
 # search for tests in spec/swagger
 rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
+```
+
+### Additional rspec options
+
+You can add additional rspec parameters using the ADDITIONAL_RSPEC_OPTS env variable:
+
+```ruby
+# Only include tests tagged "rswag"
+rake rswag:specs:swaggerize ADDITIONAL_RSPEC_OPTS="--tag rswag"
 ```
 
 ### Referenced Parameters and Schema Definitions ###
@@ -535,7 +550,7 @@ config.swagger_docs = {
   }
 }
 
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs' do
@@ -549,7 +564,7 @@ describe 'Blogs API' do
   ...
 end
 
-# spec/integration/comments_spec.rb
+# spec/requests/comments_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}/comments' do
@@ -562,13 +577,45 @@ describe 'Blogs API' do
 end
 ```
 
+### Request examples ###
+
+```ruby
+# spec/integration/blogs_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs/{blog_id}' do
+
+    get 'Retrieves a blog' do
+
+      request_example value: { some_field: 'Foo' }, name: 'request_example_1', summary: 'A request example'
+
+      response 200, 'blog found' do
+        ...
+```
+
+to use the actual request from the spec as the example:
+
+```ruby
+config.after(:each, operation: true, use_as_request_example: true) do |spec|
+  spec.metadata[:operation][:request_examples] ||= []
+
+  example = {
+    value: JSON.parse(request.body.string, symbolize_names: true),
+    name: 'request_example_1',
+    summary: 'A request example'
+  }
+
+  spec.metadata[:operation][:request_examples] << example
+end
+```
+
 ### Response headers ###
 
 In Rswag, you could use `header` method inside the response block to specify header objects for this response.
 Rswag will validate your response headers with those header objects and inject them into the generated swagger file:
 
 ```ruby
-# spec/integration/comments_spec.rb
+# spec/requests/comments_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}/comments' do
@@ -576,8 +623,8 @@ describe 'Blogs API' do
     post 'Creates a comment' do
 
       response 422, 'invalid request' do
-        header 'X-Rate-Limit-Limit', type: :integer, description: 'The number of allowed requests in the current period'
-        header 'X-Rate-Limit-Remaining', type: :integer, description: 'The number of remaining requests in the current period'
+        header 'X-Rate-Limit-Limit', schema: { type: :integer }, description: 'The number of allowed requests in the current period'
+        header 'X-Rate-Limit-Remaining', schema: { type: :integer }, description: 'The number of remaining requests in the current period'
   ...
 end
 ```
@@ -605,8 +652,9 @@ end
 
 You can provide custom response examples to the generated swagger file by calling the method `examples` inside the response block:
 However, auto generated example responses are now enabled by default in rswag. See below.
+
 ```ruby
-# spec/integration/blogs_spec.rb
+# spec/requests/blogs_spec.rb
 describe 'Blogs API' do
 
   path '/blogs/{blog_id}' do
@@ -634,26 +682,26 @@ end
 
 To enable examples generation from responses add callback above run_test! like:
 
-```
-  after do |example|
-    content = example.metadata[:response][:content] || {}
-    example_spec = {
-      "application/json"=>{
-        examples: {
-          test_example: {
-            value: JSON.parse(response.body, symbolize_names: true)
-          }
+```ruby
+after do |example|
+  content = example.metadata[:response][:content] || {}
+  example_spec = {
+    "application/json"=>{
+      examples: {
+        test_example: {
+          value: JSON.parse(response.body, symbolize_names: true)
         }
       }
     }
-    example.metadata[:response][:content] = content.deep_merge(example_spec)
-  end
+  }
+  example.metadata[:response][:content] = content.deep_merge(example_spec)
+end
 ```
 
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
-disable it you can use the environment varible `SWAGGER_DRY_RUN=0` during the
+disable it you can use the environment variable `SWAGGER_DRY_RUN=0` during the
 generation command or add the following to your `config/environments/test.rb`:
 
 ```ruby
@@ -863,7 +911,7 @@ Rswag::Api.configure do |c|
 end
 ```
 
-Note how the filter is passed the rack env for the current request. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
+Note how the filter is passed the rack env for the current request. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations based on user permissions.
 
 ### Custom Headers for Swagger Files ###
 

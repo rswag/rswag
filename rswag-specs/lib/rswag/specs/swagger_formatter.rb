@@ -7,10 +7,12 @@ require 'swagger_helper'
 module Rswag
   module Specs
     class SwaggerFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
+      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
 
-      # NOTE: rspec 2.x support
       if RSPEC_VERSION > 2
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
+      else
+        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
       end
 
       def initialize(output, config = Rswag::Specs.config)
@@ -21,7 +23,6 @@ module Rswag
       end
 
       def example_group_finished(notification)
-        # NOTE: rspec 2.x support
         metadata = if RSPEC_VERSION > 2
           notification.group.metadata
         else
@@ -54,15 +55,25 @@ module Rswag
             doc[:paths]&.each_pair do |_k, v|
               v.each_pair do |_verb, value|
                 is_hash = value.is_a?(Hash)
-                if is_hash && value.dig(:parameters)
-                  schema_param = value.dig(:parameters)&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                  mime_list = value.dig(:consumes) || doc[:consumes]
+                if is_hash && value[:parameters]
+                  schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
+                  mime_list = value[:consumes] || doc[:consumes]
                   if value && schema_param && mime_list
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
                     value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
+                    examples = value.dig(:request_examples)
                     mime_list.each do |mime|
                       value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
+                      if examples
+                        value[:requestBody][:content][mime][:examples] ||= {}
+                        examples.map do |example|
+                          value[:requestBody][:content][mime][:examples][example[:name]] = {
+                            summary: example[:summary] || value[:summary],
+                            value: example[:value]
+                          }
+                        end
+                      end
                     end
                   end
 
@@ -197,8 +208,9 @@ module Rswag
 
       def remove_invalid_operation_keys!(value)
         is_hash = value.is_a?(Hash)
-        value.delete(:consumes) if is_hash && value.dig(:consumes)
-        value.delete(:produces) if is_hash && value.dig(:produces)
+        value.delete(:consumes) if is_hash && value[:consumes]
+        value.delete(:produces) if is_hash && value[:produces]
+        value.delete(:request_examples) if is_hash && value[:request_examples]
       end
     end
   end

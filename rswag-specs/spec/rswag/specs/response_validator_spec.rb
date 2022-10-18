@@ -178,7 +178,7 @@ module Rswag
                   end
                 end
 
-                context 'using nullable attrtibute' do
+                context 'using nullable attribute' do
                   before do
                     metadata[:response][:schema][:properties][:blog]['nullable'] = true
                   end
@@ -189,7 +189,7 @@ module Rswag
                 end
               end
 
-              context 'nullable oneOf wtih referenced schema' do
+              context 'nullable oneOf with referenced schema' do
                 let(:response) do
                   OpenStruct.new(
                     code: '200',
@@ -223,7 +223,7 @@ module Rswag
                   end
                 end
 
-                context 'using nullable attrtibute' do
+                context 'using nullable attribute' do
                   before do
                     metadata[:response][:schema][:properties][:blog]['nullable'] = true
                   end

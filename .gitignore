@@ -8,3 +8,4 @@
 Gemfile.lock
 /.idea/
 **/.byebug_history
+**/coverage

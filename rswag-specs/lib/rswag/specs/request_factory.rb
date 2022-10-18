@@ -101,8 +101,28 @@ module Rswag
         request[:verb] = metadata[:operation][:verb]
       end
 
+      def base_path_from_servers(swagger_doc, use_server = :default)
+        return '' if swagger_doc[:servers].nil? || swagger_doc[:servers].empty?
+        server = swagger_doc[:servers].first
+        variables = {}
+        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { |name| variables[name.to_sym] }
+        URI(base_path).path
+      end
+
       def add_path(request, metadata, swagger_doc, parameters, example)
-        template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        open_api_3_doc = doc_version(swagger_doc).start_with?('3')
+        uses_base_path = swagger_doc[:basePath].present?
+
+        if open_api_3_doc && uses_base_path
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
+        end
+
+        if uses_base_path
+          template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        else # OpenAPI 3
+          template = base_path_from_servers(swagger_doc) + metadata[:path_item][:template]
+        end
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
@@ -150,7 +170,7 @@ module Rswag
                           when :spaceDelimited then '%20'
                           when :pipeDelimited then '|'
                           end
-              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator) 
+              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{name}=#{value}"
@@ -193,8 +213,8 @@ module Rswag
           tuples << ['Content-Type', content_type]
         end
 
-        # Rails test infrastructure requires rackified headers
-        rackified_tuples = tuples.map do |pair|
+        # Rails test infrastructure requires rack-formatted headers
+        rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
             when 'Accept' then 'HTTP_ACCEPT'
@@ -206,7 +226,7 @@ module Rswag
           ]
         end
 
-        request[:headers] = Hash[rackified_tuples]
+        request[:headers] = Hash[rack_formatted_tuples]
       end
 
       def add_payload(request, parameters, example)
