@@ -49,6 +49,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     - [Referenced Parameters and Schema Definitions](#referenced-parameters-and-schema-definitions)
     - [Request examples](#request-examples)
     - [Response headers](#response-headers)
+      - [Nullable or Optional Response Headers](#nullable-or-optional-response-headers)
     - [Response examples](#response-examples)
     - [Enable auto generation examples from responses](#enable-auto-generation-examples-from-responses)
       - [Dry Run Option](#dry-run-option)
@@ -624,6 +625,25 @@ describe 'Blogs API' do
       response 422, 'invalid request' do
         header 'X-Rate-Limit-Limit', schema: { type: :integer }, description: 'The number of allowed requests in the current period'
         header 'X-Rate-Limit-Remaining', schema: { type: :integer }, description: 'The number of remaining requests in the current period'
+  ...
+end
+```
+
+#### Nullable or Optional Response Headers ####
+
+You can include `nullable` or `required` to specify whether a response header must be present or may be null. When `nullable` is not included, the headers validation validates that the header response is non-null. When `required` is not included, the headers validation validates the the header response is passed. 
+
+```ruby
+# spec/integration/comments_spec.rb
+describe 'Blogs API' do
+
+  path '/blogs/{blog_id}/comments' do
+
+    get 'Gets a list of comments' do
+
+      response 200, 'blog found' do
+        header 'X-Cursor', schema: { type: :string, nullable: true }, description: 'The cursor to get the next page of comments.'
+        header 'X-Per-Page', schema: { type: :integer }, required: false, description: 'The number of comments per page.'
   ...
 end
 ```

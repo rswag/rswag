@@ -282,7 +282,7 @@
             }
           },
           "required": true,
-          "description": "description"
+          "description": "The content of the blog thumbnail"
         }
       }
     }
