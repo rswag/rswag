@@ -148,7 +148,7 @@ module Rswag
           style = param[:style]&.to_sym || :form
           explode = param[:explode].nil? ? true : param[:explode]
 
-          case param[:schema][:type].to_sym
+          case param[:schema][:type]&.to_sym
           when :object
             case style
             when :deepObject

@@ -182,7 +182,7 @@ module Rswag
           end
         end
 
-        context "'query' parameters of type 'object'" do
+        context "'query' parameters of type 'array'" do
           let(:id) { [3, 4, 5] }
           let(:swagger_doc) { { swagger: '3.0' } }
 
@@ -247,6 +247,25 @@ module Rswag
                 expect(request[:path]).to eq('/blogs?id=3|4|5')
               end
             end
+          end
+        end
+
+        context "'query' parameters with schema reference" do
+          let(:things) { 'foo' }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'things', in: :query,
+                schema: { '$ref' => '#/components/schemas/FooType' }
+              }
+            ]
+            allow(example).to receive(:things).and_return(things)
+          end
+
+          it 'builds the query string' do
+            expect(request[:path]).to eq('/blogs?things=foo')
           end
         end
 
