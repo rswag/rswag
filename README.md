@@ -145,7 +145,7 @@ There is also a generator which can help get you started `rails generate rspec:s
           tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
           parameter name: :id, in: :path, type: :string
-          request_example value: { some_field: 'Foo' }, name: 'basic', summary: 'Request example description'
+          request_body_example value: { some_field: 'Foo' }, name: 'basic', summary: 'Request example description'
 
           response '200', 'blog found' do
             schema type: :object,
@@ -586,7 +586,7 @@ describe 'Blogs API' do
 
     get 'Retrieves a blog' do
 
-      request_example value: { some_field: 'Foo' }, name: 'request_example_1', summary: 'A request example'
+      request_body_example value: { some_field: 'Foo' }, name: 'request_example_1', summary: 'A request example'
 
       response 200, 'blog found' do
         ...
