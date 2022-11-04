@@ -213,7 +213,6 @@ module Rswag
           tuples << ['Content-Type', content_type]
         end
 
-
         # Host header
         host = metadata[:operation][:host] || swagger_doc[:host]
         if host.present?
