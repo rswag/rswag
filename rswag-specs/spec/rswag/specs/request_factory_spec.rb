@@ -383,6 +383,28 @@ module Rswag
           end
         end
 
+        context 'host header' do
+          context "explicit 'Host' value provided" do
+            before do
+              metadata[:operation][:host] = 'swagger.io'
+            end
+
+            it "sets 'Host' header" do
+              expect(request[:headers]).to eq('HTTP_HOST' => 'swagger.io')
+            end
+          end
+
+          context "no 'Host' value provided" do
+            before do
+              metadata[:operation][:host] = nil
+            end
+
+            it "does not set 'Host' header" do
+              expect(request[:headers]).to eq({})
+            end
+          end
+        end
+
         context 'basic auth' do
           context 'swagger 2.0' do
             before do
