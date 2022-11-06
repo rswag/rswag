@@ -8,11 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Add support for nullable & required on header parameters (https://github.com/rswag/rswag/pull/527)
+- Add option to set `Host` in header (https://github.com/rswag/rswag/pull/570)
+
 ### Changed
 
 ### Fixed
 
+- Fix support for referenced parameter schema https://github.com/rswag/rswag/pull/564)
+
 ### Documentation
+
+- Correct method name in ReadMe (https://github.com/rswag/rswag/pull/566)
 
 ## [2.7.0]
 
