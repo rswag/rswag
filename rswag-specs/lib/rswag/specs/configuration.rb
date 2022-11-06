@@ -9,9 +9,7 @@ module Rswag
 
       def swagger_root
         @swagger_root ||= begin
-          if @rspec_config.swagger_root.nil?
-            raise ConfigurationError, 'No swagger_root provided. See swagger_helper.rb'
-          end
+          raise ConfigurationError, 'No swagger_root provided. See swagger_helper.rb' if @rspec_config.swagger_root.nil?
 
           @rspec_config.swagger_root
         end
@@ -29,16 +27,18 @@ module Rswag
 
       def swagger_dry_run
         return @swagger_dry_run if defined? @swagger_dry_run
-        if ENV.key?('SWAGGER_DRY_RUN')
-          @rspec_config.swagger_dry_run = ENV['SWAGGER_DRY_RUN'] == '1'
-        end
+
+        @rspec_config.swagger_dry_run = ENV['SWAGGER_DRY_RUN'] == '1' if ENV.key?('SWAGGER_DRY_RUN')
         @swagger_dry_run = @rspec_config.swagger_dry_run.nil? || @rspec_config.swagger_dry_run
       end
 
       def swagger_format
         @swagger_format ||= begin
-          @rspec_config.swagger_format = :json if @rspec_config.swagger_format.nil? || @rspec_config.swagger_format.empty?
-          raise ConfigurationError, "Unknown swagger_format '#{@rspec_config.swagger_format}'" unless [:json, :yaml].include?(@rspec_config.swagger_format)
+          if @rspec_config.swagger_format.nil? || @rspec_config.swagger_format.empty?
+            @rspec_config.swagger_format = :json
+          end
+          raise ConfigurationError, "Unknown swagger_format '#{@rspec_config.swagger_format}'" unless %i[json
+                                                                                                         yaml].include?(@rspec_config.swagger_format)
 
           @rspec_config.swagger_format
         end

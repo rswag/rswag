@@ -1,29 +1,24 @@
+# frozen_string_literal: true
+
 require 'generator_spec'
 require 'generators/rswag/api/install/install_generator'
 
+RSpec.describe Rswag::Api::InstallGenerator do
+  include GeneratorSpec::TestCase
+  destination File.expand_path('tmp', __dir__)
 
-module Rswag
-  module Api
+  before(:all) do
+    prepare_destination
+    fixtures_dir = File.expand_path('fixtures', __dir__)
+    FileUtils.cp_r("#{fixtures_dir}/config", destination_root)
 
-    describe InstallGenerator do
-      include GeneratorSpec::TestCase
-      destination File.expand_path('../tmp', __FILE__)
-
-      before(:all) do
-        prepare_destination
-        fixtures_dir = File.expand_path('../fixtures', __FILE__)
-        FileUtils.cp_r("#{fixtures_dir}/config", destination_root)
-
-        run_generator
-      end
-
-      it 'installs the Rails initializer' do
-        assert_file('config/initializers/rswag_api.rb')
-      end
-
-      # Don't know how to test this
-      #it 'wires up routes'
-    end
+    run_generator
   end
-end
 
+  it 'installs the Rails initializer' do
+    assert_file('config/initializers/rswag_api.rb')
+  end
+
+  # Don't know how to test this
+  # it 'wires up routes'
+end

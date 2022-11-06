@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'yaml'
 require 'rack/mime'
@@ -5,7 +7,6 @@ require 'rack/mime'
 module Rswag
   module Api
     class Middleware
-
       def initialize(app, config)
         @app = app
         @config = config
@@ -17,7 +18,7 @@ module Rswag
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           swagger = parse_file(filename)
-          @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
+          @config.swagger_filter&.call(swagger, env)
           mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
           headers = { 'Content-Type' => mime }.merge(@config.swagger_headers || {})
           body = unload_swagger(filename, swagger)
@@ -25,11 +26,11 @@ module Rswag
           return [
             '200',
             headers,
-            [ body ]
+            [body]
           ]
         end
 
-        return @app.call(env)
+        @app.call(env)
       end
 
       private

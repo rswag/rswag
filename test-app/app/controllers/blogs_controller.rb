@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 
 class BlogsController < ApplicationController
-
   # POST /blogs
   def create
     @blog = Blog.create(params.require(:blog).permit(:title, :content))
@@ -10,7 +11,6 @@ class BlogsController < ApplicationController
 
   # POST /blogs/flexible
   def flexible_create
-
     # contrived example to play around with new anyOf and oneOf
     # request body definition for 3.0
     blog_params = params.require(:blog).permit(:title, :content, :headline, :text)
@@ -21,7 +21,6 @@ class BlogsController < ApplicationController
 
   # POST /blogs/alternate
   def alternate_create
-
     # contrived example to show different :examples in the requestBody section
     @blog = Blog.create(params.require(:blog).permit(:title, :content))
     respond_with @blog
@@ -31,6 +30,7 @@ class BlogsController < ApplicationController
   def upload
     @blog = Blog.find_by_id(params[:id])
     return head :not_found if @blog.nil?
+
     @blog.thumbnail = save_uploaded_file params[:file]
     head @blog.save ? :ok : :unprocessable_entity
   end
@@ -49,6 +49,7 @@ class BlogsController < ApplicationController
     return unless stale?(@blog)
 
     respond_with @blog, status: :not_found and return unless @blog
+
     respond_with @blog
   end
 
@@ -56,6 +57,7 @@ class BlogsController < ApplicationController
 
   def save_uploaded_file(field)
     return if field.nil?
+
     file = File.join('public/uploads', field.original_filename)
     FileUtils.cp field.tempfile.path, file
     field.original_filename
