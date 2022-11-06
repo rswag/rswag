@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Documentation
+
+## [2.7.0]
+
+### Added
+
 - Add tooling for measuring test coverage so that changes are safer (https://github.com/rswag/rswag/pull/551)
 - Add CSP compatible with rswag in case the Rails one is not compatible (https://github.com/rswag/rswag/pull/263)
 - Add ADDITIONAL_RSPEC_OPTS env variable (https://github.com/rswag/rswag/pull/556)
@@ -30,7 +40,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fix ResponseValidator adding support for nullable and required headers (https://github.com/rswag/rswag/pull/527)
 
 ### Documentation
-
 
 ## [2.6.0] - 2022-09-09
 
