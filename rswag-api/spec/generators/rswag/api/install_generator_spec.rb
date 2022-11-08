@@ -20,9 +20,6 @@ module Rswag
       it 'installs the Rails initializer' do
         assert_file('config/initializers/rswag_api.rb')
       end
-
-      # Don't know how to test this
-      #it 'wires up routes'
     end
   end
 end
