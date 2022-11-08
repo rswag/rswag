@@ -147,7 +147,7 @@ module Rswag
 
         target_node[:content] ||= {}
         mime_list.each do |mime_type|
-          # TODO upgrade to have content-type specific schema
+          # TODO: upgrade to have content-type specific schema
           (target_node[:content][mime_type] ||= {}).merge!(schema: schema)
         end
       end
