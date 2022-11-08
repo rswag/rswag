@@ -8,8 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Documentation
+
+## [2.8.0]
+
+### Added
+
 - Add support for nullable & required on header parameters (https://github.com/rswag/rswag/pull/527)
 - Add option to set `Host` in header (https://github.com/rswag/rswag/pull/570)
+- Add Support for Request body examples (https://github.com/rswag/rswag/pull/555)
 
 ### Changed
 
