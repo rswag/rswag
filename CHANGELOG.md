@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Make dependency on rspec-core explicit instead of implied (https://github.com/rswag/rswag/pull/554)
 - Fix base path for OAS3 specification (https://github.com/rswag/rswag/pull/547)
 - Fix ResponseValidator adding support for nullable and required headers (https://github.com/rswag/rswag/pull/527)
+- Fix inability to define common responses in the global responses section and reference that definition via $ref at the operation level in swagger 2.0
 
 ### Documentation
 

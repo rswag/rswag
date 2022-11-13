@@ -122,6 +122,24 @@ module Rswag
               metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
             end
 
+            context 'with shared `responses` as a part of swagger schema' do
+              before do
+                swagger_doc[:responses] = {
+                  'NotFound' => {
+                    type: :object,
+                    properties: { message: { type: :string } },
+                    required: ['message']
+                  }
+                }
+                metadata[:response][:schema] = { '$ref' => '#/responses/NotFound' }
+              end
+
+              it 'uses the referenced schema to validate the response body' do
+                expect { call }.to raise_error(/did not contain a required property of 'message'/)
+              end
+              
+            end
+
             it 'uses the referenced schema to validate the response body' do
               expect { call }.to raise_error(/Expected response body/)
             end

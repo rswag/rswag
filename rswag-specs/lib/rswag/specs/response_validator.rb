@@ -72,7 +72,7 @@ module Rswag
 
       def definitions_or_component_schemas(swagger_doc, version)
         if version.start_with?('2')
-          swagger_doc.slice(:definitions)
+          swagger_doc.slice(:definitions, :responses)
         else # Openapi3
           if swagger_doc.key?(:definitions)
             ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
