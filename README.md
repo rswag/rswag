@@ -18,17 +18,6 @@ And that's not all ...
 
 Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
 
-## Compatibility ##
-
-| Rswag Version                                        | Swagger (OpenAPI) Spec. | swagger-ui |
-| ---------------------------------------------------- | ----------------------- | ---------- |
-| [master](https://github.com/rswag/rswag/tree/master) | 3.0.3                   | 3.52.5     |
-| [2.5.1](https://github.com/rswag/rswag/tree/2.5.0)   | 3.0.3                   | 3.52.5     |
-| [2.3.0](https://github.com/rswag/rswag/tree/2.3.0)   | 3.0.3                   | 3.23.11    |
-| [2.2.0](https://github.com/rswag/rswag/tree/2.2.0)   | 2.0                     | 3.18.2     |
-| [1.6.0](https://github.com/rswag/rswag/tree/1.6.0)   | 2.0                     | 2.2.5      |
-
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 **Table of Contents**
 
