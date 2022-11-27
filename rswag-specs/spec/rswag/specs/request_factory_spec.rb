@@ -40,7 +40,7 @@ module Rswag
               ]
             end
 
-            it "explicitly warns user about missing parameter, instead of giving generic error" do
+            it 'explicitly warns user about missing parameter, instead of giving generic error' do
               expect { request[:path] }.not_to raise_error(/undefined method/)
               expect { request[:path] }.not_to raise_error(/is not available from within an example/)
               expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
@@ -84,7 +84,7 @@ module Rswag
             metadata[:operation][:parameters] = [
               { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
             ]
-            allow(example).to receive(:things).and_return(['foo', 'bar'])
+            allow(example).to receive(:things).and_return(%w[foo bar])
           end
 
           context 'collectionFormat = csv' do
@@ -124,7 +124,7 @@ module Rswag
         end
 
         context "'query' parameters of type 'object'" do
-          let(:things) { {'foo': 'bar'} }
+          let(:things) { { 'foo': 'bar' } }
           let(:swagger_doc) { { swagger: '3.0' } }
 
           before do
@@ -148,7 +148,7 @@ module Rswag
           end
 
           context 'deepObject with nested objects' do
-            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
             it 'formats as deep object' do
@@ -173,7 +173,7 @@ module Rswag
           end
 
           context 'form explode=true with nesting and uri encodable output' do
-            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
             it 'formats as an exploded form' do
@@ -215,7 +215,7 @@ module Rswag
             end
           end
 
-          context "spaceDelimited" do
+          context 'spaceDelimited' do
             let(:style) { :spaceDelimited }
             context 'exploded' do
               let(:explode) { true }
@@ -232,7 +232,7 @@ module Rswag
             end
           end
 
-          context "pipeDelimited" do
+          context 'pipeDelimited' do
             let(:style) { :pipeDelimited }
             context 'exploded' do
               let(:explode) { true }
@@ -589,10 +589,10 @@ module Rswag
           context 'openapi 3.0' do
             before do
               swagger_doc[:servers] = [{
-                :url => "https://{defaultHost}",
-                :variables => {
-                  :defaultHost => {
-                    :default => "www.example.com"
+                url: 'https://{defaultHost}',
+                variables: {
+                  defaultHost: {
+                    default: 'www.example.com'
                   }
                 }
               }]
@@ -604,7 +604,7 @@ module Rswag
           end
 
           context 'openapi 3.0 with old config' do
-            let(:swagger_doc) { {:openapi => '3.0', :basePath => '/blogs' } }
+            let(:swagger_doc) { { openapi: '3.0', basePath: '/blogs' } }
 
             before do
               allow(ActiveSupport::Deprecation).to receive(:warn)

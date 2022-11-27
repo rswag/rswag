@@ -35,8 +35,8 @@ group :test do
   gem 'generator_spec'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'test-unit'
   gem 'simplecov', '=0.21.2'
+  gem 'test-unit'
 end
 
 group :development do

@@ -5,7 +5,6 @@ require 'rack/mime'
 module Rswag
   module Api
     class Middleware
-
       def initialize(app, config)
         @app = app
         @config = config
@@ -25,11 +24,11 @@ module Rswag
           return [
             '200',
             headers,
-            [ body ]
+            [body]
           ]
         end
 
-        return @app.call(env)
+        @app.call(env)
       end
 
       private

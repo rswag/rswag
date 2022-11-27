@@ -2,7 +2,6 @@ require 'rails/generators'
 
 module Rswag
   class InstallGenerator < Rails::Generators::Base
-
     def install_components
       generate 'rswag:specs:install'
       generate 'rswag:api:install'

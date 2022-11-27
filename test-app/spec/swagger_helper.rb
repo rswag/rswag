@@ -52,9 +52,9 @@ RSpec.configure do |config|
             id: { type: 'integer' },
             title: { type: 'string' },
             content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string', 'x-nullable': true}
+            thumbnail: { type: 'string', 'x-nullable': true }
           },
-          required: [ 'id', 'title' ]
+          required: %w[id title]
         },
         flexible_blog: {
           type: 'object',
@@ -64,7 +64,7 @@ RSpec.configure do |config|
             text: { type: 'string', nullable: true },
             thumbnail: { type: 'string', nullable: true }
           },
-          required: ['id', 'headline']
+          required: %w[id headline]
         }
       },
       components: {
@@ -118,9 +118,9 @@ RSpec.configure do |config|
             id: { type: 'integer' },
             title: { type: 'string' },
             content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string', 'x-nullable': true}
+            thumbnail: { type: 'string', 'x-nullable': true }
           },
-          required: [ 'id', 'title' ]
+          required: %w[id title]
         },
         flexible_blog: {
           type: 'object',
@@ -130,7 +130,7 @@ RSpec.configure do |config|
             text: { type: 'string', nullable: true },
             thumbnail: { type: 'string', nullable: true }
           },
-          required: ['id', 'headline']
+          required: %w[id headline]
         }
       },
       components: {

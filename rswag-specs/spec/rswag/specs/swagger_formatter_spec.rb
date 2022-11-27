@@ -27,9 +27,7 @@ module Rswag
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
           operation = { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] }
-          if request_examples
-            operation[:request_examples] = request_examples
-          end
+          operation[:request_examples] = request_examples if request_examples
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: operation,
@@ -37,7 +35,10 @@ module Rswag
             document: document
           }
         end
-        let(:response_metadata) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } } }
+        let(:response_metadata) do
+          { code: '201', description: 'blog created', headers: { type: :string },
+            schema: { '$ref' => '#/definitions/blog' } }
+        end
 
         context 'with the document tag set to false' do
           let(:swagger_doc) { { swagger: '2.0' } }
@@ -81,7 +82,7 @@ module Rswag
             {
               openapi: '3.0.1',
               basePath: '/foo',
-              schemes: ['http', 'https'],
+              schemes: %w[http https],
               host: 'api.example.com',
               produces: ['application/vnd.my_mime', 'application/json'],
               components: {
@@ -181,7 +182,7 @@ module Rswag
               {
                 openapi: '3.0.1',
                 basePath: '/foo',
-                schemes: ['http', 'https'],
+                schemes: %w[http https],
                 host: 'api.example.com',
                 components: {
                   securitySchemes: {
@@ -327,15 +328,15 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_2[:paths]['/path/'][:get].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_2[:paths]['/path/'][:get].keys).to eql(%i[summary tags parameters requestBody])
           end
 
           it 'duplicates params in: :body to requestBody from consumes list' do
             expect(doc_2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
-              'application/xml' => { schema: { foo: :bar } },
-              'application/json' => { schema: { foo: :bar } }
-            })
+                                                                         'application/xml' => { schema: { foo: :bar } },
+                                                                         'application/json' => { schema: { foo: :bar } }
+                                                                       })
           end
         end
 
@@ -352,7 +353,7 @@ module Rswag
                     parameters: [{
                       in: :formData,
                       schema: { type: :file }
-                    },{
+                    }, {
                       in: :headers
                     }]
                   }
@@ -362,14 +363,14 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_2[:paths]['/path/'][:post].keys).to eql(%i[summary tags parameters requestBody])
           end
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
             expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => { schema: { type: :file } }
-            })
+                                                                          'multipart/form-data' => { schema: { type: :file } }
+                                                                        })
           end
         end
 
@@ -383,7 +384,7 @@ module Rswag
                     consumes: ['application/json'],
                     parameters: [{
                       in: :body,
-                      description: "description",
+                      description: 'description',
                       schema: { type: :number }
                     }]
                   }
@@ -401,7 +402,6 @@ module Rswag
           FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end
 
-
         context 'with request examples' do
           let(:doc_2) do
             {
@@ -417,7 +417,7 @@ module Rswag
                       schema: {
                         '$ref': '#/components/schemas/BlogPost'
                       }
-                    },{
+                    }, {
                       in: :headers
                     }],
                     request_examples: [
@@ -434,7 +434,7 @@ module Rswag
                           some_field: 'Bar'
                         }
                       }
-                    ],
+                    ]
                   }
                 }
               },
@@ -455,30 +455,30 @@ module Rswag
           end
 
           it 'removes remaining request_examples' do
-            expect(doc_2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_2[:paths]['/path/'][:post].keys).to eql(%i[summary tags parameters requestBody])
           end
 
           it 'creates requestBody examples' do
             expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'application/json' => {
-                schema: { '$ref': '#/components/schemas/BlogPost' },
-                examples: {
-                  'basic' => {
-                    value: {
-                      some_field: 'Foo'
-                    },
-                    summary: 'An example'
-                  },
-                  'another_basic' => {
-                    value: {
-                      some_field: 'Bar'
-                    },
-                    summary: 'Retrieve Nested Paths'
-                  }
-                }
-              }
-            })
+                                                                          'application/json' => {
+                                                                            schema: { '$ref': '#/components/schemas/BlogPost' },
+                                                                            examples: {
+                                                                              'basic' => {
+                                                                                value: {
+                                                                                  some_field: 'Foo'
+                                                                                },
+                                                                                summary: 'An example'
+                                                                              },
+                                                                              'another_basic' => {
+                                                                                value: {
+                                                                                  some_field: 'Bar'
+                                                                                },
+                                                                                summary: 'Retrieve Nested Paths'
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        })
           end
         end
 

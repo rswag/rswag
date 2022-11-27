@@ -9,9 +9,9 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
   before do |example|
     output = double('output').as_null_object
     swagger_root = File.expand_path('tmp/swagger', __dir__)
-    config = double('config', swagger_root: swagger_root, get_swagger_doc: swagger_doc )
+    config = double('config', swagger_root: swagger_root, get_swagger_doc: swagger_doc)
     formatter = Rswag::Specs::SwaggerFormatter.new(output, config)
-    
+
     example_group = OpenStruct.new(group: OpenStruct.new(metadata: example.metadata))
     formatter.example_group_finished(example_group)
   end
@@ -27,7 +27,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
     }
   end
   let(:api_openapi) { '3.0.3' }
-  let(:api_servers) {[{ url: "https://api.example.com/foo" }]}
+  let(:api_servers) { [{ url: 'https://api.example.com/foo' }] }
   let(:api_produces) { ['application/json'] }
   let(:api_components) { {} }
 
@@ -44,45 +44,49 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
           it 'lists server' do
             tree = swagger_doc.dig(:servers)
             expect(tree).to eq([
-              { url: "https://api.example.com/foo" }
-            ])
+                                 { url: 'https://api.example.com/foo' }
+                               ])
           end
 
-          context "multiple" do
-            let(:api_servers) {[
-              { url: "https://api.example.com/foo" },
-              { url: "http://api.example.com/foo" },
-            ]}
+          context 'multiple' do
+            let(:api_servers) do
+              [
+                { url: 'https://api.example.com/foo' },
+                { url: 'http://api.example.com/foo' }
+              ]
+            end
 
             it 'lists servers' do
               tree = swagger_doc.dig(:servers)
               expect(tree).to eq([
-                { url: "https://api.example.com/foo" },
-                { url: "http://api.example.com/foo" }
-              ])
+                                   { url: 'https://api.example.com/foo' },
+                                   { url: 'http://api.example.com/foo' }
+                                 ])
             end
           end
 
-          context "with variables" do
-            let(:api_servers) {[{
-              url: "https://{defaultHost}/foo",
-              variables: {
-                defaultHost: {
-                  default: "api.example.com" 
+          context 'with variables' do
+            let(:api_servers) do
+              [{
+                url: 'https://{defaultHost}/foo',
+                variables: {
+                  defaultHost: {
+                    default: 'api.example.com'
+                  }
                 }
-              }
-            }]}
+              }]
+            end
 
             it 'lists server and variables' do
               tree = swagger_doc.dig(:servers)
               expect(tree).to eq([{
-                url: "https://{defaultHost}/foo",
-                variables: {
-                  defaultHost: {
-                    default: "api.example.com" 
-                  }
-                }
-              }])
+                                   url: 'https://{defaultHost}/foo',
+                                   variables: {
+                                     defaultHost: {
+                                       default: 'api.example.com'
+                                     }
+                                   }
+                                 }])
             end
           end
 
@@ -101,8 +105,8 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
           run_test!
 
           it 'declares output as application/json' do
-            pending "Not yet implemented?"
-            tree = swagger_doc.dig(:paths, "/stubs", :get, :responses, '200', :content)
+            pending 'Not yet implemented?'
+            tree = swagger_doc.dig(:paths, '/stubs', :get, :responses, '200', :content)
             expect(tree).to have_key('application/json')
           end
         end
@@ -121,21 +125,21 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
 
           parameter(
             name: 'a_param',
-            in: :path,
+            in: :path
           )
-          let(:a_param) { "42" }
+          let(:a_param) { '42' }
 
           response '200', 'OK' do
             run_test!
 
             it 'declares parameter in path' do
-              tree = swagger_doc.dig(:paths, "/stubs/{a_param}", :get, :parameters)
+              tree = swagger_doc.dig(:paths, '/stubs/{a_param}', :get, :parameters)
               expect(tree.first[:name]).to eq('a_param')
               expect(tree.first[:in]).to eq(:path)
             end
 
             it 'declares path parameters as required' do
-              tree = swagger_doc.dig(:paths, "/stubs/{a_param}", :get, :parameters)
+              tree = swagger_doc.dig(:paths, '/stubs/{a_param}', :get, :parameters)
               expect(tree.first[:required]).to eq(true)
             end
           end
@@ -151,15 +155,15 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
 
           parameter(
             name: 'a_param',
-            in: :query,
+            in: :query
           )
-          let(:a_param) { "a foo" }
+          let(:a_param) { 'a foo' }
 
           response '200', 'OK' do
             run_test!
 
             it 'declares parameter in query string' do
-              tree = swagger_doc.dig(:paths, "/stubs", :get, :parameters)
+              tree = swagger_doc.dig(:paths, '/stubs', :get, :parameters)
               expect(tree.first[:name]).to eq('a_param')
               expect(tree.first[:in]).to eq(:query)
             end
@@ -186,16 +190,16 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
       post 'body is required' do
         tags 'Media Types'
         consumes 'multipart/form-data'
-        parameter name: :file, :in => :formData, :type => :file, required: true
+        parameter name: :file, in: :formData, type: :file, required: true
 
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
 
         response '200', 'OK' do
           run_test!
 
           it 'declares requestBody is required' do
             pending "This output is massaged in SwaggerFormatter#stop, and isn't quite ready here to assert"
-            tree = swagger_doc.dig(:paths, "/stubs", :post, :requestBody)
+            tree = swagger_doc.dig(:paths, '/stubs', :post, :requestBody)
             expect(tree[:required]).to eq(true)
           end
         end
@@ -212,7 +216,6 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
   describe 'Components Section'
   describe 'Using $ref'
   describe 'Grouping Operations with Tags'
-
 
   # path '/blogs' do
   #   post 'Creates a blog' do

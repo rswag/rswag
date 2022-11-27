@@ -47,7 +47,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
 
       response '406', 'unsupported accept header' do
-        let(:'Accept') { 'application/foo' }
+        let(:Accept) { 'application/foo' }
         run_test!
       end
     end
@@ -96,7 +96,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         schema '$ref' => '#/definitions/blog'
 
-        #Legacy
+        # Legacy
         examples 'application/json' => {
           id: 1,
           title: 'Hello legacy world!',
@@ -109,7 +109,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
           thumbnail: 'thumbnail.png'
-        }, "Summary of the example", "A longer description of a fine blog post about a wonderful universe!"
+        }, 'Summary of the example', 'A longer description of a fine blog post about a wonderful universe!'
 
         example 'application/json', :blog_example_2, {
           id: 1,
@@ -142,14 +142,14 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       consumes 'multipart/form-data'
       parameter(
         name: :file,
-        description: "The content of the blog thumbnail",
+        description: 'The content of the blog thumbnail',
         in: :formData,
         type: :file,
         required: true
       )
 
       response '200', 'blog updated' do
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
         run_test!
       end
     end

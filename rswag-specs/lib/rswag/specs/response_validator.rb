@@ -24,11 +24,11 @@ module Rswag
 
       def validate_code!(metadata, response)
         expected = metadata[:response][:code].to_s
-        if response.code != expected
-          raise UnexpectedResponse,
-            "Expected response code '#{response.code}' to match '#{expected}'\n" \
-              "Response body: #{response.body}"
-        end
+        return unless response.code != expected
+
+        raise UnexpectedResponse,
+              "Expected response code '#{response.code}' to match '#{expected}'\n" \
+                "Response body: #{response.body}"
       end
 
       def validate_headers!(metadata, headers)
@@ -59,8 +59,8 @@ module Rswag
         schemas = definitions_or_component_schemas(swagger_doc, version)
 
         validation_schema = response_schema
-          .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(schemas)
+                            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+                            .merge(schemas)
 
         errors = JSON::Validator.fully_validate(validation_schema, body)
         return unless errors.any?
@@ -73,14 +73,12 @@ module Rswag
       def definitions_or_component_schemas(swagger_doc, version)
         if version.start_with?('2')
           swagger_doc.slice(:definitions)
-        else # Openapi3
-          if swagger_doc.key?(:definitions)
-            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
-            swagger_doc.slice(:definitions)
-          else
-            components = swagger_doc[:components] || {}
-            { components: components }
-          end
+        elsif swagger_doc.key?(:definitions) # Openapi3
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+          swagger_doc.slice(:definitions)
+        else
+          components = swagger_doc[:components] || {}
+          { components: components }
         end
       end
     end

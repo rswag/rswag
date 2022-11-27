@@ -7,7 +7,9 @@ require 'swagger_helper'
 module Rswag
   module Specs
     class SwaggerFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
-      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
+      if RUBY_VERSION.start_with? '2.6'
+        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0')
+      end
 
       if RSPEC_VERSION > 2
         ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
@@ -24,10 +26,10 @@ module Rswag
 
       def example_group_finished(notification)
         metadata = if RSPEC_VERSION > 2
-          notification.group.metadata
-        else
-          notification.metadata
-        end
+                     notification.group.metadata
+                   else
+                     notification.metadata
+                   end
 
         # !metadata[:document] won't work, since nil means we should generate
         # docs.
@@ -65,14 +67,14 @@ module Rswag
                     examples = value.dig(:request_examples)
                     mime_list.each do |mime|
                       value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
-                      if examples
-                        value[:requestBody][:content][mime][:examples] ||= {}
-                        examples.map do |example|
-                          value[:requestBody][:content][mime][:examples][example[:name]] = {
-                            summary: example[:summary] || value[:summary],
-                            value: example[:value]
-                          }
-                        end
+                      next unless examples
+
+                      value[:requestBody][:content][mime][:examples] ||= {}
+                      examples.map do |example|
+                        value[:requestBody][:content][mime][:examples][example[:name]] = {
+                          summary: example[:summary] || value[:summary],
+                          value: example[:value]
+                        }
                       end
                     end
                   end
@@ -118,13 +120,13 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k, _v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k, _v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end
@@ -147,7 +149,7 @@ module Rswag
 
         target_node[:content] ||= {}
         mime_list.each do |mime_type|
-          # TODO upgrade to have content-type specific schema
+          # TODO: upgrade to have content-type specific schema
           (target_node[:content][mime_type] ||= {}).merge!(schema: schema)
         end
       end
@@ -192,11 +194,11 @@ module Rswag
           ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
           flow = swagger_doc[:components][:securitySchemes][name].delete(:flow).to_s
           if flow == 'accessCode'
-            ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)")
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)')
             flow = 'authorizationCode'
           end
           if flow == 'application'
-            ActiveSupport::Deprecation.warn("Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)")
+            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)')
             flow = 'clientCredentials'
           end
           flow_elements = swagger_doc[:components][:securitySchemes][name].except(:type).each_with_object({}) do |(k, _v), a|
