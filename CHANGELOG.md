@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- Ran rubocop autocorrect on the entire project (https://github.com/rswag/rswag/pull/585)
+
 ### Fixed
 
 ### Documentation
