@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/api/middleware'
 require 'rswag/api/configuration'
 

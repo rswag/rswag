@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'rswag/specs/swagger_formatter'
 
@@ -42,7 +44,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
           run_test!
 
           it 'lists server' do
-            tree = swagger_doc.dig(:servers)
+            tree = swagger_doc[:servers]
             expect(tree).to eq([
                                  { url: 'https://api.example.com/foo' }
                                ])
@@ -57,7 +59,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
             end
 
             it 'lists servers' do
-              tree = swagger_doc.dig(:servers)
+              tree = swagger_doc[:servers]
               expect(tree).to eq([
                                    { url: 'https://api.example.com/foo' },
                                    { url: 'http://api.example.com/foo' }
@@ -78,7 +80,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
             end
 
             it 'lists server and variables' do
-              tree = swagger_doc.dig(:servers)
+              tree = swagger_doc[:servers]
               expect(tree).to eq([{
                                    url: 'https://{defaultHost}/foo',
                                    variables: {

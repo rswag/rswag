@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do

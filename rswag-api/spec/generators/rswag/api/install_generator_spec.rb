@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'generator_spec'
 require 'generators/rswag/api/install/install_generator'
 

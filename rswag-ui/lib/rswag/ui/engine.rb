@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/ui/middleware'
 require 'rswag/ui/basic_auth'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rswag
   module Ui
     class Middleware < Rack::Static
@@ -8,7 +10,7 @@ module Rswag
 
       def call(env)
         if base_path?(env)
-          redirect_uri = env['SCRIPT_NAME'].chomp('/') + '/index.html'
+          redirect_uri = "#{env['SCRIPT_NAME'].chomp('/')}/index.html"
           return [301, { 'Location' => redirect_uri }, []]
         end
 

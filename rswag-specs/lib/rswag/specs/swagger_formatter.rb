@@ -64,7 +64,7 @@ module Rswag
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
                     value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
-                    examples = value.dig(:request_examples)
+                    examples = value[:request_examples]
                     mime_list.each do |mime|
                       value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
                       next unless examples
@@ -175,7 +175,7 @@ module Rswag
 
         swagger_doc[:servers] = { urls: [] }
         swagger_doc[:schemes].each do |scheme|
-          swagger_doc[:servers][:urls] << scheme + '://' + swagger_doc[:host] + swagger_doc[:basePath]
+          swagger_doc[:servers][:urls] << "#{scheme}://#{swagger_doc[:host]}#{swagger_doc[:basePath]}"
         end
 
         swagger_doc.delete(:schemes)

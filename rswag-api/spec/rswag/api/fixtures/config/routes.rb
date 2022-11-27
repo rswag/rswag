@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 TestApp::Application.routes.draw do
   resources :blogs, defaults: { format: :json }
 

@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'rake'
 
 RSpec.describe 'rswag:specs:swaggerize' do
-  let(:swagger_root) { Rails.root.to_s + '/swagger' }
+  let(:swagger_root) { "#{Rails.root}/swagger" }
   before do
     TestApp::Application.load_tasks
     FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)

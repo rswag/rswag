@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AuthTestsController < ApplicationController
   # POST /auth-tests/basic
   def basic
@@ -15,7 +17,7 @@ class AuthTestsController < ApplicationController
 
   # POST /auth-tests/basic-and-api-key
   def basic_and_api_key
-    return head :unauthorized unless authenticate_basic and authenticate_api_key
+    return head :unauthorized unless authenticate_basic && authenticate_api_key
 
     head :no_content
   end
