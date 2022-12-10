@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require "active_support"
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -101,23 +101,82 @@ module Rswag
         request[:verb] = metadata[:operation][:verb]
       end
 
+      def base_path_from_servers(swagger_doc, use_server = :default)
+        return '' if swagger_doc[:servers].nil? || swagger_doc[:servers].empty?
+        server = swagger_doc[:servers].first
+        variables = {}
+        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { |name| variables[name.to_sym] }
+        URI(base_path).path
+      end
+
       def add_path(request, metadata, swagger_doc, parameters, example)
-        template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        open_api_3_doc = doc_version(swagger_doc).start_with?('3')
+        uses_base_path = swagger_doc[:basePath].present?
+
+        if open_api_3_doc && uses_base_path
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
+        end
+
+        if uses_base_path
+          template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+        else # OpenAPI 3
+          template = base_path_from_servers(swagger_doc) + metadata[:path_item][:template]
+        end
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
+            unless example.respond_to?(p[:name])
+              raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
+                "(i. e `it` or `let` block)")
+            end
             path_template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
           end
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(p[:name])))
+            path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
           end
         end
       end
 
-      def build_query_string_part(param, value)
+      def build_query_string_part(param, value, swagger_doc)
         name = param[:name]
+
+        # OAS 3: https://swagger.io/docs/specification/serialization/
+        if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
+          style = param[:style]&.to_sym || :form
+          explode = param[:explode].nil? ? true : param[:explode]
+
+          case param[:schema][:type]&.to_sym
+          when :object
+            case style
+            when :deepObject
+              return { name => value }.to_query
+            when :form
+              if explode
+                return value.to_query
+              else
+                return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
+              end
+            end
+          when :array
+            case explode
+            when true
+              return value.to_a.flatten.map{|v| "#{CGI.escape(name.to_s)}=#{CGI.escape(v.to_s)}"}.join('&')
+            else
+              separator = case style
+                          when :form then ','
+                          when :spaceDelimited then '%20'
+                          when :pipeDelimited then '|'
+                          end
+              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
+            end
+          else
+            return "#{name}=#{value}"
+          end
+        end
+
         type = param[:type] || param.dig(:schema, :type)
         return "#{name}=#{value}" unless type&.to_sym == :array
 
@@ -154,20 +213,28 @@ module Rswag
           tuples << ['Content-Type', content_type]
         end
 
-        # Rails test infrastructure requires rackified headers
-        rackified_tuples = tuples.map do |pair|
+        # Host header
+        host = metadata[:operation][:host] || swagger_doc[:host]
+        if host.present?
+          host = example.respond_to?(:'Host') ? example.send(:'Host') : host
+          tuples << ['Host', host]
+        end
+
+        # Rails test infrastructure requires rack-formatted headers
+        rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
-            when 'Accept' then 'HTTP_ACCEPT'
-            when 'Content-Type' then 'CONTENT_TYPE'
-            when 'Authorization' then 'HTTP_AUTHORIZATION'
-            else pair[0]
+              when 'Accept' then 'HTTP_ACCEPT'
+              when 'Content-Type' then 'CONTENT_TYPE'
+              when 'Authorization' then 'HTTP_AUTHORIZATION'
+              when 'Host' then 'HTTP_HOST'
+              else pair[0]
             end,
             pair[1]
           ]
         end
 
-        request[:headers] = Hash[rackified_tuples]
+        request[:headers] = Hash[rack_formatted_tuples]
       end
 
       def add_payload(request, parameters, example)
@@ -194,11 +261,35 @@ module Rswag
 
       def build_json_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-        body_param ? example.send(body_param[:name]).to_json : nil
+
+        return nil unless body_param
+
+        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
+
+        example.send(body_param[:name]).to_json
       end
 
       def doc_version(doc)
         doc[:openapi] || doc[:swagger] || '3'
+      end
+    end
+
+    class MissingParameterError < StandardError
+      attr_reader :body_param
+
+      def initialize(body_param)
+        @body_param = body_param
+      end
+
+      def message
+        <<~MSG
+          Missing parameter '#{body_param}'
+
+          Please check your spec. It looks like you defined a body parameter,
+          but did not declare usage via let. Try adding:
+
+              let(:#{body_param}) {}
+        MSG
       end
     end
   end

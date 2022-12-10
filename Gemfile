@@ -2,24 +2,24 @@
 
 source 'https://rubygems.org'
 
-# Allow the rails version to come from an ENV setting so Travis can test multiple versions.
+# Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '5.2.4.2'
+rails_version = ENV['RAILS_VERSION'] || '6.1.6.1'
 
 gem 'rails', rails_version.to_s
 
-case rails_version.split('.').first
-when '3'
-  gem 'strong_parameters'
-when '4', '5', '6'
-  gem 'responders'
-end
+gem 'responders'
 
 case rails_version.split('.').first
-when '3', '4', '5'
+when '5'
   gem 'sqlite3', '~> 1.3.6'
-when  '6'
+when  '6', '7'
   gem 'sqlite3', '~> 1.4.1'
+end
+
+case RUBY_VERSION.split('.').first
+when '3'
+  gem 'net-smtp', require: false
 end
 
 gem 'rswag-api', path: './rswag-api'
@@ -36,6 +36,7 @@ group :test do
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'test-unit'
+  gem 'simplecov', '=0.21.2'
 end
 
 group :development do
@@ -43,7 +44,7 @@ group :development do
 end
 
 group :assets do
-  gem 'therubyracer'
+  gem 'mini_racer'
   gem 'uglifier'
 end
 

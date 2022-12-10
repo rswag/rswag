@@ -12,7 +12,7 @@ module Rswag
 
       def initialize
         @template_locations = [
-          # preffered override location
+          # preferred override location
           "#{Rack::Directory.new('').root}/swagger/index.erb",
           # backwards compatible override location
           "#{Rack::Directory.new('').root}/app/views/rswag/ui/home/index.html.erb",

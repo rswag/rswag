@@ -14,7 +14,7 @@ module Rswag
         end
 
         if index_path?(env)
-          return [ 200, { 'Content-Type' => 'text/html' }, [ render_template ] ]
+          return [ 200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [ render_template ] ]
         end
 
         super
@@ -37,7 +37,17 @@ module Rswag
       end
 
       def template_filename
-        @config.template_locations.find { |filename| File.exists?(filename) }
+        @config.template_locations.find { |filename| File.exist?(filename) }
+      end
+
+      def csp
+        <<~POLICY.gsub "\n", ' '
+          default-src 'self';
+          img-src 'self' data:;
+          font-src 'self' https://fonts.gstatic.com;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          script-src 'self' 'unsafe-inline';
+        POLICY
       end
     end
   end

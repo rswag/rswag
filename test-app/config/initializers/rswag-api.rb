@@ -6,7 +6,7 @@ Rswag::Api.configure do |c|
   # that it's configured to generate files in the same folder
   c.swagger_root = Rails.root.to_s + '/swagger'
 
-  # Inject a lamda function to alter the returned Swagger prior to serialization
+  # Inject a lambda function to alter the returned Swagger prior to serialization
   # The function will have access to the rack env for the current request
   # For example, you could leverage this to dynamically assign the "host" property
   #

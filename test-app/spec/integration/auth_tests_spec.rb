@@ -37,7 +37,7 @@ RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' 
       end
 
       response '401', 'Invalid credentials' do
-        let(:api_key) { 'barfoo' }
+        let(:api_key) { 'barFoo' }
         run_test!
       end
     end
@@ -57,7 +57,7 @@ RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' 
 
       response '401', 'Invalid credentials' do
         let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
-        let(:api_key) { 'barfoo' }
+        let(:api_key) { 'barFoo' }
         run_test!
       end
     end

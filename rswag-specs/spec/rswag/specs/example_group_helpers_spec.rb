@@ -136,25 +136,89 @@ module Rswag
         end
       end
 
+      describe '#request_body_example(value:, summary: nil, name: nil)' do 
+        context "when adding one example" do 
+          before { subject.request_body_example(value: value)}
+          let(:api_metadata) { { operation: {} } }
+          let(:value) { { field: 'A', another_field: 'B' } }
+
+          it "assigns the example to the metadata" do 
+            expect(api_metadata[:operation][:request_examples].length()).to eq(1) 
+            expect(api_metadata[:operation][:request_examples][0]).to eq({ value: value, name: 0 })
+          end 
+        end
+
+        context "when adding multiple examples with additional information" do 
+          before { 
+            subject.request_body_example(value: example_one)
+            subject.request_body_example(value: example_two, name: example_two_name, summary: example_two_summary)
+          }
+          let(:api_metadata) { { operation: {} } }
+          let(:example_one) { { field: 'A', another_field: 'B' } }
+          let(:example_two) { { field: 'B', another_field: 'C' } }
+          let(:example_two_name) { 'example_two' }
+          let(:example_two_summary) { 'An example description' }
+
+          it "assigns all examples to the metadata" do 
+            expect(api_metadata[:operation][:request_examples].length()).to eq(2) 
+            expect(api_metadata[:operation][:request_examples][0]).to eq({ value: example_one, name: 0 })
+            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name, summary: example_two_summary })
+          end 
+        end  
+      end 
+
+
       describe '#examples(example)' do
         let(:mime) { 'application/json' }
         let(:json_example) do
           {
-            mime => {
               foo: 'bar'
-            }
           }
         end
         let(:api_metadata) { { response: {} } }
 
         before do
-          subject.examples(json_example)
+          subject.examples(mime => json_example)
         end
 
         it "adds to the 'response examples' metadata" do
           expect(api_metadata[:response][:content]).to match(
             mime => {
-              example: json_example[mime]
+              examples: {
+                example_0: {
+                  value: json_example
+                }
+              }
+            }
+          )
+        end
+      end
+
+      describe '#example(single)' do
+        let(:mime) { 'application/json' }
+        let(:summary) { "this is a summary"}
+        let(:description) { "this is an example description "}
+        let(:json_example) do
+          {
+              foo: 'bar'
+          }
+        end
+        let(:api_metadata) { { response: {} } }
+
+        before do
+          subject.example(mime, :example_key, json_example, summary, description)
+        end
+
+        it "adds to the 'response examples' metadata" do
+          expect(api_metadata[:response][:content]).to match(
+            mime => {
+              examples: {
+                example_key: {
+                  value: json_example,
+                  description: description,
+                  summary: summary
+                }
+              }
             }
           )
         end

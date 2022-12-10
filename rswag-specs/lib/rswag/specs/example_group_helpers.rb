@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require 'active_support'
+
 module Rswag
   module Specs
     module ExampleGroupHelpers
+      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
+
       def path(template, metadata = {}, &block)
         metadata[:path_item] = { template: template }
         describe(template, metadata, &block)
@@ -51,6 +55,18 @@ module Rswag
         end
       end
 
+
+      def request_body_example(value:, summary: nil, name: nil) 
+        if metadata.key?(:operation) 
+          metadata[:operation][:request_examples] ||= []
+          example = { value: value } 
+          example[:summary] = summary if summary 
+          # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
+          example[:name] = name || metadata[:operation][:request_examples].length()
+          metadata[:operation][:request_examples] << example
+        end 
+      end 
+
       def response(code, description, metadata = {}, &block)
         metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)
@@ -69,23 +85,44 @@ module Rswag
       # NOTE: Similar to 'description', 'examples' need to handle the case when
       # being invoked with no params to avoid overriding 'examples' method of
       # rspec-core ExampleGroup
-      def examples(example = nil)
-        return super() if example.nil?
+      def examples(examples = nil)
+        return super() if examples.nil?
+        # should we add a deprecation warning?
+        examples.each_with_index do |(mime, example_object), index|
+          example(mime, "example_#{index}", example_object)
+        end
+      end
 
-        metadata[:response][:content] =
-          example.each_with_object({}) do |(mime, example_object), memo|
-            memo[mime] = { example: example_object }
-          end
+      def example(mime, name, value, summary=nil, description=nil)
+        # Todo - move initialization of metadata somewhere else.
+        if metadata[:response][:content].blank?
+          metadata[:response][:content] = {}
+        end
+
+        if metadata[:response][:content][mime].blank?
+          metadata[:response][:content][mime] = {}
+          metadata[:response][:content][mime][:examples] = {}
+        end
+
+        example_object = {
+          value: value,
+          summary: summary,
+          description: description
+        }.select { |_, v| v.present? }
+        # TODO, issue a warning if example is being overridden with the same key
+        metadata[:response][:content][mime][:examples].merge!(
+          { name.to_sym => example_object }
+        )
       end
 
       def run_test!(&block)
-        # NOTE: rspec 2.x support
         if RSPEC_VERSION < 3
+          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
           before do
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response" do
+          it "returns a #{metadata[:response][:code]} response", rswag: true do
             assert_response_matches_metadata(metadata)
             block.call(response) if block_given?
           end
@@ -94,7 +131,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response" do |example|
+          it "returns a #{metadata[:response][:code]} response", rswag: true do |example|
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end

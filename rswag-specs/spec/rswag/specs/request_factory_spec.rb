@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# cspell:ignore Bfoo Bbar
+
 require 'rswag/specs/request_factory'
 
 module Rswag
@@ -29,18 +31,36 @@ module Rswag
         end
 
         context "'path' parameters" do
-          before do
-            metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
-            metadata[:operation][:parameters] = [
-              { name: 'blog_id', in: :path, type: :number },
-              { name: 'id', in: :path, type: :number }
-            ]
-            allow(example).to receive(:blog_id).and_return(1)
-            allow(example).to receive(:id).and_return(2)
+          context 'when `name` parameter key is required, but not defined within example group' do
+            before do
+              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+              metadata[:operation][:parameters] = [
+                { name: 'blog_id', in: :path, type: :number },
+                { name: 'id', in: :path, type: :number }
+              ]
+            end
+
+            it "explicitly warns user about missing parameter, instead of giving generic error" do
+              expect { request[:path] }.not_to raise_error(/undefined method/)
+              expect { request[:path] }.not_to raise_error(/is not available from within an example/)
+              expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
+            end
           end
 
-          it 'builds the path from example values' do
-            expect(request[:path]).to eq('/blogs/1/comments/2')
+          context 'when `name` is defined' do
+            before do
+              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+              metadata[:operation][:parameters] = [
+                { name: 'blog_id', in: :path, type: :number },
+                { name: 'id', in: :path, type: :number }
+              ]
+              allow(example).to receive(:blog_id).and_return(1)
+              allow(example).to receive(:id).and_return(2)
+            end
+
+            it 'builds the path from example values' do
+              expect(request[:path]).to eq('/blogs/1/comments/2')
+            end
           end
         end
 
@@ -103,6 +123,152 @@ module Rswag
           end
         end
 
+        context "'query' parameters of type 'object'" do
+          let(:things) { {'foo': 'bar'} }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'things', in: :query,
+                style: style,
+                explode: explode,
+                schema: { type: :object, additionalProperties: { type: :string } }
+              }
+            ]
+            allow(example).to receive(:things).and_return(things)
+          end
+
+          context 'deepObject' do
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D=bar')
+            end
+          end
+
+          context 'deepObject with nested objects' do
+            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:style) { :deepObject }
+            let(:explode) { true }
+            it 'formats as deep object' do
+              expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
+            end
+          end
+
+          context 'form explode=false' do
+            let(:style) { :form }
+            let(:explode) { false }
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?things=foo,bar')
+            end
+          end
+
+          context 'form explode=true' do
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?foo=bar')
+            end
+          end
+
+          context 'form explode=true with nesting and uri encodable output' do
+            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:style) { :form }
+            let(:explode) { true }
+            it 'formats as an exploded form' do
+              expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
+            end
+          end
+        end
+
+        context "'query' parameters of type 'array'" do
+          let(:id) { [3, 4, 5] }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'id', in: :query,
+                style: style,
+                explode: explode,
+                schema: { type: :array, items: { type: :integer } }
+              }
+            ]
+            allow(example).to receive(:id).and_return(id)
+          end
+
+          context 'form' do
+            let(:style) { :form }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3,4,5')
+              end
+            end
+          end
+
+          context "spaceDelimited" do
+            let(:style) { :spaceDelimited }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3%204%205')
+              end
+            end
+          end
+
+          context "pipeDelimited" do
+            let(:style) { :pipeDelimited }
+            context 'exploded' do
+              let(:explode) { true }
+              it 'formats as exploded form' do
+                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+              end
+            end
+
+            context 'not exploded' do
+              let(:explode) { false }
+              it 'formats as unexploded form' do
+                expect(request[:path]).to eq('/blogs?id=3|4|5')
+              end
+            end
+          end
+        end
+
+        context "'query' parameters with schema reference" do
+          let(:things) { 'foo' }
+          let(:swagger_doc) { { swagger: '3.0' } }
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'things', in: :query,
+                schema: { '$ref' => '#/components/schemas/FooType' }
+              }
+            ]
+            allow(example).to receive(:things).and_return(things)
+          end
+
+          it 'builds the query string' do
+            expect(request[:path]).to eq('/blogs?things=foo')
+          end
+        end
+
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
@@ -160,6 +326,21 @@ module Rswag
             end
           end
 
+          context 'missing body parameter' do
+            before do
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
+              allow(example).to receive(:comment).and_raise(NoMethodError, "undefined method 'comment'")
+              allow(example).to receive(:respond_to?).with(:'Content-Type')
+              allow(example).to receive(:respond_to?).with('comment').and_return(false)
+            end
+
+            it 'uses the referenced metadata to build the request' do
+              expect do
+                request[:payload]
+              end.to raise_error(Rswag::Specs::MissingParameterError, /Missing parameter 'comment'/)
+            end
+          end
+
           context 'form payload' do
             before do
               metadata[:operation][:consumes] = ['multipart/form-data']
@@ -198,6 +379,28 @@ module Rswag
 
             it "sets 'HTTP_ACCEPT' header to example value" do
               expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/xml')
+            end
+          end
+        end
+
+        context 'host header' do
+          context "explicit 'Host' value provided" do
+            before do
+              metadata[:operation][:host] = 'swagger.io'
+            end
+
+            it "sets 'Host' header" do
+              expect(request[:headers]).to eq('HTTP_HOST' => 'swagger.io')
+            end
+          end
+
+          context "no 'Host' value provided" do
+            before do
+              metadata[:operation][:host] = nil
+            end
+
+            it "does not set 'Host' header" do
+              expect(request[:headers]).to eq({})
             end
           end
         end
@@ -374,11 +577,44 @@ module Rswag
           end
         end
 
-        context 'global basePath' do
-          before { swagger_doc[:basePath] = '/api' }
+        context 'base path' do
+          context 'openapi 2.0' do
+            before { swagger_doc[:basePath] = '/api' }
 
-          it 'prepends to the path' do
-            expect(request[:path]).to eq('/api/blogs')
+            it 'prepends to the path' do
+              expect(request[:path]).to eq('/api/blogs')
+            end
+          end
+
+          context 'openapi 3.0' do
+            before do
+              swagger_doc[:servers] = [{
+                :url => "https://{defaultHost}",
+                :variables => {
+                  :defaultHost => {
+                    :default => "www.example.com"
+                  }
+                }
+              }]
+            end
+
+            it 'generates the path' do
+              expect(request[:path]).to eq('/blogs')
+            end
+          end
+
+          context 'openapi 3.0 with old config' do
+            let(:swagger_doc) { {:openapi => '3.0', :basePath => '/blogs' } }
+
+            before do
+              allow(ActiveSupport::Deprecation).to receive(:warn)
+            end
+
+            it 'generates the path' do
+              expect(request[:headers]).to eq({})
+              expect(ActiveSupport::Deprecation).to have_received(:warn)
+                .with('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
+            end
           end
         end
 
@@ -397,7 +633,7 @@ module Rswag
             allow(example).to receive(:api_key).and_return('foobar')
           end
 
-          it 'applieds the scheme by default' do
+          it 'applies the scheme by default' do
             expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end

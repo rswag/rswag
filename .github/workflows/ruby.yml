@@ -11,15 +11,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [2.6, 2.7, truffleruby-head]
-        rails: [5.2.4.4, 6.0.3.4]
+        ruby: [2.6, 2.7, 3.0, 3.1] # 2.6 is EOL March 31, 2022; kept for information only
+        rails: [5.2.6, 6.1.4.4, 7.0.1] # 5.2 EOL in 01 Jun 2022; kept for information only
+        exclude:
+        # excludes Rails 5.2.x on Ruby 3.0 and on 3.1 
+        # Note that 6.0.x should also exclude 3.0 and 3.1 but we're not testing it.
+        - rails: 5.2.6
+          ruby: 3.0
+        - rails: 5.2.6
+          ruby: 3.1
+        # Rails 7.0.1 requires >= 2.7.0, so excluding 2.6
+        - rails: 7.0.1
+          ruby: 2.6
     env:
       RAILS_VERSION: ${{ matrix.rails }}
 
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
-      with: { ruby-version: 2.6 }
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
     - uses: actions/cache@v2
       id: cache
@@ -31,6 +43,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        gem update --system
         bundle install
         cd rswag-ui && npm install
 

@@ -1,3 +1,11 @@
+---
+name: 🐛 Bug
+about: File a bug/issue with Rswag that is not working
+title: '[BUG] <title>'
+labels: Bug, Needs Triage
+assignees: ''
+---
+
 ## Describe the bug
 A clear and concise description of what the bug is.
 
@@ -15,3 +23,8 @@ Add any other context about the problem here.
 
 ## Rswag Version
 The version of rswag are you using.
+
+## Relates to which version of OAS (Open API Specification)
+- [ ] OAS2
+- [ ] OAS3
+- [ ] OAS3.1

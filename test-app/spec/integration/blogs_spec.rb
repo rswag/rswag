@@ -96,10 +96,25 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         schema '$ref' => '#/definitions/blog'
 
+        #Legacy
         examples 'application/json' => {
+          id: 1,
+          title: 'Hello legacy world!',
+          content: 'Hello legacy world and hello universe. Thank you all very much!!!',
+          thumbnail: 'legacy-thumbnail.png'
+        }
+
+        example 'application/json', :blog_example_1, {
           id: 1,
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
+          thumbnail: 'thumbnail.png'
+        }, "Summary of the example", "A longer description of a fine blog post about a wonderful universe!"
+
+        example 'application/json', :blog_example_2, {
+          id: 1,
+          title: 'Another fine example!',
+          content: 'Oh... what a fine example this is, indeed, a fine example!',
           thumbnail: 'thumbnail.png'
         }
 
@@ -125,7 +140,13 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
-      parameter name: :file, :in => :formData, :type => :file, required: true
+      parameter(
+        name: :file,
+        description: "The content of the blog thumbnail",
+        in: :formData,
+        type: :file,
+        required: true
+      )
 
       response '200', 'blog updated' do
         let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }

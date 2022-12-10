@@ -14,9 +14,7 @@
         "operationId": "testBasicAuth",
         "security": [
           {
-            "basic_auth": [
-
-            ]
+            "basic_auth": []
           }
         ],
         "responses": {
@@ -38,9 +36,7 @@
         "operationId": "testApiKey",
         "security": [
           {
-            "api_key": [
-
-            ]
+            "api_key": []
           }
         ],
         "responses": {
@@ -62,12 +58,8 @@
         "operationId": "testBasicAndApiKey",
         "security": [
           {
-            "basic_auth": [
-
-            ],
-            "api_key": [
-
-            ]
+            "basic_auth": [],
+            "api_key": []
           }
         ],
         "responses": {
@@ -88,9 +80,7 @@
         ],
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "blog created"
@@ -147,9 +137,7 @@
         ],
         "description": "Creates a flexible blog from provided data",
         "operationId": "createFlexibleBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "flexible blog created",
@@ -221,11 +209,33 @@
             },
             "content": {
               "application/json": {
-                "example": {
-                  "id": 1,
-                  "title": "Hello world!",
-                  "content": "Hello world and hello universe. Thank you all very much!!!",
-                  "thumbnail": "thumbnail.png"
+                "examples": {
+                  "example_0": {
+                    "value": {
+                      "id": 1,
+                      "title": "Hello legacy world!",
+                      "content": "Hello legacy world and hello universe. Thank you all very much!!!",
+                      "thumbnail": "legacy-thumbnail.png"
+                    }
+                  },
+                  "blog_example_1": {
+                    "value": {
+                      "id": 1,
+                      "title": "Hello world!",
+                      "content": "Hello world and hello universe. Thank you all very much!!!",
+                      "thumbnail": "thumbnail.png"
+                    },
+                    "summary": "Summary of the example",
+                    "description": "A longer description of a fine blog post about a wonderful universe!"
+                  },
+                  "blog_example_2": {
+                    "value": {
+                      "id": 1,
+                      "title": "Another fine example!",
+                      "content": "Oh... what a fine example this is, indeed, a fine example!",
+                      "thumbnail": "thumbnail.png"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/definitions/blog"
@@ -257,9 +267,7 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "blog updated"
@@ -273,7 +281,8 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "description": "The content of the blog thumbnail"
         }
       }
     }

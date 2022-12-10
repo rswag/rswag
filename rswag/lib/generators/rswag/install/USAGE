@@ -6,5 +6,5 @@ Example:
 
     This will create:
         spec/swagger_helper.rb
-        config/initializers/rswag-api.rb
-        config/initializers/rswag-ui.rb
+        config/initializers/rswag_api.rb
+        config/initializers/rswag_ui.rb
