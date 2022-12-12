@@ -451,7 +451,7 @@ module Rswag
 
         context 'apiKey' do
           before do
-            swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
+            swagger_doc[:securityDefinitions] = { apiKey: { type: 'apiKey', name: 'api_key', in: key_location } }
             metadata[:operation][:security] = [apiKey: []]
             allow(example).to receive(:api_key).and_return('foobar')
           end
@@ -460,12 +460,22 @@ module Rswag
             let(:key_location) { :query }
 
             it 'adds name and example value to the query string' do
+              swagger_doc[:securityDefinitions][:apiKey][:type] = :apiKey
+              expect(request[:path]).to eq('/blogs?api_key=foobar')
+            end
+
+            it 'adds name and example value to the query string' do
               expect(request[:path]).to eq('/blogs?api_key=foobar')
             end
           end
 
           context 'in header' do
             let(:key_location) { :header }
+
+            it 'adds name and example value to the headers' do
+              swagger_doc[:securityDefinitions][:apiKey][:type] = :apiKey
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+            end
 
             it 'adds name and example value to the headers' do
               expect(request[:headers]).to eq('api_key' => 'foobar')
@@ -481,6 +491,12 @@ module Rswag
               ]
               allow(example).to receive(:q1).and_return('foo')
               allow(example).to receive(:api_key).and_return('foobar')
+            end
+
+            it 'adds authorization parameter only once' do
+              swagger_doc[:securityDefinitions][:apiKey][:type] = :apiKey
+              expect(request[:headers]).to eq('api_key' => 'foobar')
+              expect(metadata[:operation][:parameters].size).to eq 2
             end
 
             it 'adds authorization parameter only once' do
