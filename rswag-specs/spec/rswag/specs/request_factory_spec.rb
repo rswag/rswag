@@ -589,8 +589,11 @@ module Rswag
           context 'openapi 3.0' do
             before do
               swagger_doc[:servers] = [{
-                :url => "https://{defaultHost}",
+                :url => "{protocol}://{defaultHost}",
                 :variables => {
+                  :protocol => {
+                    :default => :https
+                  },
                   :defaultHost => {
                     :default => "www.example.com"
                   }

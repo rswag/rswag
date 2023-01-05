@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Invalid URI error when specifying protocol within server configuration
 - Fix ADDITIONAL_RSPEC_OPTS to always apply (https://github.com/rswag/rswag/pull/584)
 
 ### Documentation
