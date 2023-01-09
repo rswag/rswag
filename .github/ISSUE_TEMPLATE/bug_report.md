@@ -21,10 +21,14 @@ If applicable, add screenshots to help explain your problem.
 ## Additional context
 Add any other context about the problem here.
 
-## Rswag Version
-The version of rswag are you using.
+## Dependency versions
+The version of are you using for:
+* Rswag:
+* RSpec:
+* Rails:
+* Ruby:
 
-## Relates to which version of OAS (Open API Specification)
+## Relates to which version of OAS (OpenAPI Specification)
 - [ ] OAS2
 - [ ] OAS3
 - [ ] OAS3.1
