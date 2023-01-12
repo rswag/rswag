@@ -9,11 +9,7 @@ module Rswag
     class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
       ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
 
-      if RSPEC_VERSION > 2
-        ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
-      else
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
-      end
+      ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
       def initialize(output, config = Rswag::Specs.config)
         @output = output
@@ -23,11 +19,7 @@ module Rswag
       end
 
       def example_group_finished(notification)
-        metadata = if RSPEC_VERSION > 2
-          notification.group.metadata
-        else
-          notification.metadata
-        end
+        metadata = notification.group.metadata
         # metadata[:document] has to be explicitly false to skip generating docs
         return if metadata[:document] == false
         return unless metadata.key?(:response)
