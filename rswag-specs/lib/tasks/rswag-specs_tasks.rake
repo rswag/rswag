@@ -18,11 +18,8 @@ namespace :rswag do
 
       t.rspec_opts = [additional_rspec_opts]
 
-      if Rswag::Specs::RSPEC_VERSION > 2 && Rswag::Specs.config.rswag_dry_run
+      if Rswag::Specs.config.swagger_dry_run
         t.rspec_opts += ['--format Rswag::Specs::OpenapiFormatter', '--dry-run', '--order defined']
-      else
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
-        t.rspec_opts += ['--format Rswag::Specs::OpenapiFormatter', '--order defined']
       end
     end
   end
