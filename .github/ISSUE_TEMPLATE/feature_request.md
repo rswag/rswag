@@ -24,6 +24,5 @@ A clear and concise description of any alternative solutions or features you've 
 Add any other context or screenshots about the feature request here.
 
 ## Relates to which version of OAS (OpenAPI Specification)
-- [ ] OAS2
 - [ ] OAS3
 - [ ] OAS3.1

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'generator_spec'
-require 'generators/rspec/swagger_generator'
+require 'generators/rspec/openapi_generator'
 require 'tmpdir'
 
 module Rspec
-  describe SwaggerGenerator do
+  describe OpenapiGenerator do
     include GeneratorSpec::TestCase
     destination Dir.mktmpdir
 
@@ -18,7 +18,7 @@ module Rspec
     after(:all) do
     end
 
-    it 'installs the swagger_helper for rspec' do
+    it 'installs the openapi_helper for rspec' do
       allow_any_instance_of(Rswag::RouteParser).to receive(:routes).and_return(fake_routes)
       run_generator ['Posts::CommentsController']
 

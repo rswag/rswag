@@ -25,7 +25,7 @@ module Rswag
         @basic_auth_enabled = false
       end
 
-      def swagger_endpoint(url, name)
+      def openapi_endpoint(url, name)
         @config_object[:urls] ||= []
         @config_object[:urls] << { url: url, name: name }
       end
