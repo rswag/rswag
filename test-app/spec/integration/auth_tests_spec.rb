@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'swagger_helper'
+require 'openapi_helper'
 
-RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json' do
   before do
     allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
   end

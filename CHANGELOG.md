@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- Drop support for OpenAPI v2 (Swagger) (https://github.com/rswag/rswag/pull/574)
+
 ### Documentation
 
 ## [2.11.0]

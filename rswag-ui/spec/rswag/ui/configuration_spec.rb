@@ -3,7 +3,7 @@ require 'rswag/ui/configuration'
 require_relative '../../spec_helper'
 
 RSpec.describe Rswag::Ui::Configuration do
-  describe '#swagger_endpoints'
+  describe '#openapi_endpoints'
 
   describe '#basic_auth_enabled' do
     context 'when unspecified' do

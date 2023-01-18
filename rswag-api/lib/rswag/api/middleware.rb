@@ -15,17 +15,17 @@ module Rswag
         path = env['PATH_INFO']
         # Sanitize the filename for directory traversal by expanding, and ensuring
         # its starts with the root directory.
-        filename = File.expand_path(File.join(@config.resolve_swagger_root(env), path))
-        unless filename.start_with? @config.resolve_swagger_root(env).to_s
+        filename = File.expand_path(File.join(@config.resolve_openapi_root(env), path))
+        unless filename.start_with? @config.resolve_openapi_root(env).to_s
           return @app.call(env)
         end
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
-          swagger = parse_file(filename)
-          @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
+          openapi = parse_file(filename)
+          @config.openapi_filter.call(openapi, env) unless @config.openapi_filter.nil?
           mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
-          headers = { 'Content-Type' => mime }.merge(@config.swagger_headers || {})
-          body = unload_swagger(filename, swagger)
+          headers = { 'Content-Type' => mime }.merge(@config.openapi_headers || {})
+          body = unload_openapi(filename, openapi)
 
           return [
             '200',
@@ -55,11 +55,11 @@ module Rswag
         JSON.parse(File.read(filename))
       end
 
-      def unload_swagger(filename, swagger)
+      def unload_openapi(filename, openapi)
         if /\.ya?ml$/ === filename
-          YAML.dump(swagger)
+          YAML.dump(openapi)
         else
-          JSON.dump(swagger)
+          JSON.dump(openapi)
         end
       end
     end
