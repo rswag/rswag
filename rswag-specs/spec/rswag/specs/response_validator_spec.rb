@@ -109,6 +109,36 @@ module Rswag
           it { expect { call }.to raise_error(/Expected response body/) }
         end
 
+        context "when response body has additional properties" do
+          before { response.body = '{"foo":"Some comment", "text":"bar"}' }
+
+          context "with strict schema validation enabled" do
+            let(:swagger_strict_schema_validation) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with strict schema validation disabled" do
+            let(:swagger_strict_schema_validation) { false }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with strict schema validation disabled in config but enabled in metadata" do
+            let(:swagger_strict_schema_validation) { false }
+            let(:metadata) { super().merge(swagger_strict_schema_validation: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with strict schema validation enabled in config but disabled in metadata" do
+            let(:swagger_strict_schema_validation) { true }
+            let(:metadata) { super().merge(swagger_strict_schema_validation: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
+        end
+
         context 'referenced schemas' do
           context 'swagger 2.0' do
             before do

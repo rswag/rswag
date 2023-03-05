@@ -218,6 +218,70 @@ end
 
 Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
 
+### Strict schema validation
+
+By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_strict_schema_validation = true
+end
+```
+
+or set the option per individual example:
+
+```ruby
+# using in run_test!
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!(strict: true)
+      end
+    end
+  end
+end
+
+# using in response block
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+
+      response '201', 'blog created', swagger_strict_schema_validation: true do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!
+      end
+    end
+  end
+end
+
+# using in an explicit example
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        before do |example|
+          submit_request(example.metadata)
+        end
+
+        it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+          assert_response_matches_metadata(example.metadata)
+        end
+      end
+    end
+  end
+end
+```
+
 ### Null Values ###
 
 This library is currently using JSON::Draft4 for validation of response models. Nullable properties can be supported with the non-standard property 'x-nullable' to a definition to allow null/nil values to pass. Or you can add the new standard ```nullable``` property to a definition.

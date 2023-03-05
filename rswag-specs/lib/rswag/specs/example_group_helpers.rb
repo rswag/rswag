@@ -115,6 +115,12 @@ module Rswag
         )
       end
 
+      #
+      # Perform request and assert response matches swagger definitions
+      #
+      # @param strict: nil [Boolean] whether to validate response against given schema strictly
+      # @param &block [Proc] you can make additional assertions within that block
+      # @return [void]
       def run_test!(&block)
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
@@ -123,7 +129,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response", rswag: true do
-            assert_response_matches_metadata(metadata)
+            assert_response_matches_metadata(metadata.merge(options))
             block.call(response) if block_given?
           end
         else
@@ -132,7 +138,7 @@ module Rswag
           end
 
           it "returns a #{metadata[:response][:code]} response", rswag: true do |example|
-            assert_response_matches_metadata(example.metadata, &block)
+            assert_response_matches_metadata(example.metadata.merge(options), &block)
             example.instance_exec(response, &block) if block_given?
           end
         end
