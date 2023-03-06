@@ -58,6 +58,9 @@ module Rswag
                 if is_hash && value[:parameters]
                   schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
                   mime_list = value[:consumes] || doc[:consumes]
+
+                  value[:parameters].each {|p| p.delete(:getter) } # remove service field
+
                   if value && schema_param && mime_list
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
