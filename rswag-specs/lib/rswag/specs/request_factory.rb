@@ -106,7 +106,7 @@ module Rswag
         server = swagger_doc[:servers].first
         variables = {}
         server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
-        base_path = server[:url].gsub(/\{(.*?)\}/) { |name| variables[name.to_sym] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym] }
         URI(base_path).path
       end
 

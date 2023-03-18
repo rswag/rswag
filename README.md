@@ -313,8 +313,11 @@ RSpec.configure do |config|
       },
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: '{protocol}://{defaultHost}',
           variables: {
+            protocol: {
+              default: :https
+            },
             defaultHost: {
                 default: 'www.example.com'
             }
