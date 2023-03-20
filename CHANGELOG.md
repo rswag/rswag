@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
-
+- Added option --spec_path to the generator command with requests as default value.
 ### Changed
 
 - Remove commented code (https://github.com/rswag/rswag/pull/576)
