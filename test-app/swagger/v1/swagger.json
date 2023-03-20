@@ -277,7 +277,12 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "type": "file"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "file"
+                  }
+                }
               }
             }
           },
