@@ -163,7 +163,8 @@ There is also a generator which can help get you started `rails generate rspec:s
       end
     end
     ```
-
+By default, the above command will create spec under _spec/requests_ folder. You can pass an option to change this default path as in `rails generate rspec:swagger API::BlogsController --spec_path integration`.
+This will create the spec file _spec/integration/blogs_spec.rb_
 
 4. Generate the Swagger JSON file(s)
 
