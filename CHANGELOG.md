@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Fix ADDITIONAL_RSPEC_OPTS to always apply (https://github.com/rswag/rswag/pull/584)
+- Fix apiKey can not be declared as `String` (https://github.com/rswag/rswag/pull/589)
 
 ### Documentation
 
