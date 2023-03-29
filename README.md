@@ -988,9 +988,9 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 This will run the swagger editor in the docker daemon and can be accessed
 at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
 
-### Custom :getter option for paramater
+### Custom :getter option for parameter
 
-To avoid conflicts with rspec `included` matcher and other possible intersections like `status` method:
+To avoid conflicts with Rspec [`include`](https://github.com/rspec/rspec-rails/blob/40261bb72875c00a6e4a0ca2ac697b660d4e8d9c/spec/support/generators.rb#L18) matcher and other possible intersections like `status` method:
 
 ```
 ...

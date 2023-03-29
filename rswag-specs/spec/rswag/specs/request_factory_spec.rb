@@ -98,7 +98,7 @@ module Rswag
               allow(example).to receive(:q3_status).and_return(123)
             end
 
-            it 'builds the query string using getter ethod' do
+            it 'builds the query string using getter method' do
               expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&status=123')
             end
           end
@@ -108,45 +108,45 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [
               { name: 'things', in: :query, type: :array, collectionFormat: collection_format },
-              { name: 'nums', in: :query, type: :array, collectionFormat: collection_format, getter: :nums_param },
+              { name: 'numbers', in: :query, type: :array, collectionFormat: collection_format, getter: :magic_numbers },
             ]
             allow(example).to receive(:things).and_return(['foo', 'bar'])
-            allow(example).to receive(:nums).and_return(nil)
-            allow(example).to receive(:nums_param).and_return([0, 1])
+            allow(example).to receive(:magic_numbers).and_return([0, 1])
+            expect(example).not_to receive(:numbers)
           end
 
           context 'collectionFormat = csv' do
             let(:collection_format) { :csv }
             it 'formats as comma separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo,bar&nums=0,1')
+              expect(request[:path]).to eq('/blogs?things=foo,bar&numbers=0,1')
             end
           end
 
           context 'collectionFormat = ssv' do
             let(:collection_format) { :ssv }
             it 'formats as space separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo bar&nums=0 1')
+              expect(request[:path]).to eq('/blogs?things=foo bar&numbers=0 1')
             end
           end
 
           context 'collectionFormat = tsv' do
             let(:collection_format) { :tsv }
             it 'formats as tab separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo\tbar&nums=0\t1')
+              expect(request[:path]).to eq('/blogs?things=foo\tbar&numbers=0\t1')
             end
           end
 
           context 'collectionFormat = pipes' do
             let(:collection_format) { :pipes }
             it 'formats as pipe separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo|bar&nums=0|1')
+              expect(request[:path]).to eq('/blogs?things=foo|bar&numbers=0|1')
             end
           end
 
           context 'collectionFormat = multi' do
             let(:collection_format) { :multi }
             it 'formats as multiple parameter instances' do
-              expect(request[:path]).to eq('/blogs?things=foo&things=bar&nums=0&nums=1')
+              expect(request[:path]).to eq('/blogs?things=foo&things=bar&numbers=0&numbers=1')
             end
           end
         end
