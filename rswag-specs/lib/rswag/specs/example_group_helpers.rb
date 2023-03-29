@@ -118,10 +118,10 @@ module Rswag
       #
       # Perform request and assert response matches swagger definitions
       #
-      # @param strict: nil [Boolean] whether to validate response against given schema strictly
+      # @param swagger_strict_schema_validation: nil [Boolean] whether to validate response against given schema strictly
       # @param &block [Proc] you can make additional assertions within that block
       # @return [void]
-      def run_test!(&block)
+      def run_test!(**options, &block)
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
           before do
