@@ -240,7 +240,7 @@ describe 'Blogs API' do
       response '201', 'blog created' do
         let(:blog) { { title: 'foo', content: 'bar' } }
 
-        run_test!(strict: true)
+        run_test!(swagger_strict_schema_validation: true)
       end
     end
   end
