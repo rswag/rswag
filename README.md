@@ -189,6 +189,20 @@ If you've used [Swagger](http://swagger.io/specification) before, then the synta
 
 Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
 
+If you want to add metadata to the example, you can pass keyword arguments to the __run_test!__ method:
+
+```ruby
+# to run particular test case
+response '201', 'blog created' do
+  run_test! focus: true
+end
+
+# to write vcr cassette
+response '201', 'blog created' do
+  run_test! vcr: true
+end
+```
+
 If you want to do additional validation on the response, pass a block to the __run_test!__ method:
 
 ```ruby
@@ -217,6 +231,70 @@ end
 ```
 
 Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
+
+### Strict schema validation
+
+By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_strict_schema_validation = true
+end
+```
+
+or set the option per individual example:
+
+```ruby
+# using in run_test!
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!(swagger_strict_schema_validation: true)
+      end
+    end
+  end
+end
+
+# using in response block
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+
+      response '201', 'blog created', swagger_strict_schema_validation: true do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!
+      end
+    end
+  end
+end
+
+# using in an explicit example
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        before do |example|
+          submit_request(example.metadata)
+        end
+
+        it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+          assert_response_matches_metadata(example.metadata)
+        end
+      end
+    end
+  end
+end
+```
 
 ### Null Values ###
 

@@ -139,7 +139,12 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         }
 
         let(:id) { blog.id }
+
         run_test!
+
+        context 'when swagger_strict_schema_validation is true' do
+          run_test!(swagger_strict_schema_validation: true)
+        end
       end
 
       response '404', 'blog not found' do
