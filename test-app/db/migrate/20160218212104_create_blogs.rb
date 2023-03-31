@@ -10,6 +10,7 @@ class CreateBlogs < migration_class
       t.string :title
       t.text :content
       t.string :thumbnail
+      t.string :status
 
       t.timestamps
     end

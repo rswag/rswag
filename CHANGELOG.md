@@ -7,7 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+
 - Added option --spec_path to the generator command with requests as default value. (https://github.com/rswag/rswag/pull/607)
+- Add support for `:getter` parameter option to explicitly define custom parameter getter method and avoid RSpec conflicts with `include` matcher and `status` method (https://github.com/rswag/rswag/pull/605)
+
 ### Changed
 
 - Remove commented code (https://github.com/rswag/rswag/pull/576)

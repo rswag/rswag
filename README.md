@@ -624,7 +624,7 @@ end
 
 #### Nullable or Optional Response Headers ####
 
-You can include `nullable` or `required` to specify whether a response header must be present or may be null. When `nullable` is not included, the headers validation validates that the header response is non-null. When `required` is not included, the headers validation validates the the header response is passed. 
+You can include `nullable` or `required` to specify whether a response header must be present or may be null. When `nullable` is not included, the headers validation validates that the header response is non-null. When `required` is not included, the headers validation validates the the header response is passed.
 
 ```ruby
 # spec/integration/comments_spec.rb
@@ -987,3 +987,21 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 ```
 This will run the swagger editor in the docker daemon and can be accessed
 at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
+
+### Custom :getter option for parameter
+
+To avoid conflicts with Rspec [`include`](https://github.com/rspec/rspec-rails/blob/40261bb72875c00a6e4a0ca2ac697b660d4e8d9c/spec/support/generators.rb#L18) matcher and other possible intersections like `status` method:
+
+```
+...
+parameter name: :status,
+          getter: :filter_status,
+          in: :query,
+          schema: {
+            type: :string,
+            enum: %w[one two three],
+          }, required: false
+
+let(:status) { nil } # will not be used in query string
+let(:filter_status) { 'one' } # `&status=one` will be provided in final query
+```

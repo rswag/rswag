@@ -16,7 +16,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       produces 'application/json'
       parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
 
-      let(:blog) { { title: 'foo', content: 'bar' } }
+      let(:blog) { { title: 'foo', content: 'bar', status: 'published' } }
 
       response '201', 'blog created' do
         # schema '$ref' => '#/definitions/blog'
@@ -39,11 +39,31 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: :keywords, in: :query, type: 'string'
+      parameter name: :status, in: :query, type: 'string', getter: :blog_status
+
+      before do
+        Blog.create(title: 'foo', content: 'hello world', status: 'published')
+      end
 
       let(:keywords) { 'foo bar' }
+      let(:blog_status) { 'published' }
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+
+        run_test! do
+          expect(JSON.parse(response.body).size).to eq(1)
+        end
+      end
+
+      response '200', 'no content' do
+        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+
+        let(:blog_status) { 'invalid' }
+
+        run_test! do
+          expect(JSON.parse(response.body).size).to eq(0)
+        end
       end
 
       response '406', 'unsupported accept header' do

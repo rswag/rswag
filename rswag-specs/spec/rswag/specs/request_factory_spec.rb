@@ -31,15 +31,15 @@ module Rswag
         end
 
         context "'path' parameters" do
-          context 'when `name` parameter key is required, but not defined within example group' do
-            before do
-              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
-              metadata[:operation][:parameters] = [
-                { name: 'blog_id', in: :path, type: :number },
-                { name: 'id', in: :path, type: :number }
-              ]
-            end
+          before do
+            metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
+            metadata[:operation][:parameters] = [
+              { name: 'blog_id', in: :path, type: :number },
+              { name: 'id', in: :path, type: :number }
+            ]
+          end
 
+          context 'when `name` parameter key is required, but not defined within example group' do
             it "explicitly warns user about missing parameter, instead of giving generic error" do
               expect { request[:path] }.not_to raise_error(/undefined method/)
               expect { request[:path] }.not_to raise_error(/is not available from within an example/)
@@ -49,17 +49,27 @@ module Rswag
 
           context 'when `name` is defined' do
             before do
-              metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
-              metadata[:operation][:parameters] = [
-                { name: 'blog_id', in: :path, type: :number },
-                { name: 'id', in: :path, type: :number }
-              ]
               allow(example).to receive(:blog_id).and_return(1)
               allow(example).to receive(:id).and_return(2)
             end
 
             it 'builds the path from example values' do
               expect(request[:path]).to eq('/blogs/1/comments/2')
+            end
+
+            context 'when `getter is defined`' do
+              before do
+                metadata[:operation][:parameters] = [
+                  { name: 'blog_id', in: :path, type: :number },
+                  { name: 'id', in: :path, type: :number, getter: :param_id }
+                ]
+
+                allow(example).to receive(:param_id).and_return(123)
+              end
+
+              it 'builds the path using getter method' do
+                expect(request[:path]).to eq('/blogs/1/comments/123')
+              end
             end
           end
         end
@@ -77,48 +87,66 @@ module Rswag
           it 'builds the query string from example values' do
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
           end
+
+          context 'when `getter is defined`' do
+            before do
+              metadata[:operation][:parameters] << {
+                name: 'status', in: :query, type: :string, getter: :q3_status
+              }
+
+              allow(example).to receive(:status).and_return(nil)
+              allow(example).to receive(:q3_status).and_return(123)
+            end
+
+            it 'builds the query string using getter method' do
+              expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&status=123')
+            end
+          end
         end
 
         context "'query' parameters of type 'array'" do
           before do
             metadata[:operation][:parameters] = [
-              { name: 'things', in: :query, type: :array, collectionFormat: collection_format }
+              { name: 'things', in: :query, type: :array, collectionFormat: collection_format },
+              { name: 'numbers', in: :query, type: :array, collectionFormat: collection_format, getter: :magic_numbers },
             ]
             allow(example).to receive(:things).and_return(['foo', 'bar'])
+            allow(example).to receive(:magic_numbers).and_return([0, 1])
+            expect(example).not_to receive(:numbers)
           end
 
           context 'collectionFormat = csv' do
             let(:collection_format) { :csv }
             it 'formats as comma separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo,bar')
+              expect(request[:path]).to eq('/blogs?things=foo,bar&numbers=0,1')
             end
           end
 
           context 'collectionFormat = ssv' do
             let(:collection_format) { :ssv }
             it 'formats as space separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo bar')
+              expect(request[:path]).to eq('/blogs?things=foo bar&numbers=0 1')
             end
           end
 
           context 'collectionFormat = tsv' do
             let(:collection_format) { :tsv }
             it 'formats as tab separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo\tbar')
+              expect(request[:path]).to eq('/blogs?things=foo\tbar&numbers=0\t1')
             end
           end
 
           context 'collectionFormat = pipes' do
             let(:collection_format) { :pipes }
             it 'formats as pipe separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo|bar')
+              expect(request[:path]).to eq('/blogs?things=foo|bar&numbers=0|1')
             end
           end
 
           context 'collectionFormat = multi' do
             let(:collection_format) { :multi }
             it 'formats as multiple parameter instances' do
-              expect(request[:path]).to eq('/blogs?things=foo&things=bar')
+              expect(request[:path]).to eq('/blogs?things=foo&things=bar&numbers=0&numbers=1')
             end
           end
         end
@@ -271,12 +299,16 @@ module Rswag
 
         context "'header' parameters" do
           before do
-            metadata[:operation][:parameters] = [{ name: 'Api-Key', in: :header, type: :string }]
+            metadata[:operation][:parameters] = [
+              { name: 'Api-Key', in: :header, type: :string },
+              { name: 'Token', getter: :token_param, in: :header, type: :string }
+            ]
             allow(example).to receive(:'Api-Key').and_return('foobar')
+            allow(example).to receive(:'token_param').and_return('my_token')
           end
 
           it 'adds names and example values to headers' do
-            expect(request[:headers]).to eq({ 'Api-Key' => 'foobar' })
+            expect(request[:headers]).to eq({ 'Api-Key' => 'foobar', 'Token' => 'my_token' })
           end
         end
 

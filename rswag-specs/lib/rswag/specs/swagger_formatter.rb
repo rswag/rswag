@@ -58,6 +58,7 @@ module Rswag
                 if is_hash && value[:parameters]
                   schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
                   mime_list = value[:consumes] || doc[:consumes]
+
                   if value && schema_param && mime_list
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
@@ -207,10 +208,12 @@ module Rswag
       end
 
       def remove_invalid_operation_keys!(value)
-        is_hash = value.is_a?(Hash)
-        value.delete(:consumes) if is_hash && value[:consumes]
-        value.delete(:produces) if is_hash && value[:produces]
-        value.delete(:request_examples) if is_hash && value[:request_examples]
+        return unless value.is_a?(Hash)
+
+        value.delete(:consumes) if value[:consumes]
+        value.delete(:produces) if value[:produces]
+        value.delete(:request_examples) if value[:request_examples]
+        value[:parameters].each { |p| p.delete(:getter) } if value[:parameters]
       end
     end
   end
