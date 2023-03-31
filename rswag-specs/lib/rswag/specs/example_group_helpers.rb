@@ -56,16 +56,16 @@ module Rswag
       end
 
 
-      def request_body_example(value:, summary: nil, name: nil) 
-        if metadata.key?(:operation) 
+      def request_body_example(value:, summary: nil, name: nil)
+        if metadata.key?(:operation)
           metadata[:operation][:request_examples] ||= []
-          example = { value: value } 
-          example[:summary] = summary if summary 
+          example = { value: value }
+          example[:summary] = summary if summary
           # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
           example[:name] = name || metadata[:operation][:request_examples].length()
           metadata[:operation][:request_examples] << example
-        end 
-      end 
+        end
+      end
 
       def response(code, description, metadata = {}, &block)
         metadata[:response] = { code: code, description: description }
@@ -118,7 +118,7 @@ module Rswag
       #
       # Perform request and assert response matches swagger definitions
       #
-      # @param swagger_strict_schema_validation: nil [Boolean] whether to validate response against given schema strictly
+      # @param options [Hash] options to pass to the `it` method
       # @param &block [Proc] you can make additional assertions within that block
       # @return [void]
       def run_test!(**options, &block)
