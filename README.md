@@ -189,6 +189,20 @@ If you've used [Swagger](http://swagger.io/specification) before, then the synta
 
 Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
 
+If you want to add metadata to the example, you can pass keyword arguments to the __run_test!__ method:
+
+```ruby
+# to run particular test case
+response '201', 'blog created' do
+  run_test! focus: true
+end
+
+# to write vcr cassette
+response '201', 'blog created' do
+  run_test! vcr: true
+end
+```
+
 If you want to do additional validation on the response, pass a block to the __run_test!__ method:
 
 ```ruby

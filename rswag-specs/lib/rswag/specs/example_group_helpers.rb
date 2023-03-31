@@ -122,14 +122,16 @@ module Rswag
       # @param &block [Proc] you can make additional assertions within that block
       # @return [void]
       def run_test!(**options, &block)
+        options[:rswag] = true unless options.key?(:rswag)
+
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
           before do
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", rswag: true do
-            assert_response_matches_metadata(metadata.merge(options))
+          it "returns a #{metadata[:response][:code]} response", **options do
+            assert_response_matches_metadata(metadata)
             block.call(response) if block_given?
           end
         else
@@ -137,8 +139,8 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", rswag: true do |example|
-            assert_response_matches_metadata(example.metadata.merge(options), &block)
+          it "returns a #{metadata[:response][:code]} response", **options do |example|
+            assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end
         end
