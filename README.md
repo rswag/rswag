@@ -1043,7 +1043,26 @@ rails g rswag:ui:custom
 
 ```
 
-This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_
+This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_. For example, it will let you to add your own `<title>` and favicon.
+
+To replace the *"Swagger sponsored by"* brand image, you can add the following script to the generated file:
+
+```html
+<script>
+  (function () {
+  window.addEventListener("load", function () {
+      setTimeout(function () {
+
+          var logo = document.getElementsByClassName('link');
+
+          logo[0].children[0].alt = "My API";
+          logo[0].children[0].src = "/favicon.png";
+      });
+  }); })();
+</script>
+```
+
+The above script would expect to find an image named `favicon.png` in the public folder.
 
 ### Serve UI Assets Directly from your Web Server
 
