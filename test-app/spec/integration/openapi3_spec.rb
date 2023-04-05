@@ -6,7 +6,7 @@ require 'rswag/specs/swagger_formatter'
 # https://swagger.io/docs/specification/about/
 
 RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.json' do
-  before do |example|
+  def generate_swagger_doc(example)
     output = double('output').as_null_object
     swagger_root = File.expand_path('tmp/swagger', __dir__)
     config = double('config', swagger_root: swagger_root, get_swagger_doc: swagger_doc )
@@ -14,6 +14,10 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
 
     example_group = OpenStruct.new(group: OpenStruct.new(metadata: example.metadata))
     formatter.example_group_finished(example_group)
+  end
+
+  before do |example|
+    generate_swagger_doc(example) unless manual_swagger_doc
   end
 
   # Framework definition, to be overridden for contexts
@@ -26,6 +30,7 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
       components: api_components
     }
   end
+  let(:manual_swagger_doc) { false }
   let(:api_openapi) { '3.0.3' }
   let(:api_servers) {[{ url: "https://api.example.com/foo" }]}
   let(:api_produces) { ['application/json'] }
@@ -104,6 +109,34 @@ RSpec.describe 'Generated OpenApi', type: :request, swagger_doc: 'v3/openapi.jso
             pending "Not yet implemented?"
             tree = swagger_doc.dig(:paths, "/stubs", :get, :responses, '200', :content)
             expect(tree).to have_key('application/json')
+          end
+        end
+      end
+    end
+
+    path '/no_produces_stubs_with_schema' do
+      let(:manual_swagger_doc) { true }
+
+      get 'a summary' do
+        tags 'Media Types'
+        produces
+
+        response '200', 'OK' do
+          schema type: :integer
+
+          it "outputs warning if no produces but schema specified" do |example|
+            expect(STDOUT).to receive(:puts).with(<<~TXT)
+              WARNING: Ommiting schema for `./spec/integration/openapi3_spec.rb:127`. No mime type specified for response schema.
+              Use `produces 'application/json'` in `response` section or define in `spec/swagger_helper.rb`:
+              ```
+              config.swagger_docs = {
+                "v1/swagger.yaml" => {
+                  produces: "application/json",
+                  ...
+              ```
+            TXT
+
+            generate_swagger_doc(example)
           end
         end
       end

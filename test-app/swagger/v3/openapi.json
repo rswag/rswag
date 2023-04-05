@@ -48,6 +48,19 @@
         }
       }
     },
+    "/no_produces_stubs_with_schema": {
+      "get": {
+        "summary": "a summary",
+        "tags": [
+          "Media Types"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/stubs/{a_param}": {
       "get": {
         "summary": "a summary",

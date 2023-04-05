@@ -138,6 +138,18 @@ module Rswag
         # Accept header
         mime_list = Array(metadata[:operation][:produces] || swagger_doc[:produces])
         target_node = metadata[:response]
+        if !target_node[:schema].nil? && mime_list.empty?
+          puts <<~TXT
+            WARNING: Ommiting schema for `#{metadata[:location]}`. No mime type specified for response schema.
+            Use `produces 'application/json'` in `response` section or define in `spec/swagger_helper.rb`:
+            ```
+            config.swagger_docs = {
+              "v1/swagger.yaml" => {
+                produces: "application/json",
+                ...
+            ```
+          TXT
+        end
         upgrade_content!(mime_list, target_node)
         metadata[:response].delete(:schema)
       end
