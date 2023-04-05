@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added option --spec_path to the generator command with requests as default value (https://github.com/rswag/rswag/pull/607)
 - Add support for `:getter` parameter option to explicitly define custom parameter getter method and avoid RSpec conflicts with `include` matcher and `status` method (https://github.com/rswag/rswag/pull/605)
 - Added support strict schema validation and allow to pass metadata to run_test! (https://github.com/rswag/rswag/pull/604)
+- Added the `WARNING` output in case `produces` is missing for any of responses. (https://github.com/rswag/rswag/pull/620)
 
 ### Changed
 
