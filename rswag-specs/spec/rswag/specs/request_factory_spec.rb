@@ -151,6 +151,28 @@ module Rswag
           end
         end
 
+        context "'query' parameter of format 'datetime'" do
+          let(:date_time) { DateTime.now.to_s }
+
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'date_time', in: :query, type: :string, format: :datetime, }
+            ]
+            allow(example).to receive(:date_time).and_return(DateTime.now.to_s)
+          end
+
+          it 'formats the datetime properly' do
+            expect(request[:path]).to eq("/blogs?date_time=#{CGI.escape(DateTime.now.to_s)}")
+          end
+
+          context "iso8601 format" do
+            let(:date_time) { DateTime.now.iso8601 }
+            it 'is also formated properly' do
+              expect(request[:path]).to eq("/blogs?date_time=#{CGI.escape(DateTime.now.iso8601)}")
+            end
+          end
+        end
+
         context "'query' parameters of type 'object'" do
           let(:things) { {'foo': 'bar'} }
           let(:swagger_doc) { { swagger: '3.0' } }

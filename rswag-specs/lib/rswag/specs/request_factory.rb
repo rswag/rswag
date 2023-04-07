@@ -178,7 +178,7 @@ module Rswag
         end
 
         type = param[:type] || param.dig(:schema, :type)
-        return "#{name}=#{value}" unless type&.to_sym == :array
+        return "#{CGI.escape(name.to_s)}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
