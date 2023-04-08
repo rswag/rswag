@@ -55,7 +55,6 @@ module Rswag
         end
       end
 
-
       def request_body_example(value:, summary: nil, name: nil)
         if metadata.key?(:operation)
           metadata[:operation][:request_examples] ||= []
@@ -123,6 +122,7 @@ module Rswag
       # @return [void]
       def run_test!(**options, &block)
         options[:rswag] = true unless options.key?(:rswag)
+        description = options.delete(:description) || "returns a #{metadata[:response][:code]} response"
 
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
@@ -130,7 +130,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", **options do
+          it description, **options do
             assert_response_matches_metadata(metadata)
             block.call(response) if block_given?
           end
@@ -139,7 +139,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", **options do |example|
+          it description, **options do |example|
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end
