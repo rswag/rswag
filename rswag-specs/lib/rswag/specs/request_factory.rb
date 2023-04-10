@@ -142,6 +142,7 @@ module Rswag
 
       def build_query_string_part(param, value, swagger_doc)
         name = param[:name]
+        escaped_name = CGI.escape(name.to_s)
 
         # OAS 3: https://swagger.io/docs/specification/serialization/
         if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
@@ -157,20 +158,20 @@ module Rswag
               if explode
                 return value.to_query
               else
-                return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
+                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
               end
             end
           when :array
             case explode
             when true
-              return value.to_a.flatten.map{|v| "#{CGI.escape(name.to_s)}=#{CGI.escape(v.to_s)}"}.join('&')
+              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
             else
               separator = case style
                           when :form then ','
                           when :spaceDelimited then '%20'
                           when :pipeDelimited then '|'
                           end
-              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
+              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{name}=#{value}"
@@ -178,7 +179,7 @@ module Rswag
         end
 
         type = param[:type] || param.dig(:schema, :type)
-        return "#{CGI.escape(name.to_s)}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
+        return "#{escaped_name}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
