@@ -237,7 +237,6 @@ module Rswag
         before do
           stub_const("RSPEC_VERSION", rspec_version)
           allow(subject).to receive(:before)
-          allow(subject).to receive(:description)
         end
 
         it "executes a specification" do
@@ -250,7 +249,7 @@ module Rswag
           it "executes a specification described with passed description" do
             expected_spec_description = "returns a 200 response - with a custom description"
             expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
-            subject.run_test!(description: expected_spec_description)
+            subject.run_test!(expected_spec_description)
           end
         end
       end

@@ -117,12 +117,13 @@ module Rswag
       #
       # Perform request and assert response matches swagger definitions
       #
+      # @param description [String] description of the test
       # @param options [Hash] options to pass to the `it` method
       # @param &block [Proc] you can make additional assertions within that block
       # @return [void]
-      def run_test!(**options, &block)
+      def run_test!(description = nil, **options, &block)
         options[:rswag] = true unless options.key?(:rswag)
-        description = options.delete(:description) || "returns a #{metadata[:response][:code]} response"
+        description ||= "returns a #{metadata[:response][:code]} response"
 
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
