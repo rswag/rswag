@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
+
 ### Added
 
 - Allow passing metadata to HTTP verb methods (https://github.com/rswag/rswag/pull/628)
