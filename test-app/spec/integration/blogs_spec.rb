@@ -23,11 +23,15 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         run_test!
       end
 
-      response '422', 'invalid request' do
-        schema '$ref' => '#/definitions/errors_object'
+      response "422", "invalid request" do
+        schema "$ref" => "#/definitions/errors_object"
 
-        let(:blog) { { title: 'foo' } }
-        run_test! do |response|
+        let(:blog) { {title: "foo"} }
+
+        run_test!
+
+        # Example to show custom specification description
+        run_test!("returns a 422 response - with error for missing content") do |response|
           expect(response.body).to include("can't be blank")
         end
       end
