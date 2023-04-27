@@ -203,6 +203,14 @@ response '201', 'blog created' do
 end
 ```
 
+If you want to customize the description of the generated specification, a description can be passed to **run_test!**
+
+```ruby
+response '201', 'blog created' do
+  run_test! "custom spec description"
+end
+```
+
 If you want to do additional validation on the response, pass a block to the __run_test!__ method:
 
 ```ruby

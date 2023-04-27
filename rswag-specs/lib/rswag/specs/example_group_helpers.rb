@@ -55,7 +55,6 @@ module Rswag
         end
       end
 
-
       def request_body_example(value:, summary: nil, name: nil)
         if metadata.key?(:operation)
           metadata[:operation][:request_examples] ||= []
@@ -118,11 +117,16 @@ module Rswag
       #
       # Perform request and assert response matches swagger definitions
       #
+      # @param description [String] description of the test
+      # @param args [Array] arguments to pass to the `it` method
       # @param options [Hash] options to pass to the `it` method
       # @param &block [Proc] you can make additional assertions within that block
       # @return [void]
-      def run_test!(**options, &block)
+      def run_test!(description = nil, *args, **options, &block)
+        # rswag metadata value defaults to true
         options[:rswag] = true unless options.key?(:rswag)
+
+        description ||= "returns a #{metadata[:response][:code]} response"
 
         if RSPEC_VERSION < 3
           ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
@@ -130,7 +134,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", **options do
+          it description, *args, **options do
             assert_response_matches_metadata(metadata)
             block.call(response) if block_given?
           end
@@ -139,7 +143,7 @@ module Rswag
             submit_request(example.metadata)
           end
 
-          it "returns a #{metadata[:response][:code]} response", **options do |example|
+          it description, *args, **options do |example|
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end

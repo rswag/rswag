@@ -235,6 +235,36 @@ module Rswag
           )
         end
       end
+
+      describe "#run_test!" do
+        let(:rspec_version) { 3 }
+        let(:api_metadata) {
+          {
+            response: {
+              code: "200"
+            }
+          }
+        }
+
+        before do
+          stub_const("RSPEC_VERSION", rspec_version)
+          allow(subject).to receive(:before)
+        end
+
+        it "executes a specification" do
+          expected_spec_description = "returns a 200 response"
+          expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
+          subject.run_test!
+        end
+
+        context "when options[:description] is passed" do
+          it "executes a specification described with passed description" do
+            expected_spec_description = "returns a 200 response - with a custom description"
+            expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
+            subject.run_test!(expected_spec_description)
+          end
+        end
+      end
     end
   end
 end
