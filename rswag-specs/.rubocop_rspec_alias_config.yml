@@ -1,0 +1,17 @@
+RSpec:
+  Language:
+    ExampleGroups:
+      Regular:
+        - path
+        - response
+        - get
+        - post
+        - patch
+        - put
+        - delete
+        - head
+        - options
+        - trace
+    Examples:
+      Regular:
+        - run_test!
