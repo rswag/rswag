@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Allow passing metadata to HTTP verb methods (https://github.com/rswag/rswag/pull/628)
+
 ### Changed
 
 ### Fixed
@@ -22,7 +24,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add support for `:getter` parameter option to explicitly define custom parameter getter method and avoid RSpec conflicts with `include` matcher and `status` method (https://github.com/rswag/rswag/pull/605)
 - Added support strict schema validation and allow to pass metadata to run_test! (https://github.com/rswag/rswag/pull/604)
 - Add support for passing a custom specification description to `run_test!` (https://github.com/rswag/rswag/pull/622)
-- Allow passing metadata to HTTP verb methods (https://github.com/rswag/rswag/pull/628)
 
 ### Changed
 
