@@ -13,9 +13,9 @@ module Rswag
       end
 
       [:get, :post, :patch, :put, :delete, :head, :options, :trace].each do |verb|
-        define_method(verb) do |summary, &block|
-          api_metadata = { operation: { verb: verb, summary: summary } }
-          describe(verb, api_metadata, &block)
+        define_method(verb) do |summary, **metadata, &block|
+          api_metadata = { operation: { verb: verb, summary: summary } }.deep_merge(metadata)
+          describe(verb, **api_metadata, &block)
         end
       end
 

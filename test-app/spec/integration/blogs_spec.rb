@@ -155,6 +155,14 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         let(:id) { 'invalid' }
         run_test!
       end
+
+      response '200', 'blog found - swagger_strict_schema_validation = true', swagger_strict_schema_validation: true do
+        schema '$ref' => '#/definitions/blog'
+
+        let(:id) { blog.id }
+
+        run_test!
+      end
     end
   end
 
