@@ -20,6 +20,7 @@ Links to any related issues.
 - [ ] Added tests
 - [ ] Changelog updated
 - [ ] Added documentation to README.md
+- [ ] Added example of using the enhancement into [test-app](https://github.com/rswag/rswag/tree/master/test-app)
 
 ### Steps to Test or Reproduce
 Outline the steps to test or reproduce the PR here.
