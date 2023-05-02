@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Simplify API integration testing with a succinct rspec DSL and generate OpenAPI specification files directly from your rspec tests. More about the OpenAPI initiative here: http://spec.openapis.org/'
   s.license     = 'MIT'
 
-  s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile']
+  s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile', '.rubocop_rspec_alias_config.yml']
 
   s.add_dependency 'activesupport', '>= 3.1', '< 7.1'
   s.add_dependency 'railties', '>= 3.1', '< 7.1'

@@ -1110,3 +1110,13 @@ parameter name: :status,
 let(:status) { nil } # will not be used in query string
 let(:filter_status) { 'one' } # `&status=one` will be provided in final query
 ```
+
+### Linting with RuboCop RSpec
+
+When you lint your RSpec spec files with `rubocop-rspec`, it will fail to detect RSpec aliases that Rswag defines.
+Make sure to use `rubocop-rspec` 2.0 or newer and add the following to your `.rubocop.yml`:
+
+```yaml
+inherit_gem:
+  rswag-specs: .rubocop_rspec_alias_config.yml
+```
