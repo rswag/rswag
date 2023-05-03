@@ -242,7 +242,7 @@ Also note that the examples generated with __run_test!__ are tagged with the `:r
 
 ### date-time in query parameters
 
-Input that is being sent in querys of rspec tests is html safe. That includes date-time strings. It was solved in this [`pr`](https://github.com/rswag/rswag/pull/621). Here is an example test:
+Input sent in queries of Rspec tests is HTML safe, including date-time strings.
 
 ```ruby
 parameter name: :date_time, in: :query, type: :string
