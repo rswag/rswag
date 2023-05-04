@@ -151,6 +151,28 @@ module Rswag
           end
         end
 
+        context "'query' parameter of format 'datetime'" do
+          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s  }
+
+          before do
+            metadata[:operation][:parameters] = [
+              { name: 'date_time', in: :query, type: :string, format: :datetime, }
+            ]
+            allow(example).to receive(:date_time).and_return(date_time)
+          end
+
+          it 'formats the datetime properly' do
+            expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+          end
+
+          context "iso8601 format" do
+            let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+            it 'is also formatted properly' do
+              expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+            end
+          end
+        end
+
         context "'query' parameters of type 'object'" do
           let(:things) { {'foo': 'bar'} }
           let(:swagger_doc) { { swagger: '3.0' } }

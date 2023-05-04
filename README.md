@@ -240,6 +240,22 @@ end
 
 Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
 
+### date-time in query parameters
+
+Input sent in queries of Rspec tests is HTML safe, including date-time strings.
+
+```ruby
+parameter name: :date_time, in: :query, type: :string
+
+response '200', 'blog found' do
+  let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
+
+  run_test! do
+    expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+  end
+end
+```
+
 ### Strict schema validation
 
 By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
