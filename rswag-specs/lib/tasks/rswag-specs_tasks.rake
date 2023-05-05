@@ -16,10 +16,14 @@ namespace :rswag do
         ''
       )
 
-      t.rspec_opts = [additional_rspec_opts]
+      t.rspec_opts = [
+        '--format Rswag::Specs::OpenapiFormatter',
+        '--order defined'
+      ] << additional_rspec_opts
+
 
       if Rswag::Specs.config.swagger_dry_run
-        t.rspec_opts += ['--format Rswag::Specs::OpenapiFormatter', '--dry-run', '--order defined']
+        t.rspec_opts += ['--dry-run']
       end
     end
   end
