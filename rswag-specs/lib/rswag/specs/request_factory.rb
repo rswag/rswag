@@ -251,15 +251,6 @@ module Rswag
                             end
       end
 
-      def build_body_param(parameters, example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
-        return nil unless body_param
-
-        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
-
-        body_param
-      end
-
       def build_form_payload(parameters, example)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
