@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
+- Fix support for string body params (https://github.com/rswag/rswag/pull/639)
 
 ### Added
 
