@@ -413,6 +413,18 @@ module Rswag
               )
             end
           end
+
+          context 'plain text payload' do
+            before do
+              metadata[:operation][:consumes] = ['text/plain']
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'string' } }]
+              allow(example).to receive(:comment).and_return('plain text comment')
+            end
+
+            it 'keeps payload as a raw string data' do
+              expect(request[:payload]).to eq('plain text comment')
+            end
+          end
         end
 
         context 'produces content' do
