@@ -251,6 +251,15 @@ module Rswag
                             end
       end
 
+      def build_body_param(parameters, example)
+        body_param = parameters.select { |p| p[:in] == :body }.first
+        return nil unless body_param
+
+        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
+
+        body_param
+      end
+
       def build_form_payload(parameters, example)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
@@ -262,16 +271,6 @@ module Rswag
         Hash[tuples]
       end
 
-      def build_json_payload(parameters, example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
-
-        return nil unless body_param
-
-        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
-
-        example.send(body_param[:name]).to_json
-      end
-
       def build_raw_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
         return nil unless body_param
@@ -279,6 +278,10 @@ module Rswag
         raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
 
         example.send(body_param[:name])
+      end
+
+      def build_json_payload(parameters, example)
+        build_raw_payload(parameters, example)&.to_json
       end
 
       def doc_version(doc)
