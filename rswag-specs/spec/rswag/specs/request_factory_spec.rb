@@ -417,7 +417,7 @@ module Rswag
           context 'plain text payload' do
             before do
               metadata[:operation][:consumes] = ['text/plain']
-              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'string' } }]
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, type: 'string' }]
               allow(example).to receive(:comment).and_return('plain text comment')
             end
 
