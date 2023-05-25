@@ -34,7 +34,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !example.respond_to?(p[:name]) }
+          .reject { |p| p[:required] == false && !example.respond_to?(extract_getter(p)) }
       end
 
       def derive_security_params(metadata, swagger_doc)
@@ -106,7 +106,7 @@ module Rswag
         server = swagger_doc[:servers].first
         variables = {}
         server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
-        base_path = server[:url].gsub(/\{(.*?)\}/) { |name| variables[name.to_sym] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym] }
         URI(base_path).path
       end
 
@@ -126,22 +126,23 @@ module Rswag
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
-            unless example.respond_to?(p[:name])
+            unless example.respond_to?(extract_getter(p))
               raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
                 "(i. e `it` or `let` block)")
             end
-            path_template.gsub!("{#{p[:name]}}", example.send(p[:name]).to_s)
+            path_template.gsub!("{#{p[:name]}}", example.send(extract_getter(p)).to_s)
           end
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(p[:name]), swagger_doc))
+            path_template.concat(build_query_string_part(p, example.send(extract_getter(p)), swagger_doc))
           end
         end
       end
 
       def build_query_string_part(param, value, swagger_doc)
         name = param[:name]
+        escaped_name = CGI.escape(name.to_s)
 
         # OAS 3: https://swagger.io/docs/specification/serialization/
         if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
@@ -157,20 +158,20 @@ module Rswag
               if explode
                 return value.to_query
               else
-                return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
+                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
               end
             end
           when :array
             case explode
             when true
-              return value.to_a.flatten.map{|v| "#{CGI.escape(name.to_s)}=#{CGI.escape(v.to_s)}"}.join('&')
+              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
             else
               separator = case style
                           when :form then ','
                           when :spaceDelimited then '%20'
                           when :pipeDelimited then '|'
                           end
-              return "#{CGI.escape(name.to_s)}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
+              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{name}=#{value}"
@@ -178,7 +179,7 @@ module Rswag
         end
 
         type = param[:type] || param.dig(:schema, :type)
-        return "#{name}=#{value}" unless type&.to_sym == :array
+        return "#{escaped_name}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
 
         case param[:collectionFormat]
         when :ssv
@@ -197,7 +198,7 @@ module Rswag
       def add_headers(request, metadata, swagger_doc, parameters, example)
         tuples = parameters
           .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], example.send(p[:name]).to_s] }
+          .map { |p| [p[:name], example.send(extract_getter(p)).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
@@ -255,7 +256,7 @@ module Rswag
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
           .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], example.send(p[:name])] }
+          .map { |p| [p[:name], example.send(extract_getter(p))] }
         Hash[tuples]
       end
 
@@ -271,6 +272,10 @@ module Rswag
 
       def doc_version(doc)
         doc[:openapi] || doc[:swagger] || '3'
+      end
+
+      def extract_getter(parameter)
+         parameter[:getter] || parameter[:name]
       end
     end
 

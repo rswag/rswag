@@ -10,7 +10,6 @@ class BlogsController < ApplicationController
 
   # POST /blogs/flexible
   def flexible_create
-
     # contrived example to play around with new anyOf and oneOf
     # request body definition for 3.0
     blog_params = params.require(:blog).permit(:title, :content, :headline, :text)
@@ -21,7 +20,6 @@ class BlogsController < ApplicationController
 
   # POST /blogs/alternate
   def alternate_create
-
     # contrived example to show different :examples in the requestBody section
     @blog = Blog.create(params.require(:blog).permit(:title, :content))
     respond_with @blog
@@ -38,6 +36,8 @@ class BlogsController < ApplicationController
   # GET /blogs
   def index
     @blogs = Blog.all
+    @blogs = @blogs.where(status: params[:status]) if params[:status].present?
+
     respond_with @blogs
   end
 

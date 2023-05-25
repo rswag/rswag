@@ -6,16 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
+
 ### Added
+
+- Allow passing metadata to HTTP verb methods (https://github.com/rswag/rswag/pull/628)
+- Added configuration for RuboCop RSpec to improve detection of RSpec examples and example groups (https://github.com/rswag/rswag/pull/632)
 
 ### Changed
 
 ### Fixed
 
+### Documentation
+
+## [2.9.0]
+
+### Added
+
+- Added option --spec_path to the generator command with requests as default value (https://github.com/rswag/rswag/pull/607)
+- Add support for `:getter` parameter option to explicitly define custom parameter getter method and avoid RSpec conflicts with `include` matcher and `status` method (https://github.com/rswag/rswag/pull/605)
+- Added support strict schema validation and allow to pass metadata to run_test! (https://github.com/rswag/rswag/pull/604)
+- Add support for passing a custom specification description to `run_test!` (https://github.com/rswag/rswag/pull/622)
+
+### Changed
+
+- Remove commented code (https://github.com/rswag/rswag/pull/576)
+
+### Fixed
+
+- Invalid URI error when specifying protocol within server configuration (https://github.com/rswag/rswag/pull/591)
 - Fix ADDITIONAL_RSPEC_OPTS to always apply (https://github.com/rswag/rswag/pull/584)
 - Add support for support per-enum-value descriptions (https://github.com/rswag/rswag/pull/429)
 
 ### Documentation
+
+- Ask for dependency versions in issue template (https://github.com/rswag/rswag/pull/575)
 
 ## [2.8.0]
 
@@ -53,7 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- Fix request body examples (https://github.com/rswag/pull/555)
+- Fix request body examples (https://github.com/rswag/rswag/pull/555)
 - Corrected method name in README example (https://github.com/rswag/rswag/pull/566)
 - Fix Style/SingleArgumentDig issue in `swagger_formatter` (https://github.com/rswag/rswag/pull/486)
 - Make dependency on rspec-core explicit instead of implied (https://github.com/rswag/rswag/pull/554)

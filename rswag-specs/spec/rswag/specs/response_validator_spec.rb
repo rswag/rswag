@@ -10,28 +10,31 @@ module Rswag
       before do
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
         allow(config).to receive(:get_swagger_doc_version).and_return('2.0')
+        allow(config).to receive(:swagger_strict_schema_validation).and_return(swagger_strict_schema_validation)
       end
+
       let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
+      let(:swagger_strict_schema_validation) { false }
       let(:metadata) do
         {
           response: {
             code: 200,
-            headers: { 
+            headers: {
               'X-Rate-Limit-Limit' => { type: :integer },
-              'X-Cursor' => { 
-                schema: { 
+              'X-Cursor' => {
+                schema: {
                   type: :string
                 },
                 required: false
               },
-              'X-Per-Page' => { 
-                schema: { 
+              'X-Per-Page' => {
+                schema: {
                   type: :string,
                   nullable: true
                 }
-              } 
+              }
             },
             schema: {
               type: :object,
@@ -107,6 +110,36 @@ module Rswag
         context 'response body differs from metadata' do
           before { response.body = '{"foo":"Some comment"}' }
           it { expect { call }.to raise_error(/Expected response body/) }
+        end
+
+        context "when response body has additional properties" do
+          before { response.body = '{"foo":"Some comment", "number": 3, "text":"bar"}' }
+
+          context "with strict schema validation enabled" do
+            let(:swagger_strict_schema_validation) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with strict schema validation disabled" do
+            let(:swagger_strict_schema_validation) { false }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with strict schema validation disabled in config but enabled in metadata" do
+            let(:swagger_strict_schema_validation) { false }
+            let(:metadata) { super().merge(swagger_strict_schema_validation: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with strict schema validation enabled in config but disabled in metadata" do
+            let(:swagger_strict_schema_validation) { true }
+            let(:metadata) { super().merge(swagger_strict_schema_validation: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
         end
 
         context 'referenced schemas' do

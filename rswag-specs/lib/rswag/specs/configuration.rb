@@ -55,6 +55,10 @@ module Rswag
         doc = get_swagger_doc(name)
         doc[:openapi] || doc[:swagger]
       end
+
+      def swagger_strict_schema_validation
+        @swagger_strict_schema_validation ||= (@rspec_config.swagger_strict_schema_validation || false)
+      end
     end
 
     class ConfigurationError < StandardError; end

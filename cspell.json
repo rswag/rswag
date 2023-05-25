@@ -49,6 +49,8 @@
     "swaggerize",
     "tempuri",
     "tmpdir",
-    "xlink"
+    "xlink",
+    "rubocop",
+    "RuboCop"
   ]
 }

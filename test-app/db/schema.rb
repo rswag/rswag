@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 2016_02_18_212104) do
     t.string "title"
     t.text "content"
     t.string "thumbnail"
+    t.string "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

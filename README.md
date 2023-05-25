@@ -163,7 +163,8 @@ There is also a generator which can help get you started `rails generate rspec:s
       end
     end
     ```
-
+By default, the above command will create spec under _spec/requests_ folder. You can pass an option to change this default path as in `rails generate rspec:swagger API::BlogsController --spec_path integration`.
+This will create the spec file _spec/integration/blogs_spec.rb_
 
 4. Generate the Swagger JSON file(s)
 
@@ -187,6 +188,28 @@ There is also a generator which can help get you started `rails generate rspec:s
 If you've used [Swagger](http://swagger.io/specification) before, then the syntax should be very familiar. To describe your API operations, start by specifying a path and then list the supported operations (i.e. HTTP verbs) for that path. Path parameters must be surrounded by curly braces ({}). Within an operation block (see "post" or "get" in the example above), most of the fields supported by the [Swagger "Operation" object](http://swagger.io/specification/#operationObject) are available as methods on the example group. To list (and test) the various responses for an operation, create one or more response blocks. Again, you can reference the [Swagger "Response" object](http://swagger.io/specification/#responseObject) for available fields.
 
 Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
+
+If you want to add metadata to the example, you can pass keyword arguments to the __run_test!__ method:
+
+```ruby
+# to run particular test case
+response '201', 'blog created' do
+  run_test! focus: true
+end
+
+# to write vcr cassette
+response '201', 'blog created' do
+  run_test! vcr: true
+end
+```
+
+If you want to customize the description of the generated specification, a description can be passed to **run_test!**
+
+```ruby
+response '201', 'blog created' do
+  run_test! "custom spec description"
+end
+```
 
 If you want to do additional validation on the response, pass a block to the __run_test!__ method:
 
@@ -216,6 +239,86 @@ end
 ```
 
 Also note that the examples generated with __run_test!__ are tagged with the `:rswag` so they can easily be filtered. E.g. `rspec --tag rswag`
+
+### date-time in query parameters
+
+Input sent in queries of Rspec tests is HTML safe, including date-time strings.
+
+```ruby
+parameter name: :date_time, in: :query, type: :string
+
+response '200', 'blog found' do
+  let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
+
+  run_test! do
+    expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+  end
+end
+```
+
+### Strict schema validation
+
+By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.swagger_strict_schema_validation = true
+end
+```
+
+or set the option per individual example:
+
+```ruby
+# using in run_test!
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!(swagger_strict_schema_validation: true)
+      end
+    end
+  end
+end
+
+# using in response block
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+
+      response '201', 'blog created', swagger_strict_schema_validation: true do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        run_test!
+      end
+    end
+  end
+end
+
+# using in an explicit example
+describe 'Blogs API' do
+  path '/blogs' do
+    post 'Creates a blog' do
+      ...
+      response '201', 'blog created' do
+        let(:blog) { { title: 'foo', content: 'bar' } }
+
+        before do |example|
+          submit_request(example.metadata)
+        end
+
+        it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+          assert_response_matches_metadata(example.metadata)
+        end
+      end
+    end
+  end
+end
+```
 
 ### Null Values ###
 
@@ -313,8 +416,11 @@ RSpec.configure do |config|
       },
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: '{protocol}://{defaultHost}',
           variables: {
+            protocol: {
+              default: :https
+            },
             defaultHost: {
                 default: 'www.example.com'
             }
@@ -620,7 +726,7 @@ end
 
 #### Nullable or Optional Response Headers ####
 
-You can include `nullable` or `required` to specify whether a response header must be present or may be null. When `nullable` is not included, the headers validation validates that the header response is non-null. When `required` is not included, the headers validation validates the the header response is passed. 
+You can include `nullable` or `required` to specify whether a response header must be present or may be null. When `nullable` is not included, the headers validation validates that the header response is non-null. When `required` is not included, the headers validation validates the the header response is passed.
 
 ```ruby
 # spec/integration/comments_spec.rb
@@ -961,7 +1067,26 @@ rails g rswag:ui:custom
 
 ```
 
-This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_
+This will add a local version that you can modify at _app/views/rswag/ui/home/index.html.erb_. For example, it will let you to add your own `<title>` and favicon.
+
+To replace the *"Swagger sponsored by"* brand image, you can add the following script to the generated file:
+
+```html
+<script>
+  (function () {
+  window.addEventListener("load", function () {
+      setTimeout(function () {
+
+          var logo = document.getElementsByClassName('link');
+
+          logo[0].children[0].alt = "My API";
+          logo[0].children[0].src = "/favicon.png";
+      });
+  }); })();
+</script>
+```
+
+The above script would expect to find an image named `favicon.png` in the public folder.
 
 ### Serve UI Assets Directly from your Web Server
 
@@ -983,3 +1108,31 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 ```
 This will run the swagger editor in the docker daemon and can be accessed
 at ```http://localhost```. From here, you can use the UI to load the generated swagger.json to validate the output.
+
+### Custom :getter option for parameter
+
+To avoid conflicts with Rspec [`include`](https://github.com/rspec/rspec-rails/blob/40261bb72875c00a6e4a0ca2ac697b660d4e8d9c/spec/support/generators.rb#L18) matcher and other possible intersections like `status` method:
+
+```
+...
+parameter name: :status,
+          getter: :filter_status,
+          in: :query,
+          schema: {
+            type: :string,
+            enum: %w[one two three],
+          }, required: false
+
+let(:status) { nil } # will not be used in query string
+let(:filter_status) { 'one' } # `&status=one` will be provided in final query
+```
+
+### Linting with RuboCop RSpec
+
+When you lint your RSpec spec files with `rubocop-rspec`, it will fail to detect RSpec aliases that Rswag defines.
+Make sure to use `rubocop-rspec` 2.0 or newer and add the following to your `.rubocop.yml`:
+
+```yaml
+inherit_gem:
+  rswag-specs: .rubocop_rspec_alias_config.yml
+```

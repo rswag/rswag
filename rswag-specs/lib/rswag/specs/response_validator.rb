@@ -62,12 +62,23 @@ module Rswag
           .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
           .merge(schemas)
 
-        errors = JSON::Validator.fully_validate(validation_schema, body)
+        validation_options = validation_options_from(metadata)
+
+        errors = JSON::Validator.fully_validate(validation_schema, body, validation_options)
         return unless errors.any?
 
         raise UnexpectedResponse,
               "Expected response body to match schema: #{errors.join("\n")}\n" \
               "Response body: #{JSON.pretty_generate(JSON.parse(body))}"
+      end
+
+      def validation_options_from(metadata)
+        is_strict = !!metadata.fetch(
+          :swagger_strict_schema_validation,
+          @config.swagger_strict_schema_validation
+        )
+
+        { strict: is_strict }
       end
 
       def definitions_or_component_schemas(swagger_doc, version)

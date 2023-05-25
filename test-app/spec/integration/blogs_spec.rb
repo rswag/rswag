@@ -16,18 +16,22 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       produces 'application/json'
       parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
 
-      let(:blog) { { title: 'foo', content: 'bar' } }
+      let(:blog) { { title: 'foo', content: 'bar', status: 'published' } }
 
       response '201', 'blog created' do
         # schema '$ref' => '#/definitions/blog'
         run_test!
       end
 
-      response '422', 'invalid request' do
-        schema '$ref' => '#/definitions/errors_object'
+      response "422", "invalid request" do
+        schema "$ref" => "#/definitions/errors_object"
 
-        let(:blog) { { title: 'foo' } }
-        run_test! do |response|
+        let(:blog) { {title: "foo"} }
+
+        run_test!
+
+        # Example to show custom specification description
+        run_test!("returns a 422 response - with error for missing content") do |response|
           expect(response.body).to include("can't be blank")
         end
       end
@@ -39,11 +43,31 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: :keywords, in: :query, type: 'string'
+      parameter name: :status, in: :query, type: 'string', getter: :blog_status
+
+      before do
+        Blog.create(title: 'foo', content: 'hello world', status: 'published')
+      end
 
       let(:keywords) { 'foo bar' }
+      let(:blog_status) { 'published' }
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+
+        run_test! do
+          expect(JSON.parse(response.body).size).to eq(1)
+        end
+      end
+
+      response '200', 'no content' do
+        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+
+        let(:blog_status) { 'invalid' }
+
+        run_test! do
+          expect(JSON.parse(response.body).size).to eq(0)
+        end
       end
 
       response '406', 'unsupported accept header' do
@@ -119,11 +143,24 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         }
 
         let(:id) { blog.id }
+
         run_test!
+
+        context 'when swagger_strict_schema_validation is true' do
+          run_test!(swagger_strict_schema_validation: true)
+        end
       end
 
       response '404', 'blog not found' do
         let(:id) { 'invalid' }
+        run_test!
+      end
+
+      response '200', 'blog found - swagger_strict_schema_validation = true', swagger_strict_schema_validation: true do
+        schema '$ref' => '#/definitions/blog'
+
+        let(:id) { blog.id }
+
         run_test!
       end
     end
