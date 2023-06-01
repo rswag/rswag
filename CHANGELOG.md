@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Allow passing metadata to HTTP verb methods (https://github.com/rswag/rswag/pull/628)
 - Added configuration for RuboCop RSpec to improve detection of RSpec examples and example groups (https://github.com/rswag/rswag/pull/632)
-- Added global setting for `additionalProperties` to defalt to false unless explicitly defined (https://github.com/rswag/rswag/compare/master...MichaelAlexanderBanuelos:rswag:feature/stricter-schemas?expand=1)
+- Added global setting for `additionalProperties` to defalt to false unless explicitly defined (https://github.com/rswag/rswag/pull/644)
 
 ### Changed
 
