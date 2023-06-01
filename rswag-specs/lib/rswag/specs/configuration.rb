@@ -59,6 +59,10 @@ module Rswag
       def swagger_strict_schema_validation
         @swagger_strict_schema_validation ||= (@rspec_config.swagger_strict_schema_validation || false)
       end
+
+      def disallow_additional_properties
+        @disallow_additional_properties ||= (@rspec_config.disallow_additional_properties || false)
+      end
     end
 
     class ConfigurationError < StandardError; end

@@ -320,6 +320,17 @@ describe 'Blogs API' do
 end
 ```
 
+### Strict schema validation
+
+By default, `additionalProperties` will be set to true. This allows your schemas to pass even if undocumented keys show up in the response. There is a global setting to turn on strict validation, but strict validation makes all fields required and may not be what you are looking for. If you want optional fields, but only documented fields to show up then this is the setting you are looking for.
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.disallow_additional_properties = true
+end
+```
+
 ### Null Values ###
 
 This library is currently using JSON::Draft4 for validation of response models. Nullable properties can be supported with the non-standard property 'x-nullable' to a definition to allow null/nil values to pass. Or you can add the new standard ```nullable``` property to a definition.

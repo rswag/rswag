@@ -57,10 +57,11 @@ module Rswag
 
         version = @config.get_swagger_doc_version(metadata[:swagger_doc])
         schemas = definitions_or_component_schemas(swagger_doc, version)
-
+        schema_options = additional_properties(response_schema)
         validation_schema = response_schema
           .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
           .merge(schemas)
+          .merge(schema_options)
 
         validation_options = validation_options_from(metadata)
 
@@ -79,6 +80,14 @@ module Rswag
         )
 
         { strict: is_strict }
+      end
+
+      def additional_properties(schema)
+        return { additionalProperties: schema[:additionalProperties] } unless schema[:additionalProperties].nil?
+
+        return {} unless @config.disallow_additional_properties
+
+        { additionalProperties: false }
       end
 
       def definitions_or_component_schemas(swagger_doc, version)

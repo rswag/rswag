@@ -11,12 +11,14 @@ module Rswag
         allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
         allow(config).to receive(:get_swagger_doc_version).and_return('2.0')
         allow(config).to receive(:swagger_strict_schema_validation).and_return(swagger_strict_schema_validation)
+        allow(config).to receive(:disallow_additional_properties).and_return(disallow_additional_properties)
       end
 
       let(:config) { double('config') }
       let(:swagger_doc) { {} }
       let(:example) { double('example') }
       let(:swagger_strict_schema_validation) { false }
+      let(:disallow_additional_properties) { false }
       let(:metadata) do
         {
           response: {
@@ -114,6 +116,41 @@ module Rswag
 
         context "when response body has additional properties" do
           before { response.body = '{"foo":"Some comment", "number": 3, "text":"bar"}' }
+
+          context 'with disallow_additional_properties enabled' do
+            let(:disallow_additional_properties) { true }
+
+            context 'when the schema already has additionalProperties defined' do
+              before do
+                metadata[:response][:schema] = {
+                    type: :object,
+                    properties: {
+                      text: { type: :string },
+                      number: { type: :integer },
+                      bar: {  type: :integer}
+                    },
+                    additionalProperties: {
+                      type: :string,
+                    },
+                    required: ['text', 'number']
+                }
+              end
+
+              it 'does not overwrite the existing value' do
+                call
+                expect { call }.not_to raise_error
+              end
+            end
+
+            context 'when unknown fields show up in the response' do
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+          end
+
+
+          context 'with disallow_additional_properties not enabled' do
+            it { expect { call }.not_to raise_error }
+          end
 
           context "with strict schema validation enabled" do
             let(:swagger_strict_schema_validation) { true }
