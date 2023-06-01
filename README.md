@@ -320,9 +320,11 @@ describe 'Blogs API' do
 end
 ```
 
-### Strict schema validation
+### Additional Properties
 
-By default, `additionalProperties` will be set to true. This allows your schemas to pass even if undocumented keys show up in the response. There is a global setting to turn on strict validation, but strict validation makes all fields required and may not be what you are looking for. If you want optional fields, but only documented fields to show up then this is the setting you are looking for.
+By default, `additionalProperties` will be set to true. This allows your schemas to pass even if undocumented keys show up in the response. There is a global setting in `rswag` to turn on strict validation within `JSON::Validator`, but strict validation makes all fields required and may not be what you are looking for. 
+
+This is a global setting that will set `addtionalProperties` to false for all schemas unless explicitly defined. There is only a global setting as if you want to change it per schema or test you can just set `additionalProperties` manually there. If you want optional fields, but only documented fields to show up in your response then this is the setting you are looking for.
 
 ```ruby
 # spec/swagger_helper.rb
