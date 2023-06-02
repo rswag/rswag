@@ -7,8 +7,6 @@ require 'openapi_helper'
 module Rswag
   module Specs
     class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
-      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
-
       ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
       def initialize(output, config = Rswag::Specs.config)
