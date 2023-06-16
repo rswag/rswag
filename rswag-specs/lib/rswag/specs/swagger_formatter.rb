@@ -52,35 +52,14 @@ module Rswag
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           unless doc_version(doc).start_with?('2')
-            doc[:paths]&.each_pair do |_k, v|
-              v.each_pair do |_verb, value|
-                is_hash = value.is_a?(Hash)
-                if is_hash && value[:parameters]
-                  schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                  mime_list = value[:consumes] || doc[:consumes]
-
-                  if value && schema_param && mime_list
-                    value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
-                    value[:requestBody][:required] = true if schema_param[:required]
-                    value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
-                    examples = value.dig(:request_examples)
-                    mime_list.each do |mime|
-                      value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
-                      if examples
-                        value[:requestBody][:content][mime][:examples] ||= {}
-                        examples.map do |example|
-                          value[:requestBody][:content][mime][:examples][example[:name]] = {
-                            summary: example[:summary] || value[:summary],
-                            value: example[:value]
-                          }
-                        end
-                      end
-                    end
-                  end
-
-                  value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
+            doc[:paths]&.each_pair do |_k, path|
+              path.each_pair do |_verb, endpoint|
+                is_hash = endpoint.is_a?(Hash)
+                if is_hash && endpoint[:parameters]
+                  mime_list = endpoint[:consumes] || doc[:consumes]
+                  parse_parameters(endpoint, mime_list) if mime_list
                 end
-                remove_invalid_operation_keys!(value)
+                remove_invalid_operation_keys!(endpoint)
               end
             end
           end
@@ -214,6 +193,88 @@ module Rswag
         value.delete(:produces) if value[:produces]
         value.delete(:request_examples) if value[:request_examples]
         value[:parameters].each { |p| p.delete(:getter) } if value[:parameters]
+      end
+
+      def parse_parameters(endpoint, mime_list)
+        parameters = endpoint[:parameters]
+        # There can only be 1 body!
+        schema_param = parameters.find { |p| (p[:in] == :body) && p[:schema] }
+        parse_body_parameter(endpoint, schema_param, mime_list) if schema_param
+
+        # But there can be any number of formData
+        parameters.select { |p| (p[:in] == :formData) && p[:schema] }.each do |schema_param|
+          parse_parameter_schema(endpoint, schema_param, mime_list)
+        end
+
+        parameters.reject! { |p| p[:in] == :body || p[:in] == :formData }
+      end
+
+      def add_request_body(endpoint)
+        return if endpoint.dig(:requestBody, :content)
+        endpoint[:requestBody] = { content: {} }
+      end
+
+      def parse_body_parameter(endpoint, parameter, mime_list)
+        add_request_body(endpoint)
+        # If a parameter in `body` exists use its description (there is only ever 1)
+        endpoint[:requestBody][:description] = parameter[:description] if parameter[:description]
+
+        parse_parameter_schema(endpoint, parameter, mime_list)
+      end
+
+      def parse_parameter_schema(endpoint, parameter, mime_list)
+        # Only add if there are any body parameters and not already defined
+        add_request_body(endpoint)
+        set_request_body_required(endpoint, parameter)
+
+        mime_list.each do |mime|
+          endpoint[:requestBody][:content][mime] ||= {}
+          mime_config = endpoint[:requestBody][:content][mime]
+          set_parameter_schema(parameter)
+          set_mime_config(mime_config, parameter)
+          set_mime_examples(mime_config, endpoint)
+        end
+      end
+
+      # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
+        # you could have optional body, but if body is provided then some properties are required.
+      def set_request_body_required(endpoint, parameter)
+        required = parameter[:required] || parameter.dig(:schema, :required)
+        endpoint[:requestBody][:required] = true if required
+      end
+
+      def set_parameter_schema(parameter)
+        parameter[:schema] ||= {}
+        parameter[:schema][:required] = true if parameter[:required]
+        parameter[:schema][:description] = parameter[:description] if parameter[:description]
+      end
+
+      def set_mime_config(mime_config, parameter)
+        mime_config[:schema] ||= parameter[:name] ? {type: :object, properties: {}} : parameter[:schema]
+        if parameter[:name]
+          mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
+          set_mime_encoding(mime_config, parameter)
+        end
+      end
+      
+      def set_mime_encoding(mime_config, parameter)
+        return unless parameter[:encoding]
+        encoding = parameter[:encoding].dup
+        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        mime_config[:encoding] ||= {}
+        mime_config[:encoding][parameter[:name]] = encoding
+      end
+      
+      def set_mime_examples(mime_config, endpoint)
+        examples = endpoint[:request_examples]
+        return unless examples
+        examples.each do |example|
+          mime_config[:examples] ||= {}
+          mime_config[:examples][example[:name]] = {
+            summary: example[:summary] || endpoint[:summary],
+            value: example[:value]
+          }
+        end
       end
     end
   end
