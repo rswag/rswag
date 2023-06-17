@@ -43,10 +43,12 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: :keywords, in: :query, type: 'string'
-      parameter name: :status, in: :query, type: 'string', getter: :blog_status
+      parameter name: :status, in: :query, getter: :blog_status,
+                enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                description: 'Filter by status'
 
       before do
-        Blog.create(title: 'foo', content: 'hello world', status: 'published')
+        Blog.create(title: 'foo', content: 'hello world', status: :published)
       end
 
       let(:keywords) { 'foo bar' }
