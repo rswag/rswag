@@ -52,16 +52,7 @@ module Rswag
       def stop(_notification = nil)
         @config.swagger_docs.each do |url_path, doc|
           unless doc_version(doc).start_with?('2')
-            doc[:paths]&.each_pair do |_k, path|
-              path.each_pair do |_verb, endpoint|
-                is_hash = endpoint.is_a?(Hash)
-                if is_hash && endpoint[:parameters]
-                  mime_list = endpoint[:consumes] || doc[:consumes]
-                  parse_parameters(endpoint, mime_list) if mime_list
-                end
-                remove_invalid_operation_keys!(endpoint)
-              end
-            end
+            parse_parameters_to_oas3_syntax(doc)
           end
 
           file_path = File.join(@config.swagger_root, url_path)
@@ -195,6 +186,19 @@ module Rswag
         value[:parameters].each { |p| p.delete(:getter) } if value[:parameters]
       end
 
+      def parse_parameters_to_oas3_syntax(doc)
+        doc[:paths]&.each_pair do |_k, path|
+          path.each_pair do |_verb, endpoint|
+            is_hash = endpoint.is_a?(Hash)
+            if is_hash && endpoint[:parameters]
+              mime_list = endpoint[:consumes] || doc[:consumes]
+              parse_parameters(endpoint, mime_list) if mime_list
+            end
+            remove_invalid_operation_keys!(endpoint)
+          end
+        end
+      end
+
       def parse_parameters(endpoint, mime_list)
         parameters = endpoint[:parameters]
         # There can only be 1 body parameter in Swagger 2.0, so while in OAS3 we interpret
@@ -231,6 +235,7 @@ module Rswag
           endpoint[:requestBody][:content][mime] ||= {}
           mime_config = endpoint[:requestBody][:content][mime]
           set_parameter_schema(parameter)
+          convert_file_parameter(parameter)
           # Only parse parameters if there has not already been a reference object set
           if !mime_config[:schema] || mime_config.dig(:schema, :properties)
             set_mime_config(mime_config, parameter)
@@ -258,6 +263,13 @@ module Rswag
         parameter[:schema] ||= {}
         parameter[:schema][:required] = true if parameter[:required]
         parameter[:schema][:description] = parameter[:description] if parameter[:description]
+      end
+
+      def convert_file_parameter(parameter)
+        if parameter[:schema][:type] == :file
+          parameter[:schema][:type] = :string
+          parameter[:schema][:format] = :binary
+        end
       end
 
       def set_mime_config(mime_config, parameter)

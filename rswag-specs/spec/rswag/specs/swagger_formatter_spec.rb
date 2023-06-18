@@ -304,7 +304,7 @@ module Rswag
           end
         end
 
-        context 'with oauth3 upgrades' do
+        context 'with OAS3' do
           let(:doc_2) do
             {
               paths: {
@@ -319,6 +319,12 @@ module Rswag
                       schema: { foo: :bar }
                     }, {
                       in: :headers
+                    }],
+                    security: [{ # Must provide both my_auth and oauth2_with_scopes
+                      my_auth: [],
+                      oauth2_with_scopes: [:scope1, :scope2]
+                    }, { # or can auth with only auth_with_this
+                      auth_with_this: []
                     }]
                   }
                 }
@@ -327,7 +333,7 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_2[:paths]['/path/'][:get].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_2[:paths]['/path/'][:get].keys).to include(:summary, :tags, :parameters, :requestBody, :security)
           end
 
           it 'duplicates params in: :body to requestBody from consumes list' do
@@ -337,9 +343,21 @@ module Rswag
               'application/json' => { schema: { foo: :bar } }
             })
           end
+
+          it 'adds security to operation' do
+            expect(doc_2[:paths]['/path/'][:get][:security]).to eql([
+              {
+                my_auth: [],
+                oauth2_with_scopes: [:scope1, :scope2]
+              },
+              {
+                auth_with_this: []
+              }
+            ])
+          end
         end
 
-        context 'with oauth3 formData' do
+        context 'with OpenAPI 3 formData' do
           let(:doc_2) do
             {
               paths: {
@@ -351,7 +369,7 @@ module Rswag
                     consumes: ['multipart/form-data'],
                     parameters: [{
                       in: :formData,
-                      schema: { type: :file }
+                      schema: { type: :string }
                     },{
                       in: :headers
                     }]
@@ -368,7 +386,118 @@ module Rswag
           it 'duplicates params in: :formData to requestBody from consumes list' do
             expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => { schema: { type: :file } }
+              'multipart/form-data' => { schema: { type: :string } }
+            })
+          end
+        end
+
+        context 'with OpenAPI 3 formData file upload' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload file',
+                    produces: ['application/json'],
+                    consumes: ['image/png', 'application/octet-stream'],
+                    parameters: [
+                      {
+                        in: :formData,
+                        schema: { type: :file }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody for content type' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'image/png' => {schema: {type: :string, format: :binary}},
+              'application/octet-stream' => {schema: {type: :string, format: :binary}}
+            })
+          end
+        end
+
+        context 'with OpenAPI 3 formData file upload as part of multipart' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload file',
+                    consumes: ['multipart/form-data'],
+                    parameters: [
+                      {
+                        name: :myFile,
+                        in: :formData,
+                        schema: { type: :file },
+                        encoding: {contentType: ['image/png', 'image/jpeg']}
+                      },
+                      {
+                        name: :foo,
+                        in: :formData,
+                        schema: { type: :string }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody for content type' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'multipart/form-data' => {
+                schema: {
+                  type: :object,
+                  properties: {
+                    myFile: {type: :string, format: :binary},
+                    foo: {type: :string}
+                  }
+                },
+                encoding: {
+                  myFile: {
+                    contentType: "image/png,image/jpeg"
+                  }
+                }
+              }
+            })
+          end
+        end
+
+        context 'with OpenAPI 3 formData multiple file uploads' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload files',
+                    consumes: ['multipart/form-data'],
+                    parameters: [
+                      {
+                        name: :files,
+                        in: :formData,
+                        schema: { type: :array, items: { type: :string, format: :binary } }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody with multipart/form-data' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'multipart/form-data' => {
+                schema: {
+                  type: :object,
+                  properties: {
+                    files: {type: :array, items: {type: :string, format: :binary}}
+                  }
+                }
+              }
             })
           end
         end
