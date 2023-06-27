@@ -139,11 +139,8 @@ module Rswag
             block.call(response) if block_given?
           end
         else
-          before do |example|
-            submit_request(example.metadata)
-          end
-
           it description, *args, **options do |example|
+            submit_request(example.metadata)
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end

@@ -20,7 +20,15 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
       response '201', 'blog created' do
         # schema '$ref' => '#/definitions/blog'
-        run_test!
+        run_test! 'it creates one blog post' do
+          expect(Blog.count).to eq(1)
+        end
+
+        context 'with a nested context' do
+          run_test! 'it still creates one blog post' do
+            expect(Blog.count).to eq(1)
+          end
+        end
       end
 
       response "422", "invalid request" do
