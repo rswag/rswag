@@ -7,6 +7,7 @@ TestApp::Application.routes.draw do
 
   post 'auth-tests/basic', to: 'auth_tests#basic'
   post 'auth-tests/api-key', to: 'auth_tests#api_key'
+  post 'auth-tests/bearer', to: 'auth_tests#bearer'
   post 'auth-tests/basic-and-api-key', to: 'auth_tests#basic_and_api_key'
 
   resources :stubs
