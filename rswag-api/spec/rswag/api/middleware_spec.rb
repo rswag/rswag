@@ -84,6 +84,17 @@ module Rswag
           end
         end
 
+        context "Disallow path traversing on path info" do
+          let(:env) { env_defaults.merge('PATH_INFO' => '../traverse-secret.yml') }
+          before do
+            allow(app).to receive(:call).and_return([ '500', {}, [] ])
+          end
+
+          it 'delegates to the next middleware' do
+            expect(response).to include('500')
+          end
+        end
+
         context 'when the env contains a specific swagger_root' do
           let(:env) do
             env_defaults.merge(
