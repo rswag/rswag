@@ -13,9 +13,10 @@ module Rswag
 
       def call(env)
         path = env['PATH_INFO']
-        # Sanitize the filename for directory traversal by expanding, and matching the swagger root directory
-        filename = File.expand_path(File.join(@config.resolve_swagger_root(env), path))
-        unless filename.match Regexp.new('^' + Regexp.escape(@config.resolve_swagger_root(env)))
+        # Sanitize the filename for directory traversal by expanding, and ensuring
+        # its starts with the root directory.
+        filename = File.expand_path(path, @config.resolve_swagger_root(env))
+        unless filename.start_with? @config.resolve_swagger_root(env)
           return @app.call(env)
         end
 
