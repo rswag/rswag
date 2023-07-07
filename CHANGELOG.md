@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+### Added
+
+### Changed
+
+### Documentation
+
+## [2.10.0]
+
+### Fixed
+
+- Sanitize directory traversal in middleware (https://github.com/rswag/rswag/pull/654)
 - Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
 
 ### Added
