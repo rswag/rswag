@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+Relaxed the dependency on json-schema, allowing for updates including support for allPropertiesRequired and noPropertiesRequired options
+
 ### Fixed
 
 - Add missing link to Content Security Policy (https://github.com/rswag/rswag/pull/619)
