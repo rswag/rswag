@@ -15,7 +15,7 @@ module Rswag
         path = env['PATH_INFO']
         # Sanitize the filename for directory traversal by expanding, and ensuring
         # its starts with the root directory.
-        filename = File.expand_path(path, @config.resolve_swagger_root(env))
+        filename = File.expand_path(File.join(@config.resolve_swagger_root(env), path))
         unless filename.start_with? @config.resolve_swagger_root(env)
           return @app.call(env)
         end
