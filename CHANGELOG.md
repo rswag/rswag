@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
+## [2.10.1]
+
+### Fixed
+
+- Fix path expansion (https://github.com/rswag/rswag/pull/660)
+
 ## [2.10.0]
 
 ### Fixed
