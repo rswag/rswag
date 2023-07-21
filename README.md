@@ -793,6 +793,9 @@ after do |example|
 end
 ```
 
+Note you will need to disable the `--dry-run` option for Rspec 3.0.0 or higher to 
+run the after callback. See below for more information.
+
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
