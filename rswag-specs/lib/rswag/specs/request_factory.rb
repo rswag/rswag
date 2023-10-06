@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 require "active_support"
 require 'active_support/core_ext/hash/slice'
-require 'active_support/core_ext/hash/conversions'
 require 'json'
+require_relative './query_serializers/specifications/oas3_serializer'
+require_relative './query_serializers/specifications/swagger_serializer'
 
 module Rswag
   module Specs
@@ -141,58 +142,11 @@ module Rswag
       end
 
       def build_query_string_part(param, value, swagger_doc)
-        name = param[:name]
-        escaped_name = CGI.escape(name.to_s)
-
-        # OAS 3: https://swagger.io/docs/specification/serialization/
         if swagger_doc && doc_version(swagger_doc).start_with?('3') && param[:schema]
-          style = param[:style]&.to_sym || :form
-          explode = param[:explode].nil? ? true : param[:explode]
-
-          case param[:schema][:type]&.to_sym
-          when :object
-            case style
-            when :deepObject
-              return { name => value }.to_query
-            when :form
-              if explode
-                return value.to_query
-              else
-                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
-              end
-            end
-          when :array
-            case explode
-            when true
-              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
-            else
-              separator = case style
-                          when :form then ','
-                          when :spaceDelimited then '%20'
-                          when :pipeDelimited then '|'
-                          end
-              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
-            end
-          else
-            return "#{name}=#{value}"
-          end
+          return QuerySerializers::Specifications::OAS3Serializer.new(param).serialize(value)
         end
 
-        type = param[:type] || param.dig(:schema, :type)
-        return "#{escaped_name}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
-
-        case param[:collectionFormat]
-        when :ssv
-          "#{name}=#{value.join(' ')}"
-        when :tsv
-          "#{name}=#{value.join('\t')}"
-        when :pipes
-          "#{name}=#{value.join('|')}"
-        when :multi
-          value.map { |v| "#{name}=#{v}" }.join('&')
-        else
-          "#{name}=#{value.join(',')}" # csv is default
-        end
+        QuerySerializers::Specifications::SwaggerSerializer.new(param).serialize(value)
       end
 
       def add_headers(request, metadata, swagger_doc, parameters, example)
