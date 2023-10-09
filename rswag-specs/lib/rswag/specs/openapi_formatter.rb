@@ -141,7 +141,8 @@ module Rswag
 
       def parse_parameters(endpoint, mime_list)
         parameters = endpoint[:parameters]
-        # There can only be 1 body!
+        # There can only be 1 body parameter in Swagger 2.0, so while in OAS3 we interpret
+        # body parameters as formData, only consider the first body we encounter.
         schema_param = parameters.find { |p| (p[:in] == :body) && p[:schema] }
         parse_body_parameter(endpoint, schema_param, mime_list) if schema_param
 
@@ -169,21 +170,31 @@ module Rswag
       def parse_parameter_schema(endpoint, parameter, mime_list)
         # Only add if there are any body parameters and not already defined
         add_request_body(endpoint)
-        set_request_body_required(endpoint, parameter)
 
         mime_list.each do |mime|
           endpoint[:requestBody][:content][mime] ||= {}
           mime_config = endpoint[:requestBody][:content][mime]
           set_parameter_schema(parameter)
-          set_mime_config(mime_config, parameter)
-          set_mime_examples(mime_config, endpoint)
+          # Only parse parameters if there has not already been a reference object set
+          if !mime_config[:schema] || mime_config.dig(:schema, :properties)
+            set_mime_config(mime_config, parameter)
+            set_mime_examples(mime_config, endpoint)
+          end
         end
+
+        set_request_body_required(endpoint, mime_list)
       end
 
       # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
       # you could have optional body, but if body is provided then some properties are required.
-      def set_request_body_required(endpoint, parameter)
-        required = parameter[:required] || parameter.dig(:schema, :required)
+      # Also could just parse this info at time of parsing parameters
+      def set_request_body_required(endpoint, mime_list)
+        required = mime_list.any? do |mime|
+          mime_config = endpoint[:requestBody][:content][mime]
+          mime_config.any? do |_mime, config|
+            config[:required] || config.dig(:schema, :required) || config[:properties]&.any? { |_k, s| s[:required] }
+          end
+        end
         endpoint[:requestBody][:required] = true if required
       end
 
