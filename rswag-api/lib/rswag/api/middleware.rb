@@ -48,7 +48,8 @@ module Rswag
       end
 
       def load_yaml(filename)
-        YAML.safe_load(File.read(filename))
+        # permitted_classes: [Date] works around https://github.com/ruby/psych/issues/262
+        YAML.safe_load(File.read(filename), permitted_classes: [Date])
       end
 
       def load_json(filename)
