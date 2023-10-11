@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
+## [2.11.0]
+
+### Added
+
+- Rails 7.1 support (https://github.com/rswag/rswag/pull/677)
+
 ## [2.10.1]
 
 ### Fixed
