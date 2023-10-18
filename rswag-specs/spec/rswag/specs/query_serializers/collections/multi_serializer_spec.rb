@@ -34,10 +34,10 @@ module Rswag
             end
 
             context "when value contains unescaped characters" do
-              let(:value) { ["something cool", "neato"] }
+              let(:value) { ["something cool", "neat"] }
 
               it "escapes them" do
-                expect(serialize).to eq("values=something+cool&values=neato")
+                expect(serialize).to eq("values=something+cool&values=neat")
               end
             end
           end

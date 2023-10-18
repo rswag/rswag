@@ -135,7 +135,7 @@ module Rswag
             context "when style is something invalid" do
               let(:style) { :somethingInvalid }
 
-              # I don't know if this is intentional behaviour or if this is just
+              # I don't know if this is intentional behavior or if this is just
               # a quirk of how serialization was initially implemented.
               it "returns nil" do
                 expect(serialize_object).to be_nil
