@@ -80,10 +80,13 @@ module Rswag
 
                   value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
                 end
-                remove_invalid_operation_keys!(value)
+                remove_invalid_path_operation_keys!(value)
               end
             end
+
+            remove_invalid_root_keys!(doc)
           end
+
 
           file_path = File.join(@config.swagger_root, url_path)
           dirname = File.dirname(file_path)
@@ -207,7 +210,14 @@ module Rswag
         end
       end
 
-      def remove_invalid_operation_keys!(value)
+      # only have valid oas v3 fields
+      # based on https://spec.openapis.org/oas/v3.1.0#fixed-fields
+      def remove_invalid_root_keys!(doc)
+        new_doc = doc.slice(:openapi, :info, :jsonSchemaDialect, :servers, :paths, :webhooks, :components, :security, :tags, :externalDocs)
+        doc.replace(new_doc)
+      end
+
+      def remove_invalid_path_operation_keys!(value)
         return unless value.is_a?(Hash)
 
         value.delete(:consumes) if value[:consumes]
