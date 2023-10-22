@@ -501,11 +501,11 @@ module Rswag
             }
           end
 
-          it 'removes invalid field' do
+          it 'removes invalid fields' do
             expect(doc_2[:consumes]).to be_nil
           end
 
-          it 'removes invalid field' do
+          it 'consume in root still applies' do
             expect(doc_2[:paths]['/path/'][:post][:requestBody][:content]).to eql({
               'application/json' => {
                 schema: { type: :number }
