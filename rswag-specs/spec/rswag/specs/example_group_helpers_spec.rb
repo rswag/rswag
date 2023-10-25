@@ -25,6 +25,38 @@ module Rswag
         end
       end
 
+      describe "#path(path, metadata)" do
+        describe "when metadata is a hash" do
+          before { subject.path('/blogs', foo: 'bar') }
+
+          it "delegates to 'describe' with 'response' metadata" do
+            expect(subject).to have_received(:describe).with(
+              '/blogs', path_item: { template: '/blogs' }, foo: 'bar'
+            )
+          end
+        end
+
+        describe "when metadata is a symbol" do
+          before { subject.path('/blogs', :foo) }
+
+          it "delegates to 'describe' with 'response' metadata" do
+            expect(subject).to have_received(:describe).with(
+              '/blogs', path_item: { template: '/blogs' }, foo: true
+            )
+          end
+        end
+
+        describe "when metadata is a mix of symbols and hashes" do
+          before { subject.path('/blogs', :foo, :qux, bar: 'baz') }
+
+          it "delegates to 'describe' with 'response' metadata" do
+            expect(subject).to have_received(:describe).with(
+              '/blogs', path_item: { template: '/blogs' }, foo: true, bar: 'baz', qux: true
+            )
+          end
+        end
+      end
+
       describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
         context 'when called without keyword arguments' do
           before { subject.post('Creates a blog') }
@@ -42,6 +74,16 @@ module Rswag
           it "delegates to 'describe' with 'operation' metadata and provided metadata" do
             expect(subject).to have_received(:describe).with(
               :post, operation: { verb: :post, summary: 'Creates a blog' }, foo: 'bar'
+            )
+          end
+        end
+
+        context 'when called with symbol and hash arguments' do
+          before { subject.post('Creates a blog', :foo, bar: 'baz') }
+
+          it "delegates to 'describe' with 'operation' metadata and provided metadata" do
+            expect(subject).to have_received(:describe).with(
+              :post, operation: { verb: :post, summary: 'Creates a blog' }, foo: true, bar: 'baz'
             )
           end
         end
@@ -149,7 +191,7 @@ module Rswag
           end
         end
 
-        describe "when metadata is a mix of symbols and hashs" do
+        describe "when metadata is a mix of symbols and hashes" do
           before { subject.response('201', 'success', :foo, :qux, bar: 'baz') }
 
           it "delegates to 'context' with 'response' metadata and provided metadata" do

@@ -7,14 +7,18 @@ module Rswag
     module ExampleGroupHelpers
       ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
 
-      def path(template, metadata = {}, &block)
+      def path(template, *metadata, &block)
+        metadata = _parse_metadata(metadata)
         metadata[:path_item] = { template: template }
         describe(template, metadata, &block)
       end
 
       [:get, :post, :patch, :put, :delete, :head, :options, :trace].each do |verb|
-        define_method(verb) do |summary, **metadata, &block|
-          api_metadata = { operation: { verb: verb, summary: summary } }.deep_merge(metadata)
+        define_method(verb) do |summary, *metadata, &block|
+          metadata = _parse_metadata(metadata)
+          api_metadata =
+            { operation: { verb: verb, summary: summary } }
+            .deep_merge(metadata)
           describe(verb, **api_metadata, &block)
         end
       end
@@ -67,14 +71,7 @@ module Rswag
       end
 
       def response(code, description, *metadata, &block)
-        metadata = metadata.reduce({}) do |acc, item|
-          if item.is_a?(Symbol)
-            acc[item] = true
-          elsif item.is_a?(Hash)
-            acc.merge!(item)
-          end
-          acc
-        end
+        metadata = _parse_metadata(metadata)
         metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)
       end
@@ -155,6 +152,19 @@ module Rswag
             assert_response_matches_metadata(example.metadata, &block)
             example.instance_exec(response, &block) if block_given?
           end
+        end
+      end
+
+      private
+
+      def _parse_metadata(metadata)
+        metadata.reduce({}) do |acc, item|
+          if item.is_a?(Symbol)
+            acc[item] = true
+          elsif item.is_a?(Hash)
+            acc.merge!(item)
+          end
+          acc
         end
       end
     end
