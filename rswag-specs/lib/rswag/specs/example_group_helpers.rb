@@ -66,9 +66,14 @@ module Rswag
         end
       end
 
-      def response(code, description, metadata = {}, &block)
-        if metadata.is_a?(Symbol)
-          metadata = { metadata => true }
+      def response(code, description, *metadata, &block)
+        metadata = metadata.reduce({}) do |acc, item|
+          if item.is_a?(Symbol)
+            acc[item] = true
+          elsif item.is_a?(Hash)
+            acc.merge!(item)
+          end
+          acc
         end
         metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)

@@ -148,6 +148,16 @@ module Rswag
             )
           end
         end
+
+        describe "when metadata is a mix of symbols and hashs" do
+          before { subject.response('201', 'success', :foo, :qux, bar: 'baz') }
+
+          it "delegates to 'context' with 'response' metadata and provided metadata" do
+            expect(subject).to have_received(:context).with(
+              'success', response: { code: '201', description: 'success' }, foo: true, bar: 'baz', qux: true
+            )
+          end
+        end
       end
 
       describe '#schema(value)' do
