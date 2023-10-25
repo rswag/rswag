@@ -127,6 +127,28 @@ module Rswag
           )
         end
       end
+      describe '#response(code, description, metadata)' do
+
+        describe "when metadata is a hash" do
+          before { subject.response('201', 'success', foo: 'bar') }
+
+          it "delegates to 'context' with 'response' metadata and provided metadata" do
+            expect(subject).to have_received(:context).with(
+              'success', response: { code: '201', description: 'success' }, foo: 'bar'
+            )
+          end
+        end
+
+        describe "when metadata is a symbol" do
+          before { subject.response('201', 'success', :foo) }
+
+          it "delegates to 'context' with 'response' metadata and provided metadata" do
+            expect(subject).to have_received(:context).with(
+              'success', response: { code: '201', description: 'success' }, foo: true
+            )
+          end
+        end
+      end
 
       describe '#schema(value)' do
         before { subject.schema(type: 'object') }

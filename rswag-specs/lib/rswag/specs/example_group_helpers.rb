@@ -67,6 +67,9 @@ module Rswag
       end
 
       def response(code, description, metadata = {}, &block)
+        if metadata.is_a?(Symbol)
+          metadata = { metadata => true }
+        end
         metadata[:response] = { code: code, description: description }
         context(description, metadata, &block)
       end
