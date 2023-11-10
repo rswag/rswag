@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Add missing link to Content Security Policy (https://github.com/rswag/rswag/pull/619)
+- Fix it's vs its typo (https://github.com/rswag/rswag/pull/689)
+
 ### Added
 
 ### Changed
@@ -61,7 +64,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Invalid URI error when specifying protocol within server configuration (https://github.com/rswag/rswag/pull/591)
 - Fix ADDITIONAL_RSPEC_OPTS to always apply (https://github.com/rswag/rswag/pull/584)
-- Add missing link to Content Security Policy (https://github.com/rswag/rswag/pull/619)
 
 ### Documentation
 
