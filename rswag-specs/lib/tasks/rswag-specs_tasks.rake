@@ -22,7 +22,7 @@ namespace :rswag do
       ] << additional_rspec_opts
 
 
-      if Rswag::Specs.config.swagger_dry_run
+      if Rswag::Specs.config.rswag_dry_run
         t.rspec_opts += ['--dry-run']
       end
     end
