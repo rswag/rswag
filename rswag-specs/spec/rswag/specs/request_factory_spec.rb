@@ -171,6 +171,22 @@ module Rswag
               expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
             end
           end
+
+          context 'openapi 3.0.1' do
+            let(:swagger_doc) { { openapi: '3.0.1' } }
+            context 'parameter type is defined as schema: { type: :string }' do
+              before do
+                metadata[:operation][:parameters] = [
+                  { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime, }
+                ]
+                allow(example).to receive(:date_time).and_return(date_time)
+              end
+
+              it 'formats the datetime properly' do
+                expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+              end
+            end
+          end
         end
 
         context "'query' parameters of type 'object'" do

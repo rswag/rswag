@@ -173,6 +173,8 @@ module Rswag
                           end
               return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
+          when :string
+            return "#{escaped_name}=#{CGI.escape(value.to_s)}"
           else
             return "#{name}=#{value}"
           end

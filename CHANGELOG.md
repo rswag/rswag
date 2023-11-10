@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Fix encoding query parameter for OpenApi v3 (https://github.com/rswag/rswag/pull/671)
+
 ### Added
 
 ### Changed
