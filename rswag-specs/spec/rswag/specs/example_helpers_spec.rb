@@ -10,18 +10,20 @@ module Rswag
       before do
         subject.extend(ExampleHelpers)
         allow(Rswag::Specs).to receive(:config).and_return(config)
-        allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
+        allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
         stub_const('Rswag::Specs::RAILS_VERSION', 3)
       end
       let(:config) { double('config') }
-      let(:swagger_doc) do
+      let(:openapi_spec) do
         {
-          swagger: '2.0',
-          securityDefinitions: {
-            api_key: {
-              type: :apiKey,
-              name: 'api_key',
-              in: :query
+          openapi: '3.0',
+          components: {
+            securitySchemes: {
+              api_key: {
+                type: :apiKey,
+                name: 'api_key',
+                in: :query
+              }
             }
           }
         }

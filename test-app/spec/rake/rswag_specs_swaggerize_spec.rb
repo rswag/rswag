@@ -4,14 +4,14 @@ require 'spec_helper'
 require 'rake'
 
 RSpec.describe 'rswag:specs:swaggerize' do
-  let(:swagger_root) { Rails.root.to_s + '/swagger' }
+  let(:openapi_root) { Rails.root.to_s + '/openapi' }
   before do
     TestApp::Application.load_tasks
-    FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
+    FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
   end
 
-  it 'generates Swagger JSON files from integration specs' do
+  it 'generates OpenAPI JSON files from integration specs' do
     Rake::Task['rswag:specs:swaggerize'].invoke
-    expect(File).to exist("#{swagger_root}/v1/swagger.json")
+    expect(File).to exist("#{openapi_root}/v1/openapi.json")
   end
 end
