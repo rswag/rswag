@@ -23,8 +23,7 @@ module Rswag
       @config ||= Configuration.new(RSpec.configuration)
     end
 
-    # Support Rails 3+ and RSpec 2+ (sigh!)
+    # Support Rails 3+
     RAILS_VERSION = Rails::VERSION::MAJOR
-    RSPEC_VERSION = RSpec::Core::Version::STRING.split('.').first.to_i
   end
 end
