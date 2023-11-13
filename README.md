@@ -118,12 +118,12 @@ There is also a generator which can help get you started `rails generate rspec:s
           }
 
           response '201', 'blog created' do
-            let(:blog) { { title: 'foo', content: 'bar' } }
+            let(:request_parameters) { { 'blog' => { title: 'foo', content: 'bar' } } } }
             run_test!
           end
 
           response '422', 'invalid request' do
-            let(:blog) { { title: 'foo' } }
+            let(:request_parameters) { { 'blog' => { title: 'foo' } } }
             run_test!
           end
         end
@@ -146,17 +146,17 @@ There is also a generator which can help get you started `rails generate rspec:s
               },
               required: [ 'id', 'title', 'content' ]
 
-            let(:id) { Blog.create(title: 'foo', content: 'bar').id }
+            let(:request_parameters) { 'id' => { Blog.create(title: 'foo', content: 'bar').id } }
             run_test!
           end
 
           response '404', 'blog not found' do
-            let(:id) { 'invalid' }
+            let(:request_parameters) { { 'id' => 'invalid' } }
             run_test!
           end
 
           response '406', 'unsupported accept header' do
-            let(:'Accept') { 'application/foo' }
+            let(:request_headers) { { 'Accept' => 'application/foo' } }
             run_test!
           end
         end
@@ -226,7 +226,7 @@ If you'd like your specs to be a little more explicit about what's going on here
 
 ```ruby
 response '201', 'blog created' do
-  let(:blog) { { title: 'foo', content: 'bar' } }
+  let(:request_parameters) { { 'blog' => { title: 'foo', content: 'bar' } } }
 
   before do |example|
     submit_request(example.metadata)
@@ -276,7 +276,7 @@ describe 'Blogs API' do
     post 'Creates a blog' do
       ...
       response '201', 'blog created' do
-        let(:blog) { { title: 'foo', content: 'bar' } }
+        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
 
         run_test!(openapi_strict_schema_validation: true)
       end
@@ -291,7 +291,7 @@ describe 'Blogs API' do
       ...
 
       response '201', 'blog created', openapi_strict_schema_validation: true do
-        let(:blog) { { title: 'foo', content: 'bar' } }
+        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
 
         run_test!
       end
@@ -305,7 +305,7 @@ describe 'Blogs API' do
     post 'Creates a blog' do
       ...
       response '201', 'blog created' do
-        let(:blog) { { title: 'foo', content: 'bar' } }
+        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
 
         before do |example|
           submit_request(example.metadata)
@@ -488,7 +488,7 @@ RSpec.configure do |config|
           api_key: {
             type: :apiKey,
             name: 'api_key',
-            in: :query
+            in: :header
           }
         }
       }
@@ -507,12 +507,12 @@ describe 'Blogs API' do
       ...
 
       response '201', 'blog created' do
-        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
         run_test!
       end
 
       response '401', 'authentication failed' do
-        let(:Authorization) { "Basic #{::Base64.strict_encode64('bogus:bogus')}" }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('bogus:bogus')}" } }
         run_test!
       end
     end
@@ -528,14 +528,22 @@ describe 'Auth examples API' do
       security [{ basic_auth: [], api_key: [] }]
 
       response '204', 'Valid credentials' do
-        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
-        let(:api_key) { 'foobar' }
+        let(:request_headers) {
+          {
+            'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}"
+            'api_key' => 'foobar',
+          }
+        }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
-        let(:api_key) { 'bar-foo' }
+        let(:request_headers) {
+          {
+            'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}"
+            'api_key' => 'bar-foo',
+          }
+        }
         run_test!
       end
     end
@@ -836,7 +844,7 @@ describe 'Blogs API', document: false do
 There are some helper methods to help with documenting request bodies.
 ```ruby
 describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
-  let(:api_key) { 'fake_key' }
+  let(:request_headers) { { 'api_key' => 'fake_key' } }
 
   path '/blogs' do
     post 'Creates a blog' do
