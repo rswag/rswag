@@ -7,11 +7,17 @@ require 'json'
 module Rswag
   module Specs
     class RequestFactory
-      def initialize(config = ::Rswag::Specs.config)
+      attr_accessor :example, :metadata, :params, :headers
+
+      def initialize(metadata, example, config = ::Rswag::Specs.config)
         @config = config
+        @example = example
+        @metadata = metadata
+        @params = example.respond_to?(:request_params) ? example.request_params : {}
+        @headers = example.respond_to?(:request_headers) ? example.request_headers : {}
       end
 
-      def build_request(metadata, example)
+      def build_request
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
         parameters = expand_parameters(metadata, openapi_spec, example)
 
@@ -34,7 +40,11 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], openapi_spec) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !example.respond_to?(extract_getter(p)) }
+          .reject do |p|
+            p[:required] == false &&
+              !headers.key?(p[:name]) &&
+              !params.key?(p[:name])
+          end
       end
 
       def derive_security_params(metadata, openapi_spec)
@@ -88,16 +98,19 @@ module Rswag
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
-            unless example.respond_to?(extract_getter(p))
-              raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
+            begin
+              param_value = params.fetch(p[:name].to_s).to_s
+            rescue KeyError
+              raise ArgumentError.new("`#{p[:name]}`" \
+                "parameter key present, but not defined within example group" \
                 "(i. e `it` or `let` block)")
             end
-            path_template.gsub!("{#{p[:name]}}", example.send(extract_getter(p)).to_s)
+            path_template.gsub!("{#{p[:name]}}", param_value)
           end
 
-          parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|
+          parameters.select { |p| p[:in] == :query && params.key?(p[:name]) }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, example.send(extract_getter(p)), openapi_spec))
+            path_template.concat(build_query_string_part(p, params.fetch(p[:name]), openapi_spec))
           end
         end
       end
@@ -160,19 +173,19 @@ module Rswag
       def add_headers(request, metadata, openapi_spec, parameters, example)
         tuples = parameters
           .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], example.send(extract_getter(p)).to_s] }
+          .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
         if produces
-          accept = example.respond_to?(:Accept) ? example.send(:Accept) : produces.first
+          accept = headers.fetch("Accept", produces.first)
           tuples << ['Accept', accept]
         end
 
         # Content-Type header
         consumes = metadata[:operation][:consumes] || openapi_spec[:consumes]
         if consumes
-          content_type = example.respond_to?(:'Content-Type') ? example.send(:'Content-Type') : consumes.first
+          content_type = headers.fetch('Content-Type', consumes.first)
           tuples << ['Content-Type', content_type]
         end
 
@@ -205,39 +218,39 @@ module Rswag
         return if content_type.nil?
 
         if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
-          request[:payload] = build_form_payload(parameters, example)
+          request[:payload] = build_form_payload(parameters)
         else
-          request[:payload] = build_json_payload(parameters, example)
+          request[:payload] = build_json_payload(parameters)
         end
       end
 
-      def build_form_payload(parameters, example)
+      def build_form_payload(parameters)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
           .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], example.send(extract_getter(p))] }
+          .map { |p| [p[:name], params.fetch(p[:name])] }
         Hash[tuples]
       end
 
-      def build_json_payload(parameters, example)
+      def build_json_payload(parameters)
         body_param = parameters.select { |p| p[:in] == :body }.first
 
         return nil unless body_param
 
-        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
+        begin
+          json_payload = params.fetch(body_param[:name].to_s)
+        rescue KeyError
+          raise(MissingParameterError, body_param[:name])
+        end
 
-        example.send(body_param[:name]).to_json
+        json_payload.to_json
       end
 
       def doc_version(doc)
         doc[:openapi]
-      end
-
-      def extract_getter(parameter)
-         parameter[:getter] || parameter[:name]
       end
     end
 
@@ -258,6 +271,7 @@ module Rswag
               let(:#{body_param}) {}
         MSG
       end
+
     end
   end
 end

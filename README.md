@@ -1107,24 +1107,6 @@ docker run -d -p 80:8080 swaggerapi/swagger-editor
 This will run the swagger editor in the docker daemon and can be accessed
 at ```http://localhost```. From here, you can use the UI to load the generated openapi.json to validate the output.
 
-### Custom :getter option for parameter
-
-To avoid conflicts with Rspec [`include`](https://github.com/rspec/rspec-rails/blob/40261bb72875c00a6e4a0ca2ac697b660d4e8d9c/spec/support/generators.rb#L18) matcher and other possible intersections like `status` method:
-
-```
-...
-parameter name: :status,
-          getter: :filter_status,
-          in: :query,
-          schema: {
-            type: :string,
-            enum: %w[one two three],
-          }, required: false
-
-let(:status) { nil } # will not be used in query string
-let(:filter_status) { 'one' } # `&status=one` will be provided in final query
-```
-
 ### Linting with RuboCop RSpec
 
 When you lint your RSpec spec files with `rubocop-rspec`, it will fail to detect RSpec aliases that Rswag defines.
