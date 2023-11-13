@@ -38,8 +38,6 @@ module Rswag
               { name: 'blog_id', in: :path, type: :number },
               { name: 'id', in: :path, type: :number }
             ]
-            # TODO: removed in conflict: example.request_params["blog_id"] = 1
-            # TODO: removed in conflict: example.request_params["id"] = 2
           end
 
           context 'when `name` parameter key is required, but not defined within example group' do
@@ -52,27 +50,12 @@ module Rswag
 
           context 'when `name` is defined' do
             before do
-              allow(example).to receive(:blog_id).and_return(1)
-              allow(example).to receive(:id).and_return(2)
+              example.request_params['blog_id'] = 1
+              example.request_params['id'] = 2
             end
 
             it 'builds the path from example values' do
               expect(request[:path]).to eq('/blogs/1/comments/2')
-            end
-
-            context 'when `getter is defined`' do
-              before do
-                metadata[:operation][:parameters] = [
-                  { name: 'blog_id', in: :path, type: :number },
-                  { name: 'id', in: :path, type: :number, getter: :param_id }
-                ]
-
-                allow(example).to receive(:param_id).and_return(123)
-              end
-
-              it 'builds the path using getter method' do
-                expect(request[:path]).to eq('/blogs/1/comments/123')
-              end
             end
           end
         end
@@ -93,31 +76,16 @@ module Rswag
           it 'builds the query string from example values' do
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&falsey=false')
           end
-
-          context 'when `getter is defined`' do
-            before do
-              metadata[:operation][:parameters] << {
-                name: 'status', in: :query, type: :string, getter: :q3_status
-              }
-
-              allow(example).to receive(:status).and_return(nil)
-              allow(example).to receive(:q3_status).and_return(123)
-            end
-
-            it 'builds the query string using getter method' do
-              expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&status=123')
-            end
-          end
         end
 
         context "'query' parameters of type 'array'" do
           before do
             metadata[:operation][:parameters] = [
               { name: 'things', in: :query, type: :array, collectionFormat: collection_format },
-              { name: 'numbers', in: :query, type: :array, collectionFormat: collection_format, getter: :magic_numbers },
+              { name: 'numbers', in: :query, type: :array, collectionFormat: collection_format },
             ]
             example.request_params["things"] = ['foo', 'bar']
-            example.request_params["magic_numbers"] = [0, 1]
+            example.request_params["numbers"] = [0, 1]
             # TODO: expect(example).not_to receive(:numbers)
           end
 
@@ -164,7 +132,7 @@ module Rswag
             metadata[:operation][:parameters] = [
               { name: 'date_time', in: :query, type: :string, format: :datetime, }
             ]
-            allow(example).to receive(:date_time).and_return(date_time)
+            example.request_params['date_time'] = date_time
           end
 
           it 'formats the datetime properly' do
@@ -192,7 +160,7 @@ module Rswag
                 schema: { type: :object, additionalProperties: { type: :string } }
               }
             ]
-            allow(example).to receive(:things).and_return(things)
+            example.request_params["things"] = things
           end
 
           context 'deepObject' do
@@ -251,7 +219,7 @@ module Rswag
                 schema: { type: :array, items: { type: :integer } }
               }
             ]
-            allow(example).to receive(:id).and_return(id)
+            example.request_params['id'] = id
           end
 
           context 'form' do
@@ -317,7 +285,7 @@ module Rswag
                 schema: { '$ref' => '#/components/schemas/FooType' }
               }
             ]
-            allow(example).to receive(:things).and_return(things)
+            example.request_params['things'] = things
           end
 
           it 'builds the query string' do
@@ -329,7 +297,7 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [
               { name: 'Api-Key', in: :header, type: :string },
-              { name: 'Token', getter: :token_param, in: :header, type: :string }
+              { name: 'Token', in: :header, type: :string }
             ]
             example.request_headers["Api-Key"] = 'foobar'
             example.request_headers["Token"] = 'my_token'
@@ -389,9 +357,6 @@ module Rswag
           context 'missing body parameter' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              allow(example).to receive(:comment).and_raise(NoMethodError, "undefined method 'comment'")
-              allow(example).to receive(:respond_to?).with(:'Content-Type')
-              allow(example).to receive(:respond_to?).with('comment').and_return(false)
             end
 
             it 'uses the referenced metadata to build the request' do

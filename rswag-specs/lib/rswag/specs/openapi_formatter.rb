@@ -157,7 +157,6 @@ module Rswag
         value.delete(:consumes) if value[:consumes]
         value.delete(:produces) if value[:produces]
         value.delete(:request_examples) if value[:request_examples]
-        value[:parameters].each { |p| p.delete(:getter) } if value[:parameters]
       end
     end
   end

@@ -64,8 +64,10 @@ module Rswag
         it "submits a request built from metadata and 'let' values" do
           expect(subject).to have_received(:put).with(
             '/blogs/1/comments/2?q1=foo&api_key=fooKey',
-            '{"text":"Some comment"}',
-            { 'CONTENT_TYPE' => 'application/json' }
+            {
+              :params=>'{"text":"Some comment"}',
+              :headers=>{ 'CONTENT_TYPE' => 'application/json'}
+            }
           )
         end
       end

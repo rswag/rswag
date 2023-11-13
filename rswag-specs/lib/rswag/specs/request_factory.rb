@@ -8,6 +8,7 @@ module Rswag
   module Specs
     class RequestFactory
       attr_accessor :example, :metadata, :params, :headers
+
       def initialize(metadata, example, config = ::Rswag::Specs.config)
         @config = config
         @example = example
@@ -39,7 +40,11 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], openapi_spec) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !headers.key?(extract_getter(p)) && !params.key?(extract_getter(p)) }
+          .reject do |p|
+            p[:required] == false &&
+              !headers.key?(p[:name]) &&
+              !params.key?(p[:name])
+          end
       end
 
       def derive_security_params(metadata, openapi_spec)
@@ -93,16 +98,19 @@ module Rswag
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
-            unless params.fetch(extract_getter(p).to_s)
-              raise ArgumentError.new("`#{extract_getter(p).to_s}` parameter key present, but not defined within example group"\
+            begin
+              param_value = params.fetch(p[:name].to_s).to_s
+            rescue KeyError
+              raise ArgumentError.new("`#{p[:name]}`" \
+                "parameter key present, but not defined within example group" \
                 "(i. e `it` or `let` block)")
             end
-            path_template.gsub!("{#{p[:name]}}", params.fetch(extract_getter(p)).to_s)
+            path_template.gsub!("{#{p[:name]}}", param_value)
           end
 
           parameters.select { |p| p[:in] == :query && params.key?(p[:name]) }.each_with_index do |p, i|
             path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, params.fetch(extract_getter(p)), openapi_spec))
+            path_template.concat(build_query_string_part(p, params.fetch(p[:name]), openapi_spec))
           end
         end
       end
@@ -165,7 +173,7 @@ module Rswag
       def add_headers(request, metadata, openapi_spec, parameters, example)
         tuples = parameters
           .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], headers.fetch(extract_getter(p)).to_s] }
+          .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
@@ -223,7 +231,7 @@ module Rswag
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
           .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], params.fetch(extract_getter(p))] }
+          .map { |p| [p[:name], params.fetch(p[:name])] }
         Hash[tuples]
       end
 
@@ -232,17 +240,17 @@ module Rswag
 
         return nil unless body_param
 
-        raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
+        begin
+          json_payload = params.fetch(body_param[:name].to_s)
+        rescue KeyError
+          raise(MissingParameterError, body_param[:name])
+        end
 
-        params.fetch(body_param[:name]).to_json
+        json_payload.to_json
       end
 
       def doc_version(doc)
         doc[:openapi]
-      end
-
-      def extract_getter(parameter)
-         parameter[:getter] || parameter[:name]
       end
     end
 

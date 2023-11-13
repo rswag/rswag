@@ -21,7 +21,6 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         required: true
       }
 
-
       response '201', 'blog created' do
         schema '$ref' => '#/components/schemas/blog'
         run_test!
@@ -47,14 +46,16 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: "keywords", in: :query, type: 'string'
-      parameter name: "status", in: :query, type: 'string', getter: :blog_status
+      parameter name: "status", in: :query, type: 'string'
 
       before do
         Blog.create(title: 'foo', content: 'hello world', status: 'published')
       end
 
-      let(:request_params) { { "keywords" => 'foo bar' } }
-      let(:request_params) { { "blog_status" => 'published' } }
+      let(:request_params) { {
+        "keywords" => 'foo bar',
+        "status" => 'published'
+       } }
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
@@ -67,7 +68,9 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       response '200', 'no content' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
 
-        let(:blog_status) { 'invalid' }
+        let(:request_params) { {
+          "status" => 'invalid'
+         } }
 
         run_test! do
           expect(JSON.parse(response.body).size).to eq(0)
@@ -150,10 +153,6 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
           thumbnail: 'thumbnail.png'
         }
 
-        # TODO: probably unneeded, has been removed, just noting during conflict resolving
-        # let(:request_params) { {
-        #   "id" => blog.id
-        # } }
         run_test!
 
         context 'when openapi_strict_schema_validation is true' do
