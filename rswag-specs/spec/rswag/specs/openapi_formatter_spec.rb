@@ -37,7 +37,7 @@ module Rswag
             document: document
           }
         end
-        let(:response_metadata) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } } }
+        let(:response_metadata) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/components/schemas/blog' } } }
 
         context 'with the document tag set to false' do
           let(:openapi_spec) { { openapi: '3.0' } }
