@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- Bump "swagger-ui-dist" to "5.9.4" in rswag-ui
+
 ### Documentation
 
 ## [2.10.1]
