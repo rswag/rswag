@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0]
+
+### Fixed
+
+### Added
+
+### Changed
+
+- Drop support for OpenAPI v2 (Swagger) (https://github.com/rswag/rswag/pull/574)
+
+### Documentation
+
 ## [Unreleased]
 
 ### Fixed
@@ -15,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Drop support for OpenAPI v2 (Swagger) (https://github.com/rswag/rswag/pull/574)
+- Bump "swagger-ui-dist" to "5.9.4" in rswag-ui
 
 ### Documentation
 
