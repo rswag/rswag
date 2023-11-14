@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile']
 
-  s.add_dependency 'railties', '>= 3.1', '< 7.1'
-  
+  s.add_dependency 'railties', '>= 3.1', '< 7.2'
+
   s.add_development_dependency 'simplecov', '=0.21.2'
 end

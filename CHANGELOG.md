@@ -6,8 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Relaxed the dependency on json-schema, allowing for updates including support for allPropertiesRequired and noPropertiesRequired options (https://github.com/rswag/rswag/pull/659)
+
 ### Fixed
 
+- Add missing link to Content Security Policy (https://github.com/rswag/rswag/pull/619)
+- Fix it's vs its typo (https://github.com/rswag/rswag/pull/689)
+
+### Added
+
+- Add warning about methods renaming (https://github.com/rswag/rswag/pull/688)
+
+### Changed
+
+- Bump "swagger-ui-dist" to "5.9.4" in rswag-ui (https://github.com/rswag/rswag/pull/670)
+
+### Documentation
+
+## [2.11.0]
+
+### Added
+
+- Rails 7.1 support (https://github.com/rswag/rswag/pull/677)
+
+## [2.10.1]
+
+### Fixed
+
+- Fix path expansion (https://github.com/rswag/rswag/pull/660)
+
+## [2.10.0]
+
+### Fixed
+
+- Sanitize directory traversal in middleware (https://github.com/rswag/rswag/pull/654)
 - Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
 
 ### Added

@@ -35,6 +35,17 @@ module Rswag
             expect(response[1]).to include( 'Content-Type' => 'application/json')
             expect(response[2].join).to include('"title":"API V1"')
           end
+
+          context 'configured with a Pathname similar to `Rails.root.join("swagger")`' do
+            let(:swagger_root_pathname) { Pathname.new(swagger_root) }
+
+            before { config.swagger_root = swagger_root_pathname }
+
+            it 'returns a 200 status' do
+              expect(response.length).to eql(3)
+              expect(response.first).to eql('200')
+            end
+          end
         end
 
         context 'when swagger_headers is configured' do
@@ -75,6 +86,17 @@ module Rswag
 
         context "given a path that doesn't map to any swagger file" do
           let(:env) { env_defaults.merge('PATH_INFO' => 'foobar.json') }
+          before do
+            allow(app).to receive(:call).and_return([ '500', {}, [] ])
+          end
+
+          it 'delegates to the next middleware' do
+            expect(response).to include('500')
+          end
+        end
+
+        context "Disallow path traversing on path info" do
+          let(:env) { env_defaults.merge('PATH_INFO' => '../traverse-secret.yml') }
           before do
             allow(app).to receive(:call).and_return([ '500', {}, [] ])
           end

@@ -13,7 +13,12 @@ module Rswag
 
       def call(env)
         path = env['PATH_INFO']
-        filename = "#{@config.resolve_swagger_root(env)}/#{path}"
+        # Sanitize the filename for directory traversal by expanding, and ensuring
+        # its starts with the root directory.
+        filename = File.expand_path(File.join(@config.resolve_swagger_root(env), path))
+        unless filename.start_with? @config.resolve_swagger_root(env).to_s
+          return @app.call(env)
+        end
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           swagger = parse_file(filename)
