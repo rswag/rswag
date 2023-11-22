@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Add warning about methods renaming (https://github.com/rswag/rswag/pull/688)
+- Added more details about config swagger format [#698](https://github.com/rswag/rswag/pull/698)
 
 ### Changed
 
