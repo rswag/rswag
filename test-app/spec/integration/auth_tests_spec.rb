@@ -2,9 +2,9 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/swagger.json' do
   before do
-    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+    allow(Rswag::Specs.deprecator).to receive(:warn) # Silence deprecation output from specs
   end
 
   path '/auth-tests/basic' do

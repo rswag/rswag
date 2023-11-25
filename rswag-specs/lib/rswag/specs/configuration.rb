@@ -7,63 +7,59 @@ module Rswag
         @rspec_config = rspec_config
       end
 
-      def swagger_root
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "openapi_root" in v3.0')
-        @swagger_root ||= begin
-          if @rspec_config.swagger_root.nil?
-            raise ConfigurationError, 'No swagger_root provided. See swagger_helper.rb'
+      def openapi_root
+        @openapi_root ||=
+          @rspec_config.openapi_root || raise(ConfigurationError, 'No openapi_root provided. See swagger_helper.rb')
+      end
+
+      def openapi_specs
+        @openapi_specs ||= begin
+          if @rspec_config.openapi_specs.nil? || @rspec_config.openapi_specs.empty?
+            raise ConfigurationError, 'No openapi_specs defined. See swagger_helper.rb'
           end
 
-          @rspec_config.swagger_root
+          @rspec_config.openapi_specs
         end
       end
 
-      def swagger_docs
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "openapi_specs" in v3.0')
-        @swagger_docs ||= begin
-          if @rspec_config.swagger_docs.nil? || @rspec_config.swagger_docs.empty?
-            raise ConfigurationError, 'No swagger_docs defined. See swagger_helper.rb'
+      def rswag_dry_run
+        @rswag_dry_run ||= begin
+          if ENV.key?('SWAGGER_DRY_RUN') || ENV.key?('RSWAG_DRY_RUN')
+            @rspec_config.rswag_dry_run = ENV['SWAGGER_DRY_RUN'] == '1' || ENV['RSWAG_DRY_RUN'] == '1'
           end
 
-          @rspec_config.swagger_docs
+          @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
         end
       end
 
-      def swagger_dry_run
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "rswag_dry_run" in v3.0')
-        return @swagger_dry_run if defined? @swagger_dry_run
-        if ENV.key?('SWAGGER_DRY_RUN')
-          @rspec_config.swagger_dry_run = ENV['SWAGGER_DRY_RUN'] == '1'
-        end
-        @swagger_dry_run = @rspec_config.swagger_dry_run.nil? || @rspec_config.swagger_dry_run
-      end
+      def openapi_format
+        @openapi_format ||= begin
+          if @rspec_config.openapi_format.nil? || @rspec_config.openapi_format.empty?
+            @rspec_config.openapi_format = :json
+          end
 
-      def swagger_format
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "openapi_format" in v3.0')
-        @swagger_format ||= begin
-          @rspec_config.swagger_format = :json if @rspec_config.swagger_format.nil? || @rspec_config.swagger_format.empty?
-          raise ConfigurationError, "Unknown swagger_format '#{@rspec_config.swagger_format}'" unless [:json, :yaml].include?(@rspec_config.swagger_format)
+          unless [:json, :yaml].include?(@rspec_config.openapi_format)
+            raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'"
+          end
 
-          @rspec_config.swagger_format
+          @rspec_config.openapi_format
         end
       end
 
-      def get_swagger_doc(name)
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "get_openapi_spec" in v3.0')
-        return swagger_docs.values.first if name.nil?
-        raise ConfigurationError, "Unknown swagger_doc '#{name}'" unless swagger_docs[name]
+      def get_openapi_spec(name)
+        return openapi_specs.values.first if name.nil?
+        raise ConfigurationError, "Unknown openapi_spec '#{name}'" unless openapi_specs[name]
 
-        swagger_docs[name]
+        openapi_specs[name]
       end
 
-      def get_swagger_doc_version(name)
-        doc = get_swagger_doc(name)
+      def get_openapi_spec_version(name)
+        doc = get_openapi_spec(name)
         doc[:openapi] || doc[:swagger]
       end
 
-      def swagger_strict_schema_validation
-        ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: The method will be renamed to "openapi_strict_schema_validation" in v3.0')
-        @swagger_strict_schema_validation ||= (@rspec_config.swagger_strict_schema_validation || false)
+      def openapi_strict_schema_validation
+        @rspec_config.openapi_strict_schema_validation || false
       end
     end
 
