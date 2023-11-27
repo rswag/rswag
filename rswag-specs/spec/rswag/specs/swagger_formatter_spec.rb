@@ -482,6 +482,38 @@ module Rswag
           end
         end
 
+        context 'with invalid oas 3 root fields' do
+          let(:doc_2) do
+            {
+              openapi: '3.0.1',
+              paths: {
+                '/path/' => {
+                  post: {
+                    parameters: [{
+                      in: :body,
+                      description: "description",
+                      schema: { type: :number }
+                    }]
+                  }
+                }
+              },
+              consumes: ['application/json']
+            }
+          end
+
+          it 'removes invalid fields' do
+            expect(doc_2[:consumes]).to be_nil
+          end
+
+          it 'consume in root still applies' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody][:content]).to eql({
+              'application/json' => {
+                schema: { type: :number }
+              }
+            })
+          end
+        end
+
         after do
           FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
         end
