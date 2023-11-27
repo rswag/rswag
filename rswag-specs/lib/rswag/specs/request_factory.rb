@@ -43,7 +43,7 @@ module Rswag
         schemes = security_version(scheme_names, swagger_doc)
 
         schemes.map do |scheme|
-          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param = (scheme[:type]&.to_sym == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(type: :string, required: requirements.one?)
         end
       end
