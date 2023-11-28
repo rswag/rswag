@@ -18,6 +18,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Fixed
+
+### Documentation
+
+## [2.12.0]
+
+### Changed
+
+- Relaxed the dependency on json-schema, allowing for updates including support for allPropertiesRequired and noPropertiesRequired options (https://github.com/rswag/rswag/pull/659)
+
 ### Fixed
 
 - Add missing link to Content Security Policy (https://github.com/rswag/rswag/pull/619)
@@ -25,9 +39,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Add warning about methods renaming (https://github.com/rswag/rswag/pull/688)
+
 ### Changed
 
-- Bump "swagger-ui-dist" to "5.9.4" in rswag-ui
+- Bump "swagger-ui-dist" to "5.9.4" in rswag-ui (https://github.com/rswag/rswag/pull/670)
 
 ### Documentation
 
