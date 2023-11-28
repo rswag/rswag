@@ -59,7 +59,7 @@ module Rswag
         if /\.ya?ml$/ === filename
           YAML.dump(swagger)
         else
-          JSON.dump(swagger)
+          JSON.pretty_generate(swagger)
         end
       end
     end

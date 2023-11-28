@@ -33,7 +33,7 @@ module Rswag
           it 'returns contents of the swagger file' do
             expect(response.length).to eql(3)
             expect(response[1]).to include( 'Content-Type' => 'application/json')
-            expect(response[2].join).to include('"title":"API V1"')
+            expect(response[2].join).to include('"title": "API V1"')
           end
 
           context 'configured with a Pathname similar to `Rails.root.join("swagger")`' do
@@ -119,7 +119,7 @@ module Rswag
           it 'locates files at the provided swagger_root' do
             expect(response.length).to eql(3)
             expect(response[1]).to include( 'Content-Type' => 'application/json')
-            expect(response[2].join).to include('"openapi":"3.0.1"')
+            expect(response[2].join).to include('"openapi": "3.0.1"')
           end
         end
 
@@ -131,7 +131,7 @@ module Rswag
 
           it 'applies the filter prior to serialization' do
             expect(response.length).to eql(3)
-            expect(response[2].join).to include('"host":"tempuri.org"')
+            expect(response[2].join).to include('"host": "tempuri.org"')
           end
         end
 
