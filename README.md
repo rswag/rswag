@@ -320,6 +320,19 @@ describe 'Blogs API' do
 end
 ```
 
+### Additional Properties
+
+By default, `additionalProperties` will be set to true. This allows your schemas to pass even if undocumented keys show up in the response. There is a global setting in `rswag` to turn on strict validation within `JSON::Validator`, but strict validation makes all fields required and may not be what you are looking for. 
+
+This is a global setting that will set `addtionalProperties` to false for all schemas unless explicitly defined. There is only a global setting as if you want to change it per schema or test you can just set `additionalProperties` manually there. If you want optional fields, but only documented fields to show up in your response then this is the setting you are looking for.
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.disallow_additional_properties = true
+end
+```
+
 ### Null Values ###
 
 This library is currently using JSON::Draft4 for validation of response models. Nullable properties can be supported with the non-standard property 'x-nullable' to a definition to allow null/nil values to pass. Or you can add the new standard ```nullable``` property to a definition.
