@@ -987,7 +987,7 @@ You can adjust this in the _rswag_api.rb_ initializer that's installed with __rs
 
 ```ruby
 Rswag::Api.configure do |c|
-  c.swagger_root = Rails.root.to_s + '/your-custom-folder-name'
+  c.openapi_root = Rails.root.to_s + '/your-custom-folder-name'
   ...
 end
 ```
