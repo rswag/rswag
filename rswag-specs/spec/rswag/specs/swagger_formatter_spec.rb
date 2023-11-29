@@ -10,17 +10,17 @@ module Rswag
 
       # Mock out some infrastructure
       before do
-        allow(config).to receive(:swagger_root).and_return(swagger_root)
+        allow(config).to receive(:openapi_root).and_return(openapi_root)
 
-        allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+        allow(Rswag::Specs.deprecator).to receive(:warn) # Silence deprecation output from specs
       end
       let(:config) { double('config') }
       let(:output) { double('output').as_null_object }
-      let(:swagger_root) { File.expand_path('tmp/swagger', __dir__) }
+      let(:openapi_root) { File.expand_path('tmp/swagger', __dir__) }
 
       describe '#example_group_finished(notification)' do
         before do
-          allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
+          allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
           subject.example_group_finished(notification)
         end
         let(:request_examples) { nil }
@@ -40,21 +40,21 @@ module Rswag
         let(:response_metadata) { { code: '201', description: 'blog created', headers: { type: :string }, schema: { '$ref' => '#/definitions/blog' } } }
 
         context 'with the document tag set to false' do
-          let(:swagger_doc) { { swagger: '2.0' } }
+          let(:openapi_spec) { { swagger: '2.0' } }
           let(:document) { false }
 
           it 'does not update the swagger doc' do
-            expect(swagger_doc).to match({ swagger: '2.0' })
+            expect(openapi_spec).to match({ swagger: '2.0' })
           end
         end
 
         context 'with the document tag set to anything but false' do
-          let(:swagger_doc) { { swagger: '2.0' } }
+          let(:openapi_spec) { { swagger: '2.0' } }
           # anything works, including its absence when specifying responses.
           let(:document) { nil }
 
           it 'converts to swagger and merges into the corresponding swagger doc' do
-            expect(swagger_doc).to match(
+            expect(openapi_spec).to match(
               swagger: '2.0',
               paths: {
                 '/blogs' => {
@@ -77,7 +77,7 @@ module Rswag
         end
 
         context 'with metadata upgrades for 3.0' do
-          let(:swagger_doc) do
+          let(:openapi_spec) do
             {
               openapi: '3.0.1',
               basePath: '/foo',
@@ -108,7 +108,7 @@ module Rswag
           let(:document) { nil }
 
           it 'converts query and path params, type: to schema: { type: }' do
-            expect(swagger_doc.slice(:paths)).to match(
+            expect(openapi_spec.slice(:paths)).to match(
               paths: {
                 '/blogs' => {
                   parameters: [{ schema: { type: :string } }],
@@ -147,7 +147,7 @@ module Rswag
             end
 
             it 'adds example to definition' do
-              expect(swagger_doc.slice(:paths)).to match(
+              expect(openapi_spec.slice(:paths)).to match(
                 paths: {
                   '/blogs' => {
                     parameters: [{ schema: { type: :string } }],
@@ -177,7 +177,7 @@ module Rswag
           end
 
           context 'with empty content' do
-            let(:swagger_doc) do
+            let(:openapi_spec) do
               {
                 openapi: '3.0.1',
                 basePath: '/foo',
@@ -206,7 +206,7 @@ module Rswag
             end
 
             it 'converts query and path params, type: to schema: { type: }' do
-              expect(swagger_doc.slice(:paths)).to match(
+              expect(openapi_spec.slice(:paths)).to match(
                 paths: {
                   '/blogs' => {
                     parameters: [{ schema: { type: :string } }],
@@ -227,7 +227,7 @@ module Rswag
           end
 
           it 'converts basePath, schemas and host to urls' do
-            expect(swagger_doc.slice(:servers)).to match(
+            expect(openapi_spec.slice(:servers)).to match(
               servers: {
                 urls: ['http://api.example.com/foo', 'https://api.example.com/foo']
               }
@@ -235,7 +235,7 @@ module Rswag
           end
 
           it 'upgrades oauth flow to flows' do
-            expect(swagger_doc.slice(:components)).to match(
+            expect(openapi_spec.slice(:components)).to match(
               components: {
                 securitySchemes: {
                   myClientCredentials: {
@@ -271,36 +271,36 @@ module Rswag
 
       describe '#stop' do
         before do
-          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
-          allow(config).to receive(:swagger_docs).and_return(
+          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
+          allow(config).to receive(:openapi_specs).and_return(
             'v1/swagger.json' => doc_1,
             'v2/swagger.json' => doc_2
           )
-          allow(config).to receive(:swagger_format).and_return(swagger_format)
+          allow(config).to receive(:openapi_format).and_return(openapi_format)
           subject.stop(notification)
         end
 
         let(:doc_1) { { info: { version: 'v1' } } }
         let(:doc_2) { { info: { version: 'v2' } } }
-        let(:swagger_format) { :json }
+        let(:openapi_format) { :json }
 
         let(:notification) { double('notification') }
         context 'with default format' do
-          it 'writes the swagger_doc(s) to file' do
-            expect(File).to exist("#{swagger_root}/v1/swagger.json")
-            expect(File).to exist("#{swagger_root}/v2/swagger.json")
-            expect { JSON.parse(File.read("#{swagger_root}/v2/swagger.json")) }.not_to raise_error
+          it 'writes the openapi_spec(s) to file' do
+            expect(File).to exist("#{openapi_root}/v1/swagger.json")
+            expect(File).to exist("#{openapi_root}/v2/swagger.json")
+            expect { JSON.parse(File.read("#{openapi_root}/v2/swagger.json")) }.not_to raise_error
           end
         end
 
         context 'with yaml format' do
-          let(:swagger_format) { :yaml }
+          let(:openapi_format) { :yaml }
 
-          it 'writes the swagger_doc(s) as yaml' do
-            expect(File).to exist("#{swagger_root}/v1/swagger.json")
-            expect { JSON.parse(File.read("#{swagger_root}/v1/swagger.json")) }.to raise_error(JSON::ParserError)
+          it 'writes the openapi_spec(s) as yaml' do
+            expect(File).to exist("#{openapi_root}/v1/swagger.json")
+            expect { JSON.parse(File.read("#{openapi_root}/v1/swagger.json")) }.to raise_error(JSON::ParserError)
             # Psych::DisallowedClass would be raised if we do not pre-process ruby symbols
-            expect { YAML.safe_load(File.read("#{swagger_root}/v1/swagger.json")) }.not_to raise_error
+            expect { YAML.safe_load(File.read("#{openapi_root}/v1/swagger.json")) }.not_to raise_error
           end
         end
 
@@ -398,7 +398,7 @@ module Rswag
         end
 
         after do
-          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
+          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
         end
 
 
@@ -483,7 +483,7 @@ module Rswag
         end
 
         after do
-          FileUtils.rm_r(swagger_root) if File.exist?(swagger_root)
+          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
         end
       end
     end
