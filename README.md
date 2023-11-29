@@ -456,6 +456,9 @@ By default, the swagger docs are generated in JSON format. If you want to genera
 RSpec.configure do |config|
   config.openapi_root = Rails.root.to_s + '/swagger'
   
+  # Use if you want to see which test is running
+  # config.formatter = :documentation
+
   # Generate swagger docs in YAML format
   config.openapi_format = :yaml
 
