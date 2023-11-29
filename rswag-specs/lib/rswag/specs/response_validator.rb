@@ -13,7 +13,7 @@ module Rswag
       end
 
       def validate!(metadata, response)
-        swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+        swagger_doc = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
 
         validate_code!(metadata, response)
         validate_headers!(metadata, response.headers)
@@ -55,7 +55,7 @@ module Rswag
         response_schema = metadata[:response][:schema]
         return if response_schema.nil?
 
-        version = @config.get_swagger_doc_version(metadata[:swagger_doc])
+        version = @config.get_openapi_spec_version(metadata[:openapi_spec] || metadata[:swagger_doc])
         schemas = definitions_or_component_schemas(swagger_doc, version)
 
         validation_schema = response_schema
@@ -73,10 +73,12 @@ module Rswag
       end
 
       def validation_options_from(metadata)
-        is_strict = !!metadata.fetch(
-          :swagger_strict_schema_validation,
-          @config.swagger_strict_schema_validation
-        )
+        if metadata.key?(:swagger_strict_schema_validation)
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be renamed to "openapi_strict_schema_validation" in v3.0')
+          is_strict = !!metadata[:swagger_strict_schema_validation]
+        else
+          is_strict = !!metadata.fetch(:openapi_strict_schema_validation, @config.openapi_strict_schema_validation)
+        end
 
         { strict: is_strict }
       end
@@ -86,7 +88,7 @@ module Rswag
           swagger_doc.slice(:definitions)
         else # Openapi3
           if swagger_doc.key?(:definitions)
-            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
             swagger_doc.slice(:definitions)
           else
             components = swagger_doc[:components] || {}

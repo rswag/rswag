@@ -31,6 +31,7 @@ end
 
 group :test do
   gem 'capybara'
+  gem 'climate_control'
   gem 'geckodriver-helper'
   gem 'generator_spec'
   gem 'rspec-rails'

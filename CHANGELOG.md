@@ -8,9 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Add deprecation warnings for `Rswag::Api` configuration (https://github.com/rswag/rswag/pull/702)
+
 ### Changed
 
 ### Fixed
+
+- Fix deprecation warnings for `Rswag::Specs` configuration (https://github.com/rswag/rswag/pull/702)
 
 ### Documentation
 

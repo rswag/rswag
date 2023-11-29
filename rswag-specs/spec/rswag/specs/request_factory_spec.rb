@@ -10,10 +10,10 @@ module Rswag
       subject { RequestFactory.new(config) }
 
       before do
-        allow(config).to receive(:get_swagger_doc).and_return(swagger_doc)
+        allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
       end
       let(:config) { double('config') }
-      let(:swagger_doc) { { swagger: '2.0' } }
+      let(:openapi_spec) { { swagger: '2.0' } }
       let(:example) { double('example') }
       let(:metadata) do
         {
@@ -40,9 +40,7 @@ module Rswag
           end
 
           context 'when `name` parameter key is required, but not defined within example group' do
-            it "explicitly warns user about missing parameter, instead of giving generic error" do
-              expect { request[:path] }.not_to raise_error(/undefined method/)
-              expect { request[:path] }.not_to raise_error(/is not available from within an example/)
+            it 'explicitly warns user about missing parameter, instead of giving generic error' do
               expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
             end
           end
@@ -175,7 +173,7 @@ module Rswag
 
         context "'query' parameters of type 'object'" do
           let(:things) { {'foo': 'bar'} }
-          let(:swagger_doc) { { swagger: '3.0' } }
+          let(:openapi_spec) { { swagger: '3.0' } }
 
           before do
             metadata[:operation][:parameters] = [
@@ -234,7 +232,7 @@ module Rswag
 
         context "'query' parameters of type 'array'" do
           let(:id) { [3, 4, 5] }
-          let(:swagger_doc) { { swagger: '3.0' } }
+          let(:openapi_spec) { { swagger: '3.0' } }
 
           before do
             metadata[:operation][:parameters] = [
@@ -302,7 +300,7 @@ module Rswag
 
         context "'query' parameters with schema reference" do
           let(:things) { 'foo' }
-          let(:swagger_doc) { { swagger: '3.0' } }
+          let(:openapi_spec) { { swagger: '3.0' } }
 
           before do
             metadata[:operation][:parameters] = [
@@ -462,7 +460,7 @@ module Rswag
         context 'basic auth' do
           context 'swagger 2.0' do
             before do
-              swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+              openapi_spec[:securityDefinitions] = { basic: { type: :basic } }
               metadata[:operation][:security] = [basic: []]
               allow(example).to receive(:Authorization).and_return('Basic foobar')
             end
@@ -473,9 +471,9 @@ module Rswag
           end
 
           context 'openapi 3.0.1' do
-            let(:swagger_doc) { { openapi: '3.0.1' } }
+            let(:openapi_spec) { { openapi: '3.0.1' } }
             before do
-              swagger_doc[:components] = { securitySchemes: { basic: { type: :basic } } }
+              openapi_spec[:components] = { securitySchemes: { basic: { type: :basic } } }
               metadata[:operation][:security] = [basic: []]
               allow(example).to receive(:Authorization).and_return('Basic foobar')
             end
@@ -486,26 +484,26 @@ module Rswag
           end
 
           context 'openapi 3.0.1 upgrade notice' do
-            let(:swagger_doc) { { openapi: '3.0.1' } }
+            let(:openapi_spec) { { openapi: '3.0.1' } }
             before do
-              allow(ActiveSupport::Deprecation).to receive(:warn)
-              swagger_doc[:securityDefinitions] = { basic: { type: :basic } }
+              allow(Rswag::Specs.deprecator).to receive(:warn)
+              openapi_spec[:securityDefinitions] = { basic: { type: :basic } }
               metadata[:operation][:security] = [basic: []]
               allow(example).to receive(:Authorization).and_return('Basic foobar')
             end
 
             it 'warns the user to upgrade' do
               expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
-              expect(ActiveSupport::Deprecation).to have_received(:warn)
+              expect(Rswag::Specs.deprecator).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
-              expect(swagger_doc[:components]).to have_key(:securitySchemes)
+              expect(openapi_spec[:components]).to have_key(:securitySchemes)
             end
           end
         end
 
         context 'apiKey' do
           before do
-            swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
+            openapi_spec[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: key_location } }
             metadata[:operation][:security] = [apiKey: []]
             allow(example).to receive(:api_key).and_return('foobar')
           end
@@ -546,7 +544,7 @@ module Rswag
 
         context 'oauth2' do
           before do
-            swagger_doc[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: ['read:blogs'] } }
+            openapi_spec[:securityDefinitions] = { oauth2: { type: :oauth2, scopes: ['read:blogs'] } }
             metadata[:operation][:security] = [oauth2: ['read:blogs']]
             allow(example).to receive(:Authorization).and_return('Bearer foobar')
           end
@@ -558,7 +556,7 @@ module Rswag
 
         context 'paired security requirements' do
           before do
-            swagger_doc[:securityDefinitions] = {
+            openapi_spec[:securityDefinitions] = {
               basic: { type: :basic },
               api_key: { type: :apiKey, name: 'api_key', in: :query }
             }
@@ -589,7 +587,7 @@ module Rswag
         context 'referenced parameters' do
           context 'swagger 2.0' do
             before do
-              swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
+              openapi_spec[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/parameters/q1' }]
               allow(example).to receive(:q1).and_return('foo')
             end
@@ -600,9 +598,9 @@ module Rswag
           end
 
           context 'openapi 3.0.1' do
-            let(:swagger_doc) { { openapi: '3.0.1' } }
+            let(:openapi_spec) { { openapi: '3.0.1' } }
             before do
-              swagger_doc[:components] = { parameters: { q1: { name: 'q1', in: :query, type: :string } } }
+              openapi_spec[:components] = { parameters: { q1: { name: 'q1', in: :query, type: :string } } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/components/parameters/q1' }]
               allow(example).to receive(:q1).and_return('foo')
             end
@@ -613,19 +611,19 @@ module Rswag
           end
 
           context 'openapi 3.0.1 upgrade notice' do
-            let(:swagger_doc) { { openapi: '3.0.1' } }
+            let(:openapi_spec) { { openapi: '3.0.1' } }
             before do
-              allow(ActiveSupport::Deprecation).to receive(:warn)
-              swagger_doc[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
+              allow(Rswag::Specs.deprecator).to receive(:warn)
+              openapi_spec[:parameters] = { q1: { name: 'q1', in: :query, type: :string } }
               metadata[:operation][:parameters] = [{ '$ref' => '#/parameters/q1' }]
               allow(example).to receive(:q1).and_return('foo')
             end
 
             it 'warns the user to upgrade' do
               expect(request[:path]).to eq('/blogs?q1=foo')
-              expect(ActiveSupport::Deprecation).to have_received(:warn)
+              expect(Rswag::Specs.deprecator).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
-              expect(ActiveSupport::Deprecation).to have_received(:warn)
+              expect(Rswag::Specs.deprecator).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
             end
           end
@@ -633,7 +631,7 @@ module Rswag
 
         context 'base path' do
           context 'openapi 2.0' do
-            before { swagger_doc[:basePath] = '/api' }
+            before { openapi_spec[:basePath] = '/api' }
 
             it 'prepends to the path' do
               expect(request[:path]).to eq('/api/blogs')
@@ -642,7 +640,7 @@ module Rswag
 
           context 'openapi 3.0' do
             before do
-              swagger_doc[:servers] = [{
+              openapi_spec[:servers] = [{
                 :url => "{protocol}://{defaultHost}",
                 :variables => {
                   :protocol => {
@@ -661,22 +659,22 @@ module Rswag
           end
 
           context 'openapi 3.0 with old config' do
-            let(:swagger_doc) { {:openapi => '3.0', :basePath => '/blogs' } }
+            let(:openapi_spec) { {:openapi => '3.0', :basePath => '/blogs' } }
 
             before do
-              allow(ActiveSupport::Deprecation).to receive(:warn)
+              allow(Rswag::Specs.deprecator).to receive(:warn)
             end
 
             it 'generates the path' do
               expect(request[:headers]).to eq({})
-              expect(ActiveSupport::Deprecation).to have_received(:warn)
+              expect(Rswag::Specs.deprecator).to have_received(:warn)
                 .with('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
             end
           end
         end
 
         context 'global consumes' do
-          before { swagger_doc[:consumes] = ['application/xml'] }
+          before { openapi_spec[:consumes] = ['application/xml'] }
 
           it "defaults 'CONTENT_TYPE' to global value(s)" do
             expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
@@ -685,8 +683,8 @@ module Rswag
 
         context 'global security requirements' do
           before do
-            swagger_doc[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: :query } }
-            swagger_doc[:security] = [apiKey: []]
+            openapi_spec[:securityDefinitions] = { apiKey: { type: :apiKey, name: 'api_key', in: :query } }
+            openapi_spec[:security] = [apiKey: []]
             allow(example).to receive(:api_key).and_return('foobar')
           end
 

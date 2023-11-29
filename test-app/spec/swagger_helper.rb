@@ -6,15 +6,15 @@ RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
-  config.swagger_root = Rails.root.to_s + '/swagger'
-  config.swagger_dry_run = false
+  config.openapi_root = Rails.root.to_s + '/swagger'
+  config.rswag_dry_run = false
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:to_swagger' rake task, the complete Swagger will
-  # be generated at the provided relative path under swagger_root
+  # be generated at the provided relative path under openapi_root
   # By default, the operations defined in spec files are added to the first
-  # document below. You can override this behavior by adding a swagger_doc tag to the
-  # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
-  config.swagger_docs = {
+  # document below. You can override this behavior by adding a openapi_spec tag to the
+  # the root example_group in your specs, e.g. describe '...', openapi_spec: 'v2/swagger.json'
+  config.openapi_specs = {
     'v1/swagger.json' => {
       openapi: '3.0.0',
       info: {
@@ -35,41 +35,6 @@ RSpec.configure do |config|
           }
         }
       ],
-      definitions: {
-        errors_object: {
-          type: 'object',
-          properties: {
-            errors: { '$ref' => '#/definitions/errors_map' }
-          }
-        },
-        errors_map: {
-          type: 'object',
-          additionalProperties: {
-            type: 'array',
-            items: { type: 'string' }
-          }
-        },
-        blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            title: { type: 'string' },
-            content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string', 'x-nullable': true}
-          },
-          required: [ 'id', 'title' ]
-        },
-        flexible_blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            headline: { type: 'string' },
-            text: { type: 'string', nullable: true },
-            thumbnail: { type: 'string', nullable: true }
-          },
-          required: ['id', 'headline']
-        }
-      },
       components: {
         securitySchemes: {
           basic_auth: {
@@ -80,6 +45,41 @@ RSpec.configure do |config|
             type: :apiKey,
             name: 'api_key',
             in: :query
+          }
+        },
+        schemas: {
+          errors_object: {
+            type: 'object',
+            properties: {
+              errors: { '$ref' => '#/components/schemas/errors_map' }
+            }
+          },
+          errors_map: {
+            type: 'object',
+            additionalProperties: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              title: { type: 'string' },
+              content: { type: 'string', 'x-nullable': true },
+              thumbnail: { type: 'string', 'x-nullable': true}
+            },
+            required: [ 'id', 'title' ]
+          },
+          flexible_blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              headline: { type: 'string' },
+              text: { type: 'string', nullable: true },
+              thumbnail: { type: 'string', nullable: true }
+            },
+            required: ['id', 'headline']
           }
         }
       }
@@ -101,41 +101,6 @@ RSpec.configure do |config|
           }
         }
       ],
-      definitions: {
-        errors_object: {
-          type: 'object',
-          properties: {
-            errors: { '$ref' => '#/definitions/errors_map' }
-          }
-        },
-        errors_map: {
-          type: 'object',
-          additionalProperties: {
-            type: 'array',
-            items: { type: 'string' }
-          }
-        },
-        blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            title: { type: 'string' },
-            content: { type: 'string', 'x-nullable': true },
-            thumbnail: { type: 'string', 'x-nullable': true}
-          },
-          required: [ 'id', 'title' ]
-        },
-        flexible_blog: {
-          type: 'object',
-          properties: {
-            id: { type: 'integer' },
-            headline: { type: 'string' },
-            text: { type: 'string', nullable: true },
-            thumbnail: { type: 'string', nullable: true }
-          },
-          required: ['id', 'headline']
-        }
-      },
       components: {
         securitySchemes: {
           basic_auth: {
@@ -146,6 +111,41 @@ RSpec.configure do |config|
             type: :apiKey,
             name: 'api_key',
             in: :query
+          }
+        },
+        schemas: {
+          errors_object: {
+            type: 'object',
+            properties: {
+              errors: { '$ref' => '#/components/errors_map' }
+            }
+          },
+          errors_map: {
+            type: 'object',
+            additionalProperties: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              title: { type: 'string' },
+              content: { type: 'string', 'x-nullable': true },
+              thumbnail: { type: 'string', 'x-nullable': true}
+            },
+            required: [ 'id', 'title' ]
+          },
+          flexible_blog: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              headline: { type: 'string' },
+              text: { type: 'string', nullable: true },
+              thumbnail: { type: 'string', nullable: true }
+            },
+            required: ['id', 'headline']
           }
         }
       }

@@ -5,7 +5,6 @@ require 'rack/mime'
 module Rswag
   module Api
     class Middleware
-
       def initialize(app, config)
         @app = app
         @config = config
@@ -15,10 +14,9 @@ module Rswag
         path = env['PATH_INFO']
         # Sanitize the filename for directory traversal by expanding, and ensuring
         # its starts with the root directory.
-        filename = File.expand_path(File.join(@config.resolve_swagger_root(env), path))
-        unless filename.start_with? @config.resolve_swagger_root(env).to_s
-          return @app.call(env)
-        end
+        openapi_root = @config.resolve_openapi_root(env)
+        filename = File.expand_path(File.join(openapi_root, path))
+        return @app.call(env) unless filename.start_with? openapi_root.to_s
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           swagger = parse_file(filename)
@@ -30,11 +28,11 @@ module Rswag
           return [
             '200',
             headers,
-            [ body ]
+            [body]
           ]
         end
 
-        return @app.call(env)
+        @app.call(env)
       end
 
       private

@@ -263,7 +263,7 @@ By default, if response body contains undocumented properties tests will pass. T
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_strict_schema_validation = true
+  config.openapi_strict_schema_validation = true
 end
 ```
 
@@ -278,7 +278,7 @@ describe 'Blogs API' do
       response '201', 'blog created' do
         let(:blog) { { title: 'foo', content: 'bar' } }
 
-        run_test!(swagger_strict_schema_validation: true)
+        run_test!(openapi_strict_schema_validation: true)
       end
     end
   end
@@ -290,7 +290,7 @@ describe 'Blogs API' do
     post 'Creates a blog' do
       ...
 
-      response '201', 'blog created', swagger_strict_schema_validation: true do
+      response '201', 'blog created', openapi_strict_schema_validation: true do
         let(:blog) { { title: 'foo', content: 'bar' } }
 
         run_test!
@@ -311,7 +311,7 @@ describe 'Blogs API' do
           submit_request(example.metadata)
         end
 
-        it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+        it 'returns a valid 201 response', openapi_strict_schema_validation: true do |example|
           assert_response_matches_metadata(example.metadata)
         end
       end
@@ -385,9 +385,9 @@ In addition to paths, operations and responses, Swagger also supports global API
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.to_s + '/swagger'
 
-  config.swagger_docs = {
+  config.openapi_specs = {
     'v1/swagger.json' => {
       openapi: '3.0.1',
       info: {
@@ -433,11 +433,11 @@ end
 ```
 
 #### Supporting multiple versions of API ####
-By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
+By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```openapi_spec``` tag to each spec specifying its target document name:
 
 ```ruby
 # spec/requests/v2/blogs_spec.rb
-describe 'Blogs API', swagger_doc: 'v2/swagger.yaml' do
+describe 'Blogs API', openapi_spec: 'v2/swagger.yaml' do
 
   path '/blogs' do
   ...
@@ -475,9 +475,9 @@ Swagger supports :basic, :bearer, :apiKey and :oauth2 and :openIdConnect scheme 
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.to_s + '/swagger'
 
-  config.swagger_docs = {
+  config.openapi_specs = {
     'v1/swagger.json' => {
       ...  # note the new Open API 3.0 compliant security structure here, under "components"
       components: {
@@ -566,7 +566,7 @@ You can adjust this in the _swagger_helper.rb_ that's installed with __rswag-spe
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/your-custom-folder-name'
+  config.openapi_root = Rails.root.to_s + '/your-custom-folder-name'
   ...
 end
 ```
@@ -600,7 +600,7 @@ Rather than repeating the schema in every operation spec, you can define it glob
 
 ```ruby
 # spec/swagger_helper.rb
-config.swagger_docs = {
+config.openapi_specs = {
   'v1/swagger.json' => {
     openapi: '3.0.0',
     info: {
@@ -796,12 +796,12 @@ end
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
-disable it you can use the environment variable `SWAGGER_DRY_RUN=0` during the
+disable it you can use the environment variable `RSWAG_DRY_RUN=0` during the
 generation command or add the following to your `config/environments/test.rb`:
 
 ```ruby
 RSpec.configure do |config|
-  config.swagger_dry_run = false
+  config.rswag_dry_run = false
 end
 ```
 
@@ -837,7 +837,7 @@ describe 'Blogs API', document: false do
 <!--
 There are some helper methods to help with documenting request bodies.
 ```ruby
-describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
+describe 'Blogs API', type: :request, openapi_spec: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
 
   path '/blogs' do
@@ -975,7 +975,7 @@ TestApp::Application.routes.draw do
 end
 ```
 
-Assuming a Swagger file exists at &lt;swagger_root&gt;/v1/swagger.json, this configuration would expose the file as the following JSON endpoint:
+Assuming a Swagger file exists at &lt;openapi_root&gt;/v1/swagger.json, this configuration would expose the file as the following JSON endpoint:
 
 ```
 GET http://<hostname>/your-custom-prefix/v1/swagger.json
@@ -987,12 +987,12 @@ You can adjust this in the _rswag_api.rb_ initializer that's installed with __rs
 
 ```ruby
 Rswag::Api.configure do |c|
-  c.swagger_root = Rails.root.to_s + '/your-custom-folder-name'
+  c.openapi_root = Rails.root.to_s + '/your-custom-folder-name'
   ...
 end
 ```
 
-__NOTE__: If you're using rswag-specs to generate Swagger files, you'll want to ensure they both use the same &lt;swagger_root&gt;. The reason for separate settings is to maintain independence between the two gems. For example, you could install rswag-api independently and create your Swagger files manually.
+__NOTE__: If you're using rswag-specs to generate Swagger files, you'll want to ensure they both use the same &lt;openapi_root&gt;. The reason for separate settings is to maintain independence between the two gems. For example, you could install rswag-api independently and create your Swagger files manually.
 
 ### Dynamic Values for Swagger JSON ##
 
@@ -1029,8 +1029,8 @@ You can update the _rswag_ui.rb_ initializer, installed with rswag-ui, to specif
 
 ```ruby
 Rswag::Ui.configure do |c|
-  c.swagger_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
-  c.swagger_endpoint '/api-docs/v2/swagger.json', 'API V2 Docs'
+  c.openapi_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
+  c.openapi_endpoint '/api-docs/v2/swagger.json', 'API V2 Docs'
 end
 ```
 
