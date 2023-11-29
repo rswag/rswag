@@ -7,7 +7,7 @@ namespace :rswag do
     desc 'Generate Swagger JSON files from integration specs'
     RSpec::Core::RakeTask.new('swaggerize') do |t|
       t.pattern = ENV.fetch(
-        'PATTERN',
+        'RSWAG_PATTERN',
         'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
       )
 
