@@ -407,7 +407,7 @@ RSpec.configure do |config|
       ]
     },
 
-    'v2/swagger.yaml' => {
+    'v2/swagger.json' => {
       openapi: '3.0.1',
       info: {
         title: 'API V2',
@@ -444,6 +444,44 @@ describe 'Blogs API', openapi_spec: 'v2/swagger.yaml' do
 
   path '/blogs/{id}' do
   ...
+end
+```
+
+#### Supporting YAML format ####
+
+By default, the swagger docs are generated in JSON format. If you want to generate them in YAML format, you can specify the swagger format in the swagger_helper.rb file:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_root = Rails.root.to_s + '/swagger'
+  
+  # Use if you want to see which test is running
+  # config.formatter = :documentation
+
+  # Generate swagger docs in YAML format
+  config.openapi_format = :yaml
+
+  config.openapi_specs = {
+    'v1/swagger.yaml' => {
+      openapi: '3.0.1',
+      info: {
+        title: 'API V1',
+        version: 'v1',
+        description: 'This is the first version of my API'
+      },
+      servers: [
+        {
+          url: 'https://{defaultHost}',
+          variables: {
+            defaultHost: {
+                default: 'www.example.com'
+            }
+          }
+        }
+      ]
+    },
+  }
 end
 ```
 

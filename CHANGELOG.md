@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
+- Added more details about config swagger format [#698](https://github.com/rswag/rswag/pull/698)
+
 ## [2.13.0]
 
 ### Added
