@@ -263,7 +263,7 @@ By default, if response body contains undocumented properties tests will pass. T
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_strict_schema_validation = true
+  config.swagger_strict_schema_validation = true
 end
 ```
 
