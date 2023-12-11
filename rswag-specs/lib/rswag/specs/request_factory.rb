@@ -244,6 +244,8 @@ module Rswag
 
         if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
           request[:payload] = build_form_payload(parameters, example)
+        elsif [ 'application/xml', 'text/xml' ].include?(content_type)
+          request[:payload] = build_xml_payload(parameters, example)        
         else
           request[:payload] = build_json_payload(parameters, example)
         end
@@ -295,6 +297,11 @@ module Rswag
 
               let(:#{body_param}) {}
         MSG
+      end
+            
+      def build_xml_payload(parameters, example)
+        body_param = parameters.select { |p| p[:in] == :body }.first
+        body_param ? example.send(body_param[:name]) : nil
       end
     end
   end

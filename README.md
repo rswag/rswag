@@ -121,7 +121,13 @@ There is also a generator which can help get you started `rails generate rspec:s
             let(:blog) { { title: 'foo', content: 'bar' } }
             run_test!
           end
-
+          
+          response '201', 'blog created with xml' do
+            let(:"CONTENT_TYPE"){"application/xml"}
+            let(:blog) { "<blog><title>foo</title><content>bar</content></blog>" } }
+            run_test!
+          end
+          
           response '422', 'invalid request' do
             let(:blog) { { title: 'foo' } }
             run_test!
