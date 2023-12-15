@@ -10,5 +10,9 @@ module Rswag
     def self.config
       @config ||= Configuration.new
     end
+
+    def self.deprecator
+      @deprecator ||= ActiveSupport::Deprecation.new('3.0', 'rswag-ui')
+    end
   end
 end

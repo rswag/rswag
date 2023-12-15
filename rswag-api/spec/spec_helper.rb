@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'simplecov'
 
 RSpec.configure do |config|
@@ -8,3 +10,5 @@ RSpec.configure do |config|
     add_filter %r{^/spec/}
   end
 end
+
+require 'rswag/api'

@@ -387,7 +387,7 @@ In addition to paths, operations and responses, OpenAPI also supports global API
 RSpec.configure do |config|
   config.openapi_root = Rails.root.to_s + '/openapi'
 
-  config.openapi_docs = {
+  config.openapi_specs = {
     'v1/openapi.json' => {
       openapi: '3.0.1',
       info: {
@@ -447,6 +447,44 @@ describe 'Blogs API', openapi_spec: 'v2/openapi.yaml' do
 end
 ```
 
+#### Supporting YAML format ####
+
+By default, the OpenAPI specs are generated in JSON format. If you want to generate them in YAML format, you can specify the OpenAPI format in the `openapi_helper.rb` file:
+
+```ruby
+# spec/openapi_helper.rb
+RSpec.configure do |config|
+  config.openapi_root = Rails.root.to_s + '/openapi'
+
+  # Use if you want to see which test is running
+  # config.formatter = :documentation
+
+  # Generate OpenAPI docs in YAML format
+  config.openapi_format = :yaml
+
+  config.openapi_specs = {
+    'v1/openapi.yaml' => {
+      openapi: '3.0.1',
+      info: {
+        title: 'API V1',
+        version: 'v1',
+        description: 'This is the first version of my API'
+      },
+      servers: [
+        {
+          url: 'https://{defaultHost}',
+          variables: {
+            defaultHost: {
+                default: 'www.example.com'
+            }
+          }
+        }
+      ]
+    },
+  }
+end
+```
+
 #### Formatting the description literals: ####
 OpenAPI supports the Markdown syntax to format strings. This can be especially handy if you were to provide a long description of a given API version or endpoint. Use [this guide](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for reference.
 
@@ -479,6 +517,7 @@ RSpec.configure do |config|
 
   config.openapi_specs = {
     'v1/openapi.json' => {
+      ...  # note the new Open API 3.0 compliant security structure here, under "components"
       components: {
         securitySchemes: {
           basic_auth: {
@@ -802,7 +841,7 @@ end
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
-disable it you can use the environment variable `SWAGGER_DRY_RUN=0` during the
+disable it you can use the environment variable `RSWAG_DRY_RUN=0` during the
 generation command or add the following to your `config/environments/test.rb`:
 
 ```ruby

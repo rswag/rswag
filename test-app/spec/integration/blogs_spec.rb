@@ -4,7 +4,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
 
   before do
-    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+    # allow(Rswag::Specs.deprecator).to receive(:warn) # Silence deprecation output from specs
   end
 
   path '/blogs' do

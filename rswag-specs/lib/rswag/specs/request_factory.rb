@@ -217,14 +217,16 @@ module Rswag
         content_type = request[:headers]['CONTENT_TYPE']
         return if content_type.nil?
 
-        if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
-          request[:payload] = build_form_payload(parameters)
-        else
-          request[:payload] = build_json_payload(parameters)
-        end
+        request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
+                              build_form_payload(parameters, example)
+                            elsif content_type == 'application/json'
+                              build_json_payload(parameters, example)
+                            else
+                              build_raw_payload(parameters, example)
+                            end
       end
 
-      def build_form_payload(parameters)
+      def build_form_payload(parameters, example)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
@@ -235,9 +237,8 @@ module Rswag
         Hash[tuples]
       end
 
-      def build_json_payload(parameters)
+      def build_raw_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-
         return nil unless body_param
 
         begin
@@ -246,7 +247,11 @@ module Rswag
           raise(MissingParameterError, body_param[:name])
         end
 
-        json_payload.to_json
+        json_payload
+      end
+
+      def build_json_payload(parameters, example)
+        build_raw_payload(parameters, example)&.to_json
       end
 
       def doc_version(doc)

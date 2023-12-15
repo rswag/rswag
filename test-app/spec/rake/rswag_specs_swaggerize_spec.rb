@@ -5,6 +5,7 @@ require 'rake'
 
 RSpec.describe 'rswag:specs:swaggerize' do
   let(:openapi_root) { Rails.root.to_s + '/openapi' }
+
   before do
     TestApp::Application.load_tasks
     FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)

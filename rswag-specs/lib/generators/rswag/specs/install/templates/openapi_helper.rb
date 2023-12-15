@@ -9,7 +9,7 @@ RSpec.configure do |config|
   config.openapi_root = Rails.root.join('openapi').to_s
 
   # Define one or more OpenAPI documents and provide global metadata for each one
-  # When you run the 'rswag:specs:swaggerize' rake task, the complete OpenAPI will
+  # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
   # be generated at the provided relative path under openapi_root
   # By default, the operations defined in spec files are added to the first
   # document below. You can override this behavior by adding a openapi_spec tag to the

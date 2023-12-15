@@ -8,13 +8,8 @@ module Rswag
       end
 
       def openapi_root
-        @openapi_root ||= begin
-          if @rspec_config.openapi_root.nil?
-            raise ConfigurationError, 'No openapi_root provided. See openapi_helper.rb'
-          end
-
-          @rspec_config.openapi_root
-        end
+        @openapi_root ||=
+          @rspec_config.openapi_root || raise(ConfigurationError, 'No openapi_root provided. See openapi_helper.rb')
       end
 
       def openapi_specs
@@ -28,11 +23,13 @@ module Rswag
       end
 
       def rswag_dry_run
-        return @rswag_dry_run if defined? @rswag_dry_run
-        if ENV.key?('RSWAG_DRY_RUN')
-          @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1'
+        @rswag_dry_run ||= begin
+          if ENV.key?('RSWAG_DRY_RUN')
+            @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1'
+          end
+
+          @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
         end
-        @rswag_dry_run = @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
       end
 
       def openapi_format
@@ -40,6 +37,7 @@ module Rswag
           if @rspec_config.openapi_format.nil? || @rspec_config.openapi_format.empty?
             @rspec_config.openapi_format = :json
           end
+
           unless [:json, :yaml].include?(@rspec_config.openapi_format)
             raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'"
           end
@@ -56,7 +54,7 @@ module Rswag
       end
 
       def openapi_strict_schema_validation
-        @openapi_strict_schema_validation ||= (@rspec_config.openapi_strict_schema_validation || false)
+        @rspec_config.openapi_strict_schema_validation || false
       end
     end
 

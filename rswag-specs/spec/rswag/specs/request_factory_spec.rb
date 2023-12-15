@@ -41,9 +41,7 @@ module Rswag
           end
 
           context 'when `name` parameter key is required, but not defined within example group' do
-            it "explicitly warns user about missing parameter, instead of giving generic error" do
-              expect { request[:path] }.not_to raise_error(/undefined method/)
-              expect { request[:path] }.not_to raise_error(/is not available from within an example/)
+            it 'explicitly warns user about missing parameter, instead of giving generic error' do
               expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
             end
           end
@@ -86,7 +84,6 @@ module Rswag
             ]
             example.request_params["things"] = ['foo', 'bar']
             example.request_params["numbers"] = [0, 1]
-            # TODO: expect(example).not_to receive(:numbers)
           end
 
           context 'collectionFormat = csv' do
@@ -382,6 +379,18 @@ module Rswag
                 'f1' => 'foo blah',
                 'f2' => 'bar blah'
               )
+            end
+          end
+
+          context 'plain text payload' do
+            before do
+              metadata[:operation][:consumes] = ['text/plain']
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, type: 'string' }]
+              example.request_params["comment"] = 'plain text comment'
+            end
+
+            it 'keeps payload as a raw string data' do
+              expect(request[:payload]).to eq('plain text comment')
             end
           end
         end
