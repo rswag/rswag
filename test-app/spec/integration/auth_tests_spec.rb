@@ -3,10 +3,6 @@
 require 'openapi_helper'
 
 RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json' do
-  before do
-    # allow(Rswag::Specs.deprecator).to receive(:warn) # Silence deprecation output from specs
-  end
-
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do
       tags 'Auth Tests'
