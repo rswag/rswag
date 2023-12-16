@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [3.0, 3.1, 3.2]
+        ruby: [3.0, 3.1, 3.2] # 3.0 EOL is 2024-03-31
         rails: [6.1.4.4, 7.0.4.3]
     env:
       RAILS_VERSION: ${{ matrix.rails }}
