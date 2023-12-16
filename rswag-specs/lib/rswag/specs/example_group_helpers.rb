@@ -5,8 +5,6 @@ require 'active_support'
 module Rswag
   module Specs
     module ExampleGroupHelpers
-      ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for Ruby 2.6 will be dropped in v3.0') if RUBY_VERSION.start_with? '2.6'
-
       def path(template, metadata = {}, &block)
         metadata[:path_item] = { template: template }
         describe(template, metadata, &block)
@@ -129,7 +127,6 @@ module Rswag
         description ||= "returns a #{metadata[:response][:code]} response"
 
         if RSPEC_VERSION < 3
-          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: Support for RSpec 2.X will be dropped in v3.0')
           before do
             submit_request(example.metadata)
           end

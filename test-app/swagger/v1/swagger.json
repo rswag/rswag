@@ -14,7 +14,9 @@
         "operationId": "testBasicAuth",
         "security": [
           {
-            "basic_auth": []
+            "basic_auth": [
+
+            ]
           }
         ],
         "responses": {
@@ -36,7 +38,9 @@
         "operationId": "testApiKey",
         "security": [
           {
-            "api_key": []
+            "api_key": [
+
+            ]
           }
         ],
         "responses": {
@@ -58,8 +62,12 @@
         "operationId": "testBasicAndApiKey",
         "security": [
           {
-            "basic_auth": [],
-            "api_key": []
+            "basic_auth": [
+
+            ],
+            "api_key": [
+
+            ]
           }
         ],
         "responses": {
@@ -80,7 +88,9 @@
         ],
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
-        "parameters": [],
+        "parameters": [
+
+        ],
         "responses": {
           "201": {
             "description": "blog created"
@@ -90,7 +100,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/errors_object"
+                  "$ref": "#/components/schemas/errors_object"
                 }
               }
             }
@@ -100,7 +110,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/blog"
+                "$ref": "#/components/schemas/blog"
               }
             }
           }
@@ -140,7 +150,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/blog"
+                    "$ref": "#/components/schemas/blog"
                   }
                 }
               }
@@ -160,7 +170,9 @@
         ],
         "description": "Creates a flexible blog from provided data",
         "operationId": "createFlexibleBlog",
-        "parameters": [],
+        "parameters": [
+
+        ],
         "responses": {
           "201": {
             "description": "flexible blog created",
@@ -169,10 +181,10 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "$ref": "#/definitions/blog"
+                      "$ref": "#/components/schemas/blog"
                     },
                     {
-                      "$ref": "#/definitions/flexible_blog"
+                      "$ref": "#/components/schemas/flexible_blog"
                     }
                   ]
                 }
@@ -218,7 +230,7 @@
         "operationId": "getBlog",
         "responses": {
           "200": {
-            "description": "blog found",
+            "description": "blog found - openapi_strict_schema_validation = true",
             "headers": {
               "ETag": {
                 "type": "string"
@@ -261,7 +273,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/definitions/blog"
+                  "$ref": "#/components/schemas/blog"
                 }
               }
             }
@@ -290,7 +302,9 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
-        "parameters": [],
+        "parameters": [
+
+        ],
         "responses": {
           "200": {
             "description": "blog updated"
@@ -312,79 +326,17 @@
   },
   "servers": [
     {
-      "url": "https://{defaultHost}",
+      "url": "{protocol}://{defaultHost}",
       "variables": {
+        "protocol": {
+          "default": "https"
+        },
         "defaultHost": {
           "default": "www.example.com"
         }
       }
     }
   ],
-  "definitions": {
-    "errors_object": {
-      "type": "object",
-      "properties": {
-        "errors": {
-          "$ref": "#/definitions/errors_map"
-        }
-      }
-    },
-    "errors_map": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "blog": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string",
-          "x-nullable": true
-        },
-        "thumbnail": {
-          "type": "string",
-          "x-nullable": true
-        }
-      },
-      "required": [
-        "id",
-        "title"
-      ]
-    },
-    "flexible_blog": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "headline": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string",
-          "nullable": true
-        },
-        "thumbnail": {
-          "type": "string",
-          "nullable": true
-        }
-      },
-      "required": [
-        "id",
-        "headline"
-      ]
-    }
-  },
   "components": {
     "securitySchemes": {
       "basic_auth": {
@@ -395,6 +347,71 @@
         "type": "apiKey",
         "name": "api_key",
         "in": "query"
+      }
+    },
+    "schemas": {
+      "errors_object": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/errors_map"
+          }
+        }
+      },
+      "errors_map": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "blog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "flexible_blog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "headline"
+        ]
       }
     }
   }

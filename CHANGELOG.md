@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Tell Dependabot to update GitHub Actions (https://github.com/rswag/rswag/pull/707)
+
+### Changed
+
+### Fixed
+
+### Documentation
+
+- Added more details about config swagger format [#698](https://github.com/rswag/rswag/pull/698)
+
+## [2.13.0]
+
+### Added
+
+- Add deprecation warnings for `Rswag::Api` configuration (https://github.com/rswag/rswag/pull/702)
+
+### Fixed
+
+- Fix deprecation warnings for `Rswag::Specs` configuration (https://github.com/rswag/rswag/pull/702)
+
+## [2.12.0]
+
 ### Changed
 
 - Relaxed the dependency on json-schema, allowing for updates including support for allPropertiesRequired and noPropertiesRequired options (https://github.com/rswag/rswag/pull/659)
@@ -43,6 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Sanitize directory traversal in middleware (https://github.com/rswag/rswag/pull/654)
 - Fix encoding of query params (https://github.com/rswag/rswag/pull/621)
+- Fix support for string body params (https://github.com/rswag/rswag/pull/639)
 
 ### Added
 

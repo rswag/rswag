@@ -12,7 +12,7 @@ module Rswag
       end
 
       def build_request(metadata, example)
-        swagger_doc = @config.get_swagger_doc(metadata[:swagger_doc])
+        swagger_doc = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
         parameters = expand_parameters(metadata, swagger_doc, example)
 
         {}.tap do |request|
@@ -53,7 +53,7 @@ module Rswag
           (swagger_doc[:securityDefinitions] || {}).slice(*scheme_names).values
         else # Openapi3
           if swagger_doc.key?(:securityDefinitions)
-            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: securityDefinitions is replaced in OpenAPI3! Rename to components/securitySchemes (in swagger_helper.rb)')
             swagger_doc[:components] ||= { securitySchemes: swagger_doc[:securityDefinitions] }
             swagger_doc.delete(:securityDefinitions)
           end
@@ -75,7 +75,7 @@ module Rswag
           ref.sub('#/parameters/', '').to_sym
         else # Openapi3
           if ref.start_with?('#/parameters/')
-            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
             ref.sub('#/parameters/', '').to_sym
           else
             ref.sub('#/components/parameters/', '').to_sym
@@ -88,7 +88,7 @@ module Rswag
           swagger_doc[:parameters]
         else # Openapi3
           if swagger_doc.key?(:parameters)
-            ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
             swagger_doc[:parameters]
           else
             components = swagger_doc[:components] || {}
@@ -115,7 +115,7 @@ module Rswag
         uses_base_path = swagger_doc[:basePath].present?
 
         if open_api_3_doc && uses_base_path
-          ActiveSupport::Deprecation.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
         end
 
         if uses_base_path
@@ -242,11 +242,13 @@ module Rswag
         content_type = request[:headers]['CONTENT_TYPE']
         return if content_type.nil?
 
-        if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
-          request[:payload] = build_form_payload(parameters, example)
-        else
-          request[:payload] = build_json_payload(parameters, example)
-        end
+        request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
+                              build_form_payload(parameters, example)
+                            elsif content_type == 'application/json'
+                              build_json_payload(parameters, example)
+                            else
+                              build_raw_payload(parameters, example)
+                            end
       end
 
       def build_form_payload(parameters, example)
@@ -260,14 +262,17 @@ module Rswag
         Hash[tuples]
       end
 
-      def build_json_payload(parameters, example)
+      def build_raw_payload(parameters, example)
         body_param = parameters.select { |p| p[:in] == :body }.first
-
         return nil unless body_param
 
         raise(MissingParameterError, body_param[:name]) unless example.respond_to?(body_param[:name])
 
-        example.send(body_param[:name]).to_json
+        example.send(body_param[:name])
+      end
+
+      def build_json_payload(parameters, example)
+        build_raw_payload(parameters, example)&.to_json
       end
 
       def doc_version(doc)
