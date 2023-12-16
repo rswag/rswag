@@ -6,9 +6,9 @@ Rswag::Api.configure do |c|
   # that it's configured to generate files in the same folder
   c.openapi_root = Rails.root.to_s + '/openapi'
 
-  # Inject a lambda function to alter the returned Swagger prior to serialization
+  # Inject a lambda function to alter the returned OpenAPI prior to serialization
   # The function will have access to the rack env for the current request
   # For example, you could leverage this to dynamically assign the "host" property
   #
-  #c.swagger_filter = lambda { |swagger, env| swagger['host'] = env['HTTP_HOST'] }
+  #c.openapi_filter = lambda { |swagger, env| swagger['host'] = env['HTTP_HOST'] }
 end

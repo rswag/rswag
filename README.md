@@ -1144,7 +1144,7 @@ bundle exec rake rswag:ui:copy_assets[public/api-docs]
 __NOTE:__: The provided subfolder MUST correspond to the UI mount prefix - "api-docs" by default.
 
 
-Notes to test swagger output locally with swagger editor
+Notes to test OpenAPI output locally with Swagger editor
 ```
 docker pull swaggerapi/swagger-editor
 ```
