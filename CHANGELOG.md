@@ -8,13 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Dropped using #send (https://github.com/rswag/rswag/pull/396)
+
 ### Added
 
 ### Changed
 
 - Drop support for OpenAPI v2 (Swagger) (https://github.com/rswag/rswag/pull/574)
+- Drop Rspec V2 support (https://github.com/rswag/rswag/pull/636)
+- upgrade to ruby 3.0.6 and rails 7.0.4.3 in local dev (https://github.com/rswag/rswag/pull/625)
 
 ### Documentation
+
+- fix README for new request_* pattern (https://github.com/rswag/rswag/pull/694)
 
 ## [Unreleased]
 
@@ -28,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
-- Added more details about config swagger format [#698](https://github.com/rswag/rswag/pull/698)
+- Added more details about config swagger format (https://github.com/rswag/rswag/pull/698)
 
 ## [2.13.0]
 
