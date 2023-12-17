@@ -144,7 +144,6 @@ module Rswag
         context 'referenced schemas' do
           context 'components/schemas' do
             before do
-              allow(ActiveSupport::Deprecation).to receive(:warn)
               openapi_spec[:components] = {
                 schemas: {
                   'blog' => {
