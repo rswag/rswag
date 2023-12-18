@@ -22,8 +22,5 @@ module Rswag
     def self.config
       @config ||= Configuration.new(RSpec.configuration)
     end
-
-    # Support Rails 3+
-    RAILS_VERSION = Rails::VERSION::MAJOR
   end
 end

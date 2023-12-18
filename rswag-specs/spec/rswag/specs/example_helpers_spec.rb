@@ -12,7 +12,6 @@ module Rswag
         subject.extend(ExampleHelpers)
         allow(Rswag::Specs).to receive(:config).and_return(config)
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-        stub_const('Rswag::Specs::RAILS_VERSION', 3)
       end
       let(:config) { double('config') }
       let(:openapi_spec) do
