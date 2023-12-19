@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Update README to fix broken link to the JSON-Schema website [#715](https://github.com/rswag/rswag/pull/715)
+
 ### Documentation
 
 - Added more details about config swagger format (https://github.com/rswag/rswag/pull/698)
