@@ -35,6 +35,11 @@ module Rswag
         @config_object[:urls] << { url: url, name: name }
       end
 
+      def content_security_policy(policy_name, policy_config)
+        @config_object[:csp] ||= {}
+        @config_object[:csp][policy_name] = policy_config
+      end
+
       def basic_auth_credentials(username, password)
         @config_object[:basic_auth] = { username: username, password: password }
       end
