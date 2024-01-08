@@ -147,11 +147,11 @@ module Rswag
         parameters = endpoint[:parameters]
         # There can only be 1 body parameter in Swagger 2.0, so while in OAS3 we interpret
         # body parameters as formData, only consider the first body we encounter.
-        schema_param = parameters.find { |p| (p[:in] == :body) && p[:schema] }
+        schema_param = parameters.find { |p| p[:schema] if p[:in] == :body }
         parse_body_parameter(endpoint, schema_param, mime_list) if schema_param
 
         # But there can be any number of formData
-        parameters.select { |p| (p[:in] == :formData) && p[:schema] }.each do |schema_param|
+        parameters.select { |p| p[:schema] if p[:in] == :formData  }.each do |schema_param|
           parse_parameter_schema(endpoint, schema_param, mime_list)
         end
 
