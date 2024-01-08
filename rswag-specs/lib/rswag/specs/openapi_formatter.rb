@@ -38,7 +38,7 @@ module Rswag
 
       def stop(_notification = nil)
         @config.openapi_specs.each do |url_path, doc|
-          parse_parameters_to_oas3_syntax(doc)
+          parse_parameters(doc)
 
           file_path = File.join(@config.openapi_root, url_path)
           dirname = File.dirname(file_path)
@@ -130,20 +130,20 @@ module Rswag
         value.delete(:request_examples) if value[:request_examples]
       end
 
-      def parse_parameters_to_oas3_syntax(doc)
+      def parse_parameters(doc)
         doc[:paths]&.each_pair do |_k, path|
           path.each_pair do |_verb, endpoint|
             is_hash = endpoint.is_a?(Hash)
             if is_hash && endpoint[:parameters]
               mime_list = endpoint[:consumes] || doc[:consumes]
-              parse_parameters(endpoint, mime_list) if mime_list
+              parse_endpoint(endpoint, mime_list) if mime_list
             end
             remove_invalid_operation_keys!(endpoint)
           end
         end
       end
 
-      def parse_parameters(endpoint, mime_list)
+      def parse_endpoint(endpoint, mime_list)
         parameters = endpoint[:parameters]
         # There can only be 1 body parameter in Swagger 2.0, so while in OAS3 we interpret
         # body parameters as formData, only consider the first body we encounter.
