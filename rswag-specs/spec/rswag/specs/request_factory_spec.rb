@@ -88,6 +88,21 @@ module Rswag
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
           end
 
+          context 'when escaping is needed' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string },
+                { name: 'q2', in: :query, type: :string }
+              ]
+              allow(example).to receive(:q1).and_return('order #123')
+              allow(example).to receive(:q2).and_return('last % ditch')
+            end
+
+            it 'builds the query string from example values with encoding' do
+              expect(request[:path]).to eq('/blogs?q1=foo&q2=bar')
+            end
+          end
+
           context 'when `getter is defined`' do
             before do
               metadata[:operation][:parameters] << {
