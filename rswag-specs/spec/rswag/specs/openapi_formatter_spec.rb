@@ -105,7 +105,7 @@ module Rswag
           end
         end
 
-        context 'with oauth3 upgrades' do
+        context 'with OAS3' do
           let(:doc_2) do
             {
               paths: {
@@ -116,10 +116,16 @@ module Rswag
                     produces: ['application/json'],
                     consumes: ['application/xml', 'application/json'],
                     parameters: [{
-                      in: :body,
+                      in: :formData,
                       schema: { foo: :bar }
                     }, {
                       in: :headers
+                    }],
+                    security: [{ # Must provide both my_auth and oauth2_with_scopes
+                      my_auth: [],
+                      oauth2_with_scopes: [:scope1, :scope2]
+                    }, { # or can auth with only auth_with_this
+                      auth_with_this: []
                     }]
                   }
                 }
@@ -128,19 +134,31 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_2[:paths]['/path/'][:get].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_2[:paths]['/path/'][:get].keys).to include(:summary, :tags, :parameters, :requestBody, :security)
           end
 
-          it 'duplicates params in: :body to requestBody from consumes list' do
+          it 'params in: :formData appear in requestBody' do
             expect(doc_2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
               'application/xml' => { schema: { foo: :bar } },
               'application/json' => { schema: { foo: :bar } }
             })
           end
+
+          it 'adds security to operation' do
+            expect(doc_2[:paths]['/path/'][:get][:security]).to eql([
+              {
+                my_auth: [],
+                oauth2_with_scopes: [:scope1, :scope2]
+              },
+              {
+                auth_with_this: []
+              }
+            ])
+          end
         end
 
-        context 'with oauth3 formData' do
+        context 'with formData' do
           let(:doc_2) do
             {
               paths: {
@@ -152,7 +170,7 @@ module Rswag
                     consumes: ['multipart/form-data'],
                     parameters: [{
                       in: :formData,
-                      schema: { type: :file }
+                      schema: { type: :string }
                     },{
                       in: :headers
                     }]
@@ -169,12 +187,227 @@ module Rswag
           it 'duplicates params in: :formData to requestBody from consumes list' do
             expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => { schema: { type: :file } }
+              'multipart/form-data' => { schema: { type: :string } }
             })
           end
         end
 
-        context 'with descriptions on the body param' do
+        context 'with formData file upload' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload file',
+                    produces: ['application/json'],
+                    consumes: ['image/png', 'application/octet-stream'],
+                    parameters: [
+                      {
+                        in: :formData,
+                        schema: { type: :file }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody for content type' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'image/png' => {schema: {type: :string, format: :binary}},
+              'application/octet-stream' => {schema: {type: :string, format: :binary}}
+            })
+          end
+        end
+
+        context 'with formData file upload as part of multipart' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload file',
+                    consumes: ['multipart/form-data'],
+                    parameters: [
+                      {
+                        name: :myFile,
+                        in: :formData,
+                        schema: { type: :file },
+                        encoding: {contentType: ['image/png', 'image/jpeg']}
+                      },
+                      {
+                        name: :foo,
+                        in: :formData,
+                        schema: { type: :string }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody for content type' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'multipart/form-data' => {
+                schema: {
+                  type: :object,
+                  properties: {
+                    myFile: {type: :string, format: :binary},
+                    foo: {type: :string}
+                  }
+                },
+                encoding: {
+                  myFile: {
+                    contentType: "image/png,image/jpeg"
+                  }
+                }
+              }
+            })
+          end
+        end
+
+        context 'with formData multiple file uploads' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Upload files',
+                    consumes: ['multipart/form-data'],
+                    parameters: [
+                      {
+                        name: :files,
+                        in: :formData,
+                        schema: { type: :array, items: { type: :string, format: :binary } }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'generates schema in requestBody with multipart/form-data' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
+              'multipart/form-data' => {
+                schema: {
+                  type: :object,
+                  properties: {
+                    files: {type: :array, items: {type: :string, format: :binary}}
+                  }
+                }
+              }
+            })
+          end
+        end
+
+        context 'with formData with multiple parameters' do
+          let(:first_param) do
+            {
+              in: :headers
+            }
+          end
+
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  post: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['multipart/form-data'],
+                    parameters: [
+                      first_param,
+                      {
+                        name: :file,
+                        description: 'the actual file with appropriate content type',
+                        in: :formData,
+                        schema: {
+                          type: :string,
+                          format: :binary,
+                          required: true
+                        },
+                        encoding: {
+                          contentType: ['text/csv', 'application/json']
+                        }
+                      },
+                      {
+                        name: :scheduled_for,
+                        description: 'a datetime string in ISO 8601 format',
+                        in: :formData,
+                        schema: {
+                          type: :string,
+                          format: 'date-time'
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'duplicates params in: :formData to requestBody from consumes list' do
+            expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
+            request_body = {
+              content: {
+                'multipart/form-data' => {
+                  schema: {
+                    type: :object,
+                    properties: {
+                      file: {
+                        description: 'the actual file with appropriate content type',
+                        format: :binary,
+                        required: true,
+                        type: :string
+                      },
+                      scheduled_for: {
+                        description: 'a datetime string in ISO 8601 format',
+                        format: 'date-time',
+                        type: :string
+                      }
+                    }
+                  },
+                  encoding: {
+                    file: {
+                      contentType: 'text/csv,application/json'
+                    }
+                  }
+                }
+              },
+              required: true
+            }
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(request_body)
+          end
+
+          context 'with a requestBody schema defined by reference' do
+            let(:first_param) do
+              {
+                in: :formData,
+                schema: {
+                  '$ref': '#/components/schemas/BlogPost'
+                }
+              }
+            end
+
+            it 'ignores :formData parameters defined after the requestBody schema is set my reference' do
+              expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(
+                content: {
+                  'multipart/form-data' => {
+                    schema: {
+                      '$ref': '#/components/schemas/BlogPost'
+                    }
+                  }
+                }
+              )
+            end
+          end
+        end
+
+        context 'with multiple `in: formData` parameters' do
           let(:doc_2) do
             {
               paths: {
@@ -182,26 +415,48 @@ module Rswag
                   post: {
                     produces: ['application/json'],
                     consumes: ['application/json'],
-                    parameters: [{
-                      in: :body,
-                      description: "description",
-                      schema: { type: :number }
-                    }]
+                    parameters: [
+                      {
+                        in: :formData,
+                        name: :foo,
+                        schema: { type: :number }
+                      },
+                      {
+                        in: :formData,
+                        name: :bar,
+                        schema: { type: :string }
+                      }
+                    ]
                   }
                 }
               }
             }
           end
 
-          it 'puts the description in the doc' do
-            expect(doc_2[:paths]['/path/'][:post][:requestBody][:description]).to eql('description')
+          it 'formData parameters appear in requestBody' do
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'application/json' => {
+                  schema: {
+                    type: :object,
+                    properties: {
+                      foo: {
+                        type: :number
+                      },
+                      bar: {
+                        type: :string
+                      }
+                    }
+                  }
+                }
+              }
+            )
           end
         end
 
         after do
           FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
         end
-
 
         context 'with request examples' do
           let(:doc_2) do
@@ -214,7 +469,7 @@ module Rswag
                     produces: ['application/json'],
                     consumes: ['application/json'],
                     parameters: [{
-                      in: :body,
+                      in: :formData,
                       schema: {
                         '$ref': '#/components/schemas/BlogPost'
                       }

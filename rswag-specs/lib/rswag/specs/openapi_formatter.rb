@@ -38,36 +38,7 @@ module Rswag
 
       def stop(_notification = nil)
         @config.openapi_specs.each do |url_path, doc|
-          doc[:paths]&.each_pair do |_k, v|
-            v.each_pair do |_verb, value|
-              is_hash = value.is_a?(Hash)
-              if is_hash && value[:parameters]
-                schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                mime_list = value[:consumes] || doc[:consumes]
-                if value && schema_param && mime_list
-                  value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
-                  value[:requestBody][:required] = true if schema_param[:required]
-                  value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
-                  examples = value.dig(:request_examples)
-                  mime_list.each do |mime|
-                    value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
-                    if examples
-                      value[:requestBody][:content][mime][:examples] ||= {}
-                      examples.map do |example|
-                        value[:requestBody][:content][mime][:examples][example[:name]] = {
-                          summary: example[:summary] || value[:summary],
-                          value: example[:value]
-                        }
-                      end
-                    end
-                  end
-                end
-
-                value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
-              end
-              remove_invalid_operation_keys!(value)
-            end
-          end
+          parse_parameters(doc)
 
           file_path = File.join(@config.openapi_root, url_path)
           dirname = File.dirname(file_path)
@@ -157,6 +128,107 @@ module Rswag
         value.delete(:consumes) if value[:consumes]
         value.delete(:produces) if value[:produces]
         value.delete(:request_examples) if value[:request_examples]
+      end
+
+      def parse_parameters(doc)
+        doc[:paths]&.each_pair do |_k, path|
+          path.each_pair do |_verb, endpoint|
+            is_hash = endpoint.is_a?(Hash)
+            if is_hash && endpoint[:parameters]
+              mime_list = endpoint[:consumes] || doc[:consumes]
+              parse_endpoint(endpoint, mime_list) if mime_list
+            end
+            remove_invalid_operation_keys!(endpoint)
+          end
+        end
+      end
+
+      def parse_endpoint(endpoint, mime_list)
+        parameters = endpoint[:parameters]
+        # But there can be any number of formData
+        parameters.select { |p| p[:schema] if p[:in] == :formData  }.each do |schema_param|
+          parse_parameter_schema(endpoint, schema_param, mime_list)
+        end
+
+        parameters.reject! { |p| p[:in] == :formData }
+      end
+
+      def add_request_body(endpoint)
+        return if endpoint.dig(:requestBody, :content)
+        endpoint[:requestBody] = { content: {} }
+      end
+
+      def parse_parameter_schema(endpoint, parameter, mime_list)
+        # Only add if there are any body parameters and not already defined
+        add_request_body(endpoint)
+
+        mime_list.each do |mime|
+          endpoint[:requestBody][:content][mime] ||= {}
+          mime_config = endpoint[:requestBody][:content][mime]
+          set_parameter_schema(parameter)
+          convert_file_parameter(parameter)
+          # Only parse parameters if there has not already been a reference object set
+          if !mime_config[:schema] || mime_config.dig(:schema, :properties)
+            set_mime_config(mime_config, parameter)
+            set_mime_examples(mime_config, endpoint)
+          end
+        end
+
+        set_request_body_required(endpoint, mime_list)
+      end
+
+      # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
+      # you could have optional body, but if body is provided then some properties are required.
+      # Also could just parse this info at time of parsing parameters
+      def set_request_body_required(endpoint, mime_list)
+        required = mime_list.any? do |mime|
+          mime_config = endpoint[:requestBody][:content][mime]
+          mime_config.any? do |_mime, config|
+            config[:required] || config.dig(:schema, :required) || config[:properties]&.any? { |_k, s| s[:required] }
+          end
+        end
+        endpoint[:requestBody][:required] = true if required
+      end
+
+      def set_parameter_schema(parameter)
+        parameter[:schema] ||= {}
+        parameter[:schema][:required] = true if parameter[:required]
+        parameter[:schema][:description] = parameter[:description] if parameter[:description]
+      end
+
+      def convert_file_parameter(parameter)
+        if parameter[:schema][:type] == :file
+          parameter[:schema][:type] = :string
+          parameter[:schema][:format] = :binary
+        end
+      end
+
+      def set_mime_config(mime_config, parameter)
+        mime_config[:schema] ||= parameter[:name] ? {type: :object, properties: {}} : parameter[:schema]
+        if parameter[:name]
+          mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
+          set_mime_encoding(mime_config, parameter)
+        end
+      end
+
+      def set_mime_encoding(mime_config, parameter)
+        return unless parameter[:encoding]
+        encoding = parameter[:encoding].dup
+        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        mime_config[:encoding] ||= {}
+        mime_config[:encoding][parameter[:name]] = encoding
+      end
+
+      def set_mime_examples(mime_config, endpoint)
+        examples = endpoint[:request_examples]
+        return unless examples
+        examples.each do |example|
+          mime_config[:examples] ||= {}
+          mime_config[:examples][example[:name]] = {
+            summary: example[:summary] || endpoint[:summary],
+            value: example[:value]
+          }
+        end
       end
     end
   end

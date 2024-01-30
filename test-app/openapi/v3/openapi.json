@@ -40,7 +40,14 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "type": "file"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "required": true,
+                    "format": "binary"
+                  }
+                }
               }
             }
           },
@@ -154,6 +161,10 @@
         "type": "apiKey",
         "name": "api_key",
         "in": "query"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }
