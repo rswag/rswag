@@ -116,7 +116,7 @@ module Rswag
                     produces: ['application/json'],
                     consumes: ['application/xml', 'application/json'],
                     parameters: [{
-                      in: :body,
+                      in: :formData,
                       schema: { foo: :bar }
                     }, {
                       in: :headers
@@ -137,7 +137,7 @@ module Rswag
             expect(doc_2[:paths]['/path/'][:get].keys).to include(:summary, :tags, :parameters, :requestBody, :security)
           end
 
-          it 'duplicates params in: :body to requestBody from consumes list' do
+          it 'params in: :formData appear in requestBody' do
             expect(doc_2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers }])
             expect(doc_2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
               'application/xml' => { schema: { foo: :bar } },
@@ -407,32 +407,7 @@ module Rswag
           end
         end
 
-        context 'with descriptions on the body param' do
-          let(:doc_2) do
-            {
-              paths: {
-                '/path/' => {
-                  post: {
-                    produces: ['application/json'],
-                    consumes: ['application/json'],
-                    parameters: [{
-                      in: :body,
-                      description: "description",
-                      schema: { type: :number }
-                    }]
-                  }
-                }
-              }
-            }
-          end
-
-          it 'puts the description in the doc' do
-            expect(doc_2[:paths]['/path/'][:post][:requestBody][:description]).to eql('description')
-          end
-        end
-
-        # With OpenAPI 3, the in: :body parameter is treated same as formData
-        context 'with `in: body` parameters' do
+        context 'with multiple `in: formData` parameters' do
           let(:doc_2) do
             {
               paths: {
@@ -442,7 +417,7 @@ module Rswag
                     consumes: ['application/json'],
                     parameters: [
                       {
-                        in: :body,
+                        in: :formData,
                         name: :foo,
                         schema: { type: :number }
                       },
@@ -458,7 +433,7 @@ module Rswag
             }
           end
 
-          it 'treats body as formData' do
+          it 'formData parameters appear in requestBody' do
             expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(
               content: {
                 'application/json' => {
@@ -478,59 +453,6 @@ module Rswag
             )
           end
         end
-
-        context 'with multiple body parameters' do
-          let(:doc_2) do
-            {
-              paths: {
-                '/path/' => {
-                  post: {
-                    produces: ['application/json'],
-                    consumes: ['application/json'],
-                    parameters: [
-                      {
-                        in: :body,
-                        name: :foo,
-                        schema: { type: :number }
-                      },
-                      {
-                        in: :body,
-                        name: :baz,
-                        schema: { type: :object }
-                      },
-                      {
-                        in: :formData,
-                        name: :bar,
-                        schema: { type: :string }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          end
-
-          it 'only uses the first' do
-            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(
-              content: {
-                'application/json' => {
-                  schema: {
-                    type: :object,
-                    properties: {
-                      foo: {
-                        type: :number
-                      },
-                      bar: {
-                        type: :string
-                      }
-                    }
-                  }
-                }
-              }
-            )
-          end
-        end
-
 
         after do
           FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
@@ -547,7 +469,7 @@ module Rswag
                     produces: ['application/json'],
                     consumes: ['application/json'],
                     parameters: [{
-                      in: :body,
+                      in: :formData,
                       schema: {
                         '$ref': '#/components/schemas/BlogPost'
                       }
