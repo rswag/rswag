@@ -3,7 +3,7 @@ ENV RAILS_VERSION 7.0.3.1
 
 RUN apt-get update -qq && apt-get install -y nodejs npm
 # Bugfix for https://github.com/rubyjs/mini_racer/issues/220#issuecomment-1010724771
-RUN gem update --system 3.4.2
+RUN gem update --system 3.4.22
 
 # Run docker as a non-root user to avoid having to chown generated files while developing
 ENV APP_PATH=/rswag/
