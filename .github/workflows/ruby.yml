@@ -43,7 +43,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        gem update --system
+        if [ ${{ matrix.ruby }} < 3 ]; then
+          gem update --system 3.4.22
+        else
+          gem update --system
+        fi
         bundle install
         cd rswag-ui && npm install
 
