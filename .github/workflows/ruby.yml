@@ -43,7 +43,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        if [ ${{ matrix.ruby }} < 3 ]; then
+        if [ $(cut -d '.' -f 1 <<< "${{ matrix.ruby }}") -lt 3 ]; then
           gem update --system 3.4.22
         else
           gem update --system
