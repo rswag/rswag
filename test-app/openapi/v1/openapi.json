@@ -93,7 +93,14 @@
         ],
         "responses": {
           "201": {
-            "description": "blog created"
+            "description": "blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/blog"
+                }
+              }
+            }
           },
           "422": {
             "description": "invalid request",
@@ -110,7 +117,8 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/blog"
+                "type": "object",
+                "required": true
               }
             }
           }
@@ -195,10 +203,10 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/definitions/blog"
+                    "$ref": "#/components/schemas/blog"
                   },
                   {
-                    "$ref": "#/definitions/flexible_blog"
+                    "$ref": "#/components/schemas/flexible_blog"
                   }
                 ]
               }
@@ -335,17 +343,6 @@
     }
   ],
   "components": {
-    "securitySchemes": {
-      "basic_auth": {
-        "type": "http",
-        "scheme": "basic"
-      },
-      "api_key": {
-        "type": "apiKey",
-        "name": "api_key",
-        "in": "query"
-      }
-    },
     "schemas": {
       "errors_object": {
         "type": "object",
@@ -409,6 +406,17 @@
           "id",
           "headline"
         ]
+      }
+    },
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "query"
       }
     }
   }

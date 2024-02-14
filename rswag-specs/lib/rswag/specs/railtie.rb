@@ -8,13 +8,7 @@ module Rswag
       end
 
       generators do
-        require 'generators/rspec/swagger_generator'
-      end
-
-      initializer 'rswag-specs.deprecator' do |app|
-        if app.respond_to?(:deprecators)
-          app.deprecators[:rswag_specs] = Rswag::Specs.deprecator
-        end
+        require 'generators/rspec/openapi_generator.rb'
       end
     end
   end

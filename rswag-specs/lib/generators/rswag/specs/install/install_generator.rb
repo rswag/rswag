@@ -7,8 +7,8 @@ module Rswag
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path('templates', __dir__)
 
-      def add_swagger_helper
-        template('swagger_helper.rb', 'spec/swagger_helper.rb')
+      def add_openapi_helper
+        template('openapi_helper.rb', 'spec/openapi_helper.rb')
       end
     end
   end
