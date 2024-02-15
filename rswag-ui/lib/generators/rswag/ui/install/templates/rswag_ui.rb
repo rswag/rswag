@@ -13,4 +13,15 @@ Rswag::Ui.configure do |c|
   # Add Basic Auth in case your API is private
   # c.basic_auth_enabled = true
   # c.basic_auth_credentials 'username', 'password'
+
+  # Override content security policies for the swagger-ui
+  # These defaults will allow you to use the swagger-ui with no issues but may not be ideal for your application.
+  # If you need to modify these, we recommend that you understand the implications of the default policies
+  # and only make minor modifications to what's truly necessary for your application.
+  #
+  # c.content_security_policy "default-src", "'self';"
+  # c.content_security_policy "img-src", "'self' data: https://validator.swagger.io;"
+  # c.content_security_policy "font-src", "'self' https://fonts.gstatic.com;"
+  # c.content_security_policy "style-src", "'self' 'unsafe-inline' https://fonts.googleapis.com;"
+  # c.content_security_policy "script-src", "'self' 'unsafe-inline';"
 end
