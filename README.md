@@ -256,6 +256,21 @@ response '200', 'blog found' do
 end
 ```
 
+### Enum description ###
+If you want to output a description of each enum value, the description can be passed to each value:
+```ruby
+parameter name: :status, in: :query, getter: :blog_status,
+          enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+          description: 'Filter by status'
+
+response '200', 'success' do
+  let(:blog_status) { 'published' }
+
+  run_test!
+end
+```
+
+
 ### Strict schema validation
 
 By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
