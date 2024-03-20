@@ -1126,6 +1126,16 @@ To replace the *"Swagger sponsored by"* brand image, you can add the following s
 
 The above script would expect to find an image named `favicon.png` in the public folder.
 
+You can also customize the swagger ui with _configuration objects._ Rswag's `config_object` can be used with swagger's configuration parameters found here: https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+The ui can be configured in the _config/initializers/rswag-ui.rb_ file like so:
+
+```ruby
+Rswag::Ui.configure do |c|
+  c.config_object['defaultModelsExpandDepth'] = 1
+end
+
+```
+
 ### Serve UI Assets Directly from your Web Server
 
 Rswag ships with an embedded version of the [swagger-ui](https://github.com/swagger-api/swagger-ui), which is a static collection of JavaScript and CSS files. These assets are served by the rswag-ui middleware. However, for optimal performance you may want to serve them directly from your web server (e.g. Apache or NGINX). To do this, you'll need to copy them to the web server root. This is the "public" folder in a typical Rails application.
