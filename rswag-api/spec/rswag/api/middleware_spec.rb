@@ -28,7 +28,7 @@ describe Rswag::Api::Middleware do
 
       it 'returns a 200 status' do
         expect(response.length).to eql(3)
-        expect(response.first).to eql('200')
+        expect(response.first).to eql(200)
       end
 
       it 'returns contents of the swagger file' do
@@ -44,7 +44,7 @@ describe Rswag::Api::Middleware do
 
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
-          expect(response.first).to eql('200')
+          expect(response.first).to eql(200)
         end
       end
     end
@@ -58,7 +58,7 @@ describe Rswag::Api::Middleware do
         end
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
-          expect(response.first).to eql('200')
+          expect(response.first).to eql(200)
         end
 
         it 'applies the headers to the response' do
@@ -72,7 +72,7 @@ describe Rswag::Api::Middleware do
         end
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
-          expect(response.first).to eql('200')
+          expect(response.first).to eql(200)
         end
 
         it 'applies the headers to the response' do
@@ -167,7 +167,7 @@ describe Rswag::Api::Middleware do
 
       it 'returns a 200 status' do
         expect(response.length).to eql(3)
-        expect(response.first).to eql('200')
+        expect(response.first).to eql(200)
       end
 
       it 'returns contents of the swagger file' do
