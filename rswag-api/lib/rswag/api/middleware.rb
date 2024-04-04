@@ -26,7 +26,7 @@ module Rswag
           body = unload_swagger(filename, swagger)
 
           return [
-            '200',
+            200,
             headers,
             [body]
           ]
