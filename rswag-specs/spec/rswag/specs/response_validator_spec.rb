@@ -656,6 +656,73 @@ module Rswag
             end
           end
         end
+
+        context 'oneOf with discriminator' do
+          let(:response) do
+            OpenStruct.new(
+              code: '200',
+              headers: {
+                'X-Rate-Limit-Limit' => '10',
+                'X-Cursor' => 'test_cursor',
+                'X-Per-Page' => 25
+              },
+              body: '{ "blog": { "bar": "baz", "blog_type": "other_blog" } }'
+            )
+          end
+
+          before do
+            openapi_spec[:components] = {
+              schemas: {
+                'blog' => {
+                  type: :object,
+                  properties: {
+                    foo: { type: :string },
+                    blog_type: { type: :string }
+                  },
+                  required: ['foo']
+                },
+                'other_blog' => {
+                  type: :object,
+                  properties: {
+                    bar: { type: :string },
+                    blog_type: { type: :string }
+                  },
+                  required: %w[bar blog_type]
+                }
+              }
+            }
+
+            metadata[:response][:schema] = {
+              properties: {
+                blog: {
+                  oneOf: [
+                    { '$ref' => '#/components/schemas/blog' },
+                    { '$ref' => '#/components/schemas/other_blog' },
+                  ],
+                  discriminator: {
+                    propertyName: 'blog_type'
+                  }
+                }
+              },
+              required: ['blog']
+            }
+          end
+
+          context 'response with implicit mapping' do
+            it { expect { call }.to_not raise_error }
+          end
+
+          context 'response with explicit mapping' do
+            before do
+              metadata[:response][:schema][:properties][:blog][:discriminator][:mapping] = {
+                'blog' => '#/components/schemas/blog',
+                'other_blog' => '#/components/schemas/other_blog'
+              }
+            end
+
+            it { expect { call }.to_not raise_error }
+          end
+        end
       end
     end
   end
