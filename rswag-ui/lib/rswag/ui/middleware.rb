@@ -37,7 +37,7 @@ module Rswag
       end
 
       def template_filename
-        @config.template_locations.find { |filename| File.exists?(filename) }
+        @config.template_locations.find { |filename| File.exist?(filename) }
       end
     end
   end
