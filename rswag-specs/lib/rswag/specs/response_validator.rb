@@ -74,13 +74,21 @@ module Rswag
 
       def validation_options_from(metadata)
         if metadata.key?(:swagger_strict_schema_validation)
-          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be renamed to "openapi_strict_schema_validation" in v3.0')
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
           is_strict = !!metadata[:swagger_strict_schema_validation]
         else
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
           is_strict = !!metadata.fetch(:openapi_strict_schema_validation, @config.openapi_strict_schema_validation)
         end
 
-        { strict: is_strict }
+        allPropertiesRequired = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
+        noAdditionalProperties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+
+        {
+          strict: is_strict,
+          allPropertiesRequired: allPropertiesRequired,
+          noAdditionalProperties: noAdditionalProperties
+        }
       end
 
       def definitions_or_component_schemas(swagger_doc, version)
