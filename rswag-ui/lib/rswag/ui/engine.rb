@@ -15,8 +15,6 @@ module Rswag
             c.config_object[:basic_auth].values == [username, password]
           end
         end
-
-        app.middleware.use ::ActionDispatch::Static, "#{root}/lib/rswag/ui/public"
       end
 
       rake_tasks do
