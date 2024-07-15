@@ -117,7 +117,7 @@ module Rswag
         operation = metadata[:operation]
           .reject { |k, _v| k == :verb }
           .merge(responses: { response_code => response })
-
+        metadata[:operation][:parameters]&.each{|hash| hash.delete(:getter) }
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
           .reject { |k, _v| k == :template }
