@@ -266,6 +266,65 @@ module Rswag
                   end
                 end
               end
+
+              context 'oneOf with discriminator' do
+                let(:response) do
+                  OpenStruct.new(
+                    code: '200',
+                    headers: {
+                      'X-Rate-Limit-Limit' => '10',
+                      'X-Cursor' => 'test_cursor',
+                      'X-Per-Page' => 25
+                    },
+                    body: '{ "blog": { "bar": "baz", "blog_type": "flexible_blog" } }'
+                  )
+                end
+
+                before do
+                  blog_schema = openapi_spec[:components][:schemas]['blog']
+                  blog_schema[:properties][:blog_type] = { type: :string }
+                  blog_schema[:required].push('blog_type')
+
+                  openapi_spec[:components][:schemas]['flexible_blog'] = {
+                    type: :object,
+                    properties: {
+                      bar: { type: :string },
+                      blog_type: { type: :string }
+                    },
+                    required: ['bar', 'blog_type']
+                  }
+
+                  metadata[:response][:schema] = {
+                    properties: {
+                      blog: {
+                        oneOf: [
+                          { '$ref' => '#/components/schemas/blog' },
+                          { '$ref' => '#/components/schemas/flexible_blog' },
+                        ],
+                        discriminator: {
+                          propertyName: 'blog_type'
+                        }
+                      }
+                    },
+                    required: ['blog']
+                  }
+                end
+
+                context 'response with implicit mapping' do
+                  it { expect { call }.to_not raise_error }
+                end
+
+                context 'response with explicit mapping' do
+                  before do
+                    metadata[:response][:schema][:properties][:blog][:discriminator][:mapping] = {
+                      'blog' => '#/components/schemas/blog',
+                      'flexible_blog' => '#/components/schemas/flexible_blog'
+                    }
+                  end
+
+                  it { expect { call }.to_not raise_error }
+                end
+              end
             end
 
             context 'deprecated definitions' do
