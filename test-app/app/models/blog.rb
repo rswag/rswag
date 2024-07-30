@@ -6,6 +6,8 @@ class Blog < ActiveRecord::Base
   alias_attribute :headline, :title
   alias_attribute :text, :content
 
+  enum status: [:draft, :published, :archived]
+
   def as_json(_options)
     {
       id: id,
