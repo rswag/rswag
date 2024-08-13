@@ -6,7 +6,7 @@ class Blog < ActiveRecord::Base
   alias_attribute :headline, :title
   alias_attribute :text, :content
 
-  # Rails 7.0 deprecated defining enums with keyword arguments.
+  # Rails 7.0 introduced new syntax to define enums.
   # See https://github.com/rails/rails/pull/50987
   if Gem::Version.new(Rails.version) >= Gem::Version.new("7.0")
     enum :status, [:draft, :published, :archived]
