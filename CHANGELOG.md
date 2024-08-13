@@ -8,14 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Tell Dependabot to update GitHub Actions (https://github.com/rswag/rswag/pull/707)
-- Rails 7.2 support [#765](https://github.com/rswag/rswag/pull/765)
-
 ### Changed
 
 ### Fixed
 
+## [2.14.0] - 2024-08-13
+
+### Added
+
+- Tell Dependabot to update GitHub Actions (https://github.com/rswag/rswag/pull/707)
+- Rails 7.2 support [#765](https://github.com/rswag/rswag/pull/765)
+- Add support for support per-enum-value descriptions (https://github.com/rswag/rswag/pull/429)
+- Add support for text/plain body format (https://github.com/rswag/rswag/pull/639)
+
+### Fixed
+
 - Update README to fix broken link to the JSON-Schema website [#715](https://github.com/rswag/rswag/pull/715)
+- fix: rubygems-update version for Docker (https://github.com/rswag/rswag/pull/724)
+- fix: rubygems-update for github actions (https://github.com/rswag/rswag/pull/730)
 
 ### Documentation
 
@@ -100,7 +110,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Invalid URI error when specifying protocol within server configuration (https://github.com/rswag/rswag/pull/591)
 - Fix ADDITIONAL_RSPEC_OPTS to always apply (https://github.com/rswag/rswag/pull/584)
-- Add support for support per-enum-value descriptions (https://github.com/rswag/rswag/pull/429)
 
 ### Documentation
 
