@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Change the method `swagger_endpoint` to `openapi_endpoint` on fresh install.
+
 ## [2.14.0] - 2024-08-13
 
 ### Added
