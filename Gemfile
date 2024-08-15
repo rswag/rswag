@@ -14,7 +14,7 @@ case rails_version.split('.').first
 when '5'
   gem 'sqlite3', '~> 1.3.6'
 when  '6', '7'
-  gem 'sqlite3', '~> 1.4.1'
+  gem 'sqlite3', '~> 1.4'
 end
 
 case RUBY_VERSION.split('.').first
@@ -45,7 +45,6 @@ group :development do
 end
 
 group :assets do
-  gem 'mini_racer'
   gem 'uglifier'
 end
 
