@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Fixed
 
+- Fix Content-Security-Policy header name based on Rack version (https://github.com/rswag/rswag/pull/773)
+
 ## [2.16.0] - 2024-11-13
 
 ## Changed
