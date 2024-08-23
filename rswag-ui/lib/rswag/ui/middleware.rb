@@ -1,6 +1,11 @@
 module Rswag
   module Ui
     class Middleware < Rack::Static
+      CONTENT_SECURITY_POLICY_HEADER = if Gem::Version.new(Rack::RELEASE) < Gem::Version.new("3")
+        'Content-Security-Policy'
+      else
+        'content-security-policy'
+      end
 
       def initialize(app, config)
         @config = config
@@ -14,7 +19,7 @@ module Rswag
         end
 
         if index_path?(env)
-          return [ 200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [ render_template ] ]
+          return [ 200, { 'Content-Type' => 'text/html', CONTENT_SECURITY_POLICY_HEADER => csp }, [ render_template ] ]
         end
 
         super
