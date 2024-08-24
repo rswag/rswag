@@ -142,9 +142,12 @@
           {
             "name": "status",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "enum": {
+              "draft": "Retrieves draft blogs",
+              "published": "Retrieves published blogs",
+              "archived": "Retrieves archived blogs"
+            },
+            "description": "Filter by status:\n * `draft` Retrieves draft blogs\n * `published` Retrieves published blogs\n * `archived` Retrieves archived blogs\n "
           }
         ],
         "responses": {
