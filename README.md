@@ -259,12 +259,12 @@ end
 ### Enum description ###
 If you want to output a description of each enum value, the description can be passed to each value:
 ```ruby
-parameter name: :status, in: :query, getter: :blog_status,
+parameter name: :status, in: :query,
           enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
           description: 'Filter by status'
 
 response '200', 'success' do
-  let(:blog_status) { 'published' }
+  let(:request_params) { {'status' => 'published'} }
 
   run_test!
 end

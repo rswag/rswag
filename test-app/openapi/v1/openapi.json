@@ -142,7 +142,6 @@
           {
             "name": "status",
             "in": "query",
-            "getter": "blog_status",
             "enum": {
               "draft": "Retrieves draft blogs",
               "published": "Retrieves published blogs",

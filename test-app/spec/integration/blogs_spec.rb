@@ -42,7 +42,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: "keywords", in: :query, type: 'string'
-      parameter name: "status", in: :query, getter: :blog_status,
+      parameter name: "status", in: :query,
                 enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
                 description: 'Filter by status'
 
