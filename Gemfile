@@ -11,10 +11,8 @@ gem 'rails', rails_version.to_s
 gem 'responders'
 
 case rails_version.split('.').first
-when '5'
-  gem 'sqlite3', '~> 1.3.6'
 when  '6', '7'
-  gem 'sqlite3', '~> 1.4.1'
+  gem 'sqlite3'
 end
 
 gem 'net-smtp', require: false
