@@ -4,15 +4,16 @@ source 'https://rubygems.org'
 
 # Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '7.2.0'
+rails_version = Gem::Version.new(ENV['RAILS_VERSION'] || '7.2.0')
 
 gem 'rails', rails_version.to_s
 
 gem 'responders'
 
-case rails_version.split('.').first
-when  '6', '7'
+if rails_version >= Gem::Version.new('7.2.0')
   gem 'sqlite3'
+else
+  gem 'sqlite3', '~> 1.4.1'
 end
 
 gem 'net-smtp', require: false
