@@ -63,6 +63,11 @@ module Rswag
                   end
                 end
 
+                enum_param = value.dig(:parameters).find{|p| p[:enum]}
+                if enum_param && enum_param.is_a?(Hash)
+                  enum_param[:description] = generate_enum_description(enum_param)
+                end
+
                 value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
               end
               remove_invalid_operation_keys!(value)
@@ -157,6 +162,14 @@ module Rswag
         value.delete(:consumes) if value[:consumes]
         value.delete(:produces) if value[:produces]
         value.delete(:request_examples) if value[:request_examples]
+      end
+
+      def generate_enum_description(param)
+        enum_description = "#{param[:description]}:\n "
+        param[:enum].each do |k,v|
+          enum_description += "* `#{k}` #{v}\n "
+        end
+        enum_description
       end
     end
   end
