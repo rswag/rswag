@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Allow vendor-specific MIME types for JSON payloads (https://github.com/rswag/rswag/pull/769)
+
 ## [2.14.0] - 2024-08-13
 
 ### Added

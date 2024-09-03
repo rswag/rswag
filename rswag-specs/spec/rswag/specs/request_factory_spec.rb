@@ -378,6 +378,18 @@ module Rswag
             end
           end
 
+          context 'JSON:API payload' do
+            before do
+              metadata[:operation][:consumes] = 'application/vnd.api+json'
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
+              allow(example).to receive(:comment).and_return(text: 'Some comment')
+            end
+
+            it "serializes first 'body' parameter to JSON object" do
+              expect(request[:payload]).to eq(text: 'Some comment')
+            end
+          end
+
           context 'missing body parameter' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
