@@ -8,19 +8,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Tell Dependabot to update GitHub Actions (https://github.com/rswag/rswag/pull/707)
-
 ### Changed
 
 ### Fixed
 
+- Allow vendor-specific MIME types for JSON payloads (https://github.com/rswag/rswag/pull/769)
+
+## [2.14.0] - 2024-08-13
+
+### Added
+
+- Tell Dependabot to update GitHub Actions (https://github.com/rswag/rswag/pull/707)
+- Rails 7.2 support [#765](https://github.com/rswag/rswag/pull/765)
+- Add support for support per-enum-value descriptions (https://github.com/rswag/rswag/pull/429)
+- Add support for text/plain body format (https://github.com/rswag/rswag/pull/639)
+
+### Fixed
+
 - Update README to fix broken link to the JSON-Schema website [#715](https://github.com/rswag/rswag/pull/715)
+- fix: rubygems-update version for Docker (https://github.com/rswag/rswag/pull/724)
+- fix: rubygems-update for github actions (https://github.com/rswag/rswag/pull/730)
 
 ### Documentation
 
 - Added more details about config swagger format [#698](https://github.com/rswag/rswag/pull/698)
 
-## [2.13.0]
+## [2.13.0] - 2023-11-29
 
 ### Added
 
@@ -30,7 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix deprecation warnings for `Rswag::Specs` configuration (https://github.com/rswag/rswag/pull/702)
 
-## [2.12.0]
+## [2.12.0] - 2023-11-25
 
 ### Changed
 
@@ -51,19 +64,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
-## [2.11.0]
+## [2.11.0] - 2023-10-11
 
 ### Added
 
 - Rails 7.1 support (https://github.com/rswag/rswag/pull/677)
 
-## [2.10.1]
+## [2.10.1] - 2023-07-13
 
 ### Fixed
 
 - Fix path expansion (https://github.com/rswag/rswag/pull/660)
 
-## [2.10.0]
+## [2.10.0] - 2023-07-13
 
 ### Fixed
 
@@ -82,7 +95,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Documentation
 
-## [2.9.0]
+## [2.9.0] - 2023-04-24
 
 ### Added
 
@@ -104,7 +117,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Ask for dependency versions in issue template (https://github.com/rswag/rswag/pull/575)
 
-## [2.8.0]
+## [2.8.0] - 2022-11-16
 
 ### Added
 
@@ -122,7 +135,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Correct method name in ReadMe (https://github.com/rswag/rswag/pull/566)
 
-## [2.7.0]
+## [2.7.0] - 2022-10-19
 
 ### Added
 
