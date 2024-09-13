@@ -22,7 +22,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 **Table of Contents**
 
 - [rswag](#rswag)
-  - [Compatibility](#compatibility)
   - [Getting Started](#getting-started)
   - [The rspec DSL](#the-rspec-dsl)
     - [Paths, Operations and Responses](#paths-operations-and-responses)
