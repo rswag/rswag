@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- Relaxed the dependency on json-schema to make v5 available.
+
 ### Fixed
 
 - Allow vendor-specific MIME types for JSON payloads (https://github.com/rswag/rswag/pull/769)
