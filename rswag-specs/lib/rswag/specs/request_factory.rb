@@ -244,7 +244,7 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type =~ /\Aapplication\/(vnd\..+\+)?json\z/
+                            elsif content_type =~ /\Aapplication\/([0-9A-Za-z._-]+\+json\z|json\z)/
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
