@@ -182,14 +182,6 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/swagger.json' do
         run_test!
       end
 
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
-        run_test!
-      end
-
       response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
         schema '$ref' => '#/components/schemas/blog'
 

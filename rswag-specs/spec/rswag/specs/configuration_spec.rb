@@ -207,7 +207,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when provided in rspec config' do
       let(:openapi_all_properties_required) { true }
-       it { expect(response).to eq(true) }
+      it { expect(response).to eq(true) }
     end
   end
 
