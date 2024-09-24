@@ -7,8 +7,13 @@ RSpec.describe Rswag::Specs::Configuration do
   subject { described_class.new(rspec_config) }
 
   let(:rspec_config) do
-    OpenStruct.new(openapi_root: openapi_root, openapi_specs: openapi_specs, openapi_format: openapi_format,
-                   rswag_dry_run: rswag_dry_run, openapi_strict_schema_validation: openapi_strict_schema_validation)
+    OpenStruct.new(
+      openapi_root: openapi_root, openapi_specs: openapi_specs,
+      openapi_format: openapi_format, rswag_dry_run: rswag_dry_run,
+      openapi_strict_schema_validation: openapi_strict_schema_validation,
+      openapi_all_properties_required: openapi_all_properties_required,
+      openapi_no_additional_properties: openapi_no_additional_properties
+    )
   end
   let(:openapi_root) { 'foobar' }
   let(:openapi_specs) do
@@ -20,6 +25,8 @@ RSpec.describe Rswag::Specs::Configuration do
   let(:openapi_format) { :yaml }
   let(:rswag_dry_run) { nil }
   let(:openapi_strict_schema_validation) { nil }
+  let(:openapi_all_properties_required) { nil }
+  let(:openapi_no_additional_properties) { nil }
 
   describe '#openapi_root' do
     let(:response) { subject.openapi_root }
@@ -186,6 +193,34 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when provided in rspec config' do
       let(:openapi_strict_schema_validation) { true }
+      it { expect(response).to eq(true) }
+    end
+  end
+
+  describe '#openapi_all_properties_required' do
+    let(:response) { subject.openapi_all_properties_required }
+
+    context 'when not provided' do
+      let(:openapi_all_properties_required) { nil }
+      it { expect(response).to eq(false) }
+    end
+
+    context 'when provided in rspec config' do
+      let(:openapi_all_properties_required) { true }
+      it { expect(response).to eq(true) }
+    end
+  end
+
+  describe '#openapi_no_additional_properties' do
+    let(:response) { subject.openapi_no_additional_properties }
+
+    context 'when not provided' do
+      let(:openapi_no_additional_properties) { nil }
+      it { expect(response).to eq(false) }
+    end
+
+    context 'when provided in rspec config' do
+      let(:openapi_no_additional_properties) { true }
       it { expect(response).to eq(true) }
     end
   end

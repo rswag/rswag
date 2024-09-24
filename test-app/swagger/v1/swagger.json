@@ -230,7 +230,7 @@
         "operationId": "getBlog",
         "responses": {
           "200": {
-            "description": "blog found - openapi_strict_schema_validation = true",
+            "description": "blog found - openapi_no_additional_properties = true",
             "headers": {
               "ETag": {
                 "type": "string"
