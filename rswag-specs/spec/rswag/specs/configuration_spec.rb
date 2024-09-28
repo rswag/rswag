@@ -10,7 +10,6 @@ RSpec.describe Rswag::Specs::Configuration do
     OpenStruct.new(
       openapi_root: openapi_root, openapi_specs: openapi_specs,
       openapi_format: openapi_format, rswag_dry_run: rswag_dry_run,
-      openapi_strict_schema_validation: openapi_strict_schema_validation,
       openapi_all_properties_required: openapi_all_properties_required,
       openapi_no_additional_properties: openapi_no_additional_properties
     )
@@ -24,7 +23,6 @@ RSpec.describe Rswag::Specs::Configuration do
   end
   let(:openapi_format) { :yaml }
   let(:rswag_dry_run) { nil }
-  let(:openapi_strict_schema_validation) { nil }
   let(:openapi_all_properties_required) { nil }
   let(:openapi_no_additional_properties) { nil }
 
@@ -135,20 +133,6 @@ RSpec.describe Rswag::Specs::Configuration do
         let(:tag) { 'foobar' }
         it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
       end
-    end
-  end
-
-  describe '#openapi_strict_schema_validation' do
-    let(:response) { subject.openapi_strict_schema_validation }
-
-    context 'when not provided' do
-      let(:openapi_strict_schema_validation) { nil }
-      it { expect(response).to eq(false) }
-    end
-
-    context 'when provided in rspec config' do
-      let(:openapi_strict_schema_validation) { true }
-      it { expect(response).to eq(true) }
     end
   end
 

@@ -153,10 +153,6 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
 
         run_test!
 
-        context 'when openapi_strict_schema_validation is true' do
-          run_test!(openapi_strict_schema_validation: true)
-        end
-
         context 'when openapi_all_properties_required is true' do
           run_test!(openapi_all_properties_required: true)
         end
@@ -168,14 +164,6 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
 
       response '404', 'blog not found' do
         let(:request_params) { { "id" => 'invalid' } }
-        run_test!
-      end
-
-      response '200', 'blog found - openapi_strict_schema_validation = true', openapi_strict_schema_validation: true do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
         run_test!
       end
 

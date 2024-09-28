@@ -9,7 +9,6 @@ module Rswag
 
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-        allow(config).to receive(:openapi_strict_schema_validation).and_return(openapi_strict_schema_validation)
         allow(config).to receive(:openapi_all_properties_required).and_return(openapi_all_properties_required)
         allow(config).to receive(:openapi_no_additional_properties).and_return(openapi_no_additional_properties)
       end
@@ -17,7 +16,6 @@ module Rswag
       let(:config) { double('config') }
       let(:openapi_spec) { {} }
       let(:example) { double('example') }
-      let(:openapi_strict_schema_validation) { false }
       let(:openapi_all_properties_required) { false }
       let(:openapi_no_additional_properties) { false }
       let(:schema) do
@@ -120,58 +118,6 @@ module Rswag
         end
 
         context "when response body does not have additional properties and missing properties" do
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            before do
-              allow(Rswag::Specs.deprecator).to receive(:warn)
-            end
-
-            it { expect { call }.not_to raise_error }
-
-            it do
-              call
-
-              expect(Rswag::Specs.deprecator)
-                .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
-                                              ' please use openapi_all_properties_required' \
-                                              ' and openapi_no_additional_properties set to true')
-            end
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            before do
-              allow(Rswag::Specs.deprecator).to receive(:warn)
-            end
-
-            it { expect { call }.not_to raise_error }
-
-            it do
-              call
-
-              expect(Rswag::Specs.deprecator)
-                .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
-                                              ' please use openapi_all_properties_required' \
-                                              ' and openapi_no_additional_properties set to true')
-            end
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            it { expect { call }.not_to raise_error }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -233,32 +179,6 @@ module Rswag
                   number: { type: :integer }
                 }
               }
-            end
-
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              it { expect { call }.not_to raise_error }
             end
 
             context 'with all properties required enabled' do
@@ -318,32 +238,6 @@ module Rswag
         context "when response body has additional properties" do
           before { response.body = '{"foo":"Some comment", "number": 3, "text":"bar"}' }
 
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            it { expect { call }.not_to raise_error }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -405,32 +299,6 @@ module Rswag
                   number: { type: :integer }
                 }
               }
-            end
-
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              it { expect { call }.not_to raise_error }
             end
 
             context 'with all properties required enabled' do
@@ -490,32 +358,6 @@ module Rswag
         context "when response body has missing properties" do
           before { response.body = '{"number": 3}' }
 
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -571,32 +413,6 @@ module Rswag
 
         context "when response body has missing properties and additional properties" do
           before { response.body = '{"foo":"Some comment", "text":"bar"}' }
-
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
 
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
@@ -659,32 +475,6 @@ module Rswag
                   number: { type: :integer }
                 }
               }
-            end
-
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              it { expect { call }.not_to raise_error }
             end
 
             context 'with all properties required enabled' do
