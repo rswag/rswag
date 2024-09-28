@@ -77,7 +77,14 @@ module Rswag
           @config.openapi_strict_schema_validation
         )
 
-        { strict: is_strict }
+        allPropertiesRequired = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
+        noAdditionalProperties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+
+        {
+          strict: is_strict,
+          allPropertiesRequired: allPropertiesRequired,
+          noAdditionalProperties: noAdditionalProperties
+        }
       end
     end
 

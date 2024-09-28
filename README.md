@@ -22,7 +22,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 **Table of Contents**
 
 - [rswag](#rswag)
-  - [Compatibility](#compatibility)
   - [Getting Started](#getting-started)
   - [The rspec DSL](#the-rspec-dsl)
     - [Paths, Operations and Responses](#paths-operations-and-responses)
@@ -271,15 +270,18 @@ response '200', 'success' do
 end
 ```
 
+### Schema validations
 
-### Strict schema validation
-
-By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+#### Strict (deprecated)
+It validates required properties and disallows additional properties in response body.
+To enable, you can set the option `openapi_strict_schema_validation` to true.
+It is equal to `openapi_no_additional_properties: true` and `openapi_all_properties_required: true`
+**Important** If you would like to keep validation of required properties but allow additional properties, you can set the `openapi_strict_schema_validation` option to `false` and set `openapi_all_properties_required` to `true` and `openapi_no_additional_properties` to `false`.
 
 ```ruby
 # spec/openapi_helper.rb
 RSpec.configure do |config|
-  config.openapi_strict_schema_validation = true
+  config.openapi_strict_schema_validation = true # default false
 end
 ```
 
@@ -335,6 +337,31 @@ describe 'Blogs API' do
   end
 end
 ```
+
+#### Additional properties
+If you want to disallow additional properties in response body, you can set the option `openapi_no_additional_properties` to true:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_no_additional_properties = true # default false
+end
+```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
+
+#### All required properties
+If you want to disallow missing required properties in response body, you can set the `openapi_all_properties_required` option to true:
+**Important** it will allow the additional properties
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_all_properties_required = true # default false
+end
+```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
 ### Null Values ###
 

@@ -40,7 +40,6 @@ group :development do
 end
 
 group :assets do
-  gem 'mini_racer'
   gem 'uglifier'
 end
 
