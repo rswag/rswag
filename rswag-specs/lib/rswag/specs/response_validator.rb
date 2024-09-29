@@ -73,21 +73,23 @@ module Rswag
       end
 
       def validation_options_from(metadata)
+        is_strict = @config.openapi_strict_schema_validation
+
         if metadata.key?(:swagger_strict_schema_validation)
           Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
           is_strict = !!metadata[:swagger_strict_schema_validation]
-        else
+        elsif metadata.key?(:openapi_strict_schema_validation)
           Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
-          is_strict = !!metadata.fetch(:openapi_strict_schema_validation, @config.openapi_strict_schema_validation)
+          is_strict = !!metadata[:openapi_strict_schema_validation]
         end
 
-        allPropertiesRequired = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
-        noAdditionalProperties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+        all_properties_required = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
+        no_additional_properties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
 
         {
           strict: is_strict,
-          allPropertiesRequired: allPropertiesRequired,
-          noAdditionalProperties: noAdditionalProperties
+          allPropertiesRequired: all_properties_required,
+          noAdditionalProperties: no_additional_properties
         }
       end
 
