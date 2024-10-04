@@ -12,8 +12,7 @@ module Rswag
       swagger_root: :openapi_root,
       swagger_docs: :openapi_specs,
       swagger_dry_run: :rswag_dry_run,
-      swagger_format: :openapi_format,
-      swagger_strict_schema_validation: :openapi_strict_schema_validation
+      swagger_format: :openapi_format
     }.freeze
     private_constant :RENAMED_METHODS
 
@@ -48,11 +47,20 @@ module Rswag
           public_send("#{new_name}=", *args, &block)
         end
       end
+
+      define_method('swagger_strict_schema_validation=') do |*args, &block|
+        public_send('openapi_strict_schema_validation=', *args, &block)
+      end
     end
 
     Specs.deprecator.deprecate_methods(
       RSpec::Core::Configuration,
       RENAMED_METHODS.to_h { |old_name, new_name| ["#{old_name}=".to_sym, "#{new_name}=".to_sym] }
+    )
+
+    Specs.deprecator.deprecate_methods(
+      RSpec::Core::Configuration,
+      :openapi_strict_schema_validation= => 'use openapi_all_properties_required and openapi_no_additional_properties set to true'
     )
 
     if RUBY_VERSION.start_with? '2.6'

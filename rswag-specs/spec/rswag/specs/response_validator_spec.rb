@@ -56,6 +56,19 @@ module Rswag
         }
       end
 
+      shared_context 'with strict deprecation warning' do
+        before do
+          allow(Rswag::Specs.deprecator).to receive(:warn)
+        end
+
+        after do
+          expect(Rswag::Specs.deprecator)
+            .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
+                                          ' please use openapi_all_properties_required' \
+                                          ' and openapi_no_additional_properties set to true')
+        end
+      end
+
       describe '#validate!(metadata, response)' do
         let(:call) { subject.validate!(metadata, response) }
         let(:response) do
@@ -124,44 +137,20 @@ module Rswag
           context "with strict schema validation enabled" do
             let(:openapi_strict_schema_validation) { true }
 
-            before do
-              allow(Rswag::Specs.deprecator).to receive(:warn)
-            end
-
             it { expect { call }.not_to raise_error }
-
-            it do
-              call
-
-              expect(Rswag::Specs.deprecator)
-                .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
-                                              ' please use openapi_all_properties_required' \
-                                              ' and openapi_no_additional_properties set to true')
-            end
           end
 
           context "with strict schema validation disabled" do
             let(:openapi_strict_schema_validation) { false }
 
-            before do
-              allow(Rswag::Specs.deprecator).to receive(:warn)
-            end
-
             it { expect { call }.not_to raise_error }
-
-            it do
-              call
-
-              expect(Rswag::Specs.deprecator)
-                .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
-                                              ' please use openapi_all_properties_required' \
-                                              ' and openapi_no_additional_properties set to true')
-            end
           end
 
           context "with strict schema validation disabled in config but enabled in metadata" do
             let(:openapi_strict_schema_validation) { false }
             let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
+
+            include_context 'with strict deprecation warning'
 
             it { expect { call }.not_to raise_error }
           end
@@ -169,6 +158,8 @@ module Rswag
           context "with strict schema validation enabled in config but disabled in metadata" do
             let(:openapi_strict_schema_validation) { true }
             let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+            include_context 'with strict deprecation warning'
 
             it { expect { call }.not_to raise_error }
           end
@@ -252,12 +243,16 @@ module Rswag
               let(:openapi_strict_schema_validation) { false }
               let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+              include_context 'with strict deprecation warning'
+
               it { expect { call }.not_to raise_error }
             end
 
             context "with strict schema validation enabled in config but disabled in metadata" do
               let(:openapi_strict_schema_validation) { true }
               let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+              include_context 'with strict deprecation warning'
 
               it { expect { call }.not_to raise_error }
             end
@@ -335,12 +330,16 @@ module Rswag
             let(:openapi_strict_schema_validation) { false }
             let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+            include_context 'with strict deprecation warning'
+
             it { expect { call }.to raise_error /Expected response body/ }
           end
 
           context "with strict schema validation enabled in config but disabled in metadata" do
             let(:openapi_strict_schema_validation) { true }
             let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+            include_context 'with strict deprecation warning'
 
             it { expect { call }.not_to raise_error }
           end
@@ -424,12 +423,16 @@ module Rswag
               let(:openapi_strict_schema_validation) { false }
               let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+              include_context 'with strict deprecation warning'
+
               it { expect { call }.to raise_error /Expected response body/ }
             end
 
             context "with strict schema validation enabled in config but disabled in metadata" do
               let(:openapi_strict_schema_validation) { true }
               let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+              include_context 'with strict deprecation warning'
 
               it { expect { call }.not_to raise_error }
             end
@@ -507,12 +510,16 @@ module Rswag
             let(:openapi_strict_schema_validation) { false }
             let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+            include_context 'with strict deprecation warning'
+
             it { expect { call }.to raise_error /Expected response body/ }
           end
 
           context "with strict schema validation enabled in config but disabled in metadata" do
             let(:openapi_strict_schema_validation) { true }
             let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+            include_context 'with strict deprecation warning'
 
             it { expect { call }.to raise_error /Expected response body/ }
           end
@@ -589,12 +596,16 @@ module Rswag
             let(:openapi_strict_schema_validation) { false }
             let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+            include_context 'with strict deprecation warning'
+
             it { expect { call }.to raise_error /Expected response body/ }
           end
 
           context "with strict schema validation enabled in config but disabled in metadata" do
             let(:openapi_strict_schema_validation) { true }
             let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+            include_context 'with strict deprecation warning'
 
             it { expect { call }.to raise_error /Expected response body/ }
           end
@@ -678,12 +689,16 @@ module Rswag
               let(:openapi_strict_schema_validation) { false }
               let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
 
+              include_context 'with strict deprecation warning'
+
               it { expect { call }.to raise_error /Expected response body/ }
             end
 
             context "with strict schema validation enabled in config but disabled in metadata" do
               let(:openapi_strict_schema_validation) { true }
               let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+
+              include_context 'with strict deprecation warning'
 
               it { expect { call }.not_to raise_error }
             end
