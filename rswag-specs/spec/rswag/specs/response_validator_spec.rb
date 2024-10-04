@@ -9,13 +9,26 @@ module Rswag
 
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-        allow(config).to receive(:openapi_strict_schema_validation).and_return(openapi_strict_schema_validation)
+        allow(config).to receive(:openapi_all_properties_required).and_return(openapi_all_properties_required)
+        allow(config).to receive(:openapi_no_additional_properties).and_return(openapi_no_additional_properties)
       end
 
       let(:config) { double('config') }
       let(:openapi_spec) { {} }
       let(:example) { double('example') }
-      let(:openapi_strict_schema_validation) { false }
+      let(:openapi_all_properties_required) { false }
+      let(:openapi_no_additional_properties) { false }
+      let(:schema) do
+        {
+          type: :object,
+          properties: {
+            text: { type: :string },
+            number: { type: :integer }
+          },
+          required: ['text', 'number']
+        }
+      end
+
       let(:metadata) do
         {
           response: {
@@ -35,14 +48,7 @@ module Rswag
                 }
               }
             },
-            schema: {
-              type: :object,
-              properties: {
-                text: { type: :string },
-                number: { type: :integer }
-              },
-              required: ['text', 'number']
-            }
+            schema: { **schema }
           }
         }
       end
@@ -111,33 +117,417 @@ module Rswag
           it { expect { call }.to raise_error(/Expected response body/) }
         end
 
+        context "when response body does not have additional properties and missing properties" do
+          context 'with all properties required enabled' do
+            let(:openapi_all_properties_required) { true }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'with all properties required disabled' do
+            let(:openapi_all_properties_required) { false }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with all properties required disabled in config but enabled in metadata" do
+            let(:openapi_all_properties_required) { false }
+            let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with all properties required enabled in config but disabled in metadata" do
+            let(:openapi_all_properties_required) { true }
+            let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'with no additional properties enabled' do
+            let(:openapi_no_additional_properties) { true }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'with no additional properties disabled' do
+            let(:openapi_no_additional_properties) { false }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with no additional properties validation disabled in config but enabled in metadata" do
+            let(:openapi_no_additional_properties) { false }
+            let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with no additional properties validation enabled in config but disabled in metadata" do
+            let(:openapi_no_additional_properties) { true }
+            let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'when schema does not have required property' do
+            let(:schema) do
+              {
+                type: :object,
+                properties: {
+                  text: { type: :string },
+                  number: { type: :integer }
+                }
+              }
+            end
+
+            context 'with all properties required enabled' do
+              let(:openapi_all_properties_required) { true }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with all properties required disabled' do
+              let(:openapi_all_properties_required) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with all properties required disabled in config but enabled in metadata" do
+              let(:openapi_all_properties_required) { false }
+              let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with all properties required enabled in config but disabled in metadata" do
+              let(:openapi_all_properties_required) { true }
+              let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with no additional properties enabled' do
+              let(:openapi_no_additional_properties) { true }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with no additional properties disabled' do
+              let(:openapi_no_additional_properties) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with no additional properties validation disabled in config but enabled in metadata" do
+              let(:openapi_no_additional_properties) { false }
+              let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with no additional properties validation enabled in config but disabled in metadata" do
+              let(:openapi_no_additional_properties) { true }
+              let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
+          end
+        end
+
         context "when response body has additional properties" do
           before { response.body = '{"foo":"Some comment", "number": 3, "text":"bar"}' }
 
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
+          context 'with all properties required enabled' do
+            let(:openapi_all_properties_required) { true }
 
             it { expect { call }.not_to raise_error }
           end
 
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
+          context 'with all properties required disabled' do
+            let(:openapi_all_properties_required) { false }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with all properties required disabled in config but enabled in metadata" do
+            let(:openapi_all_properties_required) { false }
+            let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context "with all properties required enabled in config but disabled in metadata" do
+            let(:openapi_all_properties_required) { true }
+            let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'with no additional properties enabled' do
+            let(:openapi_no_additional_properties) { true }
 
             it { expect { call }.to raise_error /Expected response body/ }
           end
 
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
+          context 'with no additional properties disabled' do
+            let(:openapi_no_additional_properties) { false }
 
             it { expect { call }.not_to raise_error }
+          end
+
+          context "with no additional properties validation disabled in config but enabled in metadata" do
+            let(:openapi_no_additional_properties) { false }
+            let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with no additional properties validation enabled in config but disabled in metadata" do
+            let(:openapi_no_additional_properties) { true }
+            let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'when schema does not have required property' do
+            let(:schema) do
+              {
+                type: :object,
+                properties: {
+                  text: { type: :string },
+                  number: { type: :integer }
+                }
+              }
+            end
+
+            context 'with all properties required enabled' do
+              let(:openapi_all_properties_required) { true }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with all properties required disabled' do
+              let(:openapi_all_properties_required) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with all properties required disabled in config but enabled in metadata" do
+              let(:openapi_all_properties_required) { false }
+              let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with all properties required enabled in config but disabled in metadata" do
+              let(:openapi_all_properties_required) { true }
+              let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with no additional properties enabled' do
+              let(:openapi_no_additional_properties) { true }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context 'with no additional properties disabled' do
+              let(:openapi_no_additional_properties) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with no additional properties validation disabled in config but enabled in metadata" do
+              let(:openapi_no_additional_properties) { false }
+              let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context "with no additional properties validation enabled in config but disabled in metadata" do
+              let(:openapi_no_additional_properties) { true }
+              let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
+          end
+        end
+
+        context "when response body has missing properties" do
+          before { response.body = '{"number": 3}' }
+
+          context 'with all properties required enabled' do
+            let(:openapi_all_properties_required) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with all properties required disabled' do
+            let(:openapi_all_properties_required) { false }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with all properties required disabled in config but enabled in metadata" do
+            let(:openapi_all_properties_required) { false }
+            let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with all properties required enabled in config but disabled in metadata" do
+            let(:openapi_all_properties_required) { true }
+            let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with no additional properties enabled' do
+            let(:openapi_no_additional_properties) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with no additional properties disabled' do
+            let(:openapi_no_additional_properties) { false }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with no additional properties validation disabled in config but enabled in metadata" do
+            let(:openapi_no_additional_properties) { false }
+            let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with no additional properties validation enabled in config but disabled in metadata" do
+            let(:openapi_no_additional_properties) { true }
+            let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+        end
+
+        context "when response body has missing properties and additional properties" do
+          before { response.body = '{"foo":"Some comment", "text":"bar"}' }
+
+          context 'with all properties required enabled' do
+            let(:openapi_all_properties_required) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with all properties required disabled' do
+            let(:openapi_all_properties_required) { false }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with all properties required disabled in config but enabled in metadata" do
+            let(:openapi_all_properties_required) { false }
+            let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with all properties required enabled in config but disabled in metadata" do
+            let(:openapi_all_properties_required) { true }
+            let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with no additional properties enabled' do
+            let(:openapi_no_additional_properties) { true }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'with no additional properties disabled' do
+            let(:openapi_no_additional_properties) { false }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with no additional properties validation disabled in config but enabled in metadata" do
+            let(:openapi_no_additional_properties) { false }
+            let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context "with no additional properties validation enabled in config but disabled in metadata" do
+            let(:openapi_no_additional_properties) { true }
+            let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+            it { expect { call }.to raise_error /Expected response body/ }
+          end
+
+          context 'when schema does not have required property' do
+            let(:schema) do
+              {
+                type: :object,
+                properties: {
+                  text: { type: :string },
+                  number: { type: :integer }
+                }
+              }
+            end
+
+            context 'with all properties required enabled' do
+              let(:openapi_all_properties_required) { true }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context 'with all properties required disabled' do
+              let(:openapi_all_properties_required) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with all properties required disabled in config but enabled in metadata" do
+              let(:openapi_all_properties_required) { false }
+              let(:metadata) { super().merge(openapi_all_properties_required: true) }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context "with all properties required enabled in config but disabled in metadata" do
+              let(:openapi_all_properties_required) { true }
+              let(:metadata) { super().merge(openapi_all_properties_required: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context 'with no additional properties enabled' do
+              let(:openapi_no_additional_properties) { true }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context 'with no additional properties disabled' do
+              let(:openapi_no_additional_properties) { false }
+
+              it { expect { call }.not_to raise_error }
+            end
+
+            context "with no additional properties validation disabled in config but enabled in metadata" do
+              let(:openapi_no_additional_properties) { false }
+              let(:metadata) { super().merge(openapi_no_additional_properties: true) }
+
+              it { expect { call }.to raise_error /Expected response body/ }
+            end
+
+            context "with no additional properties validation enabled in config but disabled in metadata" do
+              let(:openapi_no_additional_properties) { true }
+              let(:metadata) { super().merge(openapi_no_additional_properties: false) }
+
+              it { expect { call }.not_to raise_error }
+            end
           end
         end
 

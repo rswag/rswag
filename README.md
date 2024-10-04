@@ -22,7 +22,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 **Table of Contents**
 
 - [rswag](#rswag)
-  - [Compatibility](#compatibility)
   - [Getting Started](#getting-started)
   - [The rspec DSL](#the-rspec-dsl)
     - [Paths, Operations and Responses](#paths-operations-and-responses)
@@ -271,70 +270,32 @@ response '200', 'success' do
 end
 ```
 
+### Schema validations
 
-### Strict schema validation
-
-By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+#### Additional properties
+If you want to disallow additional properties in response body, you can set the option `openapi_no_additional_properties` to true:
 
 ```ruby
-# spec/openapi_helper.rb
+# spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_strict_schema_validation = true
+  config.openapi_no_additional_properties = true # default false
 end
 ```
 
-or set the option per individual example:
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
+
+#### All required properties
+If you want to disallow missing required properties in response body, you can set the `openapi_all_properties_required` option to true:
+**Important** it will allow the additional properties
 
 ```ruby
-# using in run_test!
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-      response '201', 'blog created' do
-        let(:request_params) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        run_test!(openapi_strict_schema_validation: true)
-      end
-    end
-  end
-end
-
-# using in response block
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-
-      response '201', 'blog created', openapi_strict_schema_validation: true do
-        let(:request_params) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        run_test!
-      end
-    end
-  end
-end
-
-# using in an explicit example
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-      response '201', 'blog created' do
-        let(:request_params) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        before do |example|
-          submit_request(example.metadata)
-        end
-
-        it 'returns a valid 201 response', openapi_strict_schema_validation: true do |example|
-          assert_response_matches_metadata(example.metadata)
-        end
-      end
-    end
-  end
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_all_properties_required = true # default false
 end
 ```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
 ### Null Values ###
 
