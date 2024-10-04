@@ -655,11 +655,11 @@ __NOTE__: If you do change this, you'll also need to update the rswag_api.rb ini
 
 ### Input Location for Rspec Tests ###
 
-By default, rswag will search for integration tests in _spec/requests_, _spec/api_ and _spec/integration_. If you want to use tests from other locations, provide the PATTERN argument to rake:
+By default, rswag will search for integration tests in _spec/requests_, _spec/api_ and _spec/integration_. If you want to use tests from other locations, provide the RSWAG_PATTERN argument to rake:
 
 ```ruby
 # search for tests in spec/swagger
-rake rswag:specs:swaggerize PATTERN="spec/swagger/**/*_spec.rb"
+rake rswag:specs:swaggerize RSWAG_PATTERN="spec/swagger/**/*_spec.rb"
 ```
 
 ### Additional rspec options
