@@ -41,13 +41,17 @@ module Rswag
       end
 
       def csp
-        <<~POLICY.tr "\n", ' '
-          default-src 'self';
-          img-src 'self' data: https://validator.swagger.io;
-          font-src 'self' https://fonts.gstatic.com;
-          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-          script-src 'self' 'unsafe-inline';
-        POLICY
+        default_csp.merge(@config.config_object[:csp] || {}).map { |k, v| "#{k} #{v}" }.join(' ')
+      end
+
+      def default_csp
+        {
+          'default-src' => "'self';",
+          'img-src' => "'self' data: https://validator.swagger.io;",
+          'font-src' => "'self' https://fonts.gstatic.com;",
+          'style-src' => "'self' 'unsafe-inline' https://fonts.googleapis.com;",
+          'script-src' => "'self' 'unsafe-inline';"
+        }
       end
     end
   end

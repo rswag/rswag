@@ -48,5 +48,15 @@ RSpec.describe Rswag::Ui::Configuration do
     end
   end
 
+  describe '#content_security_policy' do
+    it 'sets the content security policy' do
+      configuration = described_class.new
+      configuration.content_security_policy 'default-src', "'self';"
+      csp = configuration.config_object[:csp]
+
+      expect(csp).to eq('default-src' => "'self';")
+    end
+  end
+
   describe '#get_binding'
 end
