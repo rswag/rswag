@@ -369,7 +369,7 @@ module Rswag
             before do
               metadata[:operation][:consumes] = 'application/vnd.api+json'
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              allow(example).to receive(:comment).and_return(text: 'Some comment')
+              example.request_params["comment"] = {text: 'Some comment'}
             end
 
             it "serializes first 'body' parameter to JSON object" do

@@ -113,7 +113,14 @@
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
         "parameters": [
-
+          {
+            "name": "blog",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": true
+            }
+          }
         ],
         "responses": {
           "201": {
@@ -136,22 +143,6 @@
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "blog": {
-                    "type": "object",
-                    "required": true
-                  }
-                }
-              }
-            }
-          },
-          "required": true
         }
       },
       "get": {
@@ -177,7 +168,7 @@
               "published": "Retrieves published blogs",
               "archived": "Retrieves archived blogs"
             },
-            "description": "Filter by status:\n * `draft` Retrieves draft blogs\n * `published` Retrieves published blogs\n * `archived` Retrieves archived blogs\n "
+            "description": "Filter by status"
           }
         ],
         "responses": {
@@ -209,7 +200,20 @@
         "description": "Creates a flexible blog from provided data",
         "operationId": "createFlexibleBlog",
         "parameters": [
-
+          {
+            "name": "flexible_blog",
+            "in": "body",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/blog"
+                },
+                {
+                  "$ref": "#/components/schemas/flexible_blog"
+                }
+              ]
+            }
+          }
         ],
         "responses": {
           "201": {
@@ -225,27 +229,6 @@
                       "$ref": "#/components/schemas/flexible_blog"
                     }
                   ]
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "flexible_blog": {
-                    "oneOf": [
-                      {
-                        "$ref": "#/components/schemas/blog"
-                      },
-                      {
-                        "$ref": "#/components/schemas/flexible_blog"
-                      }
-                    ]
-                  }
                 }
               }
             }
