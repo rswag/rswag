@@ -150,6 +150,8 @@ module Rswag
           parse_parameter_schema(endpoint, schema_param, mime_list)
         end
 
+        add_enum_description(parameters)
+
         parameters.reject! { |p| p[:in] == :formData }
       end
 
@@ -229,6 +231,21 @@ module Rswag
             value: example[:value]
           }
         end
+      end
+
+      def add_enum_description(parameters)
+        enum_param = parameters.find { |p| p[:enum] }
+        if enum_param && enum_param.is_a?(Hash)
+          enum_param[:description] = generate_enum_description(enum_param)
+        end
+      end
+
+      def generate_enum_description(param)
+        enum_description = "#{param[:description]}:\n "
+        param[:enum].each do |k,v|
+          enum_description += "* `#{k}` #{v}\n "
+        end
+        enum_description
       end
     end
   end

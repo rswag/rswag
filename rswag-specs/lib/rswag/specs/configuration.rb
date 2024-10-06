@@ -53,8 +53,12 @@ module Rswag
         openapi_specs[name]
       end
 
-      def openapi_strict_schema_validation
-        @rspec_config.openapi_strict_schema_validation || false
+      def openapi_all_properties_required
+        @rspec_config.openapi_all_properties_required || false
+      end
+
+      def openapi_no_additional_properties
+        @rspec_config.openapi_no_additional_properties || false
       end
     end
 

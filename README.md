@@ -22,7 +22,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 **Table of Contents**
 
 - [rswag](#rswag)
-  - [Compatibility](#compatibility)
   - [Getting Started](#getting-started)
   - [The rspec DSL](#the-rspec-dsl)
     - [Paths, Operations and Responses](#paths-operations-and-responses)
@@ -108,7 +107,7 @@ There is also a generator which can help get you started `rails generate rspec:s
         post 'Creates a blog' do
           tags 'Blogs'
           consumes 'application/json'
-          parameter name: :blog, in: :body, schema: {
+          parameter name: 'blog', in: :body, schema: {
             type: :object,
             properties: {
               title: { type: :string },
@@ -118,12 +117,12 @@ There is also a generator which can help get you started `rails generate rspec:s
           }
 
           response '201', 'blog created' do
-            let(:request_parameters) { { 'blog' => { title: 'foo', content: 'bar' } } } }
+            let(:request_params) { { 'blog' => { title: 'foo', content: 'bar' } } } }
             run_test!
           end
 
           response '422', 'invalid request' do
-            let(:request_parameters) { { 'blog' => { title: 'foo' } } }
+            let(:request_params) { { 'blog' => { title: 'foo' } } }
             run_test!
           end
         end
@@ -134,7 +133,7 @@ There is also a generator which can help get you started `rails generate rspec:s
         get 'Retrieves a blog' do
           tags 'Blogs', 'Another Tag'
           produces 'application/json', 'application/xml'
-          parameter name: :id, in: :path, type: :string
+          parameter name: 'id', in: :path, type: :string
           request_body_example value: { some_field: 'Foo' }, name: 'basic', summary: 'Request example description'
 
           response '200', 'blog found' do
@@ -146,12 +145,12 @@ There is also a generator which can help get you started `rails generate rspec:s
               },
               required: [ 'id', 'title', 'content' ]
 
-            let(:request_parameters) { 'id' => { Blog.create(title: 'foo', content: 'bar').id } }
+            let(:request_params) { 'id' => { Blog.create(title: 'foo', content: 'bar').id } }
             run_test!
           end
 
           response '404', 'blog not found' do
-            let(:request_parameters) { { 'id' => 'invalid' } }
+            let(:request_params) { { 'id' => 'invalid' } }
             run_test!
           end
 
@@ -187,7 +186,7 @@ This will create the spec file _spec/integration/blogs_spec.rb_
 
 If you've used [Swagger](http://swagger.io/specification) before, then the syntax should be very familiar. To describe your API operations, start by specifying a path and then list the supported operations (i.e. HTTP verbs) for that path. Path parameters must be surrounded by curly braces ({}). Within an operation block (see "post" or "get" in the example above), most of the fields supported by the [Swagger "Operation" object](http://swagger.io/specification/#operationObject) are available as methods on the example group. To list (and test) the various responses for an operation, create one or more response blocks. Again, you can reference the [Swagger "Response" object](http://swagger.io/specification/#responseObject) for available fields.
 
-Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](https://json-schema.org/specification).
+Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the `request_params` rspec variable. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how `request_params` is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](https://json-schema.org/specification).
 
 If you want to add metadata to the example, you can pass keyword arguments to the __run_test!__ method:
 
@@ -226,7 +225,7 @@ If you'd like your specs to be a little more explicit about what's going on here
 
 ```ruby
 response '201', 'blog created' do
-  let(:request_parameters) { { 'blog' => { title: 'foo', content: 'bar' } } }
+  let(:request_params) { { 'blog' => { title: 'foo', content: 'bar' } } }
 
   before do |example|
     submit_request(example.metadata)
@@ -245,10 +244,11 @@ Also note that the examples generated with __run_test!__ are tagged with the `:r
 Input sent in queries of Rspec tests is HTML safe, including date-time strings.
 
 ```ruby
-parameter name: :date_time, in: :query, type: :string
+parameter name: 'date_time', in: :query, type: :string
 
 response '200', 'blog found' do
   let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
+  let(:request_params) { { 'date_time' => date_time } }
 
   run_test! do
     expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
@@ -256,69 +256,46 @@ response '200', 'blog found' do
 end
 ```
 
-### Strict schema validation
+### Enum description ###
+If you want to output a description of each enum value, the description can be passed to each value:
+```ruby
+parameter name: 'status', in: :query,
+          enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+          description: 'Filter by status'
 
-By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+response '200', 'success' do
+  let(:request_params) { {'status' => 'published'} }
+
+  run_test!
+end
+```
+
+### Schema validations
+
+#### Additional properties
+If you want to disallow additional properties in response body, you can set the option `openapi_no_additional_properties` to true:
 
 ```ruby
-# spec/openapi_helper.rb
+# spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_strict_schema_validation = true
+  config.openapi_no_additional_properties = true # default false
 end
 ```
 
-or set the option per individual example:
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
+
+#### All required properties
+If you want to disallow missing required properties in response body, you can set the `openapi_all_properties_required` option to true:
+**Important** it will allow the additional properties
 
 ```ruby
-# using in run_test!
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-      response '201', 'blog created' do
-        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        run_test!(openapi_strict_schema_validation: true)
-      end
-    end
-  end
-end
-
-# using in response block
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-
-      response '201', 'blog created', openapi_strict_schema_validation: true do
-        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        run_test!
-      end
-    end
-  end
-end
-
-# using in an explicit example
-describe 'Blogs API' do
-  path '/blogs' do
-    post 'Creates a blog' do
-      ...
-      response '201', 'blog created' do
-        let(:request_parameters) { 'blog' => { title: 'foo', content: 'bar' } }
-
-        before do |example|
-          submit_request(example.metadata)
-        end
-
-        it 'returns a valid 201 response', openapi_strict_schema_validation: true do |example|
-          assert_response_matches_metadata(example.metadata)
-        end
-      end
-    end
-  end
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_all_properties_required = true # default false
 end
 ```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
 ### Null Values ###
 
@@ -361,7 +338,7 @@ if during the integration test run the endpoint response does not match the resp
       consumes 'application/json'
       produces 'application/json'
 
-      parameter name: :blog, in: :body, schema: {
+      parameter name: 'blog', in: :body, schema: {
           oneOf: [
             { '$ref' => '#/components/schemas/blog' },
             { '$ref' => '#/components/schemas/flexible_blog' }
@@ -697,7 +674,7 @@ describe 'Blogs API' do
 
     post 'Creates a blog' do
 
-      parameter name: :new_blog, in: :body, schema: { '$ref' => '#/components/schemas/new_blog' }
+      parameter name: 'new_blog', in: :body, schema: { '$ref' => '#/components/schemas/new_blog' }
 
       response 422, 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'

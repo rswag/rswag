@@ -42,10 +42,12 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: "keywords", in: :query, type: 'string'
-      parameter name: "status", in: :query, type: 'string'
+      parameter name: "status", in: :query,
+                enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                description: 'Filter by status'
 
       before do
-        Blog.create(title: 'foo', content: 'hello world', status: 'published')
+        Blog.create(title: 'foo', content: 'hello world', status: :published)
       end
 
       let(:request_params) { {
@@ -151,8 +153,12 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
 
         run_test!
 
-        context 'when openapi_strict_schema_validation is true' do
-          run_test!(openapi_strict_schema_validation: true)
+        context 'when openapi_all_properties_required is true' do
+          run_test!(openapi_all_properties_required: true)
+        end
+
+        context 'when openapi_no_additional_properties is true' do
+          run_test!(openapi_no_additional_properties: true)
         end
       end
 
@@ -161,7 +167,15 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         run_test!
       end
 
-      response '200', 'blog found - openapi_strict_schema_validation = true', openapi_strict_schema_validation: true do
+      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
+        schema '$ref' => '#/components/schemas/blog'
+
+        let(:id) { blog.id }
+
+        run_test!
+      end
+
+      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }

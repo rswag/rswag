@@ -149,7 +149,7 @@ module Rswag
               return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
-            return "#{name}=#{value}"
+            return "#{escaped_name}=#{CGI.escape(value.to_s)}"
           end
         end
 
@@ -219,7 +219,7 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type == 'application/json'
+                            elsif content_type =~ /\Aapplication\/([0-9A-Za-z._-]+\+json\z|json\z)/
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
