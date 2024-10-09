@@ -3,11 +3,17 @@
 require 'rswag/specs/configuration'
 require 'climate_control'
 
+RspecConfig = Struct.new(
+  :openapi_root, :openapi_specs, :openapi_format, :rswag_dry_run,
+  :openapi_strict_schema_validation, :openapi_all_properties_required, :openapi_no_additional_properties,
+  keyword_init: true
+)
+
 RSpec.describe Rswag::Specs::Configuration do
   subject { described_class.new(rspec_config) }
 
   let(:rspec_config) do
-    OpenStruct.new(
+    RspecConfig.new(
       openapi_root: openapi_root, openapi_specs: openapi_specs,
       openapi_format: openapi_format, rswag_dry_run: rswag_dry_run,
       openapi_all_properties_required: openapi_all_properties_required,
