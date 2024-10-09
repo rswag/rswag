@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir.glob('{lib,node_modules}/**/*') + ['MIT-LICENSE', 'Rakefile' ]
 
   s.add_dependency 'actionpack', '>= 5.2', '< 8.0'
+  s.add_dependency 'ostruct', '~> 0.6.0'
   s.add_dependency 'railties', '>= 5.2', '< 8.0'
 
   s.add_development_dependency 'simplecov', '=0.21.2'
