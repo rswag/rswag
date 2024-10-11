@@ -130,7 +130,7 @@ module Rswag
               raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
                 "(i. e `it` or `let` block)")
             end
-            path_template.gsub!("{#{p[:name]}}", example.send(extract_getter(p)).to_s)
+            path_template.gsub!("{#{p[:name]}}", CGI.escape(example.send(extract_getter(p)).to_s))
           end
 
           parameters.select { |p| p[:in] == :query }.each_with_index do |p, i|

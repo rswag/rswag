@@ -55,6 +55,16 @@ module Rswag
               expect(request[:path]).to eq('/blogs/1/comments/2')
             end
 
+            context 'when values need to be url encoded' do
+              before do
+                allow(example).to receive(:blog_id).and_return('foo:1337')
+              end
+
+              it 'url encodes the values' do
+                expect(request[:path]).to eq('/blogs/foo%3A1337/comments/2')
+              end
+            end
+
             context 'when `getter is defined`' do
               before do
                 metadata[:operation][:parameters] = [
