@@ -188,6 +188,19 @@ module Rswag
                       required: true
                     }]
                   }
+                },
+                '/support_legacy_body_param_with_name/' => {
+                  post: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['application/json'],
+                    parameters: [{
+                      name: :foo,
+                      in: :body,
+                      schema: { type: :string }
+                    }]
+                  }
                 }
               }
             }
@@ -209,6 +222,13 @@ module Rswag
             expect(doc_2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(content: {
               'application/json' => { schema: { required: true, type: :object } }
             }, required: true)
+          end
+
+          it 'supports legacy body parameters with name' do
+            expect(doc_2[:paths]['/support_legacy_body_param_with_name/'][:post][:parameters]).to eql([])
+            expect(doc_2[:paths]['/support_legacy_body_param_with_name/'][:post][:requestBody]).to eql(content: {
+              'application/json' => { schema: { properties: {  foo: {type: :string } }, type: :object } }
+            })
           end
         end
 
