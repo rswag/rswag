@@ -146,13 +146,17 @@ module Rswag
       def parse_endpoint(endpoint, mime_list)
         parameters = endpoint[:parameters]
         # But there can be any number of formData
-        parameters.select { |p| p[:schema] if p[:in] == :formData  }.each do |schema_param|
+        parameters.select { |p| p[:schema] if parameter_in_formdata_or_body?(p)  }.each do |schema_param|
           parse_parameter_schema(endpoint, schema_param, mime_list)
         end
 
         add_enum_description(parameters)
 
-        parameters.reject! { |p| p[:in] == :formData }
+        parameters.reject! { |p| parameter_in_formdata_or_body?(p) }
+      end
+
+      def parameter_in_formdata_or_body?(p)
+        p[:in] == :formData || p[:in] == :body
       end
 
       def add_request_body(endpoint)

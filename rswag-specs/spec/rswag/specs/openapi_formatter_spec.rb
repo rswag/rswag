@@ -175,6 +175,19 @@ module Rswag
                       in: :headers
                     }]
                   }
+                },
+                '/support_legacy_body/' => {
+                  post: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['application/json'],
+                    parameters: [{
+                      in: :body,
+                      schema: { type: :object },
+                      required: true
+                    }]
+                  }
                 }
               }
             }
@@ -190,8 +203,15 @@ module Rswag
               'multipart/form-data' => { schema: { type: :string } }
             })
           end
+
+          it 'supports legacy body parameters' do
+            expect(doc_2[:paths]['/support_legacy_body/'][:post][:parameters]).to eql([])
+            expect(doc_2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(content: {
+              'application/json' => { schema: { required: true, type: :object } }
+            }, required: true)
+          end
         end
-        
+
         context 'with enum parameters' do
           let(:doc_2) do
             {
@@ -220,14 +240,14 @@ module Rswag
           it 'writes the enum description' do
             expect(doc_2[:paths]['/path/'][:get][:parameters]).to match(
               [{
-                in: :query, 
-                name: :foo, 
+                in: :query,
+                name: :foo,
                 enum: {
-                  bar: "list bars", 
+                  bar: "list bars",
                   baz: "lists people named baz"
-                  }, 
+                  },
                   description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
-              }]            
+              }]
             )
           end
         end
