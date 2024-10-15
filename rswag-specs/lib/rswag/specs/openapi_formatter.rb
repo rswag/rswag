@@ -134,7 +134,7 @@ module Rswag
             is_hash = endpoint.is_a?(Hash)
             if is_hash && endpoint[:parameters]
               mime_list = endpoint[:consumes] || doc[:consumes]
-              parse_endpoint(endpoint, mime_list) if mime_list
+              parse_endpoint(endpoint, mime_list)
             end
             remove_invalid_operation_keys!(endpoint)
           end
@@ -165,6 +165,8 @@ module Rswag
       end
 
       def parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
+        raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
+
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint) if parameter_in_formdata_or_body?(parameter)
 
