@@ -23,9 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        if !doc_version(openapi_spec).start_with?('3')
-          raise ConfigurationError, "Unsupported OpenAPI version"
-        end
+        raise ConfigurationError, "Unsupported OpenAPI version" unless doc_version(openapi_spec).start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -146,18 +144,16 @@ module Rswag
       def parse_endpoint(endpoint, mime_list)
         parameters = endpoint[:parameters]
 
-        # Parse any parameters
-        parameters.each do |parameter|
-          set_parameter_schema(parameter)
-          parse_enum(parameter)
-        end
-
         # Parse parameters that are body parameters:
         parameters.select { |p| p[:schema] if parameter_in_formdata_or_body?(p) }.each do |parameter|
           parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
+          parameters.delete(parameter) # "consume" parameters that will endup in response body
         end
 
-        parameters.reject! { |p| parameter_in_formdata_or_body?(p) }
+        # Parse any parameters
+        parameters.each do |parameter|
+          parse_enum(parameter)
+        end
       end
 
       def parameter_in_formdata_or_body?(p)
@@ -168,14 +164,9 @@ module Rswag
         p[:in] == :body
       end
 
-      def add_request_body(endpoint)
-        return if endpoint.dig(:requestBody, :content)
-        endpoint[:requestBody] = { content: {} }
-      end
-
       def parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
-        # Only add if there are any body parameters and not already defined
-        add_request_body(endpoint)
+        # Only add requestBody if there are any body parameters and not already defined
+        add_request_body(endpoint) if parameter_in_formdata_or_body?(parameter)
 
         mime_list.each do |mime|
           endpoint[:requestBody][:content][mime] ||= {}
@@ -190,7 +181,14 @@ module Rswag
           set_mime_config(mime_config, parameter)
           set_mime_examples(mime_config, endpoint)
           parse_parameter_required(endpoint, mime_config, parameter)
+
+          parameter[:schema][:description] = parameter[:description] if parameter[:description]
         end
+      end
+
+      def add_request_body(endpoint)
+        return if endpoint.dig(:requestBody, :content)
+        endpoint[:requestBody] = { content: {} }
       end
 
       def parse_parameter_required(endpoint, mime_config, parameter)
@@ -217,7 +215,6 @@ module Rswag
         if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
           parameter[:required] = parameter[:schema].delete(:required)
         end
-        parameter[:schema][:description] = parameter[:description] if parameter[:description]
       end
 
       def convert_file_parameter(parameter)
@@ -260,6 +257,7 @@ module Rswag
         return unless parameter.key?(:enum)
 
         enum = parameter.delete(:enum)
+        parameter[:schema] ||= {}
         parameter[:schema][:enum] = enum.is_a?(Hash) ? enum.keys.map(&:to_s) : enum
         parameter[:description] = generate_enum_description(parameter, enum) if enum.is_a?(Hash)
       end
