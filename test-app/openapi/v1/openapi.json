@@ -141,13 +141,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "blog": {
-                    "type": "object",
-                    "required": true
-                  }
-                }
+                "type": "object"
               }
             }
           },
@@ -234,19 +228,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "flexible_blog": {
-                    "oneOf": [
-                      {
-                        "$ref": "#/components/schemas/blog"
-                      },
-                      {
-                        "$ref": "#/components/schemas/flexible_blog"
-                      }
-                    ]
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/blog"
+                  },
+                  {
+                    "$ref": "#/components/schemas/flexible_blog"
                   }
-                }
+                ]
               }
             }
           }
@@ -361,11 +350,13 @@
                 "properties": {
                   "file": {
                     "type": "string",
-                    "required": true,
                     "description": "The content of the blog thumbnail",
                     "format": "binary"
                   }
-                }
+                },
+                "required": [
+                  "file"
+                ]
               }
             }
           },

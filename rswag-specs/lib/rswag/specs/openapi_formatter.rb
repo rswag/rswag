@@ -156,7 +156,11 @@ module Rswag
       end
 
       def parameter_in_formdata_or_body?(p)
-        p[:in] == :formData || p[:in] == :body
+        p[:in] == :formData || parameter_in_body?(p)
+      end
+
+      def parameter_in_body?(p)
+        p[:in] == :body
       end
 
       def add_request_body(endpoint)
@@ -173,48 +177,58 @@ module Rswag
           mime_config = endpoint[:requestBody][:content][mime]
           set_parameter_schema(parameter)
           convert_file_parameter(parameter)
-          # Only parse parameters if there has not already been a reference object set
-          if !mime_config[:schema] || mime_config.dig(:schema, :properties)
-            set_mime_config(mime_config, parameter)
-            set_mime_examples(mime_config, endpoint)
-          end
-        end
+          # Only parse parameters if there has not already been a reference object set. Ie if a `in: :body` parameter
+          # has been seen already `schema` is defined, or if formData is being used then ensure we have a `properties`
+          # key in schema.
+          next unless mime_config[:schema].nil? || mime_config.dig(:schema, :properties)
 
-        set_request_body_required(endpoint, mime_list)
+          set_mime_config(mime_config, parameter)
+          set_mime_examples(mime_config, endpoint)
+          parse_parameter_required(endpoint, mime_config, parameter)
+        end
       end
 
-      # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
-      # you could have optional body, but if body is provided then some properties are required.
-      # Also could just parse this info at time of parsing parameters
-      def set_request_body_required(endpoint, mime_list)
-        required = mime_list.any? do |mime|
-          mime_config = endpoint[:requestBody][:content][mime]
-          mime_config.any? do |_mime, config|
-            config[:required] || config.dig(:schema, :required) || config[:properties]&.any? { |_k, s| s[:required] }
-          end
+      def parse_parameter_required(endpoint, mime_config, parameter)
+        return unless parameter[:required]
+
+        # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
+        # you could have optional body, but if body is provided then some properties are required.
+        endpoint[:requestBody][:required] = true
+
+        return if parameter_in_body?(parameter)
+
+        if parameter[:name]
+          mime_config[:schema][:required] ||= []
+          mime_config[:schema][:required] << parameter[:name].to_s
+        else
+          mime_config[:schema][:required] = true
         end
-        endpoint[:requestBody][:required] = true if required
       end
 
       def set_parameter_schema(parameter)
+        # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
+        # and simply mark the parameter as required, which will be processed later.
         parameter[:schema] ||= {}
-        parameter[:schema][:required] = true if parameter[:required]
+        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
+          parameter[:required] = parameter[:schema].delete(:required)
+        end
         parameter[:schema][:description] = parameter[:description] if parameter[:description]
       end
 
       def convert_file_parameter(parameter)
-        if parameter[:schema][:type] == :file
-          parameter[:schema][:type] = :string
-          parameter[:schema][:format] = :binary
-        end
+        return unless parameter[:schema][:type] == :file
+
+        parameter[:schema][:type] = :string
+        parameter[:schema][:format] = :binary
       end
 
       def set_mime_config(mime_config, parameter)
-        mime_config[:schema] ||= parameter[:name] ? {type: :object, properties: {}} : parameter[:schema]
-        if parameter[:name]
-          mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
-          set_mime_encoding(mime_config, parameter)
-        end
+        schema_with_form_properties = parameter[:name] && !parameter_in_body?(parameter)
+        mime_config[:schema] ||= schema_with_form_properties ? { type: :object, properties: {} } : parameter[:schema]
+        return unless schema_with_form_properties
+
+        mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
+        set_mime_encoding(mime_config, parameter)
       end
 
       def set_mime_encoding(mime_config, parameter)
@@ -239,9 +253,7 @@ module Rswag
 
       def add_enum_description(parameters)
         enum_param = parameters.find { |p| p[:enum] }
-        if enum_param && enum_param.is_a?(Hash)
-          enum_param[:description] = generate_enum_description(enum_param)
-        end
+        enum_param[:description] = generate_enum_description(enum_param) if enum_param.is_a?(Hash)
       end
 
       def generate_enum_description(param)

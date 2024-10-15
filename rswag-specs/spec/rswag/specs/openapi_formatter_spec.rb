@@ -184,8 +184,7 @@ module Rswag
                     consumes: ['application/json'],
                     parameters: [{
                       in: :body,
-                      schema: { type: :object },
-                      required: true
+                      schema: { type: :object, required: true }
                     }]
                   }
                 },
@@ -198,7 +197,8 @@ module Rswag
                     parameters: [{
                       name: :foo,
                       in: :body,
-                      schema: { type: :string }
+                      schema: {'$ref': '#/components/schemas/BlogPost'},
+                      required: true
                     }]
                   }
                 }
@@ -212,23 +212,29 @@ module Rswag
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
             expect(doc_2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
-            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => { schema: { type: :string } }
-            })
+            expect(doc_2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'multipart/form-data' => { schema: { type: :string } }
+              }
+            )
           end
 
           it 'supports legacy body parameters' do
             expect(doc_2[:paths]['/support_legacy_body/'][:post][:parameters]).to eql([])
-            expect(doc_2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(content: {
-              'application/json' => { schema: { required: true, type: :object } }
-            }, required: true)
+            expect(doc_2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(
+              content: {
+                'application/json' => { schema: { type: :object} }
+              },
+              required: true
+            )
           end
 
           it 'supports legacy body parameters with name' do
             expect(doc_2[:paths]['/support_legacy_body_param_with_name/'][:post][:parameters]).to eql([])
-            expect(doc_2[:paths]['/support_legacy_body_param_with_name/'][:post][:requestBody]).to eql(content: {
-              'application/json' => { schema: { properties: {  foo: {type: :string } }, type: :object } }
-            })
+            expect(doc_2[:paths]['/support_legacy_body_param_with_name/'][:post][:requestBody]).to eql(
+              content: { 'application/json' => { schema: { '$ref': '#/components/schemas/BlogPost' } } },
+              required: true
+            )
           end
         end
 
@@ -441,7 +447,6 @@ module Rswag
                       file: {
                         description: 'the actual file with appropriate content type',
                         format: :binary,
-                        required: true,
                         type: :string
                       },
                       scheduled_for: {
@@ -449,7 +454,8 @@ module Rswag
                         format: 'date-time',
                         type: :string
                       }
-                    }
+                    },
+                    required: ["file"]
                   },
                   encoding: {
                     file: {

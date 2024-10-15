@@ -44,10 +44,12 @@
                 "properties": {
                   "file": {
                     "type": "string",
-                    "required": true,
                     "format": "binary"
                   }
-                }
+                },
+                "required": [
+                  "file"
+                ]
               }
             }
           },
