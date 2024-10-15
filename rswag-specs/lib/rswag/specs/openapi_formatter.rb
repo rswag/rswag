@@ -145,12 +145,17 @@ module Rswag
 
       def parse_endpoint(endpoint, mime_list)
         parameters = endpoint[:parameters]
-        # But there can be any number of formData
-        parameters.select { |p| p[:schema] if parameter_in_formdata_or_body?(p)  }.each do |schema_param|
-          parse_parameter_schema(endpoint, schema_param, mime_list)
+
+        # Parse any parameters
+        parameters.each do |parameter|
+          set_parameter_schema(parameter)
+          parse_enum(parameter)
         end
 
-        add_enum_description(parameters)
+        # Parse parameters that are body parameters:
+        parameters.select { |p| p[:schema] if parameter_in_formdata_or_body?(p) }.each do |parameter|
+          parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
+        end
 
         parameters.reject! { |p| parameter_in_formdata_or_body?(p) }
       end
@@ -168,7 +173,7 @@ module Rswag
         endpoint[:requestBody] = { content: {} }
       end
 
-      def parse_parameter_schema(endpoint, parameter, mime_list)
+      def parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
         # Only add if there are any body parameters and not already defined
         add_request_body(endpoint)
 
@@ -251,14 +256,17 @@ module Rswag
         end
       end
 
-      def add_enum_description(parameters)
-        enum_param = parameters.find { |p| p[:enum] }
-        enum_param[:description] = generate_enum_description(enum_param) if enum_param.is_a?(Hash)
+      def parse_enum(parameter)
+        return unless parameter.key?(:enum)
+
+        enum = parameter.delete(:enum)
+        parameter[:schema][:enum] = enum.is_a?(Hash) ? enum.keys.map(&:to_s) : enum
+        parameter[:description] = generate_enum_description(parameter, enum) if enum.is_a?(Hash)
       end
 
-      def generate_enum_description(param)
+      def generate_enum_description(param, enum)
         enum_description = "#{param[:description]}:\n "
-        param[:enum].each do |k,v|
+        enum.each do |k,v|
           enum_description += "* `#{k}` #{v}\n "
         end
         enum_description

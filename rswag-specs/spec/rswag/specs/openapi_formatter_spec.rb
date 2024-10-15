@@ -268,11 +268,10 @@ module Rswag
               [{
                 in: :query,
                 name: :foo,
-                enum: {
-                  bar: "list bars",
-                  baz: "lists people named baz"
-                  },
-                  description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
+                schema: {
+                  enum: ["bar", "baz"]
+                },
+                description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
               }]
             )
           end
