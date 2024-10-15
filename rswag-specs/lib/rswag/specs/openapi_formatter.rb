@@ -112,7 +112,7 @@ module Rswag
         path_nodes = metadata[:path_item][:parameters] || []
         header_node = metadata[:response][:headers] || {}
 
-        (operation_nodes + path_nodes + [header_node]).each do |node|
+        (operation_nodes + path_nodes + header_node.values).each do |node|
           if node && node[:type] && node[:schema].nil?
             node[:schema] = { type: node[:type] }
             node.delete(:type)
@@ -144,16 +144,36 @@ module Rswag
       def parse_endpoint(endpoint, mime_list)
         parameters = endpoint[:parameters]
 
+        # Parse any parameters
+        parameters.each do |parameter|
+          set_parameter_schema(parameter)
+          convert_file_parameter(parameter)
+          parse_enum(parameter)
+        end
+
         # Parse parameters that are body parameters:
-        parameters.select { |p| p[:schema] if parameter_in_formdata_or_body?(p) }.each do |parameter|
+        parameters.select { |p| parameter_in_formdata_or_body?(p) }.each do |parameter|
           parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
           parameters.delete(parameter) # "consume" parameters that will endup in response body
         end
 
-        # Parse any parameters
-        parameters.each do |parameter|
-          parse_enum(parameter)
+        # Remove blank schemas - todo: refactor to not add in the first place
+        parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
+      end
+
+
+      def set_parameter_schema(parameter)
+        # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
+        # and simply mark the parameter as required, which will be processed later.
+        parameter[:schema] ||= {}
+        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
+          parameter[:required] = parameter[:schema].delete(:required)
         end
+        #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
+        parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
+
+        # If a description is provided for the parameter, it should be moved to the schema description
+        parameter[:schema][:description] = parameter[:description] if parameter[:description]
       end
 
       def parameter_in_formdata_or_body?(p)
@@ -168,13 +188,12 @@ module Rswag
         raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
 
         # Only add requestBody if there are any body parameters and not already defined
-        add_request_body(endpoint) if parameter_in_formdata_or_body?(parameter)
+        add_request_body(endpoint)
 
         mime_list.each do |mime|
           endpoint[:requestBody][:content][mime] ||= {}
           mime_config = endpoint[:requestBody][:content][mime]
-          set_parameter_schema(parameter)
-          convert_file_parameter(parameter)
+
           # Only parse parameters if there has not already been a reference object set. Ie if a `in: :body` parameter
           # has been seen already `schema` is defined, or if formData is being used then ensure we have a `properties`
           # key in schema.
@@ -182,9 +201,7 @@ module Rswag
 
           set_mime_config(mime_config, parameter)
           set_mime_examples(mime_config, endpoint)
-          parse_parameter_required(endpoint, mime_config, parameter)
-
-          parameter[:schema][:description] = parameter[:description] if parameter[:description]
+          set_request_body_required(mime_config, endpoint, parameter)
         end
       end
 
@@ -193,7 +210,7 @@ module Rswag
         endpoint[:requestBody] = { content: {} }
       end
 
-      def parse_parameter_required(endpoint, mime_config, parameter)
+      def set_request_body_required(mime_config, endpoint, parameter)
         return unless parameter[:required]
 
         # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
@@ -207,15 +224,6 @@ module Rswag
           mime_config[:schema][:required] << parameter[:name].to_s
         else
           mime_config[:schema][:required] = true
-        end
-      end
-
-      def set_parameter_schema(parameter)
-        # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
-        # and simply mark the parameter as required, which will be processed later.
-        parameter[:schema] ||= {}
-        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
-          parameter[:required] = parameter[:schema].delete(:required)
         end
       end
 

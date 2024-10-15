@@ -168,6 +168,7 @@
             "in": "query",
             "description": "Filter by status:\n * `draft` Retrieves draft blogs\n * `published` Retrieves published blogs\n * `archived` Retrieves archived blogs\n ",
             "schema": {
+              "description": "Filter by status",
               "enum": [
                 "draft",
                 "published",
@@ -267,13 +268,19 @@
             "description": "blog found - openapi_no_additional_properties = true",
             "headers": {
               "ETag": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               },
               "Last-Modified": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               },
               "Cache-Control": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               }
             },
             "content": {
@@ -352,8 +359,8 @@
                 "properties": {
                   "file": {
                     "type": "string",
-                    "format": "binary",
-                    "description": "The content of the blog thumbnail"
+                    "description": "The content of the blog thumbnail",
+                    "format": "binary"
                   }
                 },
                 "required": [
