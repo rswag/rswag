@@ -171,9 +171,6 @@ module Rswag
         end
         #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
-
-        # If a description is provided for the parameter, it should be moved to the schema description
-        parameter[:schema][:description] = parameter[:description] if parameter[:description]
       end
 
       def parameter_in_formdata_or_body?(p)
@@ -189,6 +186,10 @@ module Rswag
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
+
+        # If a description is provided for the parameter, it should be moved to the schema description
+        desc = parameter.delete(:description)
+        parameter[:schema][:description] = desc if desc
 
         mime_list.each do |mime|
           endpoint[:requestBody][:content][mime] ||= {}

@@ -168,7 +168,6 @@
             "in": "query",
             "description": "Filter by status:\n * `draft` Retrieves draft blogs\n * `published` Retrieves published blogs\n * `archived` Retrieves archived blogs\n ",
             "schema": {
-              "description": "Filter by status",
               "enum": [
                 "draft",
                 "published",
@@ -359,8 +358,8 @@
                 "properties": {
                   "file": {
                     "type": "string",
-                    "description": "The content of the blog thumbnail",
-                    "format": "binary"
+                    "format": "binary",
+                    "description": "The content of the blog thumbnail"
                   }
                 },
                 "required": [
