@@ -23,9 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        if !doc_version(openapi_spec).start_with?('3')
-          raise ConfigurationError, "Unsupported OpenAPI version"
-        end
+        raise ConfigurationError, "Unsupported OpenAPI version" unless doc_version(openapi_spec).start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -38,41 +36,7 @@ module Rswag
 
       def stop(_notification = nil)
         @config.openapi_specs.each do |url_path, doc|
-          doc[:paths]&.each_pair do |_k, v|
-            v.each_pair do |_verb, value|
-              is_hash = value.is_a?(Hash)
-              if is_hash && value[:parameters]
-                schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
-                mime_list = value[:consumes] || doc[:consumes]
-                if value && schema_param && mime_list
-                  value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
-                  value[:requestBody][:required] = true if schema_param[:required]
-                  value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
-                  examples = value.dig(:request_examples)
-                  mime_list.each do |mime|
-                    value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
-                    if examples
-                      value[:requestBody][:content][mime][:examples] ||= {}
-                      examples.map do |example|
-                        value[:requestBody][:content][mime][:examples][example[:name]] = {
-                          summary: example[:summary] || value[:summary],
-                          value: example[:value]
-                        }
-                      end
-                    end
-                  end
-                end
-
-                enum_param = value.dig(:parameters).find{|p| p[:enum]}
-                if enum_param && enum_param.is_a?(Hash)
-                  enum_param[:description] = generate_enum_description(enum_param)
-                end
-
-                value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
-              end
-              remove_invalid_operation_keys!(value)
-            end
-          end
+          parse_parameters(doc)
 
           file_path = File.join(@config.openapi_root, url_path)
           dirname = File.dirname(file_path)
@@ -148,7 +112,7 @@ module Rswag
         path_nodes = metadata[:path_item][:parameters] || []
         header_node = metadata[:response][:headers] || {}
 
-        (operation_nodes + path_nodes + [header_node]).each do |node|
+        (operation_nodes + path_nodes + header_node.values).each do |node|
           if node && node[:type] && node[:schema].nil?
             node[:schema] = { type: node[:type] }
             node.delete(:type)
@@ -164,9 +128,154 @@ module Rswag
         value.delete(:request_examples) if value[:request_examples]
       end
 
-      def generate_enum_description(param)
+      def parse_parameters(doc)
+        doc[:paths]&.each_pair do |_k, path|
+          path.each_pair do |_verb, endpoint|
+            is_hash = endpoint.is_a?(Hash)
+            if is_hash && endpoint[:parameters]
+              mime_list = endpoint[:consumes] || doc[:consumes]
+              parse_endpoint(endpoint, mime_list)
+            end
+            remove_invalid_operation_keys!(endpoint)
+          end
+        end
+      end
+
+      def parse_endpoint(endpoint, mime_list)
+        parameters = endpoint[:parameters]
+
+        # Parse any parameters
+        parameters.each do |parameter|
+          set_parameter_schema(parameter)
+          convert_file_parameter(parameter)
+          parse_enum(parameter)
+        end
+
+        # Parse parameters that are body parameters:
+        parameters.select { |p| parameter_in_form_data_or_body?(p) }.each do |parameter|
+          parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
+          parameters.delete(parameter) # "consume" parameters that will end up in response body
+        end
+
+        # Remove blank schemas - todo: refactor to not add in the first place
+        parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
+      end
+
+
+      def set_parameter_schema(parameter)
+        # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
+        # and simply mark the parameter as required, which will be processed later.
+        parameter[:schema] ||= {}
+        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
+          parameter[:required] = parameter[:schema].delete(:required)
+        end
+        #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
+        parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
+      end
+
+      def parameter_in_form_data_or_body?(p)
+        p[:in] == :formData || parameter_in_body?(p)
+      end
+
+      def parameter_in_body?(p)
+        p[:in] == :body
+      end
+
+      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
+        raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
+
+        # Only add requestBody if there are any body parameters and not already defined
+        add_request_body(endpoint)
+
+        # If a description is provided for the parameter, it should be moved to the schema description
+        desc = parameter.delete(:description)
+        parameter[:schema][:description] = desc if desc
+
+        mime_list.each do |mime|
+          endpoint[:requestBody][:content][mime] ||= {}
+          mime_config = endpoint[:requestBody][:content][mime]
+
+          # Only parse parameters if there has not already been a reference object set. Ie if a `in: :body` parameter
+          # has been seen already `schema` is defined, or if formData is being used then ensure we have a `properties`
+          # key in schema.
+          next unless mime_config[:schema].nil? || mime_config.dig(:schema, :properties)
+
+          set_mime_config(mime_config, parameter)
+          set_mime_examples(mime_config, endpoint)
+          set_request_body_required(mime_config, endpoint, parameter)
+        end
+      end
+
+      def add_request_body(endpoint)
+        return if endpoint.dig(:requestBody, :content)
+        endpoint[:requestBody] = { content: {} }
+      end
+
+      def set_request_body_required(mime_config, endpoint, parameter)
+        return unless parameter[:required]
+
+        # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
+        # you could have optional body, but if body is provided then some properties are required.
+        endpoint[:requestBody][:required] = true
+
+        return if parameter_in_body?(parameter)
+
+        if parameter[:name]
+          mime_config[:schema][:required] ||= []
+          mime_config[:schema][:required] << parameter[:name].to_s
+        else
+          mime_config[:schema][:required] = true
+        end
+      end
+
+      def convert_file_parameter(parameter)
+        return unless parameter[:schema][:type] == :file
+
+        parameter[:schema][:type] = :string
+        parameter[:schema][:format] = :binary
+      end
+
+      def set_mime_config(mime_config, parameter)
+        schema_with_form_properties = parameter[:name] && !parameter_in_body?(parameter)
+        mime_config[:schema] ||= schema_with_form_properties ? { type: :object, properties: {} } : parameter[:schema]
+        return unless schema_with_form_properties
+
+        mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
+        set_mime_encoding(mime_config, parameter)
+      end
+
+      def set_mime_encoding(mime_config, parameter)
+        return unless parameter[:encoding]
+        encoding = parameter[:encoding].dup
+        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        mime_config[:encoding] ||= {}
+        mime_config[:encoding][parameter[:name]] = encoding
+      end
+
+      def set_mime_examples(mime_config, endpoint)
+        examples = endpoint[:request_examples]
+        return unless examples
+        examples.each do |example|
+          mime_config[:examples] ||= {}
+          mime_config[:examples][example[:name]] = {
+            summary: example[:summary] || endpoint[:summary],
+            value: example[:value]
+          }
+        end
+      end
+
+      def parse_enum(parameter)
+        return unless parameter.key?(:enum)
+
+        enum = parameter.delete(:enum)
+        parameter[:schema] ||= {}
+        parameter[:schema][:enum] = enum.is_a?(Hash) ? enum.keys.map(&:to_s) : enum
+        parameter[:description] = generate_enum_description(parameter, enum) if enum.is_a?(Hash)
+      end
+
+      def generate_enum_description(param, enum)
         enum_description = "#{param[:description]}:\n "
-        param[:enum].each do |k,v|
+        enum.each do |k,v|
           enum_description += "* `#{k}` #{v}\n "
         end
         enum_description
