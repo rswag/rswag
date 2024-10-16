@@ -76,7 +76,6 @@ module Rswag
         no_additional_properties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
 
         {
-          strict: is_strict,
           allPropertiesRequired: all_properties_required,
           noAdditionalProperties: no_additional_properties
         }
