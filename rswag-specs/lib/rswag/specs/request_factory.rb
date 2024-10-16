@@ -123,8 +123,9 @@ module Rswag
         if param[:schema]
           style = param[:style]&.to_sym || :form
           explode = param[:explode].nil? ? true : param[:explode]
+          type = param.dig(:schema, :type).to_sym
 
-          case param[:schema][:type]&.to_sym
+          case type
           when :object
             case style
             when :deepObject
@@ -151,22 +152,6 @@ module Rswag
           else
             return "#{escaped_name}=#{CGI.escape(value.to_s)}"
           end
-        end
-
-        type = param[:type] || param.dig(:schema, :type)
-        return "#{escaped_name}=#{CGI.escape(value.to_s)}" unless type&.to_sym == :array
-
-        case param[:collectionFormat]
-        when :ssv
-          "#{name}=#{value.join(' ')}"
-        when :tsv
-          "#{name}=#{value.join('\t')}"
-        when :pipes
-          "#{name}=#{value.join('|')}"
-        when :multi
-          value.map { |v| "#{name}=#{v}" }.join('&')
-        else
-          "#{name}=#{value.join(',')}" # csv is default
         end
       end
 
