@@ -53,6 +53,19 @@ module Rswag
         }
       end
 
+      shared_context 'with strict deprecation warning' do
+        before do
+          allow(Rswag::Specs.deprecator).to receive(:warn)
+        end
+
+        after do
+          expect(Rswag::Specs.deprecator)
+            .to have_received(:warn).with('Rswag::Specs: WARNING: This option will be removed in v3.0' \
+                                          ' please use openapi_all_properties_required' \
+                                          ' and openapi_no_additional_properties set to true')
+        end
+      end
+
       describe '#validate!(metadata, response)' do
         let(:call) { subject.validate!(metadata, response) }
         let(:response) do

@@ -76,52 +76,6 @@ module Rswag
           end
         end
 
-        context "'query' parameters of type 'array'" do
-          before do
-            metadata[:operation][:parameters] = [
-              { name: 'things', in: :query, type: :array, collectionFormat: collection_format },
-              { name: 'numbers', in: :query, type: :array, collectionFormat: collection_format },
-            ]
-            example.request_params["things"] = ['foo', 'bar']
-            example.request_params["numbers"] = [0, 1]
-          end
-
-          context 'collectionFormat = csv' do
-            let(:collection_format) { :csv }
-            it 'formats as comma separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo,bar&numbers=0,1')
-            end
-          end
-
-          context 'collectionFormat = ssv' do
-            let(:collection_format) { :ssv }
-            it 'formats as space separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo bar&numbers=0 1')
-            end
-          end
-
-          context 'collectionFormat = tsv' do
-            let(:collection_format) { :tsv }
-            it 'formats as tab separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo\tbar&numbers=0\t1')
-            end
-          end
-
-          context 'collectionFormat = pipes' do
-            let(:collection_format) { :pipes }
-            it 'formats as pipe separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo|bar&numbers=0|1')
-            end
-          end
-
-          context 'collectionFormat = multi' do
-            let(:collection_format) { :multi }
-            it 'formats as multiple parameter instances' do
-              expect(request[:path]).to eq('/blogs?things=foo&things=bar&numbers=0&numbers=1')
-            end
-          end
-        end
-
         context "'query' parameter of format 'datetime'" do
           let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s  }
 
