@@ -152,9 +152,9 @@ module Rswag
         end
 
         # Parse parameters that are body parameters:
-        parameters.select { |p| parameter_in_formdata_or_body?(p) }.each do |parameter|
-          parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
-          parameters.delete(parameter) # "consume" parameters that will endup in response body
+        parameters.select { |p| parameter_in_form_data_or_body?(p) }.each do |parameter|
+          parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
+          parameters.delete(parameter) # "consume" parameters that will end up in response body
         end
 
         # Remove blank schemas - todo: refactor to not add in the first place
@@ -173,7 +173,7 @@ module Rswag
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
 
-      def parameter_in_formdata_or_body?(p)
+      def parameter_in_form_data_or_body?(p)
         p[:in] == :formData || parameter_in_body?(p)
       end
 
@@ -181,7 +181,7 @@ module Rswag
         p[:in] == :body
       end
 
-      def parse_formdata_or_body_parameter(endpoint, parameter, mime_list)
+      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
         raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
 
         # Only add requestBody if there are any body parameters and not already defined
