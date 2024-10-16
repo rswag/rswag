@@ -72,12 +72,13 @@ module Rswag
       end
 
       def validation_options_from(metadata)
-        allPropertiesRequired = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
-        noAdditionalProperties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+        all_properties_required = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
+        no_additional_properties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
 
         {
-          allPropertiesRequired: allPropertiesRequired,
-          noAdditionalProperties: noAdditionalProperties
+          strict: is_strict,
+          allPropertiesRequired: all_properties_required,
+          noAdditionalProperties: no_additional_properties
         }
       end
     end

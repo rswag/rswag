@@ -24,7 +24,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## Added
+
+## Changed
+
+## Fixed
+
+## [2.15.0] - 2024-10-04
+
 ### Added
+
+- Define extra options for properties (https://github.com/rswag/rswag/pull/783)
 
 ### Changed
 
@@ -32,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- Suppress deprecation warning when strict setting is not set (https://github.com/rswag/rswag/pull/785)
 - Allow vendor-specific MIME types for JSON payloads (https://github.com/rswag/rswag/pull/769)
 - Fix escaping of schema in path parameters for openapi spec >= 3.0.0 (https://github.com/rswag/rswag/pull/725)
 
