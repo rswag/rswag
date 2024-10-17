@@ -41,10 +41,15 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       description 'Searches blogs by keywords'
       operationId 'searchBlogs'
       produces 'application/json'
-      parameter name: "keywords", in: :query, type: 'string'
+      parameter name: "keywords", in: :query, schema: { type: 'string' }
       parameter name: "status",
                 in: :query,
-                enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                schema: {
+                  type: :string,
+                  items:  {
+                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                  }
+                },
                 description: 'Filter by status'
 
       before do
@@ -111,7 +116,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   end
 
   path '/blogs/{id}' do
-    parameter name: 'id', in: :path, type: :string
+    parameter name: 'id', in: :path, schema: { type: :string }
 
     let(:request_params) { {
       "id" => blog.id
@@ -187,7 +192,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   end
 
   path '/blogs/{id}/upload' do
-    parameter name: "id", in: :path, type: :string
+    parameter name: "id", in: :path, schema: { type: :string }
 
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
     let(:request_params) { {
@@ -205,7 +210,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         name: "file",
         description: "The content of the blog thumbnail",
         in: :formData,
-        type: :file,
+        schema: { type: :file },
         required: true
       )
 

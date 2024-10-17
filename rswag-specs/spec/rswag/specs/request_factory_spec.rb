@@ -61,10 +61,10 @@ module Rswag
         context "'query' parameters" do
           before do
             metadata[:operation][:parameters] = [
-              { name: 'q1', in: :query, type: :string },
-              { name: 'q2', in: :query, type: :string },
-              { name: 'q3', in: :query, type: :string },
-              { name: 'falsey', in: :query, type: :boolean },
+              { name: 'q1', in: :query, schema: { type: :string } },
+              { name: 'q2', in: :query, schema: { type: :string } },
+              { name: 'q3', in: :query, schema: { type: :string } },
+              { name: 'falsey', in: :query, schema: { type: :boolean } },
             ]
             example.request_params["q1"] = 'foo'
             example.request_params["q2"] = 'bar'
@@ -81,7 +81,7 @@ module Rswag
 
           before do
             metadata[:operation][:parameters] = [
-              { name: 'date_time', in: :query, type: :string, format: :datetime, }
+              { name: 'date_time', in: :query, schema: { type: :string, format: :datetime } }
             ]
             example.request_params['date_time'] = date_time
           end
@@ -261,8 +261,8 @@ module Rswag
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [
-              { name: 'Api-Key', in: :header, type: :string },
-              { name: 'Token', in: :header, type: :string }
+              { name: 'Api-Key', in: :header, schema: { type: :string } },
+              { name: 'Token', in: :header, schema: { type: :string } }
             ]
             example.request_headers["Api-Key"] = 'foobar'
             example.request_headers["Token"] = 'my_token'
@@ -276,8 +276,8 @@ module Rswag
         context 'optional parameters not provided' do
           before do
             metadata[:operation][:parameters] = [
-              { name: 'q1', in: :query, type: :string, required: false },
-              { name: 'Api-Key', in: :header, type: :string, required: false }
+              { name: 'q1', in: :query, schema: { type: :string }, required: false },
+              { name: 'Api-Key', in: :header, schema: { type: :string }, required: false }
             ]
           end
 
@@ -347,8 +347,8 @@ module Rswag
             before do
               metadata[:operation][:consumes] = ['multipart/form-data']
               metadata[:operation][:parameters] = [
-                { name: 'f1', in: :formData, type: :string },
-                { name: 'f2', in: :formData, type: :string }
+                { name: 'f1', in: :formData, schema: { type: :string } },
+                { name: 'f2', in: :formData, schema: { type: :string } }
               ]
               example.request_params["f1"] = 'foo blah'
               example.request_params["f2"] = 'bar blah'
@@ -365,7 +365,7 @@ module Rswag
           context 'plain text payload' do
             before do
               metadata[:operation][:consumes] = ['text/plain']
-              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, type: 'string' }]
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'string' } }]
               example.request_params["comment"] = 'plain text comment'
             end
 
@@ -460,8 +460,8 @@ module Rswag
             let(:key_location) { :header }
             before do
               metadata[:operation][:parameters] = [
-                { name: 'q1', in: :query, type: :string },
-                { name: 'api_key', in: :header, type: :string }
+                { name: 'q1', in: :query, schema: { type: :string } },
+                { name: 'api_key', in: :header, schema: { type: :string } }
               ]
               example.request_params["q1"] = 'foo'
               example.request_headers["api_key"] = 'foobar'
@@ -514,8 +514,8 @@ module Rswag
 
         context 'path-level parameters' do
           before do
-            metadata[:operation][:parameters] = [{ name: 'q1', in: :query, type: :string }]
-            metadata[:path_item][:parameters] = [{ name: 'q2', in: :query, type: :string }]
+            metadata[:operation][:parameters] = [{ name: 'q1', in: :query, schema: { type: :string } }]
+            metadata[:path_item][:parameters] = [{ name: 'q2', in: :query, schema: { type: :string } }]
             example.request_params["q1"] = 'foo'
             example.request_params["q2"] = 'bar'
           end
@@ -528,7 +528,8 @@ module Rswag
         context 'referenced parameters' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
           before do
-            openapi_spec[:components] = { parameters: { q1: { name: 'q1', in: :query, type: :string } } }
+            openapi_spec[:components] = {
+              parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } } }
             metadata[:operation][:parameters] = [{ '$ref' => '#/components/parameters/q1' }]
             example.request_params["q1"] = 'foo'
           end
