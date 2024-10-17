@@ -37,9 +37,9 @@ module Rswag
             summary: 'Updates a blog',
             consumes: ['application/json'],
             parameters: [
-              { name: "blog_id", in: :path, type: 'integer' },
-              { name: 'id', in: :path, type: 'integer' },
-              { name: 'q1', in: :query, type: 'string' },
+              { name: "blog_id", in: :path, schema: { type: 'integer' } },
+              { name: 'id', in: :path, schema: { type: 'integer' } },
+              { name: 'q1', in: :query, schema: { type: 'string' } },
               { name: "blog", in: :body, schema: { type: 'object' } }
             ],
             security: [

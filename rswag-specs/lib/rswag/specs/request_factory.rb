@@ -54,7 +54,7 @@ module Rswag
 
         schemes.map do |scheme|
           param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
-          param.merge(type: :string, required: requirements.one?)
+          param.merge(schema: { type: :string }, required: requirements.one?)
         end
       end
 
@@ -123,7 +123,7 @@ module Rswag
         if param[:schema]
           style = param[:style]&.to_sym || :form
           explode = param[:explode].nil? ? true : param[:explode]
-          type = param.dig(:schema, :type).to_sym
+          type = param.dig(:schema, :type)&.to_sym
 
           case type
           when :object
