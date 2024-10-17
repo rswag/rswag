@@ -12,6 +12,11 @@ class AuthTestsController < ApplicationController
     head :no_content
   end
 
+  def bearer
+    return head :unauthorized unless authenticate_bearer
+    head :no_content
+  end
+
   # POST /auth-tests/basic-and-api-key
   def basic_and_api_key
     return head :unauthorized unless authenticate_basic and authenticate_api_key
@@ -26,5 +31,11 @@ class AuthTestsController < ApplicationController
 
   def authenticate_api_key
     params['api_key'] == 'foobar'
+  end
+
+  def authenticate_bearer
+    authenticate_with_http_token do |token, _options|
+      token == 'foobar'
+    end
   end
 end
