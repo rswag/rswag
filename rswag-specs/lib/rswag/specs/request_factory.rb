@@ -116,6 +116,7 @@ module Rswag
       end
 
       def build_query_string_part(param, value, openapi_spec)
+        raise ArgumentError.new("'type' is not supported field for Parameter") unless param[:type].nil?
         name = param[:name]
         escaped_name = CGI.escape(name.to_s)
 
