@@ -9,7 +9,6 @@ A clear and concise description of what the solution is.
 * [ANOTHER LINK TO RELEVANT OPEN API SPECS PAGE](https://spec.openapis.org/oas/v3.1.0#schema)
 
 ### The changes I made are compatible with:
-- [ ] OAS2
 - [ ] OAS3
 - [ ] OAS3.1
 
