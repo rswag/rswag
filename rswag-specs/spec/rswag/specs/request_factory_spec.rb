@@ -74,6 +74,20 @@ module Rswag
           it 'builds the query string from example values' do
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&falsey=false')
           end
+
+          context 'when `type` parameter key is present' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'q1', in: :query, type: :string },
+              ]
+              example.request_params["q1"] = 'baz'
+            end
+
+            it 'warns user about unsupported parameter' do
+              expect { request[:path] }.to raise_error(/'type' is not supported field for Parameter/)
+            end
+          end
+
         end
 
         context "'query' parameter of format 'datetime'" do
