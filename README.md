@@ -22,7 +22,6 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 **Table of Contents**
 
 - [rswag](#rswag)
-  - [Compatibility](#compatibility)
   - [Getting Started](#getting-started)
   - [The rspec DSL](#the-rspec-dsl)
     - [Paths, Operations and Responses](#paths-operations-and-responses)
@@ -187,7 +186,7 @@ This will create the spec file _spec/integration/blogs_spec.rb_
 
 If you've used [Swagger](http://swagger.io/specification) before, then the syntax should be very familiar. To describe your API operations, start by specifying a path and then list the supported operations (i.e. HTTP verbs) for that path. Path parameters must be surrounded by curly braces ({}). Within an operation block (see "post" or "get" in the example above), most of the fields supported by the [Swagger "Operation" object](http://swagger.io/specification/#operationObject) are available as methods on the example group. To list (and test) the various responses for an operation, create one or more response blocks. Again, you can reference the [Swagger "Response" object](http://swagger.io/specification/#responseObject) for available fields.
 
-Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](http://json-schema.org/documentation.html).
+Take special note of the __run_test!__ method that's called within each response block. This tells rswag to create and execute a corresponding example. It builds and submits a request based on parameter descriptions and corresponding values that have been provided using the rspec "let" syntax. For example, the "post" description in the example above specifies a "body" parameter called "blog". It also lists 2 different responses. For the success case (i.e. the 201 response), notice how "let" is used to set the blog parameter to a value that matches the provided schema. For the failure case (i.e. the 422 response), notice how it's set to a value that does not match the provided schema. When the test is executed, rswag also validates the actual response code and, where applicable, the response body against the provided [JSON Schema](https://json-schema.org/specification).
 
 If you want to add metadata to the example, you can pass keyword arguments to the __run_test!__ method:
 
@@ -256,14 +255,32 @@ response '200', 'blog found' do
 end
 ```
 
-### Strict schema validation
+### Enum description ###
+If you want to output a description of each enum value, the description can be passed to each value:
+```ruby
+parameter name: :status, in: :query, getter: :blog_status,
+          enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+          description: 'Filter by status'
 
-By default, if response body contains undocumented properties tests will pass. To keep your responses clean and validate against a strict schema definition you can set the global config option:
+response '200', 'success' do
+  let(:blog_status) { 'published' }
+
+  run_test!
+end
+```
+
+### Schema validations
+
+#### Strict (deprecated)
+It validates required properties and disallows additional properties in response body.
+To enable, you can set the option `openapi_strict_schema_validation` to true.
+It is equal to `openapi_no_additional_properties: true` and `openapi_all_properties_required: true`
+**Important** If you would like to keep validation of required properties but allow additional properties, you can set the `openapi_strict_schema_validation` option to `false` and set `openapi_all_properties_required` to `true` and `openapi_no_additional_properties` to `false`.
 
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_strict_schema_validation = true
+  config.openapi_strict_schema_validation = true # default false
 end
 ```
 
@@ -278,7 +295,7 @@ describe 'Blogs API' do
       response '201', 'blog created' do
         let(:blog) { { title: 'foo', content: 'bar' } }
 
-        run_test!(swagger_strict_schema_validation: true)
+        run_test!(openapi_strict_schema_validation: true)
       end
     end
   end
@@ -290,7 +307,7 @@ describe 'Blogs API' do
     post 'Creates a blog' do
       ...
 
-      response '201', 'blog created', swagger_strict_schema_validation: true do
+      response '201', 'blog created', openapi_strict_schema_validation: true do
         let(:blog) { { title: 'foo', content: 'bar' } }
 
         run_test!
@@ -311,7 +328,7 @@ describe 'Blogs API' do
           submit_request(example.metadata)
         end
 
-        it 'returns a valid 201 response', swagger_strict_schema_validation: true do |example|
+        it 'returns a valid 201 response', openapi_strict_schema_validation: true do |example|
           assert_response_matches_metadata(example.metadata)
         end
       end
@@ -319,6 +336,31 @@ describe 'Blogs API' do
   end
 end
 ```
+
+#### Additional properties
+If you want to disallow additional properties in response body, you can set the option `openapi_no_additional_properties` to true:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_no_additional_properties = true # default false
+end
+```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
+
+#### All required properties
+If you want to disallow missing required properties in response body, you can set the `openapi_all_properties_required` option to true:
+**Important** it will allow the additional properties
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_all_properties_required = true # default false
+end
+```
+
+You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
 ### Null Values ###
 
@@ -385,9 +427,9 @@ In addition to paths, operations and responses, Swagger also supports global API
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.to_s + '/swagger'
 
-  config.swagger_docs = {
+  config.openapi_specs = {
     'v1/swagger.json' => {
       openapi: '3.0.1',
       info: {
@@ -407,7 +449,7 @@ RSpec.configure do |config|
       ]
     },
 
-    'v2/swagger.yaml' => {
+    'v2/swagger.json' => {
       openapi: '3.0.1',
       info: {
         title: 'API V2',
@@ -433,17 +475,55 @@ end
 ```
 
 #### Supporting multiple versions of API ####
-By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```swagger_doc``` tag to each spec specifying its target document name:
+By default, the paths, operations and responses defined in your spec files will be associated with the first Swagger document in _swagger_helper.rb_. If your API has multiple versions, you should be using separate documents to describe each of them. In order to assign a file with a given version of API, you'll need to add the ```openapi_spec``` tag to each spec specifying its target document name:
 
 ```ruby
 # spec/requests/v2/blogs_spec.rb
-describe 'Blogs API', swagger_doc: 'v2/swagger.yaml' do
+describe 'Blogs API', openapi_spec: 'v2/swagger.yaml' do
 
   path '/blogs' do
   ...
 
   path '/blogs/{id}' do
   ...
+end
+```
+
+#### Supporting YAML format ####
+
+By default, the swagger docs are generated in JSON format. If you want to generate them in YAML format, you can specify the swagger format in the swagger_helper.rb file:
+
+```ruby
+# spec/swagger_helper.rb
+RSpec.configure do |config|
+  config.openapi_root = Rails.root.to_s + '/swagger'
+
+  # Use if you want to see which test is running
+  # config.formatter = :documentation
+
+  # Generate swagger docs in YAML format
+  config.openapi_format = :yaml
+
+  config.openapi_specs = {
+    'v1/swagger.yaml' => {
+      openapi: '3.0.1',
+      info: {
+        title: 'API V1',
+        version: 'v1',
+        description: 'This is the first version of my API'
+      },
+      servers: [
+        {
+          url: 'https://{defaultHost}',
+          variables: {
+            defaultHost: {
+                default: 'www.example.com'
+            }
+          }
+        }
+      ]
+    },
+  }
 end
 ```
 
@@ -475,9 +555,9 @@ Swagger supports :basic, :bearer, :apiKey and :oauth2 and :openIdConnect scheme 
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.to_s + '/swagger'
 
-  config.swagger_docs = {
+  config.openapi_specs = {
     'v1/swagger.json' => {
       ...  # note the new Open API 3.0 compliant security structure here, under "components"
       components: {
@@ -551,7 +631,7 @@ For example, :basic auth is required above and so the :Authorization (header) pa
 
 ## Configuration & Customization ##
 
-The steps described above will get you up and running with minimal setup. However, rswag offers a lot of flexibility to customize as you see fit. Before exploring the various options, you'll need to be aware of it's different components. The following table lists each of them and the files that get added/updated as part of a standard install.
+The steps described above will get you up and running with minimal setup. However, rswag offers a lot of flexibility to customize as you see fit. Before exploring the various options, you'll need to be aware of its different components. The following table lists each of them and the files that get added/updated as part of a standard install.
 
 | Gem             | Description                                                                                                                  | Added/Updated                                        |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
@@ -566,7 +646,7 @@ You can adjust this in the _swagger_helper.rb_ that's installed with __rswag-spe
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.swagger_root = Rails.root.to_s + '/your-custom-folder-name'
+  config.openapi_root = Rails.root.to_s + '/your-custom-folder-name'
   ...
 end
 ```
@@ -600,7 +680,7 @@ Rather than repeating the schema in every operation spec, you can define it glob
 
 ```ruby
 # spec/swagger_helper.rb
-config.swagger_docs = {
+config.openapi_specs = {
   'v1/swagger.json' => {
     openapi: '3.0.0',
     info: {
@@ -796,12 +876,12 @@ end
 #### Dry Run Option ####
 
 The `--dry-run` option is enabled by default for Rspec 3, but if you need to
-disable it you can use the environment variable `SWAGGER_DRY_RUN=0` during the
+disable it you can use the environment variable `RSWAG_DRY_RUN=0` during the
 generation command or add the following to your `config/environments/test.rb`:
 
 ```ruby
 RSpec.configure do |config|
-  config.swagger_dry_run = false
+  config.rswag_dry_run = false
 end
 ```
 
@@ -837,7 +917,7 @@ describe 'Blogs API', document: false do
 <!--
 There are some helper methods to help with documenting request bodies.
 ```ruby
-describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
+describe 'Blogs API', type: :request, openapi_spec: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
 
   path '/blogs' do
@@ -965,7 +1045,7 @@ capturing the response from the execution of the integration test. Again 3.0 swa
  -->
 ### Route Prefix for Swagger JSON Endpoints ###
 
-The functionality to expose Swagger files, such as those generated by rswag-specs, as JSON endpoints is implemented as a Rails Engine. As with any Engine, you can change it's mount prefix in _routes.rb_:
+The functionality to expose Swagger files, such as those generated by rswag-specs, as JSON endpoints is implemented as a Rails Engine. As with any Engine, you can change its mount prefix in _routes.rb_:
 
 ```ruby
 TestApp::Application.routes.draw do
@@ -975,7 +1055,7 @@ TestApp::Application.routes.draw do
 end
 ```
 
-Assuming a Swagger file exists at &lt;swagger_root&gt;/v1/swagger.json, this configuration would expose the file as the following JSON endpoint:
+Assuming a Swagger file exists at &lt;openapi_root&gt;/v1/swagger.json, this configuration would expose the file as the following JSON endpoint:
 
 ```
 GET http://<hostname>/your-custom-prefix/v1/swagger.json
@@ -987,12 +1067,12 @@ You can adjust this in the _rswag_api.rb_ initializer that's installed with __rs
 
 ```ruby
 Rswag::Api.configure do |c|
-  c.swagger_root = Rails.root.to_s + '/your-custom-folder-name'
+  c.openapi_root = Rails.root.to_s + '/your-custom-folder-name'
   ...
 end
 ```
 
-__NOTE__: If you're using rswag-specs to generate Swagger files, you'll want to ensure they both use the same &lt;swagger_root&gt;. The reason for separate settings is to maintain independence between the two gems. For example, you could install rswag-api independently and create your Swagger files manually.
+__NOTE__: If you're using rswag-specs to generate Swagger files, you'll want to ensure they both use the same &lt;openapi_root&gt;. The reason for separate settings is to maintain independence between the two gems. For example, you could install rswag-api independently and create your Swagger files manually.
 
 ### Dynamic Values for Swagger JSON ##
 
@@ -1029,8 +1109,8 @@ You can update the _rswag_ui.rb_ initializer, installed with rswag-ui, to specif
 
 ```ruby
 Rswag::Ui.configure do |c|
-  c.swagger_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
-  c.swagger_endpoint '/api-docs/v2/swagger.json', 'API V2 Docs'
+  c.openapi_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
+  c.openapi_endpoint '/api-docs/v2/swagger.json', 'API V2 Docs'
 end
 ```
 
@@ -1047,7 +1127,7 @@ end
 
 ### Route Prefix for the swagger-ui ###
 
-Similar to rswag-api, you can customize the swagger-ui path by changing it's mount prefix in _routes.rb_:
+Similar to rswag-api, you can customize the swagger-ui path by changing its mount prefix in _routes.rb_:
 
 ```ruby
 TestApp::Application.routes.draw do
@@ -1060,7 +1140,7 @@ end
 
 ### Customizing the swagger-ui ###
 
-The swagger-ui provides several options for customizing it's behavior, all of which are documented here https://github.com/swagger-api/swagger-ui/tree/2.x#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
+The swagger-ui provides several options for customizing its behavior, all of which are documented here https://github.com/swagger-api/swagger-ui/tree/2.x#swaggerui. If you need to tweak these or customize the overall look and feel of your swagger-ui, then you'll need to provide your own version of index.html. You can do this with the following generator.
 
 ```ruby
 rails g rswag:ui:custom

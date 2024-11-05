@@ -17,11 +17,11 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Ruby 3.1
+      - uses: actions/checkout@v4
+      - name: Set up Ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.0
+          ruby-version: 3.3.4
 
       - name: Publish rswag-api
         run: |

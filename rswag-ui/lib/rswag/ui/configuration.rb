@@ -26,6 +26,11 @@ module Rswag
       end
 
       def swagger_endpoint(url, name)
+        Rswag::Ui.deprecator.warn('Rswag::Ui: WARNING: The method will be renamed to "openapi_endpoint" in v3.0')
+        openapi_endpoint(url, name)
+      end
+
+      def openapi_endpoint(url, name)
         @config_object[:urls] ||= []
         @config_object[:urls] << { url: url, name: name }
       end

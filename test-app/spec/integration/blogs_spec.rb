@@ -1,10 +1,10 @@
 require 'swagger_helper'
 
-RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/swagger.json' do
   let(:api_key) { 'fake_key' }
 
   before do
-    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+    # allow(Rswag::Specs.deprecator).to receive(:warn) # Silence deprecation output from specs
   end
 
   path '/blogs' do
@@ -14,7 +14,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
+      parameter name: :blog, in: :body, schema: { '$ref' => '#/components/schemas/blog' }
 
       let(:blog) { { title: 'foo', content: 'bar', status: 'published' } }
 
@@ -24,7 +24,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
 
       response "422", "invalid request" do
-        schema "$ref" => "#/definitions/errors_object"
+        schema "$ref" => "#/components/schemas/errors_object"
 
         let(:blog) { {title: "foo"} }
 
@@ -43,17 +43,19 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       operationId 'searchBlogs'
       produces 'application/json'
       parameter name: :keywords, in: :query, type: 'string'
-      parameter name: :status, in: :query, type: 'string', getter: :blog_status
+      parameter name: :status, in: :query, getter: :blog_status,
+                enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                description: 'Filter by status'
 
       before do
-        Blog.create(title: 'foo', content: 'hello world', status: 'published')
+        Blog.create(title: 'foo', content: 'hello world', status: :published)
       end
 
       let(:keywords) { 'foo bar' }
       let(:blog_status) { 'published' }
 
       response '200', 'success' do
-        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
 
         run_test! do
           expect(JSON.parse(response.body).size).to eq(1)
@@ -61,7 +63,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       end
 
       response '200', 'no content' do
-        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
+        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
 
         let(:blog_status) { 'invalid' }
 
@@ -95,7 +97,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
       let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
 
       response '201', 'flexible blog created' do
-        schema oneOf: [{ '$ref' => '#/definitions/blog' }, { '$ref' => '#/definitions/flexible_blog' }]
+        schema oneOf: [{ '$ref' => '#/components/schemas/blog' }, { '$ref' => '#/components/schemas/flexible_blog' }]
         run_test!
       end
     end
@@ -118,7 +120,7 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         header 'Last-Modified', type: :string
         header 'Cache-Control', type: :string
 
-        schema '$ref' => '#/definitions/blog'
+        schema '$ref' => '#/components/schemas/blog'
 
         #Legacy
         examples 'application/json' => {
@@ -146,8 +148,16 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
 
         run_test!
 
-        context 'when swagger_strict_schema_validation is true' do
-          run_test!(swagger_strict_schema_validation: true)
+        context 'when openapi_strict_schema_validation is true' do
+          run_test!(openapi_strict_schema_validation: true)
+        end
+
+        context 'when openapi_all_properties_required is true' do
+          run_test!(openapi_all_properties_required: true)
+        end
+
+        context 'when openapi_no_additional_properties is true' do
+          run_test!(openapi_no_additional_properties: true)
         end
       end
 
@@ -156,8 +166,24 @@ RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
         run_test!
       end
 
-      response '200', 'blog found - swagger_strict_schema_validation = true', swagger_strict_schema_validation: true do
-        schema '$ref' => '#/definitions/blog'
+      response '200', 'blog found - openapi_strict_schema_validation = true', openapi_strict_schema_validation: true do
+        schema '$ref' => '#/components/schemas/blog'
+
+        let(:id) { blog.id }
+
+        run_test!
+      end
+
+      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
+        schema '$ref' => '#/components/schemas/blog'
+
+        let(:id) { blog.id }
+
+        run_test!
+      end
+
+      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
+        schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
 
