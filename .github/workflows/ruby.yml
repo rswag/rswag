@@ -19,6 +19,7 @@ jobs:
 
         # Rails 5.2 became EOL on 2022-06-01; kept for information only
         # Rails 6.0 became EOL on 2023-06-01; kept for information only
+        # Rails 6.1 became EOL on 2024-10-01; kept for information only
         rails: ['5.2.8.1', '6.0.6.1', '6.1.7.8', '7.0.8.4', '7.1.3.4', '7.2.0', '8.0.0']
 
         exclude:
