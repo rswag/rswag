@@ -19,7 +19,8 @@ jobs:
 
         # Rails 5.2 became EOL on 2022-06-01; kept for information only
         # Rails 6.0 became EOL on 2023-06-01; kept for information only
-        rails: ['5.2.8.1', '6.0.6.1', '6.1.7.8', '7.0.8.4', '7.1.3.4', '7.2.0']
+        # Rails 6.1 became EOL on 2024-10-01; kept for information only
+        rails: ['5.2.8.1', '6.0.6.1', '6.1.7.8', '7.0.8.4', '7.1.3.4', '7.2.0', '8.0.0']
 
         exclude:
         # Excludes Rails 5.2 on Ruby 3.0+
@@ -27,6 +28,7 @@ jobs:
         # Excludes Rails 7.0 on Ruby 2.6
         # Excludes Rails 7.1 on Ruby 2.6
         # Excludes Rails 7.2 on Ruby 2.6, 2.7, 3.0
+        # Excludes Rails 8.0 on Ruby 2.6, 2.7, 3.0, 3.1
         - rails: '5.2.8.1'
           ruby: '3.0'
         - rails: '5.2.8.1'
@@ -53,6 +55,14 @@ jobs:
           ruby: '2.7'
         - rails: '7.2.0'
           ruby: '3.0'
+        - rails: '8.0.0'
+          ruby: '2.6'
+        - rails: '8.0.0'
+          ruby: '2.7'
+        - rails: '8.0.0'
+          ruby: '3.0'
+        - rails: '8.0.0'
+          ruby: '3.1'
     name: Ruby ${{ matrix.ruby }}, Rails ${{ matrix.rails }}
     env:
       RAILS_VERSION: ${{ matrix.rails }}
