@@ -10,9 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
-- Update rails dependency in gemspec to support Rails 8.0 (https://github.com/rswag/rswag/pull/797)
-
 ## Fixed
+
+## [2.16.0] - 2024-11-13
+
+## Changed
+
+- Update rails dependency in gemspec to support Rails 8.0 (https://github.com/rswag/rswag/pull/797)
 
 ## [2.15.0] - 2024-10-04
 
