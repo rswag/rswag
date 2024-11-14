@@ -427,7 +427,7 @@ In addition to paths, operations and responses, Swagger also supports global API
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.join('swagger').to_s
 
   config.openapi_specs = {
     'v1/swagger.json' => {
@@ -496,7 +496,7 @@ By default, the swagger docs are generated in JSON format. If you want to genera
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.join('swagger').to_s
 
   # Use if you want to see which test is running
   # config.formatter = :documentation
@@ -555,7 +555,7 @@ Swagger supports :basic, :bearer, :apiKey and :oauth2 and :openIdConnect scheme 
 ```ruby
 # spec/swagger_helper.rb
 RSpec.configure do |config|
-  config.openapi_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.join('swagger').to_s
 
   config.openapi_specs = {
     'v1/swagger.json' => {
