@@ -5,6 +5,73 @@
     "version": "v1"
   },
   "paths": {
+    "/auth-tests/basic": {
+      "post": {
+        "summary": "Authenticates with basic auth",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testBasicAuth",
+        "security": [
+          {
+            "basic_auth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth-tests/api-key": {
+      "post": {
+        "summary": "Authenticates with an api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testApiKey",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth-tests/basic-and-api-key": {
+      "post": {
+        "summary": "Authenticates with basic auth and api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testBasicAndApiKey",
+        "security": [
+          {
+            "basic_auth": [],
+            "api_key": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
     "/stubs": {
       "get": {
         "summary": "a summary",
@@ -28,9 +95,7 @@
         "tags": [
           "Media Types"
         ],
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
