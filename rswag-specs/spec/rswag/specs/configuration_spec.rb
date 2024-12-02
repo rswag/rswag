@@ -183,6 +183,14 @@ RSpec.describe Rswag::Specs::Configuration do
       end
     end
 
+    context 'when doc provided' do
+      let(:tag) { openapi_specs['v2/swagger.json'] }
+
+      it "returns the version" do
+        expect(response).to eq('3.0.0')
+      end
+    end
+
     context 'when no tag provided' do
       let(:tag) { nil }
 

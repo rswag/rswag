@@ -63,8 +63,8 @@ module Rswag
         openapi_specs[name]
       end
 
-      def get_openapi_spec_version(name)
-        doc = get_openapi_spec(name)
+      def get_openapi_spec_version(doc)
+        doc = doc.is_a?(Hash) ? doc : get_openapi_spec(doc)
         doc[:openapi] || doc[:swagger]
       end
 
