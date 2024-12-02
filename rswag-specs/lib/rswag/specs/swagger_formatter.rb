@@ -30,8 +30,16 @@ module Rswag
         return if metadata[:document] == false
         return unless metadata.key?(:response)
 
-        swagger_doc = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
+        swagger_docs = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
 
+        if swagger_docs.is_a?(Array)
+          swagger_docs.each { |swagger_doc| merge_docs!(swagger_doc, metadata) }
+        else
+          merge_docs!(swagger_docs, metadata)
+        end
+      end
+
+      def merge_docs!(swagger_doc, metadata)
         unless doc_version(swagger_doc).start_with?('2')
           # This is called multiple times per file!
           # metadata[:operation] is also re-used between examples within file
