@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Added
 
 - Add support for multiple swagger.json api on openapi_spec method
-
+- Add support for Hash doc and tag in get_openapi_spec_version method
 
 ## [2.16.0] - 2024-11-13
 
