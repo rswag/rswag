@@ -413,6 +413,65 @@ module Rswag
           end
         end
 
+        context 'with several enum parameters' do
+          let(:doc_2) do
+            {
+              paths: {
+                '/path/' => {
+                  get: {
+                    summary: 'Retrieve Nested Paths',
+                    tags: ['nested Paths'],
+                    produces: ['application/json'],
+                    consumes: ['application/json'],
+                    parameters: [{
+                                   in: :query,
+                                   name: :foo,
+                                   enum: {
+                                     'bar': 'list bars',
+                                     'baz': 'lists people named baz'
+                                   },
+                                   description: 'get by foo'
+                                 },
+                                 {
+                                   in: :query,
+                                   name: :status,
+                                   enum: {
+                                     'active': 'list with active entries',
+                                     'inactive': 'lists inactive entries'
+                                   },
+                                   description: 'entries status'
+                                 }]
+                  }
+                }
+              }
+            }
+          end
+
+          it 'writes the enum description' do
+            expect(doc_2[:paths]['/path/'][:get][:parameters]).to match(
+                                                                    [{
+                                                                       in: :query,
+                                                                       name: :foo,
+                                                                       enum: {
+                                                                         bar: "list bars",
+                                                                         baz: "lists people named baz"
+                                                                       },
+                                                                       description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
+                                                                     },
+                                                                     {
+                                                                       in: :query,
+                                                                       name: :status,
+                                                                       enum: {
+                                                                         active: "list with active entries",
+                                                                         inactive: "lists inactive entries"
+                                                                       },
+                                                                       description: "entries status:\n * `active` list with active entries\n * `inactive` lists inactive entries\n "
+                                                                     }]
+                                                                  )
+          end
+        end
+
+
         context 'with descriptions on the body param' do
           let(:doc_2) do
             {

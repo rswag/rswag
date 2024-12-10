@@ -74,10 +74,9 @@ module Rswag
                     end
                   end
 
-                  enum_param = value.dig(:parameters).find{|p| p[:enum]}
-                  if enum_param && enum_param.is_a?(Hash)
-                    enum_param[:description] = generate_enum_description(enum_param)
-                  end
+                  enum_params = value.dig(:parameters).select { |p| p[:enum]&.is_a?(Hash) }
+
+                  enum_params.each { |param| param[:description] = generate_enum_description(param) }
 
                   value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
                 end
