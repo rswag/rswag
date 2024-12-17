@@ -13,18 +13,7 @@ module Rswag
 
       def build_request(metadata, example)
         swagger_docs = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
-        if swagger_docs.is_a?(Array)
-          swagger_docs.each do |doc|
-            build_individual_request(metadata, example, doc)
-          end
-        else
-          build_individual_request(metadata, example, swagger_docs)
-        end
-      end
-
-      private
-
-      def build_individual_request(metadata, example, swagger_doc)
+        swagger_doc = swagger_docs.is_a?(Array) ? swagger_docs.first : swagger_docs
         parameters = expand_parameters(metadata, swagger_doc, example)
 
         {}.tap do |request|
@@ -35,6 +24,7 @@ module Rswag
         end
       end
 
+      private
       def expand_parameters(metadata, swagger_doc, example)
         operation_params = metadata[:operation][:parameters] || []
         path_item_params = metadata[:path_item][:parameters] || []
