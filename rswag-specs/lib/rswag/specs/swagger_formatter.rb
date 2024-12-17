@@ -90,7 +90,8 @@ module Rswag
                     enum_param[:description] = generate_enum_description(enum_param)
                   end
 
-                  value[:parameters] = value[:parameters].dup.reject! { |p| p[:in] == :body || p[:in] == :formData }
+                  value[:parameters] = value[:parameters].dup
+                  value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
                 end
                 remove_invalid_operation_keys!(value)
               end
