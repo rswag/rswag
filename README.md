@@ -637,7 +637,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | __rswag-specs__ | Swagger-based DSL for rspec & accompanying rake task for generating Swagger files                                            | _spec/swagger_helper.rb_                             |
 | __rswag-api__   | Rails Engine that exposes your Swagger files as JSON endpoints                                                               | _config/initializers/rswag_api.rb, config/routes.rb_ |
-| __rswag-ui__    | Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints | _config/initializers/rswag-ui.rb, config/routes.rb_  |
+| __rswag-ui__    | Rails Engine that includes [swagger-ui](https://github.com/swagger-api/swagger-ui) and powers it from your Swagger endpoints | _config/initializers/rswag_ui.rb, config/routes.rb_  |
 
 ### Output Location for Generated Swagger Files ###
 
