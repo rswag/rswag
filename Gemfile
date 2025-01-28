@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = ENV['RAILS_VERSION'] || '8.0.0'
+rails_version = ENV['RAILS_VERSION'] || '8.0.1'
 
 gem 'rails', rails_version.to_s
 
@@ -38,8 +38,8 @@ group :test do
   gem 'generator_spec'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'test-unit'
   gem 'simplecov', '=0.21.2'
+  gem 'test-unit'
 end
 
 group :development do
