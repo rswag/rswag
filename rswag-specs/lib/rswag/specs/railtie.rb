@@ -12,9 +12,7 @@ module Rswag
       end
 
       initializer 'rswag-specs.deprecator' do |app|
-        if app.respond_to?(:deprecators)
-          app.deprecators[:rswag_specs] = Rswag::Specs.deprecator
-        end
+        app.deprecators[:rswag_specs] = Rswag::Specs.deprecator if app.respond_to?(:deprecators)
       end
     end
   end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "active_support"
+
+require 'active_support'
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -43,7 +44,7 @@ module Rswag
         schemes = security_version(scheme_names, swagger_doc)
 
         schemes.map do |scheme|
-          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param = scheme[:type] == :apiKey ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(type: :string, required: requirements.one?)
         end
       end
@@ -73,27 +74,23 @@ module Rswag
       def key_version(ref, swagger_doc)
         if doc_version(swagger_doc).start_with?('2')
           ref.sub('#/parameters/', '').to_sym
-        else # Openapi3
-          if ref.start_with?('#/parameters/')
-            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
-            ref.sub('#/parameters/', '').to_sym
-          else
-            ref.sub('#/components/parameters/', '').to_sym
-          end
+        elsif ref.start_with?('#/parameters/') # Openapi3
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: #/parameters/ refs are replaced in OpenAPI3! Rename to #/components/parameters/')
+          ref.sub('#/parameters/', '').to_sym
+        else
+          ref.sub('#/components/parameters/', '').to_sym
         end
       end
 
       def definition_version(swagger_doc)
         if doc_version(swagger_doc).start_with?('2')
           swagger_doc[:parameters]
-        else # Openapi3
-          if swagger_doc.key?(:parameters)
-            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
-            swagger_doc[:parameters]
-          else
-            components = swagger_doc[:components] || {}
-            components[:parameters]
-          end
+        elsif swagger_doc.key?(:parameters) # Openapi3
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: parameters is replaced in OpenAPI3! Rename to components/parameters (in swagger_helper.rb)')
+          swagger_doc[:parameters]
+        else
+          components = swagger_doc[:components] || {}
+          components[:parameters]
         end
       end
 
@@ -103,10 +100,11 @@ module Rswag
 
       def base_path_from_servers(swagger_doc, use_server = :default)
         return '' if swagger_doc[:servers].nil? || swagger_doc[:servers].empty?
+
         server = swagger_doc[:servers].first
         variables = {}
-        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
-        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym] }
+        server.fetch(:variables, {}).each_pair { |k, v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[::Regexp.last_match(1).to_sym] }
         URI(base_path).path
       end
 
@@ -118,17 +116,17 @@ module Rswag
           Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: basePath is replaced in OpenAPI3! Update your swagger_helper.rb')
         end
 
-        if uses_base_path
-          template = (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
-        else # OpenAPI 3
-          template = base_path_from_servers(swagger_doc) + metadata[:path_item][:template]
-        end
+        template = if uses_base_path
+                     (swagger_doc[:basePath] || '') + metadata[:path_item][:template]
+                   else # OpenAPI 3
+                     base_path_from_servers(swagger_doc) + metadata[:path_item][:template]
+                   end
 
         request[:path] = template.tap do |path_template|
           parameters.select { |p| p[:in] == :path }.each do |p|
             unless example.respond_to?(extract_getter(p))
-              raise ArgumentError.new("`#{p[:name].to_s}` parameter key present, but not defined within example group"\
-                "(i. e `it` or `let` block)")
+              raise ArgumentError, "`#{p[:name]}` parameter key present, but not defined within example group"\
+                '(i. e `it` or `let` block)'
             end
             path_template.gsub!("{#{p[:name]}}", example.send(extract_getter(p)).to_s)
           end
@@ -155,23 +153,18 @@ module Rswag
             when :deepObject
               return { name => value }.to_query
             when :form
-              if explode
-                return value.to_query
-              else
-                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
-              end
+              return value.to_query if explode
+
+              return "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
             end
           when :array
             case explode
             when true
-              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
+              return value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
             else
-              separator = case style
-                          when :form then ','
-                          when :spaceDelimited then '%20'
-                          when :pipeDelimited then '|'
-                          end
-              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
+              separator = { form: ',', spaceDelimited: '%20', pipeDelimited: '|' }[style]
+
+              return "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{escaped_name}=#{CGI.escape(value.to_s)}"
@@ -197,8 +190,8 @@ module Rswag
 
       def add_headers(request, metadata, swagger_doc, parameters, example)
         tuples = parameters
-          .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], example.send(extract_getter(p)).to_s] }
+                 .select { |p| p[:in] == :header }
+                 .map { |p| [p[:name], example.send(extract_getter(p)).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || swagger_doc[:produces]
@@ -217,7 +210,7 @@ module Rswag
         # Host header
         host = metadata[:operation][:host] || swagger_doc[:host]
         if host.present?
-          host = example.respond_to?(:'Host') ? example.send(:'Host') : host
+          host = example.respond_to?(:Host) ? example.send(:Host) : host
           tuples << ['Host', host]
         end
 
@@ -225,11 +218,11 @@ module Rswag
         rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
-              when 'Accept' then 'HTTP_ACCEPT'
-              when 'Content-Type' then 'CONTENT_TYPE'
-              when 'Authorization' then 'HTTP_AUTHORIZATION'
-              when 'Host' then 'HTTP_HOST'
-              else pair[0]
+            when 'Accept' then 'HTTP_ACCEPT'
+            when 'Content-Type' then 'CONTENT_TYPE'
+            when 'Authorization' then 'HTTP_AUTHORIZATION'
+            when 'Host' then 'HTTP_HOST'
+            else pair[0]
             end,
             pair[1]
           ]
@@ -244,7 +237,7 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type =~ /\Aapplication\/([0-9A-Za-z._-]+\+json\z|json\z)/
+                            elsif content_type =~ %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
@@ -257,8 +250,8 @@ module Rswag
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
-          .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], example.send(extract_getter(p))] }
+                 .select { |p| p[:in] == :formData }
+                 .map { |p| [p[:name], example.send(extract_getter(p))] }
         Hash[tuples]
       end
 
@@ -280,7 +273,7 @@ module Rswag
       end
 
       def extract_getter(parameter)
-         parameter[:getter] || parameter[:name]
+        parameter[:getter] || parameter[:name]
       end
     end
 

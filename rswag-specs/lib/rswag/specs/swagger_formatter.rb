@@ -7,9 +7,7 @@ require 'swagger_helper'
 module Rswag
   module Specs
     class SwaggerFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
-      if RSPEC_VERSION > 2
-        ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
-      end
+      ::RSpec::Core::Formatters.register self, :example_group_finished, :stop if RSPEC_VERSION > 2
 
       def initialize(output, config = Rswag::Specs.config)
         super(output)
@@ -20,10 +18,10 @@ module Rswag
 
       def example_group_finished(notification)
         metadata = if RSPEC_VERSION > 2
-          notification.group.metadata
-        else
-          notification.metadata
-        end
+                     notification.group.metadata
+                   else
+                     notification.metadata
+                   end
 
         # !metadata[:document] won't work, since nil means we should generate
         # docs.
@@ -52,34 +50,32 @@ module Rswag
               v.each_pair do |_verb, value|
                 is_hash = value.is_a?(Hash)
                 if is_hash && value[:parameters]
-                  schema_param = value[:parameters]&.find { |p| (p[:in] == :body || p[:in] == :formData) && p[:schema] }
+                  schema_param = value[:parameters]&.find { |p| %i[body formData].include?(p[:in]) && p[:schema] }
                   mime_list = value[:consumes] || doc[:consumes]
 
                   if value && schema_param && mime_list
                     value[:requestBody] = { content: {} } unless value.dig(:requestBody, :content)
                     value[:requestBody][:required] = true if schema_param[:required]
                     value[:requestBody][:description] = schema_param[:description] if schema_param[:description]
-                    examples = value.dig(:request_examples)
+                    examples = value[:request_examples]
                     mime_list.each do |mime|
                       value[:requestBody][:content][mime] = { schema: schema_param[:schema] }
-                      if examples
-                        value[:requestBody][:content][mime][:examples] ||= {}
-                        examples.map do |example|
-                          value[:requestBody][:content][mime][:examples][example[:name]] = {
-                            summary: example[:summary] || value[:summary],
-                            value: example[:value]
-                          }
-                        end
+                      next unless examples
+
+                      value[:requestBody][:content][mime][:examples] ||= {}
+                      examples.map do |example|
+                        value[:requestBody][:content][mime][:examples][example[:name]] = {
+                          summary: example[:summary] || value[:summary],
+                          value: example[:value]
+                        }
                       end
                     end
                   end
 
-                  enum_param = value.dig(:parameters).find{|p| p[:enum]}
-                  if enum_param && enum_param.is_a?(Hash)
-                    enum_param[:description] = generate_enum_description(enum_param)
-                  end
+                  enum_param = value[:parameters].find { |p| p[:enum] }
+                  enum_param[:description] = generate_enum_description(enum_param) if enum_param.is_a?(Hash)
 
-                  value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
+                  value[:parameters].reject! { |p| %i[body formData].include?(p[:in]) }
                 end
                 remove_invalid_operation_keys!(value)
               end
@@ -120,13 +116,13 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k, _v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k, _v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end
@@ -175,7 +171,7 @@ module Rswag
 
         swagger_doc[:servers] = { urls: [] }
         swagger_doc[:schemes].each do |scheme|
-          swagger_doc[:servers][:urls] << scheme + '://' + swagger_doc[:host] + swagger_doc[:basePath]
+          swagger_doc[:servers][:urls] << "#{scheme}://#{swagger_doc[:host]}#{swagger_doc[:basePath]}"
         end
 
         swagger_doc.delete(:schemes)
@@ -194,11 +190,11 @@ module Rswag
           Rswag::Specs.deprecator.warn("Rswag::Specs: WARNING: securityDefinitions flow is replaced in OpenAPI3! Rename to components/securitySchemes/#{name}/flows[] (in swagger_helper.rb)")
           flow = swagger_doc[:components][:securitySchemes][name].delete(:flow).to_s
           if flow == 'accessCode'
-            Rswag::Specs.deprecator.warn("Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)")
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: securityDefinitions accessCode is replaced in OpenAPI3! Rename to clientCredentials (in swagger_helper.rb)')
             flow = 'authorizationCode'
           end
           if flow == 'application'
-            Rswag::Specs.deprecator.warn("Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)")
+            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: securityDefinitions application is replaced in OpenAPI3! Rename to authorizationCode (in swagger_helper.rb)')
             flow = 'clientCredentials'
           end
           flow_elements = swagger_doc[:components][:securitySchemes][name].except(:type).each_with_object({}) do |(k, _v), a|
@@ -214,12 +210,12 @@ module Rswag
         value.delete(:consumes) if value[:consumes]
         value.delete(:produces) if value[:produces]
         value.delete(:request_examples) if value[:request_examples]
-        value[:parameters].each { |p| p.delete(:getter) } if value[:parameters]
+        value[:parameters]&.each { |p| p.delete(:getter) }
       end
 
       def generate_enum_description(param)
         enum_description = "#{param[:description]}:\n "
-        param[:enum].each do |k,v|
+        param[:enum].each do |k, v|
           enum_description += "* `#{k}` #{v}\n "
         end
         enum_description

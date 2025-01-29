@@ -24,15 +24,15 @@ module Rswag
 
       def validate_code!(metadata, response)
         expected = metadata[:response][:code].to_s
-        if response.code != expected
-          raise UnexpectedResponse,
-            "Expected response code '#{response.code}' to match '#{expected}'\n" \
-              "Response body: #{response.body}"
-        end
+        return unless response.code != expected
+
+        raise UnexpectedResponse,
+              "Expected response code '#{response.code}' to match '#{expected}'\n" \
+                "Response body: #{response.body}"
       end
 
       def validate_headers!(metadata, headers)
-        header_schemas = (metadata[:response][:headers] || {})
+        header_schemas = metadata[:response][:headers] || {}
         expected = header_schemas.keys
         expected.each do |name|
           nullable_attribute = header_schemas.dig(name.to_s, :schema, :nullable)
@@ -59,8 +59,8 @@ module Rswag
         schemas = definitions_or_component_schemas(swagger_doc, version)
 
         validation_schema = response_schema
-          .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(schemas)
+                            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+                            .merge(schemas)
 
         validation_options = validation_options_from(metadata)
 
@@ -83,8 +83,10 @@ module Rswag
           is_strict = !!metadata[:openapi_strict_schema_validation]
         end
 
-        all_properties_required = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
-        no_additional_properties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+        all_properties_required = metadata.fetch(:openapi_all_properties_required,
+                                                 @config.openapi_all_properties_required)
+        no_additional_properties = metadata.fetch(:openapi_no_additional_properties,
+                                                  @config.openapi_no_additional_properties)
 
         {
           strict: is_strict,
@@ -96,14 +98,12 @@ module Rswag
       def definitions_or_component_schemas(swagger_doc, version)
         if version.start_with?('2')
           swagger_doc.slice(:definitions)
-        else # Openapi3
-          if swagger_doc.key?(:definitions)
-            Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
-            swagger_doc.slice(:definitions)
-          else
-            components = swagger_doc[:components] || {}
-            { components: components }
-          end
+        elsif swagger_doc.key?(:definitions) # Openapi3
+          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+          swagger_doc.slice(:definitions)
+        else
+          components = swagger_doc[:components] || {}
+          { components: components }
         end
       end
     end
