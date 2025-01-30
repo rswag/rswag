@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Allow the rails version to come from an ENV setting so CI can test multiple versions.
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
-rails_version = Gem::Version.new(ENV['RAILS_VERSION'] || '7.2.0')
+rails_version = Gem::Version.new(ENV['RAILS_VERSION'] || '8.0.0')
 
 gem 'rails', rails_version.to_s
 
