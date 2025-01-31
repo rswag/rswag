@@ -8,7 +8,7 @@ module Rswag
 
     describe CustomGenerator do
       include GeneratorSpec::TestCase
-      destination File.expand_path('../tmp', __FILE__)
+      destination File.expand_path('tmp', __dir__)
 
       before(:all) do
         prepare_destination
