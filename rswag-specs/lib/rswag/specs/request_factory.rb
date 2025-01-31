@@ -138,20 +138,20 @@ module Rswag
               if explode
                 return value.to_query
               else
-                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
+                return "#{escaped_name}=" + value.to_a.flatten.map {|v| CGI.escape(v.to_s) }.join(',')
               end
             end
           when :array
             case explode
             when true
-              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
+              return value.to_a.flatten.map {|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
             else
               separator = case style
                           when :form then ','
                           when :spaceDelimited then '%20'
                           when :pipeDelimited then '|'
                           end
-              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
+              return "#{escaped_name}=" + value.to_a.flatten.map {|v| CGI.escape(v.to_s) }.join(separator)
             end
           else
             return "#{escaped_name}=#{CGI.escape(value.to_s)}"
