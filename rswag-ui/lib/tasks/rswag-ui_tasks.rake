@@ -2,7 +2,6 @@
 
 namespace :rswag do
   namespace :ui do
-
     desc 'TODO'
     task :copy_assets, [ :dest ] do |t, args|
       dest = args[:dest]
