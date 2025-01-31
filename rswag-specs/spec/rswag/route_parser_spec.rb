@@ -21,7 +21,7 @@ RSpec.describe Rswag::RouteParser do
             action: 'show',
             controller: 'api/v1/posts'
           },
-          segments: ['id', 'format']
+          segments: %w[id format]
         )  
       ]
     end
