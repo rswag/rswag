@@ -25,7 +25,7 @@ module Rswag
             text: { type: :string },
             number: { type: :integer }
           },
-          required: ['text', 'number']
+          required: %w[text number]
         }
       end
 

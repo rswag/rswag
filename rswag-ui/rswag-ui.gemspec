@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Expose beautiful API documentation, powered by Swagger JSON endpoints, including a UI to explore and test operations. More about the OpenAPI initiative here: http://spec.openapis.org/'
   s.license     = 'MIT'
 
-  s.files = Dir.glob('{lib,node_modules}/**/*') + ['MIT-LICENSE', 'Rakefile']
+  s.files = Dir.glob('{lib,node_modules}/**/*') + %w[MIT-LICENSE Rakefile]
 
   s.add_dependency 'actionpack', '>= 5.2', '< 8.1'
   s.add_dependency 'railties', '>= 5.2', '< 8.1'

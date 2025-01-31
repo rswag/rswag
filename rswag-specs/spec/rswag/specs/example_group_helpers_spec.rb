@@ -62,12 +62,12 @@ module Rswag
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: ['Blogs', 'Admin'],
+            tags: %w[Blogs Admin],
             description: 'Some description',
             operationId: 'createBlog',
             consumes: ['application/json', 'application/xml'],
             produces: ['application/json', 'application/xml'],
-            schemes: ['http', 'https'],
+            schemes: %w[http https],
             deprecated: true,
             security: { api_key: [] }
           )
