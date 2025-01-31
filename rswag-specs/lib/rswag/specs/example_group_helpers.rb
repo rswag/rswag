@@ -40,9 +40,7 @@ module Rswag
       end
 
       def parameter(attributes)
-        if attributes[:in] && attributes[:in].to_sym == :path
-          attributes[:required] = true
-        end
+        attributes[:required] = true if attributes[:in] && attributes[:in].to_sym == :path
 
         if metadata.key?(:operation)
           metadata[:operation][:parameters] ||= []
@@ -93,9 +91,7 @@ module Rswag
 
       def example(mime, name, value, summary=nil, description=nil)
         # Todo - move initialization of metadata somewhere else.
-        if metadata[:response][:content].blank?
-          metadata[:response][:content] = {}
-        end
+        metadata[:response][:content] = {} if metadata[:response][:content].blank?
 
         if metadata[:response][:content][mime].blank?
           metadata[:response][:content][mime] = {}

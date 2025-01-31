@@ -181,7 +181,9 @@ module Rswag
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
-        raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content' unless mime_list
+        unless mime_list
+          raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content'
+        end
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
