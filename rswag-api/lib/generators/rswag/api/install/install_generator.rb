@@ -6,7 +6,7 @@ module Rswag
   module Api
 
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('templates', __dir__)
 
       def add_initializer
         template('rswag_api.rb', 'config/initializers/rswag_api.rb')

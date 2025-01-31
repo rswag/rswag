@@ -19,9 +19,9 @@ module Rswag
           # backwards compatible override location
           "#{Rack::Directory.new('').root}/app/views/rswag/ui/home/index.html.erb",
           # default location
-          File.expand_path('../index.erb', __FILE__)
+          File.expand_path('index.erb', __dir__)
         ]
-        @assets_root = File.expand_path('../../../../node_modules/swagger-ui-dist', __FILE__)
+        @assets_root = File.expand_path('../../../node_modules/swagger-ui-dist', __dir__)
         @config_object = {}
         @oauth_config_object = {}
         @basic_auth_enabled = false
