@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "active_support"
+require 'active_support'
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -102,8 +102,8 @@ module Rswag
               param_value = params.fetch(p[:name].to_s).to_s
             rescue KeyError
               raise ArgumentError.new("`#{p[:name]}`" \
-                "parameter key present, but not defined within example group" \
-                "(i. e `it` or `let` block)")
+                'parameter key present, but not defined within example group' \
+                '(i. e `it` or `let` block)')
             end
             path_template.gsub!("{#{p[:name]}}", param_value)
           end
@@ -164,7 +164,7 @@ module Rswag
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
         if produces
-          accept = headers.fetch("Accept", produces.first)
+          accept = headers.fetch('Accept', produces.first)
           tuples << ['Accept', accept]
         end
 

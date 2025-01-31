@@ -35,7 +35,7 @@ module Rswag
             document: document
           }
         end
-        let(:response_metadata) { { code: '201', description: 'blog created', headers: {"Accept" => { type: :string }}, schema: { '$ref' => '#/components/schemas/blog' } } }
+        let(:response_metadata) { { code: '201', description: 'blog created', headers: {'Accept' => { type: :string }}, schema: { '$ref' => '#/components/schemas/blog' } } }
 
         context 'with the document tag set to false' do
           let(:openapi_spec) { { openapi: '3.0' } }
@@ -54,17 +54,17 @@ module Rswag
           it 'converts to openapi and merges into the corresponding openapi doc' do
             expect(openapi_spec).to match(
             {
-            openapi: "3.0",
+            openapi: '3.0',
             paths: {
               '/blogs' => {
                 parameters: [{:schema => {:type => :string}}],
                 post: {
                   parameters: [{:schema => {:type => :string}}],
-                  summary: "Creates a blog",
+                  summary: 'Creates a blog',
                   responses: {
                     '201' => {
-                      description: "blog created",
-                      headers: {"Accept" => {:schema => {:type => :string}}}}}}}}}
+                      description: 'blog created',
+                      headers: {'Accept' => {:schema => {:type => :string}}}}}}}}}
             )
           end
         end
@@ -119,7 +119,7 @@ module Rswag
                       in: :formData,
                       schema: { foo: :bar }
                     }, {
-                      name: "Accept",
+                      name: 'Accept',
                       in: :headers,
                       type: :string
                     }],
@@ -140,7 +140,7 @@ module Rswag
           end
 
           it 'params in: :formData appear in requestBody' do
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: "Accept", schema: { type: :string } }])
+            expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: 'Accept', schema: { type: :string } }])
             expect(doc_for_api_v2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
               'application/xml' => { schema: { foo: :bar } },
               'application/json' => { schema: { foo: :bar } }
@@ -174,7 +174,7 @@ module Rswag
                       in: :formData,
                       schema: { type: :string }
                     },{
-                      name: "Accept",
+                      name: 'Accept',
                       in: :headers
                     }]
                   }
@@ -214,7 +214,7 @@ module Rswag
           end
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers, name: "Accept" }])
+            expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers, name: 'Accept' }])
             expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
               content: {
                 'multipart/form-data' => { schema: { type: :string } }
@@ -272,7 +272,7 @@ module Rswag
                 in: :query,
                 name: :foo,
                 schema: {
-                  enum: ["bar", "baz"]
+                  enum: ['bar', 'baz']
                 },
                 description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
               }]
@@ -348,7 +348,7 @@ module Rswag
                 },
                 encoding: {
                   myFile: {
-                    contentType: "image/png,image/jpeg"
+                    contentType: 'image/png,image/jpeg'
                   }
                 }
               }
@@ -457,7 +457,7 @@ module Rswag
                         type: :string
                       }
                     },
-                    required: ["file"]
+                    required: ['file']
                   },
                   encoding: {
                     file: {

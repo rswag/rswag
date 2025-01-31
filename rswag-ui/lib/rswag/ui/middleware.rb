@@ -23,11 +23,11 @@ module Rswag
       private
 
       def base_path?(env)
-        env['REQUEST_METHOD'] == "GET" && env['PATH_INFO'] == "/"
+        env['REQUEST_METHOD'] == 'GET' && env['PATH_INFO'] == '/'
       end
 
       def index_path?(env)
-        env['REQUEST_METHOD'] == "GET" && env['PATH_INFO'] == "/index.html"
+        env['REQUEST_METHOD'] == 'GET' && env['PATH_INFO'] == '/index.html'
       end
 
       def render_template
