@@ -161,7 +161,6 @@ module Rswag
         parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
       end
 
-
       def set_parameter_schema(parameter)
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
