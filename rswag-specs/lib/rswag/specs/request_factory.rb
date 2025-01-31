@@ -263,7 +263,6 @@ module Rswag
               let(:#{body_param}) {}
         MSG
       end
-
     end
   end
 end

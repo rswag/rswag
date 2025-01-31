@@ -3,7 +3,6 @@
 module Rswag
   module Ui
     class Middleware < Rack::Static
-
       def initialize(app, config)
         @config = config
         super(app, urls: [ '' ], root: config.assets_root )
