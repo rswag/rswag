@@ -24,11 +24,11 @@ module Rswag
 
       def validate_code!(metadata, response)
         expected = metadata[:response][:code].to_s
-        if response.code != expected
+        return unless response.code != expected
           raise UnexpectedResponse,
             "Expected response code '#{response.code}' to match '#{expected}'\n" \
               "Response body: #{response.body}"
-        end
+        
       end
 
       def validate_headers!(metadata, headers)

@@ -124,7 +124,7 @@ module Rswag
         escaped_name = CGI.escape(name.to_s)
 
         # NOTE: https://swagger.io/docs/specification/serialization/
-        if param[:schema]
+        return unless param[:schema]
           style = param[:style]&.to_sym || :form
           explode = param[:explode].nil? ? true : param[:explode]
           type = param.dig(:schema, :type)&.to_sym
@@ -135,11 +135,11 @@ module Rswag
             when :deepObject
               return { name => value }.to_query
             when :form
-              if explode
-                return value.to_query
-              else
+              return value.to_query if explode
+                
+              
                 return "#{escaped_name}=" + value.to_a.flatten.map {|v| CGI.escape(v.to_s) }.join(',')
-              end
+              
             end
           when :array
             case explode
@@ -156,7 +156,7 @@ module Rswag
           else
             return "#{escaped_name}=#{CGI.escape(value.to_s)}"
           end
-        end
+        
       end
 
       def add_headers(request, metadata, openapi_spec, parameters, example)
