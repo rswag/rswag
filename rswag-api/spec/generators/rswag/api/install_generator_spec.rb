@@ -25,4 +25,3 @@ module Rswag
     end
   end
 end
-
