@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :rswag do
   namespace :ui do
 

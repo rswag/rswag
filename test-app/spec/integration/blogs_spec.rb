@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'openapi_helper'
 
 RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
