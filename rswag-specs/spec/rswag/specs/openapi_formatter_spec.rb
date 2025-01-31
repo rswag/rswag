@@ -25,9 +25,7 @@ module Rswag
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do
           operation = { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] }
-          if request_examples
-            operation[:request_examples] = request_examples
-          end
+          operation[:request_examples] = request_examples if request_examples
           {
             path_item: { template: '/blogs', parameters: [{ type: :string }] },
             operation: operation,
@@ -35,7 +33,10 @@ module Rswag
             document: document
           }
         end
-        let(:response_metadata) { { code: '201', description: 'blog created', headers: {'Accept' => { type: :string }}, schema: { '$ref' => '#/components/schemas/blog' } } }
+        let(:response_metadata) do
+          { code: '201', description: 'blog created', headers: { 'Accept' => { type: :string } },
+            schema: { '$ref' => '#/components/schemas/blog' } }
+        end
 
         context 'with the document tag set to false' do
           let(:openapi_spec) { { openapi: '3.0' } }
@@ -53,18 +54,24 @@ module Rswag
 
           it 'converts to openapi and merges into the corresponding openapi doc' do
             expect(openapi_spec).to match(
-            {
-            openapi: '3.0',
-            paths: {
-              '/blogs' => {
-                parameters: [{:schema => {:type => :string}}],
-                post: {
-                  parameters: [{:schema => {:type => :string}}],
-                  summary: 'Creates a blog',
-                  responses: {
-                    '201' => {
-                      description: 'blog created',
-                      headers: {'Accept' => {:schema => {:type => :string}}}}}}}}}
+              {
+                openapi: '3.0',
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          description: 'blog created',
+                          headers: { 'Accept' => { schema: { type: :string } } }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             )
           end
         end
@@ -125,7 +132,7 @@ module Rswag
                     }],
                     security: [{ # Must provide both my_auth and oauth2_with_scopes
                       my_auth: [],
-                      oauth2_with_scopes: [:scope1, :scope2]
+                      oauth2_with_scopes: %i[scope1 scope2]
                     }, { # or can auth with only auth_with_this
                       auth_with_this: []
                     }]
@@ -136,27 +143,29 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_for_api_v2[:paths]['/path/'][:get].keys).to include(:summary, :tags, :parameters, :requestBody, :security)
+            expect(doc_for_api_v2[:paths]['/path/'][:get].keys).to include(:summary, :tags, :parameters, :requestBody,
+                                                                           :security)
           end
 
           it 'params in: :formData appear in requestBody' do
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: 'Accept', schema: { type: :string } }])
+            expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: 'Accept',
+                                                                                  schema: { type: :string } }])
             expect(doc_for_api_v2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
-              'application/xml' => { schema: { foo: :bar } },
-              'application/json' => { schema: { foo: :bar } }
-            })
+                                                                                  'application/xml' => { schema: { foo: :bar } },
+                                                                                  'application/json' => { schema: { foo: :bar } }
+                                                                                })
           end
 
           it 'adds security to operation' do
             expect(doc_for_api_v2[:paths]['/path/'][:get][:security]).to eql([
-              {
-                my_auth: [],
-                oauth2_with_scopes: [:scope1, :scope2]
-              },
-              {
-                auth_with_this: []
-              }
-            ])
+                                                                               {
+                                                                                 my_auth: [],
+                                                                                 oauth2_with_scopes: %i[scope1 scope2]
+                                                                               },
+                                                                               {
+                                                                                 auth_with_this: []
+                                                                               }
+                                                                             ])
           end
         end
 
@@ -173,7 +182,7 @@ module Rswag
                     parameters: [{
                       in: :formData,
                       schema: { type: :string }
-                    },{
+                    }, {
                       name: 'Accept',
                       in: :headers
                     }]
@@ -200,7 +209,7 @@ module Rswag
                     parameters: [{
                       name: :foo,
                       in: :body,
-                      schema: {'$ref': '#/components/schemas/BlogPost'},
+                      schema: { '$ref': '#/components/schemas/BlogPost' },
                       required: true
                     }]
                   }
@@ -210,7 +219,7 @@ module Rswag
           end
 
           it 'removes remaining consumes/produces' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_for_api_v2[:paths]['/path/'][:post].keys).to eql(%i[summary tags parameters requestBody])
           end
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
@@ -226,7 +235,7 @@ module Rswag
             expect(doc_for_api_v2[:paths]['/support_legacy_body/'][:post][:parameters]).to eql([])
             expect(doc_for_api_v2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(
               content: {
-                'application/json' => { schema: { type: :object} }
+                'application/json' => { schema: { type: :object } }
               },
               required: true
             )
@@ -272,7 +281,7 @@ module Rswag
                 in: :query,
                 name: :foo,
                 schema: {
-                  enum: ['bar', 'baz']
+                  enum: %w[bar baz]
                 },
                 description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
               }]
@@ -303,9 +312,13 @@ module Rswag
 
           it 'generates schema in requestBody for content type' do
             expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'image/png' => {schema: {type: :string, format: :binary}},
-              'application/octet-stream' => {schema: {type: :string, format: :binary}}
-            })
+                                                                                   'image/png' => { schema: {
+                                                                                     type: :string, format: :binary
+                                                                                   } },
+                                                                                   'application/octet-stream' => { schema: {
+                                                                                     type: :string, format: :binary
+                                                                                   } }
+                                                                                 })
           end
         end
 
@@ -322,7 +335,7 @@ module Rswag
                         name: :myFile,
                         in: :formData,
                         schema: { type: :file },
-                        encoding: {contentType: ['image/png', 'image/jpeg']}
+                        encoding: { contentType: ['image/png', 'image/jpeg'] }
                       },
                       {
                         name: :foo,
@@ -338,21 +351,22 @@ module Rswag
 
           it 'generates schema in requestBody for content type' do
             expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => {
-                schema: {
-                  type: :object,
-                  properties: {
-                    myFile: {type: :string, format: :binary},
-                    foo: {type: :string}
-                  }
-                },
-                encoding: {
-                  myFile: {
-                    contentType: 'image/png,image/jpeg'
-                  }
-                }
-              }
-            })
+                                                                                   'multipart/form-data' => {
+                                                                                     schema: {
+                                                                                       type: :object,
+                                                                                       properties: {
+                                                                                         myFile: { type: :string,
+                                                                                                   format: :binary },
+                                                                                         foo: { type: :string }
+                                                                                       }
+                                                                                     },
+                                                                                     encoding: {
+                                                                                       myFile: {
+                                                                                         contentType: 'image/png,image/jpeg'
+                                                                                       }
+                                                                                     }
+                                                                                   }
+                                                                                 })
           end
         end
 
@@ -379,15 +393,18 @@ module Rswag
 
           it 'generates schema in requestBody with multipart/form-data' do
             expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'multipart/form-data' => {
-                schema: {
-                  type: :object,
-                  properties: {
-                    files: {type: :array, items: {type: :string, format: :binary}}
-                  }
-                }
-              }
-            })
+                                                                                   'multipart/form-data' => {
+                                                                                     schema: {
+                                                                                       type: :object,
+                                                                                       properties: {
+                                                                                         files: { type: :array,
+                                                                                                  items: {
+                                                                                                    type: :string, format: :binary
+                                                                                                  } }
+                                                                                       }
+                                                                                     }
+                                                                                   }
+                                                                                 })
           end
         end
 
@@ -561,7 +578,7 @@ module Rswag
                       schema: {
                         '$ref': '#/components/schemas/BlogPost'
                       }
-                    },{
+                    }, {
                       in: :headers
                     }],
                     request_examples: [
@@ -578,7 +595,7 @@ module Rswag
                           some_field: 'Bar'
                         }
                       }
-                    ],
+                    ]
                   }
                 }
               },
@@ -599,30 +616,30 @@ module Rswag
           end
 
           it 'removes remaining request_examples' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post].keys).to eql([:summary, :tags, :parameters, :requestBody])
+            expect(doc_for_api_v2[:paths]['/path/'][:post].keys).to eql(%i[summary tags parameters requestBody])
           end
 
           it 'creates requestBody examples' do
             expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
             expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-              'application/json' => {
-                schema: { '$ref': '#/components/schemas/BlogPost' },
-                examples: {
-                  'basic' => {
-                    value: {
-                      some_field: 'Foo'
-                    },
-                    summary: 'An example'
-                  },
-                  'another_basic' => {
-                    value: {
-                      some_field: 'Bar'
-                    },
-                    summary: 'Retrieve Nested Paths'
-                  }
-                }
-              }
-            })
+                                                                                   'application/json' => {
+                                                                                     schema: { '$ref': '#/components/schemas/BlogPost' },
+                                                                                     examples: {
+                                                                                       'basic' => {
+                                                                                         value: {
+                                                                                           some_field: 'Foo'
+                                                                                         },
+                                                                                         summary: 'An example'
+                                                                                       },
+                                                                                       'another_basic' => {
+                                                                                         value: {
+                                                                                           some_field: 'Bar'
+                                                                                         },
+                                                                                         summary: 'Retrieve Nested Paths'
+                                                                                       }
+                                                                                     }
+                                                                                   }
+                                                                                 })
           end
         end
 

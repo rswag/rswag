@@ -64,7 +64,7 @@ module Rswag
               { name: 'q1', in: :query, schema: { type: :string } },
               { name: 'q2', in: :query, schema: { type: :string } },
               { name: 'q3', in: :query, schema: { type: :string } },
-              { name: 'falsey', in: :query, schema: { type: :boolean } },
+              { name: 'falsey', in: :query, schema: { type: :boolean } }
             ]
             example.request_params['q1'] = 'foo'
             example.request_params['q2'] = 'bar'
@@ -78,7 +78,7 @@ module Rswag
           context 'when `type` parameter key is present' do
             before do
               metadata[:operation][:parameters] = [
-                { name: 'q1', in: :query, type: :string },
+                { name: 'q1', in: :query, type: :string }
               ]
               example.request_params['q1'] = 'baz'
             end
@@ -87,11 +87,10 @@ module Rswag
               expect { request[:path] }.to raise_error(/'type' is not supported field for Parameter/)
             end
           end
-
         end
 
         context "'query' parameter of format 'datetime'" do
-          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s  }
+          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
 
           before do
             metadata[:operation][:parameters] = [
@@ -119,7 +118,7 @@ module Rswag
 
             it 'formats the datetime properly when type is defined in schema' do
               metadata[:operation][:parameters] = [
-                { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime, }
+                { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime }
               ]
               expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
             end
@@ -127,7 +126,7 @@ module Rswag
         end
 
         context "'query' parameters of type 'object'" do
-          let(:things) { {'foo': 'bar'} }
+          let(:things) { { 'foo': 'bar' } }
           let(:openapi_spec) { { openapi: '3.0' } }
 
           before do
@@ -151,7 +150,7 @@ module Rswag
           end
 
           context 'deepObject with nested objects' do
-            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
             it 'formats as deep object' do
@@ -176,7 +175,7 @@ module Rswag
           end
 
           context 'form explode=true with nesting and uri encodable output' do
-            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
             it 'formats as an exploded form' do
@@ -337,7 +336,7 @@ module Rswag
             before do
               metadata[:operation][:consumes] = 'application/vnd.api+json'
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              example.request_params['comment'] = {text: 'Some comment'}
+              example.request_params['comment'] = { text: 'Some comment' }
             end
 
             it "serializes first 'body' parameter to JSON object" do
@@ -448,7 +447,8 @@ module Rswag
 
         context 'apiKey' do
           before do
-            openapi_spec[:components] = { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: key_location } } }
+            openapi_spec[:components] =
+              { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: key_location } } }
             metadata[:operation][:security] = [api_key: []]
           end
 
@@ -490,7 +490,8 @@ module Rswag
 
         context 'oauth2' do
           before do
-            openapi_spec[:components] = { securitySchemes: { oauth2: { type: :oauth2, flows: { implicit: { scopes: ['read:blogs'] } } } } }
+            openapi_spec[:components] =
+              { securitySchemes: { oauth2: { type: :oauth2, flows: { implicit: { scopes: ['read:blogs'] } } } } }
             metadata[:operation][:security] = [oauth2: ['read:blogs']]
             example.request_headers['Authorization'] = 'Bearer foobar'
           end
@@ -543,7 +544,8 @@ module Rswag
           let(:openapi_spec) { { openapi: '3.0.1' } }
           before do
             openapi_spec[:components] = {
-              parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } } }
+              parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } }
+            }
             metadata[:operation][:parameters] = [{ '$ref' => '#/components/parameters/q1' }]
             example.request_params['q1'] = 'foo'
           end
@@ -556,13 +558,13 @@ module Rswag
         context 'base path' do
           before do
             openapi_spec[:servers] = [{
-              :url => '{protocol}://{defaultHost}',
-              :variables => {
-                :protocol => {
-                  :default => :https
+              url: '{protocol}://{defaultHost}',
+              variables: {
+                protocol: {
+                  default: :https
                 },
-                :defaultHost => {
-                  :default => 'www.example.com'
+                defaultHost: {
+                  default: 'www.example.com'
                 }
               }
             }]
