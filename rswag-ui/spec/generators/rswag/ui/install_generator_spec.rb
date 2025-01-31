@@ -22,7 +22,7 @@ module Rswag
       end
 
       # Don't know how to test this
-      #it 'wires up routes'
+      # it 'wires up routes'
     end
   end
 end
