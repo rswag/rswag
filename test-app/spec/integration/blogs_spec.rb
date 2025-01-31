@@ -46,8 +46,9 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
                 in: :query,
                 schema: {
                   type: :string,
-                  items:  {
-                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                  items: {
+                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs',
+                            'archived': 'Retrieves archived blogs' }
                   }
                 },
                 description: 'Filter by status'
@@ -56,10 +57,12 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         Blog.create(title: 'foo', content: 'hello world', status: :published)
       end
 
-      let(:request_params) { {
-        'keywords' => 'foo bar',
-        'status' => 'published'
-       } }
+      let(:request_params) do
+        {
+          'keywords' => 'foo bar',
+          'status' => 'published'
+        }
+      end
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
@@ -72,9 +75,11 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       response '200', 'no content' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
 
-        let(:request_params) { {
-          'status' => 'invalid'
-         } }
+        let(:request_params) do
+          {
+            'status' => 'invalid'
+          }
+        end
 
         run_test! do
           expect(JSON.parse(response.body).size).to eq(0)
@@ -118,9 +123,11 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   path '/blogs/{id}' do
     parameter name: 'id', in: :path, schema: { type: :string }
 
-    let(:request_params) { {
-      'id' => blog.id
-    } }
+    let(:request_params) do
+      {
+        'id' => blog.id
+      }
+    end
 
     get 'Retrieves a blog' do
       tags 'Blogs'
@@ -135,7 +142,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
 
         schema '$ref' => '#/components/schemas/blog'
 
-        #Legacy
+        # Legacy
         examples 'application/json' => {
           id: 1,
           title: 'Hello legacy world!',
@@ -211,11 +218,13 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
     parameter name: 'id', in: :path, schema: { type: :string }
 
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
-    let(:request_params) { {
-      'id' => blog.id,
-      'blog' => blog,
-      'file' => file
-    } }
+    let(:request_params) do
+      {
+        'id' => blog.id,
+        'blog' => blog,
+        'file' => file
+      }
+    end
 
     put 'Uploads a blog thumbnail' do
       tags 'Blogs'
