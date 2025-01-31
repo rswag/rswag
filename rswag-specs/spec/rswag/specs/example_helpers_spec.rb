@@ -64,8 +64,8 @@ module Rswag
           expect(subject).to have_received(:put).with(
             '/blogs/1/comments/2?q1=foo&api_key=fooKey',
             {
-              :params=>'{"text":"Some comment"}',
-              :headers=>{ 'CONTENT_TYPE' => 'application/json'}
+              params: '{"text":"Some comment"}',
+              headers: { 'CONTENT_TYPE' => 'application/json' }
             }
           )
         end
