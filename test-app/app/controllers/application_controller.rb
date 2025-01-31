@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   wrap_parameters format: [ :json ]
 
   respond_to :json
-  rescue_from 'ActionController::UnknownFormat' do |ex|
+  rescue_from 'ActionController::UnknownFormat' do |_ex|
     head :not_acceptable
   end
 end
