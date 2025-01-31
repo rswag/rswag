@@ -28,7 +28,7 @@ module Rswag
           raise UnexpectedResponse,
             "Expected response code '#{response.code}' to match '#{expected}'\n" \
               "Response body: #{response.body}"
-        
+
       end
 
       def validate_headers!(metadata, headers)

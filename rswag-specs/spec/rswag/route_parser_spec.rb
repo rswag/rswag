@@ -22,13 +22,13 @@ RSpec.describe Rswag::RouteParser do
             controller: 'api/v1/posts'
           },
           segments: %w[id format]
-        )  
+        )
       ]
     end
 
     let(:expectation) do
       {
-        '/api/v1/posts/{id}' => { 
+        '/api/v1/posts/{id}' => {
           params: ['id'],
           actions: {
             'get' => {
