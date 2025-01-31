@@ -150,7 +150,7 @@ module Rswag
 
       describe '#request_body_example(value:, summary: nil, name: nil)' do
         context 'when adding one example' do
-          before { subject.request_body_example(value: value)}
+          before { subject.request_body_example(value: value) }
           let(:api_metadata) { { operation: {} } }
           let(:value) { { field: 'A', another_field: 'B' } }
 
@@ -207,8 +207,8 @@ module Rswag
 
       describe '#example(single)' do
         let(:mime) { 'application/json' }
-        let(:summary) { 'this is a summary'}
-        let(:description) { 'this is an example description '}
+        let(:summary) { 'this is a summary' }
+        let(:description) { 'this is an example description ' }
         let(:json_example) do
           {
               foo: 'bar'
