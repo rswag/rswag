@@ -207,6 +207,7 @@ module Rswag
 
       def add_request_body(endpoint)
         return if endpoint.dig(:requestBody, :content)
+
         endpoint[:requestBody] = { content: {} }
       end
 
@@ -245,6 +246,7 @@ module Rswag
 
       def set_mime_encoding(mime_config, parameter)
         return unless parameter[:encoding]
+
         encoding = parameter[:encoding].dup
         encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
         mime_config[:encoding] ||= {}
@@ -254,6 +256,7 @@ module Rswag
       def set_mime_examples(mime_config, endpoint)
         examples = endpoint[:request_examples]
         return unless examples
+
         examples.each do |example|
           mime_config[:examples] ||= {}
           mime_config[:examples][example[:name]] = {

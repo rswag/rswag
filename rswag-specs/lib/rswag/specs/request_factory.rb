@@ -87,6 +87,7 @@ module Rswag
 
       def base_path_from_servers(openapi_spec, use_server = :default)
         return '' if openapi_spec[:servers].nil? || openapi_spec[:servers].empty?
+
         server = openapi_spec[:servers].first
         variables = {}
         server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
@@ -118,6 +119,7 @@ module Rswag
 
       def build_query_string_part(param, value, openapi_spec)
         raise ArgumentError.new("'type' is not supported field for Parameter") unless param[:type].nil?
+
         name = param[:name]
         escaped_name = CGI.escape(name.to_s)
 
