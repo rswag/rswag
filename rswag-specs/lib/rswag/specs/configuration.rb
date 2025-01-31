@@ -38,7 +38,7 @@ module Rswag
             @rspec_config.openapi_format = :json
           end
 
-          unless [:json, :yaml].include?(@rspec_config.openapi_format)
+          unless %i[json yaml].include?(@rspec_config.openapi_format)
             raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'"
           end
 
