@@ -23,7 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        raise ConfigurationError, "Unsupported OpenAPI version" unless doc_version(openapi_spec).start_with?('3')
+        raise ConfigurationError, 'Unsupported OpenAPI version' unless doc_version(openapi_spec).start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -182,7 +182,7 @@ module Rswag
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
-        raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
+        raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content' unless mime_list
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
@@ -247,7 +247,7 @@ module Rswag
       def set_mime_encoding(mime_config, parameter)
         return unless parameter[:encoding]
         encoding = parameter[:encoding].dup
-        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
         mime_config[:encoding] ||= {}
         mime_config[:encoding][parameter[:name]] = encoding
       end

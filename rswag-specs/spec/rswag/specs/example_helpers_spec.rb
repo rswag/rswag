@@ -37,10 +37,10 @@ module Rswag
             summary: 'Updates a blog',
             consumes: ['application/json'],
             parameters: [
-              { name: "blog_id", in: :path, schema: { type: 'integer' } },
+              { name: 'blog_id', in: :path, schema: { type: 'integer' } },
               { name: 'id', in: :path, schema: { type: 'integer' } },
               { name: 'q1', in: :query, schema: { type: 'string' } },
-              { name: "blog", in: :body, schema: { type: 'object' } }
+              { name: 'blog', in: :body, schema: { type: 'object' } }
             ],
             security: [
               { api_key: [] }
@@ -51,11 +51,11 @@ module Rswag
 
       describe '#submit_request(metadata)' do
         before do
-          subject.request_params["blog_id"] = 1
-          subject.request_params["id"] = 2
-          subject.request_params["q1"] = 'foo'
-          subject.request_params["api_key"] = 'fooKey'
-          subject.request_params["blog"] = { text: 'Some comment' }
+          subject.request_params['blog_id'] = 1
+          subject.request_params['id'] = 2
+          subject.request_params['q1'] = 'foo'
+          subject.request_params['api_key'] = 'fooKey'
+          subject.request_params['blog'] = { text: 'Some comment' }
           allow(subject).to receive(:put)
           subject.submit_request(metadata)
         end
