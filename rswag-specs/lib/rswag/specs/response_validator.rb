@@ -25,14 +25,14 @@ module Rswag
       def validate_code!(metadata, response)
         expected = metadata[:response][:code].to_s
         return unless response.code != expected
-          raise UnexpectedResponse,
-            "Expected response code '#{response.code}' to match '#{expected}'\n" \
-              "Response body: #{response.body}"
 
+        raise UnexpectedResponse,
+              "Expected response code '#{response.code}' to match '#{expected}'\n" \
+                "Response body: #{response.body}"
       end
 
       def validate_headers!(metadata, headers)
-        header_schemas = (metadata[:response][:headers] || {})
+        header_schemas = metadata[:response][:headers] || {}
         expected = header_schemas.keys
         expected.each do |name|
           nullable_attribute = header_schemas.dig(name.to_s, :schema, :nullable)
@@ -58,8 +58,8 @@ module Rswag
         schemas = { components: openapi_spec[:components] }
 
         validation_schema = response_schema
-          .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-          .merge(schemas)
+                            .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
+                            .merge(schemas)
 
         validation_options = validation_options_from(metadata)
 
