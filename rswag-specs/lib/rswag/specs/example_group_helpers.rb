@@ -84,6 +84,7 @@ module Rswag
       # rspec-core ExampleGroup
       def examples(examples = nil)
         return super() if examples.nil?
+
         # should we add a deprecation warning?
         examples.each_with_index do |(mime, example_object), index|
           example(mime, "example_#{index}", example_object)

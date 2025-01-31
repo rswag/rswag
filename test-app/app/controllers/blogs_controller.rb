@@ -30,6 +30,7 @@ class BlogsController < ApplicationController
   def upload
     @blog = Blog.find_by_id(params[:id])
     return head :not_found if @blog.nil?
+
     @blog.thumbnail = save_uploaded_file params[:file]
     head @blog.save ? :ok : :unprocessable_entity
   end
@@ -50,6 +51,7 @@ class BlogsController < ApplicationController
     return unless stale?(@blog)
 
     respond_with @blog, status: :not_found and return unless @blog
+
     respond_with @blog
   end
 
@@ -57,6 +59,7 @@ class BlogsController < ApplicationController
 
   def save_uploaded_file(field)
     return if field.nil?
+
     file = File.join('public/uploads', field.original_filename)
     FileUtils.cp field.tempfile.path, file
     field.original_filename
