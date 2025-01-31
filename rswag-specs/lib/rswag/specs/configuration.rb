@@ -24,9 +24,7 @@ module Rswag
 
       def rswag_dry_run
         @rswag_dry_run ||= begin
-          if ENV.key?('RSWAG_DRY_RUN')
-            @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1'
-          end
+          @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1' if ENV.key?('RSWAG_DRY_RUN')
 
           @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
         end
