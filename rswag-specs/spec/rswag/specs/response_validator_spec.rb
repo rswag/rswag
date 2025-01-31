@@ -280,7 +280,7 @@ module Rswag
           context 'with no additional properties enabled' do
             let(:openapi_no_additional_properties) { true }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties disabled' do
@@ -293,7 +293,7 @@ module Rswag
             let(:openapi_no_additional_properties) { false }
             let(:metadata) { super().merge(openapi_no_additional_properties: true) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties validation enabled in config but disabled in metadata' do
@@ -343,7 +343,7 @@ module Rswag
             context 'with no additional properties enabled' do
               let(:openapi_no_additional_properties) { true }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with no additional properties disabled' do
@@ -356,7 +356,7 @@ module Rswag
               let(:openapi_no_additional_properties) { false }
               let(:metadata) { super().merge(openapi_no_additional_properties: true) }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with no additional properties validation enabled in config but disabled in metadata' do
@@ -374,53 +374,53 @@ module Rswag
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required disabled' do
             let(:openapi_all_properties_required) { false }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required disabled in config but enabled in metadata' do
             let(:openapi_all_properties_required) { false }
             let(:metadata) { super().merge(openapi_all_properties_required: true) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required enabled in config but disabled in metadata' do
             let(:openapi_all_properties_required) { true }
             let(:metadata) { super().merge(openapi_all_properties_required: false) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties enabled' do
             let(:openapi_no_additional_properties) { true }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties disabled' do
             let(:openapi_no_additional_properties) { false }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties validation disabled in config but enabled in metadata' do
             let(:openapi_no_additional_properties) { false }
             let(:metadata) { super().merge(openapi_no_additional_properties: true) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties validation enabled in config but disabled in metadata' do
             let(:openapi_no_additional_properties) { true }
             let(:metadata) { super().merge(openapi_no_additional_properties: false) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
         end
 
@@ -430,53 +430,53 @@ module Rswag
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required disabled' do
             let(:openapi_all_properties_required) { false }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required disabled in config but enabled in metadata' do
             let(:openapi_all_properties_required) { false }
             let(:metadata) { super().merge(openapi_all_properties_required: true) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with all properties required enabled in config but disabled in metadata' do
             let(:openapi_all_properties_required) { true }
             let(:metadata) { super().merge(openapi_all_properties_required: false) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties enabled' do
             let(:openapi_no_additional_properties) { true }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties disabled' do
             let(:openapi_no_additional_properties) { false }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties validation disabled in config but enabled in metadata' do
             let(:openapi_no_additional_properties) { false }
             let(:metadata) { super().merge(openapi_no_additional_properties: true) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'with no additional properties validation enabled in config but disabled in metadata' do
             let(:openapi_no_additional_properties) { true }
             let(:metadata) { super().merge(openapi_no_additional_properties: false) }
 
-            it { expect { call }.to raise_error /Expected response body/ }
+            it { expect { call }.to raise_error(/Expected response body/) }
           end
 
           context 'when schema does not have required property' do
@@ -493,7 +493,7 @@ module Rswag
             context 'with all properties required enabled' do
               let(:openapi_all_properties_required) { true }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with all properties required disabled' do
@@ -506,7 +506,7 @@ module Rswag
               let(:openapi_all_properties_required) { false }
               let(:metadata) { super().merge(openapi_all_properties_required: true) }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with all properties required enabled in config but disabled in metadata' do
@@ -519,7 +519,7 @@ module Rswag
             context 'with no additional properties enabled' do
               let(:openapi_no_additional_properties) { true }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with no additional properties disabled' do
@@ -532,7 +532,7 @@ module Rswag
               let(:openapi_no_additional_properties) { false }
               let(:metadata) { super().merge(openapi_no_additional_properties: true) }
 
-              it { expect { call }.to raise_error /Expected response body/ }
+              it { expect { call }.to raise_error(/Expected response body/) }
             end
 
             context 'with no additional properties validation enabled in config but disabled in metadata' do
