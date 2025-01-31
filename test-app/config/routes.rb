@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 TestApp::Application.routes.draw do
-
   post '/blogs/flexible', to: 'blogs#flexible_create'
   post '/blogs/alternate', to: 'blogs#alternate_create'
   resources :blogs
