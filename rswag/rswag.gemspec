@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests. Currently only OpenAPI 3.0 is supported. More about the OpenAPI initiative here: http://spec.openapis.org/'
   s.license     = 'MIT'
 
-  s.files = Dir['{lib}/**/*'] + [ 'MIT-LICENSE' ]
+  s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE']
 
   s.add_dependency 'rswag-specs', ENV['RUBYGEMS_VERSION'] || '0.0.0'
   s.add_dependency 'rswag-api', ENV['RUBYGEMS_VERSION'] || '0.0.0'

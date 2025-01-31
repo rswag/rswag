@@ -5,17 +5,17 @@ module Rswag
     class Middleware < Rack::Static
       def initialize(app, config)
         @config = config
-        super(app, urls: [ '' ], root: config.assets_root )
+        super(app, urls: [''], root: config.assets_root )
       end
 
       def call(env)
         if base_path?(env)
           redirect_uri = "#{env['SCRIPT_NAME'].chomp('/')}/index.html"
-          return [ 301, { 'Location' => redirect_uri }, [ ] ]
+          return [301, { 'Location' => redirect_uri }, []]
         end
 
         if index_path?(env)
-          return [ 200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [ render_template ] ]
+          return [200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [render_template]]
         end
 
         super
