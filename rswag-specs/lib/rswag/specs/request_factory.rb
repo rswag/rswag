@@ -54,7 +54,7 @@ module Rswag
         schemes = security_version(scheme_names, openapi_spec)
 
         schemes.map do |scheme|
-          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param = scheme[:type] == :apiKey ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(schema: { type: :string }, required: requirements.one?)
         end
       end
@@ -90,8 +90,8 @@ module Rswag
 
         server = openapi_spec[:servers].first
         variables = {}
-        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
-        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym] }
+        server.fetch(:variables, {}).each_pair { |k, v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[::Regexp.last_match(1).to_sym] }
         URI(base_path).path
       end
 
@@ -103,7 +103,7 @@ module Rswag
             begin
               param_value = params.fetch(p[:name].to_s).to_s
             rescue KeyError
-              raise ArgumentError.new("`#{p[:name]}`" \
+              raise ArgumentError, ("`#{p[:name]}`" \
                 'parameter key present, but not defined within example group' \
                 '(i. e `it` or `let` block)')
             end
@@ -118,51 +118,50 @@ module Rswag
       end
 
       def build_query_string_part(param, value, _openapi_spec)
-        raise ArgumentError.new("'type' is not supported field for Parameter") unless param[:type].nil?
+        raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
 
         name = param[:name]
         escaped_name = CGI.escape(name.to_s)
 
         # NOTE: https://swagger.io/docs/specification/serialization/
         return unless param[:schema]
-          style = param[:style]&.to_sym || :form
-          explode = param[:explode].nil? ? true : param[:explode]
-          type = param.dig(:schema, :type)&.to_sym
 
-          case type
-          when :object
-            case style
-            when :deepObject
-              return { name => value }.to_query
-            when :form
-              return value.to_query if explode
-                
-              
-                return "#{escaped_name}=" + value.to_a.flatten.map {|v| CGI.escape(v.to_s) }.join(',')
-              
-            end
-          when :array
-            case explode
-            when true
-              return value.to_a.flatten.map {|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
-            else
-              separator = case style
-                          when :form then ','
-                          when :spaceDelimited then '%20'
-                          when :pipeDelimited then '|'
-                          end
-              return "#{escaped_name}=" + value.to_a.flatten.map {|v| CGI.escape(v.to_s) }.join(separator)
-            end
-          else
-            return "#{escaped_name}=#{CGI.escape(value.to_s)}"
+        style = param[:style]&.to_sym || :form
+        explode = param[:explode].nil? ? true : param[:explode]
+        type = param.dig(:schema, :type)&.to_sym
+
+        case type
+        when :object
+          case style
+          when :deepObject
+            { name => value }.to_query
+          when :form
+            return value.to_query if explode
+
+            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
+
           end
-        
+        when :array
+          case explode
+          when true
+            value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
+          else
+            separator = case style
+                        when :form then ','
+                        when :spaceDelimited then '%20'
+                        when :pipeDelimited then '|'
+                        end
+            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
+          end
+        else
+          "#{escaped_name}=#{CGI.escape(value.to_s)}"
+        end
       end
 
       def add_headers(request, metadata, openapi_spec, parameters, example)
         tuples = parameters
-          .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
+                 .select { |p| p[:in] == :header }
+                 .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
@@ -181,7 +180,7 @@ module Rswag
         # Host header
         host = metadata[:operation][:host] || openapi_spec[:host]
         if host.present?
-          host = example.respond_to?(:'Host') ? example.send(:'Host') : host
+          host = example.respond_to?(:Host) ? example.send(:Host) : host
           tuples << ['Host', host]
         end
 
@@ -189,11 +188,11 @@ module Rswag
         rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
-              when 'Accept' then 'HTTP_ACCEPT'
-              when 'Content-Type' then 'CONTENT_TYPE'
-              when 'Authorization' then 'HTTP_AUTHORIZATION'
-              when 'Host' then 'HTTP_HOST'
-              else pair[0]
+            when 'Accept' then 'HTTP_ACCEPT'
+            when 'Content-Type' then 'CONTENT_TYPE'
+            when 'Authorization' then 'HTTP_AUTHORIZATION'
+            when 'Host' then 'HTTP_HOST'
+            else pair[0]
             end,
             pair[1]
           ]
@@ -208,7 +207,7 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type =~ /\Aapplication\/([0-9A-Za-z._-]+\+json\z|json\z)/
+                            elsif content_type =~ %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
@@ -221,8 +220,8 @@ module Rswag
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
-          .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], params.fetch(p[:name])] }
+                 .select { |p| p[:in] == :formData }
+                 .map { |p| [p[:name], params.fetch(p[:name])] }
         Hash[tuples]
       end
 
