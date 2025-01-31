@@ -5,7 +5,6 @@ require 'generators/rswag/api/install/install_generator'
 
 module Rswag
   module Api
-
     describe InstallGenerator do
       include GeneratorSpec::TestCase
       destination File.expand_path('tmp', __dir__)

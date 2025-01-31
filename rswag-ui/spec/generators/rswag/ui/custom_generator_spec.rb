@@ -5,7 +5,6 @@ require 'generators/rswag/ui/custom/custom_generator'
 
 module Rswag
   module Ui
-
     describe CustomGenerator do
       include GeneratorSpec::TestCase
       destination File.expand_path('tmp', __dir__)
