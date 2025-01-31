@@ -3,7 +3,6 @@
 require 'fileutils'
 
 class BlogsController < ApplicationController
-
   # POST /blogs
   def create
     @blog = Blog.create(params.require(:blog).permit(:title, :content))

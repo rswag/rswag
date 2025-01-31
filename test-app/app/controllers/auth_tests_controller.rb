@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AuthTestsController < ApplicationController
-
   # POST /auth-tests/basic
   def basic
     return head :unauthorized unless authenticate_basic
