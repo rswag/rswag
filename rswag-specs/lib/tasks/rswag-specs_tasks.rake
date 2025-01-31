@@ -21,7 +21,6 @@ namespace :rswag do
         '--order defined'
       ] << additional_rspec_opts
 
-
       if Rswag::Specs.config.rswag_dry_run
         t.rspec_opts += ['--dry-run']
       end

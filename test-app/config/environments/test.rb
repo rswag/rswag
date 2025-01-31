@@ -31,7 +31,6 @@ TestApp::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 

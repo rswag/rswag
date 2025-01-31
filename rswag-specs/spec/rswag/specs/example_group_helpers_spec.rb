@@ -179,7 +179,6 @@ module Rswag
         end
       end
 
-
       describe '#examples(example)' do
         let(:mime) { 'application/json' }
         let(:json_example) do
