@@ -161,10 +161,10 @@ module Rswag
         end
 
         context 'when adding multiple examples with additional information' do
-          before {
+          before do
             subject.request_body_example(value: example_one)
             subject.request_body_example(value: example_two, name: example_two_name, summary: example_two_summary)
-          }
+          end
           let(:api_metadata) { { operation: {} } }
           let(:example_one) { { field: 'A', another_field: 'B' } }
           let(:example_two) { { field: 'B', another_field: 'C' } }
@@ -236,13 +236,13 @@ module Rswag
       end
 
       describe '#run_test!' do
-        let(:api_metadata) {
+        let(:api_metadata) do
           {
             response: {
               code: '200'
             }
           }
-        }
+        end
 
         before do
           allow(subject).to receive(:before)
