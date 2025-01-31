@@ -6,11 +6,8 @@ require 'rack'
 module Rswag
   module Ui
     class Configuration
-      attr_reader :template_locations
-      attr_accessor :basic_auth_enabled
-      attr_accessor :config_object
-      attr_accessor :oauth_config_object
-      attr_reader :assets_root
+      attr_reader :template_locations, :assets_root
+      attr_accessor :basic_auth_enabled, :config_object, :oauth_config_object
 
       def initialize
         @template_locations = [
