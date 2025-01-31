@@ -32,7 +32,7 @@ module Rswag
 
       private
 
-      def expand_parameters(metadata, openapi_spec, example)
+      def expand_parameters(metadata, openapi_spec, _example)
         operation_params = metadata[:operation][:parameters] || []
         path_item_params = metadata[:path_item][:parameters] || []
         security_params = derive_security_params(metadata, openapi_spec)
@@ -72,7 +72,7 @@ module Rswag
         definitions[key]
       end
 
-      def key_version(ref, openapi_spec)
+      def key_version(ref, _openapi_spec)
         ref.sub('#/components/parameters/', '').to_sym
       end
 
@@ -95,7 +95,7 @@ module Rswag
         URI(base_path).path
       end
 
-      def add_path(request, metadata, openapi_spec, parameters, example)
+      def add_path(request, metadata, openapi_spec, parameters, _example)
         template = base_path_from_servers(openapi_spec) + metadata[:path_item][:template]
 
         request[:path] = template.tap do |path_template|
@@ -117,7 +117,7 @@ module Rswag
         end
       end
 
-      def build_query_string_part(param, value, openapi_spec)
+      def build_query_string_part(param, value, _openapi_spec)
         raise ArgumentError.new("'type' is not supported field for Parameter") unless param[:type].nil?
 
         name = param[:name]
@@ -215,7 +215,7 @@ module Rswag
                             end
       end
 
-      def build_form_payload(parameters, example)
+      def build_form_payload(parameters, _example)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
@@ -226,7 +226,7 @@ module Rswag
         Hash[tuples]
       end
 
-      def build_raw_payload(parameters, example)
+      def build_raw_payload(parameters, _example)
         body_param = parameters.select { |p| p[:in] == :body }.first
         return nil unless body_param
 
