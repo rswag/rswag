@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/api/middleware'
 
 module Rswag

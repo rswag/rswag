@@ -1,4 +1,6 @@
 #!/usr/bin/env rake
+# frozen_string_literal: true
+
 begin
   require 'bundler/setup'
 rescue LoadError

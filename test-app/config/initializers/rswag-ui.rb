@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rswag::Ui.configure do |c|
 
   # List the OpenAPI endpoints that you want to be documented through the swagger-ui

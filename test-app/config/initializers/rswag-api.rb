@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rswag::Api.configure do |c|
   # Specify a root folder where OpenAPI JSON files are located
   # This is used by the OpenAPI middleware to serve requests for API descriptions
