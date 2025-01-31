@@ -10,14 +10,14 @@ module Rswag
         describe(template, *tags, **metadata, &block)
       end
 
-      [:get, :post, :patch, :put, :delete, :head, :options, :trace].each do |verb|
+      %i[get post patch put delete head options trace].each do |verb|
         define_method(verb) do |summary, *tags, **metadata, &block|
           api_metadata = { operation: { verb: verb, summary: summary } }.deep_merge(metadata)
           describe(verb, *tags, **api_metadata, &block)
         end
       end
 
-      [:operationId, :deprecated, :security].each do |attr_name|
+      %i[operationId deprecated security].each do |attr_name|
         define_method(attr_name) do |value|
           metadata[:operation][attr_name] = value
         end
@@ -33,7 +33,7 @@ module Rswag
       end
 
       # These are array properties - note the splat operator
-      [:tags, :consumes, :produces, :schemes].each do |attr_name|
+      %i[tags consumes produces schemes].each do |attr_name|
         define_method(attr_name) do |*value|
           metadata[:operation][attr_name] = value
         end
