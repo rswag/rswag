@@ -5,7 +5,7 @@ module Rswag
     class Middleware < Rack::Static
       def initialize(app, config)
         @config = config
-        super(app, urls: [''], root: config.assets_root )
+        super(app, urls: [''], root: config.assets_root)
       end
 
       def call(env)
