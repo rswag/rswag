@@ -6,11 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## Added
+## Security
 
-## Changed
-
-## Fixed
+- Bump "swagger-ui-dist" to "5.18.3" in rswag-ui due to [CVE-2024-47875](https://nvd.nist.gov/vuln/detail/CVE-2024-47875) (https://github.com/rswag/rswag/pull/670)
 
 ## [2.16.0] - 2024-11-13
 
