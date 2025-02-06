@@ -100,7 +100,7 @@ There is also a generator which can help get you started `rails generate rspec:s
     # spec/requests/blogs_spec.rb
     require 'swagger_helper'
 
-    describe 'Blogs API' do
+    RSpec.describe 'Blogs API', type: :request do
 
       path '/blogs' do
 
