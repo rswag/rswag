@@ -406,7 +406,7 @@ module Rswag
 
           context 'missing body parameter' do
             before do
-              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, required: true, schema: { type: 'object' } }]
               allow(example).to receive(:comment).and_raise(NoMethodError, "undefined method 'comment'")
               allow(example).to receive(:respond_to?).with(:'Content-Type')
               allow(example).to receive(:respond_to?).with('comment').and_return(false)
