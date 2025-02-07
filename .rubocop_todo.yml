@@ -30,15 +30,6 @@ Lint/MissingSuper:
     - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
     - "rswag-specs/lib/rswag/specs/request_factory.rb"
 
-# Offense count: 4
-# This cop supports safe autocorrection (--autocorrect).
-Lint/ScriptPermission:
-  Exclude:
-    - "rswag-api/Rakefile"
-    - "rswag-specs/Rakefile"
-    - "rswag-ui/Rakefile"
-    - "test-app/Rakefile"
-
 # Offense count: 14
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
 Metrics/AbcSize:
