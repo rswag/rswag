@@ -6,13 +6,13 @@ require 'rswag/api/middleware'
 require 'rswag/api/configuration'
 
 describe Rswag::Api::Middleware do
+  subject { described_class.new(app, config) }
+
   let(:app) { double('app') }
   let(:openapi_root) { File.expand_path('fixtures/openapi', __dir__) }
   let(:config) do
     Rswag::Api::Configuration.new.tap { |c| c.openapi_root = openapi_root }
   end
-
-  subject { described_class.new(app, config) }
 
   describe '#call(env)' do
     let(:response) { subject.call(env) }
