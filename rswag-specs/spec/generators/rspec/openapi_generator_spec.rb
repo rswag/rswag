@@ -27,7 +27,7 @@ module Rspec
 
     it 'generates spec file for a controller in a defined directory' do
       allow_any_instance_of(Rswag::RouteParser).to receive(:routes).and_return(fake_routes)
-      run_generator %w(Posts::CommentsController --spec_path=integration)
+      run_generator %w[Posts::CommentsController --spec_path=integration]
 
       assert_file('spec/integration/posts/comments_spec.rb') do |content|
         assert_match(/parameter name: 'post_id', in: :path, type: :string/, content)
