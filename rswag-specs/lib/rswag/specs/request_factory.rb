@@ -34,7 +34,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], swagger_doc) : p }
           .uniq { |p| p[:name] }
-          .reject { |p| p[:required] == false && !example.respond_to?(extract_getter(p)) }
+          .select { |p| p[:required] == true || p[:in] == :path || example.respond_to?(extract_getter(p)) }
       end
 
       def derive_security_params(metadata, swagger_doc)
