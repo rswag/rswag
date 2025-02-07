@@ -8,7 +8,7 @@ module Rswag
       end
 
       generators do
-        require 'generators/rspec/openapi_generator.rb'
+        require 'generators/rspec/openapi_generator'
       end
     end
   end
