@@ -18,13 +18,6 @@ Gemspec/RequiredRubyVersion:
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowForAlignment.
-Layout/CommentIndentation:
-  Exclude:
-    - 'rswag-ui/spec/spec_helper.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
 Layout/EmptyLineAfterGuardClause:
   Exclude:
     - 'rswag-specs/lib/rswag/specs/example_group_helpers.rb'
