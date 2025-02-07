@@ -302,14 +302,6 @@ Style/MultilineBlockChain:
     - "rswag-specs/lib/rswag/route_parser.rb"
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - "rswag-specs/lib/rswag/route_parser.rb"
-
-# Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: ConvertCodeThatCanStartToReturnNil, AllowedMethods, MaxChainLength.
 # AllowedMethods: present?, blank?, presence, try, try!
