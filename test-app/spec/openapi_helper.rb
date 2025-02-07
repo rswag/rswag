@@ -6,7 +6,7 @@ RSpec.configure do |config|
   # Specify a root folder where OpenAPI JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve OpenAPI from the same folder
-  config.openapi_root = "#{Rails.root}/openapi"
+  config.openapi_root = "#{Rails.root.join('openapi')}"
   config.rswag_dry_run = false
   # Define one or more OpenAPI documents and provide global metadata for each one
   # When you run the 'rswag:specs:to_swagger' rake task, the complete OpenAPI will
