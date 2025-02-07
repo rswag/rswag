@@ -16,14 +16,6 @@ Gemspec/RequiredRubyVersion:
     - "rswag-ui/rswag-ui.gemspec"
     - "rswag/rswag.gemspec"
 
-# Offense count: 5
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: normal, indented_internal_methods
-Layout/IndentationConsistency:
-  Exclude:
-    - "rswag-specs/lib/rswag/specs/example_group_helpers.rb"
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowDoxygenCommentStyle, AllowGemfileRubyComment, AllowRBSInlineAnnotation, AllowSteepAnnotation.
