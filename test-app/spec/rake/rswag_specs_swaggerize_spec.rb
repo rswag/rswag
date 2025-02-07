@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'rake'
 
 RSpec.describe 'rswag:specs:swaggerize' do
-  let(:openapi_root) { "#{Rails.root}/openapi" }
+  let(:openapi_root) { "#{Rails.root.join('openapi')}" }
 
   before do
     TestApp::Application.load_tasks
