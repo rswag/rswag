@@ -14,9 +14,7 @@ module Rswag
 
       def openapi_specs
         @openapi_specs ||= begin
-          if @rspec_config.openapi_specs.nil? || @rspec_config.openapi_specs.empty?
-            raise ConfigurationError, 'No openapi_specs defined. See openapi_helper.rb'
-          end
+          raise ConfigurationError, 'No openapi_specs defined. See openapi_helper.rb' if @rspec_config.openapi_specs.nil? || @rspec_config.openapi_specs.empty?
 
           @rspec_config.openapi_specs
         end
@@ -32,13 +30,9 @@ module Rswag
 
       def openapi_format
         @openapi_format ||= begin
-          if @rspec_config.openapi_format.nil? || @rspec_config.openapi_format.empty?
-            @rspec_config.openapi_format = :json
-          end
+          @rspec_config.openapi_format = :json if @rspec_config.openapi_format.nil? || @rspec_config.openapi_format.empty?
 
-          unless %i[json yaml].include?(@rspec_config.openapi_format)
-            raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'"
-          end
+          raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'" unless %i[json yaml].include?(@rspec_config.openapi_format)
 
           @rspec_config.openapi_format
         end

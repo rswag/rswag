@@ -12,9 +12,7 @@ module Rswag
       end
 
       def validate(current_schema, data, *)
-        if data.nil? && (current_schema.schema['nullable'] == true || current_schema.schema['x-nullable'] == true)
-          return
-        end
+        return if data.nil? && (current_schema.schema['nullable'] == true || current_schema.schema['x-nullable'] == true)
 
         super
       end
