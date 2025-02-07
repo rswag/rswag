@@ -296,16 +296,6 @@ Style/HashLikeCase:
   Exclude:
     - "rswag-specs/lib/rswag/specs/request_factory.rb"
 
-# Offense count: 9
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Exclude:
-    - "rswag-specs/lib/rswag/specs/configuration.rb"
-    - "rswag-specs/lib/rswag/specs/extended_schema.rb"
-    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
-    - "rswag-specs/lib/rswag/specs/response_validator.rb"
-    - "rswag-ui/lib/rswag/ui/middleware.rb"
-
 # Offense count: 3
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowedMethods, AllowedPatterns.

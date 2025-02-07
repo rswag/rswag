@@ -165,9 +165,7 @@ module Rswag
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
         parameter[:schema] ||= {}
-        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
-          parameter[:required] = parameter[:schema].delete(:required)
-        end
+        parameter[:required] = parameter[:schema].delete(:required) if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
         #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
@@ -181,9 +179,7 @@ module Rswag
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
-        unless mime_list
-          raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content'
-        end
+        raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content' unless mime_list
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
