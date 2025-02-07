@@ -12,6 +12,7 @@ module Rswag
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
       end
+
       let(:config) { double('config') }
       let(:openapi_spec) { { openapi: '3.0' } }
       MockExample = Struct.new(:request_headers, :request_params)
