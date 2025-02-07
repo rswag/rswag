@@ -150,13 +150,6 @@ RSpec/MessageChain:
   Exclude:
     - "rswag-specs/spec/rswag/route_parser_spec.rb"
 
-# Offense count: 2
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: have_received, receive
-RSpec/MessageSpies:
-  Exclude:
-    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
-
 # Offense count: 25
 RSpec/MultipleExpectations:
   Max: 3

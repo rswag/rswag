@@ -255,19 +255,20 @@ module Rswag
 
         before do
           allow(subject).to receive(:before)
+          allow(subject).to receive(:it)
         end
 
         it 'executes a specification' do
           expected_spec_description = 'returns a 200 response'
-          expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
           subject.run_test!
+          expect(subject).to have_received(:it).with(expected_spec_description, rswag: true)
         end
 
         context 'when options[:description] is passed' do
           it 'executes a specification described with passed description' do
             expected_spec_description = 'returns a 200 response - with a custom description'
-            expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
             subject.run_test!(expected_spec_description)
+            expect(subject).to have_received(:it).with(expected_spec_description, rswag: true)
           end
         end
       end
