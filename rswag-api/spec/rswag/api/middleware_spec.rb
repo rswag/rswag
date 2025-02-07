@@ -27,12 +27,12 @@ describe Rswag::Api::Middleware do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
       it 'returns a 200 status' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response.first).to eql('200')
       end
 
       it 'returns contents of the openapi file' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response[1]).to include('Content-Type' => 'application/json')
         expect(response[2].join).to include('"title":"API V1"')
       end
@@ -43,7 +43,7 @@ describe Rswag::Api::Middleware do
         before { config.openapi_root = openapi_root_pathname }
 
         it 'returns a 200 status' do
-          expect(response.length).to eql(3)
+          expect(response.length).to be(3)
           expect(response.first).to eql('200')
         end
       end
@@ -58,7 +58,7 @@ describe Rswag::Api::Middleware do
         end
 
         it 'returns a 200 status' do
-          expect(response.length).to eql(3)
+          expect(response.length).to be(3)
           expect(response.first).to eql('200')
         end
 
@@ -73,7 +73,7 @@ describe Rswag::Api::Middleware do
         end
 
         it 'returns a 200 status' do
-          expect(response.length).to eql(3)
+          expect(response.length).to be(3)
           expect(response.first).to eql('200')
         end
 
@@ -122,7 +122,7 @@ describe Rswag::Api::Middleware do
       end
 
       it 'locates files at the provided openapi_root' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response[1]).to include('Content-Type' => 'application/json')
         expect(response[2].join).to include('"openapi":"3.0.1"')
       end
@@ -139,7 +139,7 @@ describe Rswag::Api::Middleware do
       end
 
       it 'locates files at the provided openapi_root' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response[1]).to include('Content-Type' => 'application/json')
         expect(response[2].join).to include('"openapi":"3.0.1"')
       end
@@ -153,7 +153,7 @@ describe Rswag::Api::Middleware do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
       it 'applies the filter prior to serialization' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response[2].join).to include('"host":"tempuri.org"')
       end
     end
@@ -162,12 +162,12 @@ describe Rswag::Api::Middleware do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.yml') }
 
       it 'returns a 200 status' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response.first).to eql('200')
       end
 
       it 'returns contents of the openapi file' do
-        expect(response.length).to eql(3)
+        expect(response.length).to be(3)
         expect(response[1]).to include('Content-Type' => 'text/yaml')
         expect(response[2].join).to include('title: API V1')
       end
