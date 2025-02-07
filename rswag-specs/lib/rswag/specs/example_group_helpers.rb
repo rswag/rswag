@@ -57,7 +57,8 @@ module Rswag
         metadata[:operation][:request_examples] ||= []
         example = { value: value }
         example[:summary] = summary if summary
-        # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
+        # We need the examples to have a unique name for a set of examples,
+        # so just make the name the length if one isn't provided.
         example[:name] = name || metadata[:operation][:request_examples].length
         metadata[:operation][:request_examples] << example
       end

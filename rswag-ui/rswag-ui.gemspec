@@ -9,9 +9,16 @@ Gem::Specification.new do |s|
   s.authors     = ['Richie Morris', 'Greg Myers', 'Jay Danielian']
   s.email       = ['domaindrivendev@gmail.com']
   s.homepage    = 'https://github.com/rswag/rswag'
-  s.summary     = 'A Rails Engine that includes swagger-ui and powers it from configured OpenAPI (formerly named Swagger) endpoints'
-  s.description = 'Expose beautiful API documentation, powered by Swagger JSON endpoints, including a UI to explore and test operations. More about the OpenAPI initiative here: http://spec.openapis.org/'
-  s.license     = 'MIT'
+  s.summary     = <<~SUMMARY
+    A Rails Engine that includes swagger-ui and powers it from configured OpenAPI
+    (formerly named Swagger) endpoints
+  SUMMARY
+  s.description = <<~DESCRIPTION
+    Generate beautiful API documentation, including a UI to explore and test operations,
+    directly from your rspec integration tests. OpenAPI 3 supported. More about the
+    OpenAPI initiative here: http://spec.openapis.org/
+  DESCRIPTION
+  s.license = 'MIT'
 
   s.files = Dir.glob('{lib,node_modules}/**/*') + %w[MIT-LICENSE Rakefile]
 
