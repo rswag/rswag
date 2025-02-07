@@ -14,7 +14,10 @@ module Rswag
           return [301, { 'Location' => redirect_uri }, []]
         end
 
-        return [200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp }, [render_template]] if index_path?(env)
+        if index_path?(env)
+          return [200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp },
+                  [render_template]]
+        end
 
         super
       end
