@@ -2,7 +2,7 @@
 
 require 'openapi_helper'
 
-RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
+RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
   let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
 
   path '/blogs' do

@@ -2,7 +2,7 @@
 
 require 'openapi_helper'
 
-RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json' do
+RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request do
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do
       tags 'Auth Tests'

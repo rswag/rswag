@@ -230,13 +230,6 @@ RSpec/RepeatedExampleGroupDescription:
   Exclude:
     - "rswag-api/spec/rswag/api/middleware_spec.rb"
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/SortMetadata:
-  Exclude:
-    - "test-app/spec/integration/auth_tests_spec.rb"
-    - "test-app/spec/integration/blogs_spec.rb"
-
 # Offense count: 12
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:
