@@ -203,12 +203,6 @@ RSpec/VerifiedDoubles:
     - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
     - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Rails/ApplicationRecord:
-  Exclude:
-    - "test-app/app/models/blog.rb"
-
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: NilOrEmpty, NotPresent, UnlessPresent.
