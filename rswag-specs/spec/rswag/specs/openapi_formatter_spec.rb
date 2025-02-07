@@ -12,6 +12,7 @@ module Rswag
       before do
         allow(config).to receive(:openapi_root).and_return(openapi_root)
       end
+
       let(:config) { double('config') }
       let(:output) { double('output').as_null_object }
       let(:openapi_root) { File.expand_path('tmp/openapi', __dir__) }
@@ -21,6 +22,7 @@ module Rswag
           allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
           subject.example_group_finished(notification)
         end
+
         let(:request_examples) { nil }
         let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
         let(:api_metadata) do

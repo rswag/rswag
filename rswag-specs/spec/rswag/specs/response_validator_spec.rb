@@ -86,11 +86,13 @@ module Rswag
 
         context 'response code differs from metadata' do
           before { response.code = '400' }
+
           it { expect { call }.to raise_error(/Expected response code/) }
         end
 
         context 'response headers differ from metadata' do
           before { response.headers = {} }
+
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
@@ -101,6 +103,7 @@ module Rswag
               'X-Per-Page' => 25
             }
           end
+
           it { expect { call }.to_not raise_error }
         end
 
@@ -112,6 +115,7 @@ module Rswag
               'X-Per-Page' => nil
             }
           end
+
           it { expect { call }.to_not raise_error }
         end
 
@@ -122,11 +126,13 @@ module Rswag
               'X-Cursor' => 'test_cursor'
             }
           end
+
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
         context 'response body differs from metadata' do
           before { response.body = '{"foo":"Some comment"}' }
+
           it { expect { call }.to raise_error(/Expected response body/) }
         end
 

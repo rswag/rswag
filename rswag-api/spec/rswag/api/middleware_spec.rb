@@ -56,6 +56,7 @@ describe Rswag::Api::Middleware do
         before do
           config.openapi_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
         end
+
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
           expect(response.first).to eql('200')
@@ -70,6 +71,7 @@ describe Rswag::Api::Middleware do
         before do
           config.openapi_headers = { 'Access-Control-Allow-Origin' => '*' }
         end
+
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
           expect(response.first).to eql('200')
@@ -147,6 +149,7 @@ describe Rswag::Api::Middleware do
       before do
         config.openapi_filter = ->(openapi, env) { openapi['host'] = env['HTTP_HOST'] }
       end
+
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
       it 'applies the filter prior to serialization' do
