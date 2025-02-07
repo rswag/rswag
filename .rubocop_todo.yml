@@ -163,15 +163,6 @@ RSpec/EmptyHook:
   Exclude:
     - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
-# Offense count: 32
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/EmptyLineAfterFinalLet:
-  Exclude:
-    - "rswag-api/spec/rswag/api/middleware_spec.rb"
-    - "rswag-specs/spec/rswag/specs/configuration_spec.rb"
-    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
-    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
-
 # Offense count: 21
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowConsecutiveOneLiners.

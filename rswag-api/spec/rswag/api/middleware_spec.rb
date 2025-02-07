@@ -87,6 +87,7 @@ describe Rswag::Api::Middleware do
 
     context "given a path that doesn't map to any openapi file" do
       let(:env) { env_defaults.merge('PATH_INFO' => 'foobar.json') }
+
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end
@@ -98,6 +99,7 @@ describe Rswag::Api::Middleware do
 
     context 'Disallow path traversing on path info' do
       let(:env) { env_defaults.merge('PATH_INFO' => '../traverse-secret.yml') }
+
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end

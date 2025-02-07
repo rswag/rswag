@@ -93,6 +93,7 @@ module Rswag
         let(:openapi_format) { :json }
 
         let(:notification) { double('notification') }
+
         context 'with default format' do
           it 'writes the openapi_spec(s) to file' do
             expect(File).to exist("#{openapi_root}/v1/openapi.json")
