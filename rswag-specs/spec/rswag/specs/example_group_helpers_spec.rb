@@ -183,7 +183,7 @@ module Rswag
         let(:mime) { 'application/json' }
         let(:json_example) do
           {
-              foo: 'bar'
+            foo: 'bar'
           }
         end
         let(:api_metadata) { { response: {} } }
@@ -211,7 +211,7 @@ module Rswag
         let(:description) { 'this is an example description ' }
         let(:json_example) do
           {
-              foo: 'bar'
+            foo: 'bar'
           }
         end
         let(:api_metadata) { { response: {} } }
