@@ -237,10 +237,3 @@ Style/HashLikeCase:
 Style/MultilineBlockChain:
   Exclude:
     - "rswag-specs/lib/rswag/route_parser.rb"
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Exclude:
-    - "rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb"
