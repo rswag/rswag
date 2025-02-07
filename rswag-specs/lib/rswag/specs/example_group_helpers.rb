@@ -53,6 +53,7 @@ module Rswag
 
       def request_body_example(value:, summary: nil, name: nil)
         return unless metadata.key?(:operation)
+
           metadata[:operation][:request_examples] ||= []
           example = { value: value }
           example[:summary] = summary if summary
