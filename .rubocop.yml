@@ -12,6 +12,7 @@ inherit_from: .rubocop_todo.yml
 # See https://docs.rubocop.org/rubocop/configuration
 require:
   - rubocop-capybara
+  - rubocop-performance
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
