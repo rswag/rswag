@@ -6,16 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 4
-# Configuration parameters: Severity, Include.
-# Include: **/*.gemspec
-Gemspec/RequiredRubyVersion:
-  Exclude:
-    - "rswag-api/rswag-api.gemspec"
-    - "rswag-specs/rswag-specs.gemspec"
-    - "rswag-ui/rswag-ui.gemspec"
-    - "rswag/rswag.gemspec"
-
 # Offense count: 1
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: enums
