@@ -5,7 +5,7 @@ require 'rswag/specs/response_validator'
 module Rswag
   module Specs
     RSpec.describe ResponseValidator do
-      subject { ResponseValidator.new(config) }
+      subject { described_class.new(config) }
 
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)

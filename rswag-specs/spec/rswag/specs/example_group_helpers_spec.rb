@@ -8,7 +8,7 @@ module Rswag
       subject { double('example_group') }
 
       before do
-        subject.extend ExampleGroupHelpers
+        subject.extend described_class
         allow(subject).to receive(:describe)
         allow(subject).to receive(:context)
         allow(subject).to receive(:metadata).and_return(api_metadata)

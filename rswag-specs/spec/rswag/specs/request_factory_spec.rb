@@ -7,7 +7,7 @@ require 'rswag/specs/request_factory'
 module Rswag
   module Specs
     RSpec.describe RequestFactory do
-      subject { RequestFactory.new(metadata, example, config) }
+      subject { described_class.new(metadata, example, config) }
 
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)

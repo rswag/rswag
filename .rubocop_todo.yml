@@ -126,17 +126,6 @@ RSpec/DescribeClass:
 
 # Offense count: 4
 # This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: SkipBlocks, EnforcedStyle, OnlyStaticConstants.
-# SupportedStyles: described_class, explicit
-RSpec/DescribedClass:
-  Exclude:
-    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
-    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
-    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
-    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
-
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: AutoCorrect.
 RSpec/EmptyExampleGroup:
   Exclude:

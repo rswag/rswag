@@ -9,7 +9,7 @@ module Rswag
       subject { mock_example.new({}, {}) }
 
       before do
-        subject.extend(ExampleHelpers)
+        subject.extend(described_class)
         allow(Rswag::Specs).to receive(:config).and_return(config)
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
       end
