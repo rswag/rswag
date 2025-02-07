@@ -14,8 +14,6 @@ module Rswag
       end
 
       let(:config) { double('config') }
-      let(:openapi_spec) { { openapi: '3.0' } }
-      MockExample = Struct.new(:request_headers, :request_params)
       let(:example) { MockExample.new({}, {}) }
       let(:metadata) do
         {
@@ -23,6 +21,9 @@ module Rswag
           operation: { verb: :get }
         }
       end
+      let(:openapi_spec) { { openapi: '3.0' } }
+
+      MockExample = Struct.new(:request_headers, :request_params)
 
       describe '#build_request' do
         let(:request) { subject.build_request }
