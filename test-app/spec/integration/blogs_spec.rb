@@ -14,6 +14,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       produces 'application/json'
 
       let(:request_params) { { 'blog' => { title: 'foo', content: 'bar', status: 'published' } } }
+
       parameter name: :blog, in: :body, schema: {
         type: :object,
         required: true
@@ -90,6 +91,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '406', 'unsupported accept header' do
         let(:request_headers) { { 'Accept' => 'application/foo' } }
+
         run_test!
       end
     end
@@ -179,10 +181,11 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '404', 'blog not found' do
         let(:request_params) { { 'id' => 'invalid' } }
+
         run_test!
       end
 
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
+      response '200', 'blog found - openapi_all_properties_required = true', :openapi_all_properties_required do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -190,7 +193,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
         run_test!
       end
 
-      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
+      response '200', 'blog found - openapi_no_additional_properties = true', :openapi_no_additional_properties do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -227,6 +230,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '200', 'blog updated' do
         let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
+
         run_test!
       end
     end

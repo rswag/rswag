@@ -124,15 +124,6 @@ RSpec/DescribeClass:
   Exclude:
     - "test-app/spec/rake/rswag_specs_swaggerize_spec.rb"
 
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AutoCorrect.
-RSpec/EmptyExampleGroup:
-  Exclude:
-    - "rswag-api/spec/lib/rswag/api/configuration_spec.rb"
-    - "test-app/spec/integration/auth_tests_spec.rb"
-    - "test-app/spec/integration/blogs_spec.rb"
-
 # Offense count: 19
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:
