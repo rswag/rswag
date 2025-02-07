@@ -216,17 +216,6 @@ Rails/RakeEnvironment:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - "rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb"
-    - "rswag-api/spec/generators/rswag/api/tmp/config/routes.rb"
-    - "rswag-ui/spec/generators/rswag/ui/tmp/config/initializers/rswag_ui.rb"
-    - "rswag-ui/spec/generators/rswag/ui/tmp/config/routes.rb"
-
 # Offense count: 1
 # Configuration parameters: MinBranchesCount.
 Style/HashLikeCase:
