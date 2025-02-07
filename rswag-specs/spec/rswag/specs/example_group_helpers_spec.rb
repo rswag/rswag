@@ -182,7 +182,8 @@ module Rswag
           it 'assigns all examples to the metadata' do
             expect(api_metadata[:operation][:request_examples].length).to eq(2)
             expect(api_metadata[:operation][:request_examples][0]).to eq({ value: example_one, name: 0 })
-            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name, summary: example_two_summary })
+            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name,
+                                                                           summary: example_two_summary })
           end
         end
       end
