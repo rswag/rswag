@@ -203,16 +203,6 @@ RSpec/VerifiedDoubles:
     - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
     - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Whitelist, AllowedMethods, AllowedReceivers.
-# Whitelist: find_by_sql, find_by_token_for
-# AllowedMethods: find_by_sql, find_by_token_for
-# AllowedReceivers: Gem::Specification, page
-Rails/DynamicFindBy:
-  Exclude:
-    - "test-app/app/controllers/blogs_controller.rb"
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Include.
