@@ -16,14 +16,6 @@ Gemspec/RequiredRubyVersion:
     - "rswag-ui/rswag-ui.gemspec"
     - "rswag/rswag.gemspec"
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: space, no_space
-Layout/SpaceAroundEqualsInParameterDefault:
-  Exclude:
-    - "rswag-specs/lib/rswag/specs/example_group_helpers.rb"
-
 # Offense count: 1
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: enums
