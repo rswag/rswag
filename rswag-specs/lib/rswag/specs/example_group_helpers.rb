@@ -60,7 +60,6 @@ module Rswag
           # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
           example[:name] = name || metadata[:operation][:request_examples].length()
           metadata[:operation][:request_examples] << example
-
       end
 
       def response(code, description, metadata = {}, &block)

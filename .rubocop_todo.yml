@@ -11,16 +11,10 @@
 # Include: **/*.gemspec
 Gemspec/RequiredRubyVersion:
   Exclude:
-    - 'rswag-api/rswag-api.gemspec'
-    - 'rswag-specs/rswag-specs.gemspec'
-    - 'rswag-ui/rswag-ui.gemspec'
-    - 'rswag/rswag.gemspec'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Layout/EmptyLinesAroundMethodBody:
-  Exclude:
-    - 'rswag-specs/lib/rswag/specs/example_group_helpers.rb'
+    - "rswag-api/rswag-api.gemspec"
+    - "rswag-specs/rswag-specs.gemspec"
+    - "rswag-ui/rswag-ui.gemspec"
+    - "rswag/rswag.gemspec"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
@@ -28,7 +22,7 @@ Layout/EmptyLinesAroundMethodBody:
 # SupportedStyles: special_inside_parentheses, consistent, align_braces
 Layout/FirstHashElementIndentation:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
 
 # Offense count: 5
 # This cop supports safe autocorrection (--autocorrect).
@@ -36,14 +30,14 @@ Layout/FirstHashElementIndentation:
 # SupportedStyles: normal, indented_internal_methods
 Layout/IndentationConsistency:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/example_group_helpers.rb'
+    - "rswag-specs/lib/rswag/specs/example_group_helpers.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowDoxygenCommentStyle, AllowGemfileRubyComment, AllowRBSInlineAnnotation, AllowSteepAnnotation.
 Layout/LeadingCommentSpace:
   Exclude:
-    - 'rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb'
+    - "rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb"
 
 # Offense count: 6
 # This cop supports safe autocorrection (--autocorrect).
@@ -51,14 +45,14 @@ Layout/LeadingCommentSpace:
 # SupportedStyles: aligned, indented, indented_relative_to_receiver
 Layout/MultilineMethodCallIndentation:
   Exclude:
-    - 'rswag-specs/lib/rswag/route_parser.rb'
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
+    - "rswag-specs/lib/rswag/route_parser.rb"
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Layout/SpaceAfterComma:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
@@ -66,30 +60,30 @@ Layout/SpaceAfterComma:
 # SupportedStyles: space, no_space
 Layout/SpaceAroundEqualsInParameterDefault:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/example_group_helpers.rb'
+    - "rswag-specs/lib/rswag/specs/example_group_helpers.rb"
 
 # Offense count: 1
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: enums
 Lint/ConstantDefinitionInBlock:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
 
 # Offense count: 2
 # Configuration parameters: AllowedParentClasses.
 Lint/MissingSuper:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
-    - 'rswag-specs/lib/rswag/specs/request_factory.rb'
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
+    - "rswag-specs/lib/rswag/specs/request_factory.rb"
 
 # Offense count: 4
 # This cop supports safe autocorrection (--autocorrect).
 Lint/ScriptPermission:
   Exclude:
-    - 'rswag-api/Rakefile'
-    - 'rswag-specs/Rakefile'
-    - 'rswag-ui/Rakefile'
-    - 'test-app/Rakefile'
+    - "rswag-api/Rakefile"
+    - "rswag-specs/Rakefile"
+    - "rswag-ui/Rakefile"
+    - "test-app/Rakefile"
 
 # Offense count: 14
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
@@ -124,7 +118,7 @@ Metrics/PerceivedComplexity:
 # Offense count: 1
 Naming/AccessorMethodName:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
 
 # Offense count: 4
 # Configuration parameters: ExpectMatchingDefinition, CheckDefinitionPathHierarchy, CheckDefinitionPathHierarchyRoots, Regex, IgnoreExecutableScripts, AllowedAcronyms.
@@ -132,17 +126,17 @@ Naming/AccessorMethodName:
 # AllowedAcronyms: CLI, DSL, ACL, API, ASCII, CPU, CSS, DNS, EOF, GUID, HTML, HTTP, HTTPS, ID, IP, JSON, LHS, QPS, RAM, RHS, RPC, SLA, SMTP, SQL, SSH, TCP, TLS, TTL, UDP, UI, UID, UUID, URI, URL, UTF8, VM, XML, XMPP, XSRF, XSS
 Naming/FileName:
   Exclude:
-    - 'rswag-specs/lib/tasks/rswag-specs_tasks.rake'
-    - 'rswag-ui/lib/tasks/rswag-ui_tasks.rake'
-    - 'test-app/config/initializers/rswag-api.rb'
-    - 'test-app/config/initializers/rswag-ui.rb'
+    - "rswag-specs/lib/tasks/rswag-specs_tasks.rake"
+    - "rswag-ui/lib/tasks/rswag-ui_tasks.rake"
+    - "test-app/config/initializers/rswag-api.rb"
+    - "test-app/config/initializers/rswag-ui.rb"
 
 # Offense count: 2
 # Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.
 # AllowedNames: as, at, by, cc, db, id, if, in, io, ip, of, on, os, pp, to
 Naming/MethodParameterName:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
 
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, CheckMethodNames, CheckSymbols, AllowedIdentifiers, AllowedPatterns.
@@ -150,52 +144,52 @@ Naming/MethodParameterName:
 # AllowedIdentifiers: capture3, iso8601, rfc1123_date, rfc822, rfc2822, rfc3339, x86_64
 Naming/VariableNumber:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'test-app/spec/integration/blogs_spec.rb'
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "test-app/spec/integration/blogs_spec.rb"
 
 # Offense count: 2
 RSpec/AnyInstance:
   Exclude:
-    - 'rswag-specs/spec/generators/rspec/openapi_generator_spec.rb'
+    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
 # Offense count: 8
 # This cop supports unsafe autocorrection (--autocorrect-all).
 RSpec/BeEq:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/configuration_spec.rb'
+    - "rswag-specs/spec/rswag/specs/configuration_spec.rb"
 
 # Offense count: 10
 # This cop supports unsafe autocorrection (--autocorrect-all).
 RSpec/BeEql:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
 
 # Offense count: 7
 RSpec/BeforeAfterAll:
   Exclude:
-    - 'rswag-api/spec/generators/rswag/api/install_generator_spec.rb'
-    - 'rswag-specs/spec/generators/rspec/openapi_generator_spec.rb'
-    - 'rswag-specs/spec/generators/rswag/specs/install_generator_spec.rb'
-    - 'rswag-ui/spec/generators/rswag/ui/custom_generator_spec.rb'
-    - 'rswag-ui/spec/generators/rswag/ui/install_generator_spec.rb'
-    - 'rswag/spec/generators/rswag/specs/install_generator_spec.rb'
+    - "rswag-api/spec/generators/rswag/api/install_generator_spec.rb"
+    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
+    - "rswag-specs/spec/generators/rswag/specs/install_generator_spec.rb"
+    - "rswag-ui/spec/generators/rswag/ui/custom_generator_spec.rb"
+    - "rswag-ui/spec/generators/rswag/ui/install_generator_spec.rb"
+    - "rswag/spec/generators/rswag/specs/install_generator_spec.rb"
 
 # Offense count: 88
 # Configuration parameters: Prefixes, AllowedPatterns.
 # Prefixes: when, with, without
 RSpec/ContextWording:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/configuration_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
+    - "rswag-specs/spec/rswag/specs/configuration_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 1
 # Configuration parameters: IgnoredMetadata.
 RSpec/DescribeClass:
   Exclude:
-    - 'test-app/spec/rake/rswag_specs_swaggerize_spec.rb'
+    - "test-app/spec/rake/rswag_specs_swaggerize_spec.rb"
 
 # Offense count: 4
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -203,47 +197,47 @@ RSpec/DescribeClass:
 # SupportedStyles: described_class, explicit
 RSpec/DescribedClass:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 4
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: AutoCorrect.
 RSpec/EmptyExampleGroup:
   Exclude:
-    - 'rswag-api/spec/lib/rswag/api/configuration_spec.rb'
-    - 'test-app/spec/integration/auth_tests_spec.rb'
-    - 'test-app/spec/integration/blogs_spec.rb'
+    - "rswag-api/spec/lib/rswag/api/configuration_spec.rb"
+    - "test-app/spec/integration/auth_tests_spec.rb"
+    - "test-app/spec/integration/blogs_spec.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AutoCorrect.
 RSpec/EmptyHook:
   Exclude:
-    - 'rswag-specs/spec/generators/rspec/openapi_generator_spec.rb'
+    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
 # Offense count: 32
 # This cop supports safe autocorrection (--autocorrect).
 RSpec/EmptyLineAfterFinalLet:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/configuration_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
+    - "rswag-specs/spec/rswag/specs/configuration_spec.rb"
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
 
 # Offense count: 21
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowConsecutiveOneLiners.
 RSpec/EmptyLineAfterHook:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 19
 # Configuration parameters: CountAsOne.
@@ -253,44 +247,44 @@ RSpec/ExampleLength:
 # Offense count: 1
 RSpec/ExpectInHook:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AutoCorrect.
 RSpec/HooksBeforeExamples:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
 
 # Offense count: 2
 # Configuration parameters: Max, AllowedIdentifiers, AllowedPatterns.
 RSpec/IndexedLet:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 RSpec/LeadingSubject:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
-    - 'rswag-specs/spec/rswag/route_parser_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
+    - "rswag-specs/spec/rswag/route_parser_spec.rb"
 
 # Offense count: 1
 RSpec/LeakyConstantDeclaration:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
 
 # Offense count: 1
 RSpec/MessageChain:
   Exclude:
-    - 'rswag-specs/spec/rswag/route_parser_spec.rb'
+    - "rswag-specs/spec/rswag/route_parser_spec.rb"
 
 # Offense count: 2
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: have_received, receive
 RSpec/MessageSpies:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -298,7 +292,7 @@ RSpec/MessageSpies:
 # SupportedStyles: hash, symbol
 RSpec/MetadataStyle:
   Exclude:
-    - 'test-app/spec/features/openapi_ui_spec.rb'
+    - "test-app/spec/features/openapi_ui_spec.rb"
 
 # Offense count: 25
 RSpec/MultipleExpectations:
@@ -314,10 +308,10 @@ RSpec/MultipleMemoizedHelpers:
 # SupportedStyles: always, named_only
 RSpec/NamedSubject:
   Exclude:
-    - 'rswag-specs/spec/rswag/route_parser_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
+    - "rswag-specs/spec/rswag/route_parser_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
 
 # Offense count: 9
 # Configuration parameters: AllowedGroups.
@@ -330,72 +324,72 @@ RSpec/NestedGroups:
 # SupportedStyles: not_to, to_not
 RSpec/NotToNot:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 5
 # This cop supports unsafe autocorrection (--autocorrect-all).
 RSpec/ReceiveMessages:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 2
 RSpec/RepeatedExampleGroupBody:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
 
 # Offense count: 2
 RSpec/RepeatedExampleGroupDescription:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
 
 # Offense count: 4
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AutoCorrect.
 RSpec/ScatteredLet:
   Exclude:
-    - 'rswag-specs/spec/rswag/route_parser_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
+    - "rswag-specs/spec/rswag/route_parser_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AutoCorrect.
 RSpec/ScatteredSetup:
   Exclude:
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 RSpec/SortMetadata:
   Exclude:
-    - 'test-app/spec/integration/auth_tests_spec.rb'
-    - 'test-app/spec/integration/blogs_spec.rb'
+    - "test-app/spec/integration/auth_tests_spec.rb"
+    - "test-app/spec/integration/blogs_spec.rb"
 
 # Offense count: 12
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:
   Exclude:
-    - 'rswag-api/spec/rswag/api/middleware_spec.rb'
-    - 'rswag-specs/spec/rswag/route_parser_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/example_helpers_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/request_factory_spec.rb'
-    - 'rswag-specs/spec/rswag/specs/response_validator_spec.rb'
+    - "rswag-api/spec/rswag/api/middleware_spec.rb"
+    - "rswag-specs/spec/rswag/route_parser_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
+    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
+    - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
+    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Rails/ApplicationRecord:
   Exclude:
-    - 'test-app/app/models/blog.rb'
+    - "test-app/app/models/blog.rb"
 
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: NilOrEmpty, NotPresent, UnlessPresent.
 Rails/Blank:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/configuration.rb'
-    - 'rswag-specs/lib/rswag/specs/request_factory.rb'
+    - "rswag-specs/lib/rswag/specs/configuration.rb"
+    - "rswag-specs/lib/rswag/specs/request_factory.rb"
 
 # Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -405,7 +399,7 @@ Rails/Blank:
 # AllowedReceivers: Gem::Specification, page
 Rails/DynamicFindBy:
   Exclude:
-    - 'test-app/app/controllers/blogs_controller.rb'
+    - "test-app/app/controllers/blogs_controller.rb"
 
 # Offense count: 5
 # This cop supports safe autocorrection (--autocorrect).
@@ -413,10 +407,10 @@ Rails/DynamicFindBy:
 # SupportedStyles: slashes, arguments
 Rails/FilePath:
   Exclude:
-    - 'test-app/config/initializers/rswag-api.rb'
-    - 'test-app/spec/openapi_helper.rb'
-    - 'test-app/spec/rake/rswag_specs_swaggerize_spec.rb'
-    - 'test-app/spec/spec_helper.rb'
+    - "test-app/config/initializers/rswag-api.rb"
+    - "test-app/spec/openapi_helper.rb"
+    - "test-app/spec/rake/rswag_specs_swaggerize_spec.rb"
+    - "test-app/spec/spec_helper.rb"
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -424,14 +418,14 @@ Rails/FilePath:
 # Include: **/Rakefile, **/*.rake
 Rails/RakeEnvironment:
   Exclude:
-    - 'rswag-ui/lib/tasks/rswag-ui_tasks.rake'
+    - "rswag-ui/lib/tasks/rswag-ui_tasks.rake"
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowOnConstant, AllowOnSelfClass.
 Style/CaseEquality:
   Exclude:
-    - 'rswag-api/lib/rswag/api/middleware.rb'
+    - "rswag-api/lib/rswag/api/middleware.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -439,7 +433,7 @@ Style/CaseEquality:
 # Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
 Style/CommentAnnotation:
   Exclude:
-    - 'rswag-ui/spec/spec_helper.rb'
+    - "rswag-ui/spec/spec_helper.rb"
 
 # Offense count: 46
 # Configuration parameters: AllowedConstants.
@@ -452,59 +446,59 @@ Style/Documentation:
 # SupportedStyles: always, always_true, never
 Style/FrozenStringLiteralComment:
   Exclude:
-    - 'rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb'
-    - 'rswag-api/spec/generators/rswag/api/tmp/config/routes.rb'
-    - 'rswag-ui/spec/generators/rswag/ui/tmp/config/initializers/rswag_ui.rb'
-    - 'rswag-ui/spec/generators/rswag/ui/tmp/config/routes.rb'
+    - "rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb"
+    - "rswag-api/spec/generators/rswag/api/tmp/config/routes.rb"
+    - "rswag-ui/spec/generators/rswag/ui/tmp/config/initializers/rswag_ui.rb"
+    - "rswag-ui/spec/generators/rswag/ui/tmp/config/routes.rb"
 
 # Offense count: 1
 # Configuration parameters: MinBranchesCount.
 Style/HashLikeCase:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/request_factory.rb'
+    - "rswag-specs/lib/rswag/specs/request_factory.rb"
 
 # Offense count: 9
 # This cop supports safe autocorrection (--autocorrect).
 Style/IfUnlessModifier:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/configuration.rb'
-    - 'rswag-specs/lib/rswag/specs/extended_schema.rb'
-    - 'rswag-specs/lib/rswag/specs/openapi_formatter.rb'
-    - 'rswag-specs/lib/rswag/specs/response_validator.rb'
-    - 'rswag-ui/lib/rswag/ui/middleware.rb'
+    - "rswag-specs/lib/rswag/specs/configuration.rb"
+    - "rswag-specs/lib/rswag/specs/extended_schema.rb"
+    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
+    - "rswag-specs/lib/rswag/specs/response_validator.rb"
+    - "rswag-ui/lib/rswag/ui/middleware.rb"
 
 # Offense count: 3
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Style/MethodCallWithoutArgsParentheses:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/example_group_helpers.rb'
-    - 'rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb'
+    - "rswag-specs/lib/rswag/specs/example_group_helpers.rb"
+    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
 
 # Offense count: 1
 Style/MultilineBlockChain:
   Exclude:
-    - 'rswag-specs/lib/rswag/route_parser.rb'
+    - "rswag-specs/lib/rswag/route_parser.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: MinDigits, Strict, AllowedNumbers, AllowedPatterns.
 Style/NumericLiterals:
   Exclude:
-    - 'test-app/db/schema.rb'
+    - "test-app/db/schema.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: PreferredDelimiters.
 Style/PercentLiteralDelimiters:
   Exclude:
-    - 'rswag-specs/spec/generators/rspec/openapi_generator_spec.rb'
+    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/RedundantFileExtensionInRequire:
   Exclude:
-    - 'rswag-specs/lib/rswag/specs/railtie.rb'
+    - "rswag-specs/lib/rswag/specs/railtie.rb"
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -512,7 +506,7 @@ Style/RedundantFileExtensionInRequire:
 # SupportedStyles: slashes, percent_r, mixed
 Style/RegexpLiteral:
   Exclude:
-    - 'rswag-specs/lib/rswag/route_parser.rb'
+    - "rswag-specs/lib/rswag/route_parser.rb"
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -520,14 +514,14 @@ Style/RegexpLiteral:
 # AllowedMethods: present?, blank?, presence, try, try!
 Style/SafeNavigation:
   Exclude:
-    - 'rswag-api/lib/rswag/api/middleware.rb'
+    - "rswag-api/lib/rswag/api/middleware.rb"
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Mode.
 Style/StringConcatenation:
   Exclude:
-    - 'rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb'
+    - "rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb"
 
 # Offense count: 23
 # This cop supports safe autocorrection (--autocorrect).
