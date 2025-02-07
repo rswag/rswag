@@ -156,13 +156,6 @@ RSpec/EmptyExampleGroup:
     - "test-app/spec/integration/auth_tests_spec.rb"
     - "test-app/spec/integration/blogs_spec.rb"
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AutoCorrect.
-RSpec/EmptyHook:
-  Exclude:
-    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
-
 # Offense count: 19
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:
