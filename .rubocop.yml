@@ -21,3 +21,7 @@ AllCops:
   Exclude:
     - "rswag-specs/lib/generators/rspec/templates/*" # invalid syntax due to being templates
     - vendor/bundle/**/* # https://github.com/rubocop/rubocop/issues/9832
+
+Style/NumericLiterals:
+  Exclude:
+    - "**/db/schema.rb" # version is split by date portions eg. 2016_02_18_212104
