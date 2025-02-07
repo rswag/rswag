@@ -22,7 +22,7 @@ module Rswag
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
           openapi = parse_file(filename)
-          @config.openapi_filter.call(openapi, env) unless @config.openapi_filter.nil?
+          @config.openapi_filter&.call(openapi, env)
           mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
           headers = { 'Content-Type' => mime }.merge(@config.openapi_headers || {})
           body = unload_openapi(filename, openapi)

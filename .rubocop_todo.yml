@@ -240,14 +240,6 @@ Style/MultilineBlockChain:
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: ConvertCodeThatCanStartToReturnNil, AllowedMethods, MaxChainLength.
-# AllowedMethods: present?, blank?, presence, try, try!
-Style/SafeNavigation:
-  Exclude:
-    - "rswag-api/lib/rswag/api/middleware.rb"
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Mode.
 Style/StringConcatenation:
   Exclude:
