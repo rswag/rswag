@@ -29,6 +29,10 @@ RSpec/DescribeClass:
   Exclude:
     - "test-app/spec/rake/*" # specs for rake tasks so this rule does not apply
 
+RSpec/IndexedLet:
+  AllowedPatterns:
+    - !ruby/regexp /.+_v\d+$/
+
 Style/NumericLiterals:
-  Exclude:
-    - "**/db/schema.rb" # version is split by date portions eg. 2016_02_18_212104
+  AllowedPatterns:
+    - !ruby/regexp /\d{4}_\d{2}_\d{2}_\d{6}/ # date-numbers; eg. 2016_02_18_212104

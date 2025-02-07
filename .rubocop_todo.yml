@@ -123,12 +123,6 @@ RSpec/ContextWording:
 RSpec/ExampleLength:
   Max: 30
 
-# Offense count: 2
-# Configuration parameters: Max, AllowedIdentifiers, AllowedPatterns.
-RSpec/IndexedLet:
-  Exclude:
-    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
-
 # Offense count: 1
 RSpec/LeakyConstantDeclaration:
   Exclude:
