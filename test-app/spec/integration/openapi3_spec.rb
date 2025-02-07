@@ -5,6 +5,9 @@ require 'rswag/specs/swagger_formatter'
 # Specifically here, we look at OpenApi 3 as documented at
 # https://swagger.io/docs/specification/about/
 
+Metadata = Struct.new(:metadata)
+Group = Struct.new(:group)
+
 RSpec.describe 'Generated OpenApi', type: :request, openapi_spec: 'v3/openapi.json' do
   before do |example|
     output = double('output').as_null_object
@@ -12,7 +15,7 @@ RSpec.describe 'Generated OpenApi', type: :request, openapi_spec: 'v3/openapi.js
     config = double('config', openapi_root: openapi_root, get_openapi_spec: openapi_spec)
     formatter = Rswag::Specs::SwaggerFormatter.new(output, config)
 
-    example_group = OpenStruct.new(group: OpenStruct.new(metadata: example.metadata))
+    example_group = Group.new(Metadata.new(example.metadata))
     formatter.example_group_finished(example_group)
   end
 

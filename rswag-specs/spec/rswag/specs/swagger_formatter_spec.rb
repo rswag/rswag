@@ -5,6 +5,9 @@ require 'ostruct'
 
 module Rswag
   module Specs
+    Metadata = Struct.new(:metadata)
+    Group = Struct.new(:group)
+
     RSpec.describe SwaggerFormatter do
       subject { described_class.new(output, config) }
 
@@ -24,7 +27,7 @@ module Rswag
           subject.example_group_finished(notification)
         end
         let(:request_examples) { nil }
-        let(:notification) { OpenStruct.new(group: OpenStruct.new(metadata: api_metadata)) }
+        let(:notification) { Group.new(Metadata.new(api_metadata)) }
         let(:api_metadata) do
           operation = { verb: :post, summary: 'Creates a blog', parameters: [{ type: :string }] }
           if request_examples

@@ -4,6 +4,8 @@ require 'rswag/specs/response_validator'
 
 module Rswag
   module Specs
+    Response = Struct.new(:code, :headers, :body, keyword_init: true)
+
     RSpec.describe ResponseValidator do
       subject { ResponseValidator.new(config) }
 
@@ -72,7 +74,7 @@ module Rswag
       describe '#validate!(metadata, response)' do
         let(:call) { subject.validate!(metadata, response) }
         let(:response) do
-          OpenStruct.new(
+          Response.new(
             code: '200',
             headers: {
               'X-Rate-Limit-Limit' => '10',
@@ -798,7 +800,7 @@ module Rswag
 
               context 'nullable referenced schema' do
                 let(:response) do
-                  OpenStruct.new(
+                  Response.new(
                     code: '200',
                     headers: {
                       'X-Rate-Limit-Limit' => '10',
@@ -839,7 +841,7 @@ module Rswag
 
               context 'nullable oneOf with referenced schema' do
                 let(:response) do
-                  OpenStruct.new(
+                  Response.new(
                     code: '200',
                     headers: {
                       'X-Rate-Limit-Limit' => '10',
