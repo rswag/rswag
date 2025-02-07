@@ -53,7 +53,7 @@ Metrics/MethodLength:
 # Offense count: 4
 # Configuration parameters: CountComments, CountAsOne.
 Metrics/ModuleLength:
-  Max: 607
+  Max: 609
 
 # Offense count: 4
 # Configuration parameters: AllowedMethods, AllowedPatterns.
@@ -180,13 +180,6 @@ RSpec/NamedSubject:
 # Configuration parameters: AllowedGroups.
 RSpec/NestedGroups:
   Max: 4
-
-# Offense count: 5
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/ReceiveMessages:
-  Exclude:
-    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
-    - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
 # Offense count: 2
 RSpec/RepeatedExampleGroupBody:

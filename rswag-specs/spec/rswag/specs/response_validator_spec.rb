@@ -8,9 +8,11 @@ module Rswag
       subject { described_class.new(config) }
 
       before do
-        allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-        allow(config).to receive(:openapi_all_properties_required).and_return(openapi_all_properties_required)
-        allow(config).to receive(:openapi_no_additional_properties).and_return(openapi_no_additional_properties)
+        allow(config).to receive_messages(
+          get_openapi_spec: openapi_spec,
+          openapi_all_properties_required: openapi_all_properties_required,
+          openapi_no_additional_properties: openapi_no_additional_properties
+        )
       end
 
       let(:config) { double('config') }

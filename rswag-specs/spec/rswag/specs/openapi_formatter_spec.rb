@@ -82,11 +82,13 @@ module Rswag
       describe '#stop' do
         before do
           FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
-          allow(config).to receive(:openapi_specs).and_return(
-            'v1/openapi.json' => doc_for_api_v1,
-            'v2/openapi.json' => doc_for_api_v2
+          allow(config).to receive_messages(
+            openapi_specs: {
+              'v1/openapi.json' => doc_for_api_v1,
+              'v2/openapi.json' => doc_for_api_v2
+            },
+            openapi_format: openapi_format
           )
-          allow(config).to receive(:openapi_format).and_return(openapi_format)
           subject.stop(notification)
         end
 
