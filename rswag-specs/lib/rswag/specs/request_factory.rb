@@ -207,7 +207,7 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type =~ %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
+                            elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
@@ -226,7 +226,7 @@ module Rswag
       end
 
       def build_raw_payload(parameters, _example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
+        body_param = parameters.find { |p| p[:in] == :body }
         return nil unless body_param
 
         begin

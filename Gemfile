@@ -39,6 +39,7 @@ end
 group :development do
   gem 'rubocop'
   gem 'rubocop-capybara'
+  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
