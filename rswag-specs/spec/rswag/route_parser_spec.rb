@@ -2,8 +2,9 @@
 
 RSpec.describe Rswag::RouteParser do
   describe '#routes' do
-    let(:controller) { 'api/v1/posts' }
     subject { described_class.new(controller) }
+
+    let(:controller) { 'api/v1/posts' }
 
     let(:routes) do
       [
