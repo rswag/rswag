@@ -181,16 +181,6 @@ RSpec/NamedSubject:
 RSpec/NestedGroups:
   Max: 4
 
-# Offense count: 2
-RSpec/RepeatedExampleGroupBody:
-  Exclude:
-    - "rswag-api/spec/rswag/api/middleware_spec.rb"
-
-# Offense count: 2
-RSpec/RepeatedExampleGroupDescription:
-  Exclude:
-    - "rswag-api/spec/rswag/api/middleware_spec.rb"
-
 # Offense count: 12
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:

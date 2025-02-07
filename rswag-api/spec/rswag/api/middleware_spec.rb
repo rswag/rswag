@@ -128,23 +128,6 @@ describe Rswag::Api::Middleware do
       end
     end
 
-    context 'when the env contains a specific openapi_root' do
-      let(:env) do
-        env_defaults.merge(
-          'PATH_INFO' => 'v1/openapi.json',
-          'action_dispatch.request.path_parameters' => {
-            openapi_root: openapi_root
-          }
-        )
-      end
-
-      it 'locates files at the provided openapi_root' do
-        expect(response.length).to be(3)
-        expect(response[1]).to include('Content-Type' => 'application/json')
-        expect(response[2].join).to include('"openapi":"3.0.1"')
-      end
-    end
-
     context 'when a openapi_filter is configured' do
       before do
         config.openapi_filter = ->(openapi, env) { openapi['host'] = env['HTTP_HOST'] }
