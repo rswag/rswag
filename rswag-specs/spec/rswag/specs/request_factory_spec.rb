@@ -105,6 +105,7 @@ module Rswag
 
           context 'iso8601 format' do
             let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+
             it 'is also formatted properly' do
               expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
             end
@@ -112,6 +113,7 @@ module Rswag
 
           context 'openapi spec >= 3.0.0' do
             let(:openapi_spec) { { swagger: '3.0' } }
+
             before do
               allow(example).to receive(:date_time).and_return(date_time)
             end
@@ -144,6 +146,7 @@ module Rswag
           context 'deepObject' do
             let(:style) { :deepObject }
             let(:explode) { true }
+
             it 'formats as deep object' do
               expect(request[:path]).to eq('/blogs?things%5Bfoo%5D=bar')
             end
@@ -153,6 +156,7 @@ module Rswag
             let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
+
             it 'formats as deep object' do
               expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
             end
@@ -161,6 +165,7 @@ module Rswag
           context 'form explode=false' do
             let(:style) { :form }
             let(:explode) { false }
+
             it 'formats as unexploded form' do
               expect(request[:path]).to eq('/blogs?things=foo,bar')
             end
@@ -169,6 +174,7 @@ module Rswag
           context 'form explode=true' do
             let(:style) { :form }
             let(:explode) { true }
+
             it 'formats as an exploded form' do
               expect(request[:path]).to eq('/blogs?foo=bar')
             end
@@ -178,6 +184,7 @@ module Rswag
             let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
+
             it 'formats as an exploded form' do
               expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
             end
@@ -202,8 +209,10 @@ module Rswag
 
           context 'form' do
             let(:style) { :form }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -211,6 +220,7 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3,4,5')
               end
@@ -219,8 +229,10 @@ module Rswag
 
           context 'spaceDelimited' do
             let(:style) { :spaceDelimited }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -228,6 +240,7 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3%204%205')
               end
@@ -236,8 +249,10 @@ module Rswag
 
           context 'pipeDelimited' do
             let(:style) { :pipeDelimited }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -245,6 +260,7 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3|4|5')
               end
@@ -434,6 +450,7 @@ module Rswag
 
         context 'basic auth' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
+
           before do
             openapi_spec[:components] = { securitySchemes: { basic: { type: :basic } } }
             metadata[:operation][:security] = [basic: []]
@@ -472,6 +489,7 @@ module Rswag
 
           context 'in header with auth param already added' do
             let(:key_location) { :header }
+
             before do
               metadata[:operation][:parameters] = [
                 { name: 'q1', in: :query, schema: { type: :string } },
@@ -542,6 +560,7 @@ module Rswag
 
         context 'referenced parameters' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
+
           before do
             openapi_spec[:components] = {
               parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } }

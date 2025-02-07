@@ -35,6 +35,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'not provided' do
       let(:openapi_root) { nil }
+
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
     end
   end
@@ -48,11 +49,13 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'not provided' do
       let(:openapi_specs) { nil }
+
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
     end
 
     context 'provided but empty' do
       let(:openapi_specs) { {} }
+
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
     end
   end
@@ -82,6 +85,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when not provided' do
       let(:rswag_dry_run) { nil }
+
       it { expect(response).to eq(true) }
     end
 
@@ -105,6 +109,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when provided in rspec config' do
       let(:rswag_dry_run) { false }
+
       it { expect(response).to eq(false) }
     end
   end
@@ -131,6 +136,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
       context 'no matching doc' do
         let(:tag) { 'foobar' }
+
         it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
       end
     end
@@ -141,11 +147,13 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when not provided' do
       let(:openapi_all_properties_required) { nil }
+
       it { expect(response).to eq(false) }
     end
 
     context 'when provided in rspec config' do
       let(:openapi_all_properties_required) { true }
+
       it { expect(response).to eq(true) }
     end
   end
@@ -155,11 +163,13 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'when not provided' do
       let(:openapi_no_additional_properties) { nil }
+
       it { expect(response).to eq(false) }
     end
 
     context 'when provided in rspec config' do
       let(:openapi_no_additional_properties) { true }
+
       it { expect(response).to eq(true) }
     end
   end
