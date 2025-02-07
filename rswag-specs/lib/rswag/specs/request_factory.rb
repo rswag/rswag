@@ -86,7 +86,7 @@ module Rswag
       end
 
       def base_path_from_servers(openapi_spec, use_server = :default)
-        return '' if openapi_spec[:servers].nil? || openapi_spec[:servers].empty?
+        return '' if openapi_spec[:servers].blank?
 
         server = openapi_spec[:servers].first
         variables = {}
