@@ -16,15 +16,6 @@ Gemspec/RequiredRubyVersion:
     - "rswag-ui/rswag-ui.gemspec"
     - "rswag/rswag.gemspec"
 
-# Offense count: 6
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: aligned, indented, indented_relative_to_receiver
-Layout/MultilineMethodCallIndentation:
-  Exclude:
-    - "rswag-specs/lib/rswag/route_parser.rb"
-    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Layout/SpaceAfterComma:

@@ -24,8 +24,8 @@ module Rswag
 
     def path_from(route)
       route.path.spec.to_s
-        .chomp('(.:format)') # Ignore any format suffix
-        .gsub(/:([^\/.?]+)/, '{\1}') # Convert :id to {id}
+           .chomp('(.:format)') # Ignore any format suffix
+           .gsub(/:([^\/.?]+)/, '{\1}') # Convert :id to {id}
     end
 
     def verb_from(route)

@@ -72,13 +72,13 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k, _v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k, _v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end
