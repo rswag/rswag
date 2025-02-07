@@ -86,14 +86,14 @@ RSpec.describe Rswag::Specs::Configuration do
     context 'when not provided' do
       let(:rswag_dry_run) { nil }
 
-      it { expect(response).to eq(true) }
+      it { expect(response).to be(true) }
     end
 
     context 'when environment variable is provided' do
       context 'when set to 0' do
         it 'returns false' do
           ClimateControl.modify RSWAG_DRY_RUN: '0' do
-            expect(response).to eq(false)
+            expect(response).to be(false)
           end
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe Rswag::Specs::Configuration do
       context 'when set to 1' do
         it 'returns true' do
           ClimateControl.modify RSWAG_DRY_RUN: '1' do
-            expect(response).to eq(true)
+            expect(response).to be(true)
           end
         end
       end
@@ -110,7 +110,7 @@ RSpec.describe Rswag::Specs::Configuration do
     context 'when provided in rspec config' do
       let(:rswag_dry_run) { false }
 
-      it { expect(response).to eq(false) }
+      it { expect(response).to be(false) }
     end
   end
 
@@ -148,13 +148,13 @@ RSpec.describe Rswag::Specs::Configuration do
     context 'when not provided' do
       let(:openapi_all_properties_required) { nil }
 
-      it { expect(response).to eq(false) }
+      it { expect(response).to be(false) }
     end
 
     context 'when provided in rspec config' do
       let(:openapi_all_properties_required) { true }
 
-      it { expect(response).to eq(true) }
+      it { expect(response).to be(true) }
     end
   end
 
@@ -164,13 +164,13 @@ RSpec.describe Rswag::Specs::Configuration do
     context 'when not provided' do
       let(:openapi_no_additional_properties) { nil }
 
-      it { expect(response).to eq(false) }
+      it { expect(response).to be(false) }
     end
 
     context 'when provided in rspec config' do
       let(:openapi_no_additional_properties) { true }
 
-      it { expect(response).to eq(true) }
+      it { expect(response).to be(true) }
     end
   end
 end

@@ -97,12 +97,6 @@ RSpec/AnyInstance:
   Exclude:
     - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
-# Offense count: 8
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/BeEq:
-  Exclude:
-    - "rswag-specs/spec/rswag/specs/configuration_spec.rb"
-
 # Offense count: 10
 # This cop supports unsafe autocorrection (--autocorrect-all).
 RSpec/BeEql:
