@@ -157,10 +157,12 @@ module Rswag
           it 'params in: :formData appear in requestBody' do
             expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: 'Accept',
                                                                                   schema: { type: :string } }])
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:requestBody]).to eql(content: {
-                                                                                  'application/xml' => { schema: { foo: :bar } },
-                                                                                  'application/json' => { schema: { foo: :bar } }
-                                                                                })
+            expect(doc_for_api_v2[:paths]['/path/'][:get][:requestBody]).to eql(
+              content: {
+                'application/xml' => { schema: { foo: :bar } },
+                'application/json' => { schema: { foo: :bar } }
+              }
+            )
           end
 
           it 'adds security to operation' do
@@ -318,14 +320,16 @@ module Rswag
           end
 
           it 'generates schema in requestBody for content type' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-                                                                                   'image/png' => { schema: {
-                                                                                     type: :string, format: :binary
-                                                                                   } },
-                                                                                   'application/octet-stream' => { schema: {
-                                                                                     type: :string, format: :binary
-                                                                                   } }
-                                                                                 })
+            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'image/png' => { schema: {
+                  type: :string, format: :binary
+                } },
+                'application/octet-stream' => { schema: {
+                  type: :string, format: :binary
+                } }
+              }
+            )
           end
         end
 
@@ -357,23 +361,25 @@ module Rswag
           end
 
           it 'generates schema in requestBody for content type' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-                                                                                   'multipart/form-data' => {
-                                                                                     schema: {
-                                                                                       type: :object,
-                                                                                       properties: {
-                                                                                         myFile: { type: :string,
-                                                                                                   format: :binary },
-                                                                                         foo: { type: :string }
-                                                                                       }
-                                                                                     },
-                                                                                     encoding: {
-                                                                                       myFile: {
-                                                                                         contentType: 'image/png,image/jpeg'
-                                                                                       }
-                                                                                     }
-                                                                                   }
-                                                                                 })
+            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'multipart/form-data' => {
+                  schema: {
+                    type: :object,
+                    properties: {
+                      myFile: { type: :string,
+                                format: :binary },
+                      foo: { type: :string }
+                    }
+                  },
+                  encoding: {
+                    myFile: {
+                      contentType: 'image/png,image/jpeg'
+                    }
+                  }
+                }
+              }
+            )
           end
         end
 
@@ -399,19 +405,21 @@ module Rswag
           end
 
           it 'generates schema in requestBody with multipart/form-data' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-                                                                                   'multipart/form-data' => {
-                                                                                     schema: {
-                                                                                       type: :object,
-                                                                                       properties: {
-                                                                                         files: { type: :array,
-                                                                                                  items: {
-                                                                                                    type: :string, format: :binary
-                                                                                                  } }
-                                                                                       }
-                                                                                     }
-                                                                                   }
-                                                                                 })
+            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'multipart/form-data' => {
+                  schema: {
+                    type: :object,
+                    properties: {
+                      files: { type: :array,
+                               items: {
+                                 type: :string, format: :binary
+                               } }
+                    }
+                  }
+                }
+              }
+            )
           end
         end
 
@@ -624,25 +632,27 @@ module Rswag
 
           it 'creates requestBody examples' do
             expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(content: {
-                                                                                   'application/json' => {
-                                                                                     schema: { '$ref': '#/components/schemas/BlogPost' },
-                                                                                     examples: {
-                                                                                       'basic' => {
-                                                                                         value: {
-                                                                                           some_field: 'Foo'
-                                                                                         },
-                                                                                         summary: 'An example'
-                                                                                       },
-                                                                                       'another_basic' => {
-                                                                                         value: {
-                                                                                           some_field: 'Bar'
-                                                                                         },
-                                                                                         summary: 'Retrieve Nested Paths'
-                                                                                       }
-                                                                                     }
-                                                                                   }
-                                                                                 })
+            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
+              content: {
+                'application/json' => {
+                  schema: { '$ref': '#/components/schemas/BlogPost' },
+                  examples: {
+                    'basic' => {
+                      value: {
+                        some_field: 'Foo'
+                      },
+                      summary: 'An example'
+                    },
+                    'another_basic' => {
+                      value: {
+                        some_field: 'Bar'
+                      },
+                      summary: 'Retrieve Nested Paths'
+                    }
+                  }
+                }
+              }
+            )
           end
         end
       end

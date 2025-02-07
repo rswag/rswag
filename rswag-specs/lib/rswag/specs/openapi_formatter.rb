@@ -169,7 +169,8 @@ module Rswag
           parameter[:required] =
             parameter[:schema].delete(:required)
         end
-        #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
+        #  Also parameters currently can be defined with a datatype (`type:`)
+        #  but this should be in `schema:` in the output.
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
 
