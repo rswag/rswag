@@ -3,6 +3,6 @@
   "version": "1.0.1",
   "private": true,
   "dependencies": {
-    "swagger-ui-dist": "5.9.4"
+    "swagger-ui-dist": "5.18.3"
   }
 }
