@@ -100,10 +100,6 @@ module Rswag
           FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
         end
 
-        after do
-          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
-        end
-
         context 'with default format' do
           it 'writes the openapi_spec(s) to file' do
             expect(File).to exist("#{openapi_root}/v1/openapi.json")
