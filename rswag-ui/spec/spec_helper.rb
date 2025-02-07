@@ -23,7 +23,7 @@ RSpec.configure do |config|
     primary_coverage :branch
     filters.clear
     add_filter %r{^/spec/}
-    # Note: any file that isn't loaded by require isn't in the report
+    # NOTE: any file that isn't loaded by require isn't in the report
   end
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
