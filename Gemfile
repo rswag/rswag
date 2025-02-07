@@ -6,8 +6,9 @@ source 'https://rubygems.org'
 # See http://www.schneems.com/post/50991826838/testing-against-multiple-rails-versions/
 rails_version = Gem::Version.create(ENV['RAILS_VERSION'] || '8.0.0')
 
+gem 'byebug'
+gem 'puma'
 gem 'rails', rails_version.to_s
-
 gem 'responders'
 
 case rails_version.segments[0]
@@ -38,8 +39,8 @@ group :test do
   gem 'generator_spec'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'test-unit'
   gem 'simplecov', '=0.21.2'
+  gem 'test-unit'
 end
 
 group :development do
@@ -54,6 +55,3 @@ end
 group :assets do
   gem 'uglifier'
 end
-
-gem 'byebug'
-gem 'puma'
