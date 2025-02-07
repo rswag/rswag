@@ -96,6 +96,14 @@ module Rswag
 
         let(:notification) { double('notification') }
 
+        after do
+          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
+        end
+
+        after do
+          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
+        end
+
         context 'with default format' do
           it 'writes the openapi_spec(s) to file' do
             expect(File).to exist("#{openapi_root}/v1/openapi.json")
@@ -562,10 +570,6 @@ module Rswag
           end
         end
 
-        after do
-          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
-        end
-
         context 'with request examples' do
           let(:doc_for_api_v2) do
             {
@@ -644,10 +648,6 @@ module Rswag
                                                                                    }
                                                                                  })
           end
-        end
-
-        after do
-          FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
         end
       end
     end
