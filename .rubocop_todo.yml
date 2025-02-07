@@ -281,14 +281,6 @@ Style/CaseEquality:
   Exclude:
     - "rswag-api/lib/rswag/api/middleware.rb"
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: Keywords, RequireColon.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
-Style/CommentAnnotation:
-  Exclude:
-    - "rswag-ui/spec/spec_helper.rb"
-
 # Offense count: 46
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
