@@ -118,12 +118,6 @@ RSpec/ContextWording:
     - "rswag-specs/spec/rswag/specs/request_factory_spec.rb"
     - "rswag-specs/spec/rswag/specs/response_validator_spec.rb"
 
-# Offense count: 1
-# Configuration parameters: IgnoredMetadata.
-RSpec/DescribeClass:
-  Exclude:
-    - "test-app/spec/rake/rswag_specs_swaggerize_spec.rb"
-
 # Offense count: 19
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:
