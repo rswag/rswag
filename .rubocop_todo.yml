@@ -16,15 +16,6 @@ Gemspec/RequiredRubyVersion:
     - 'rswag-ui/rswag-ui.gemspec'
     - 'rswag/rswag.gemspec'
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'rswag-api/spec/generators/rswag/api/tmp/config/initializers/rswag_api.rb'
-    - 'rswag-ui/spec/generators/rswag/ui/tmp/config/initializers/rswag_ui.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Layout/EmptyLinesAroundMethodBody:
