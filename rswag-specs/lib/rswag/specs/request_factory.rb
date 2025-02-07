@@ -8,6 +8,11 @@ require 'json'
 module Rswag
   module Specs
     class RequestFactory
+      STYLE_SEPARATORS = {
+        form: ',',
+        spaceDelimited: '%20',
+        pipeDelimited: '|'
+      }.freeze
       attr_accessor :example, :metadata, :params, :headers
 
       def initialize(metadata, example, config = ::Rswag::Specs.config)
@@ -146,11 +151,7 @@ module Rswag
           when true
             value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
           else
-            separator = case style
-                        when :form then ','
-                        when :spaceDelimited then '%20'
-                        when :pipeDelimited then '|'
-                        end
+            separator = STYLE_SEPARATORS[style]
             "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
           end
         else

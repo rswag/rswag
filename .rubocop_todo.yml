@@ -197,9 +197,3 @@ RSpec/VerifiedDoubles:
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
   Enabled: false
-
-# Offense count: 1
-# Configuration parameters: MinBranchesCount.
-Style/HashLikeCase:
-  Exclude:
-    - "rswag-specs/lib/rswag/specs/request_factory.rb"
