@@ -7,7 +7,7 @@ require 'json'
 
 module Rswag
   module Specs
-    class RequestFactory
+    class RequestFactory # rubocop:disable Metrics/ClassLength
       STYLE_SEPARATORS = {
         form: ',',
         spaceDelimited: '%20',

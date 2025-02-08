@@ -6,7 +6,7 @@ require 'openapi_helper'
 
 module Rswag
   module Specs
-    class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
+    class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter # rubocop:disable Metrics/ClassLength
       ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
       def initialize(output, config = Rswag::Specs.config)

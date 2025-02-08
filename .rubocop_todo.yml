@@ -18,11 +18,6 @@ Lint/MissingSuper:
 Metrics/AbcSize:
   Max: 43
 
-# Offense count: 2
-# Configuration parameters: CountComments, CountAsOne.
-Metrics/ClassLength:
-  Max: 203
-
 # Offense count: 6
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Metrics/CyclomaticComplexity:
