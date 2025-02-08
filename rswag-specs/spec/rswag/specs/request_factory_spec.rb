@@ -6,6 +6,8 @@ require 'rswag/specs/request_factory'
 
 module Rswag
   module Specs
+    MockExample = Struct.new(:request_headers, :request_params)
+
     RSpec.describe RequestFactory do
       subject { described_class.new(metadata, example, config) }
 
@@ -22,8 +24,6 @@ module Rswag
         }
       end
       let(:openapi_spec) { { openapi: '3.0' } }
-
-      MockExample = Struct.new(:request_headers, :request_params)
 
       describe '#build_request' do
         let(:request) { subject.build_request }
