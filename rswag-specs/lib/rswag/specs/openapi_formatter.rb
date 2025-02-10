@@ -174,12 +174,12 @@ module Rswag
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
 
-      def parameter_in_form_data_or_body?(p)
-        p[:in] == :formData || parameter_in_body?(p)
+      def parameter_in_form_data_or_body?(param)
+        param[:in] == :formData || parameter_in_body?(param)
       end
 
-      def parameter_in_body?(p)
-        p[:in] == :body
+      def parameter_in_body?(param)
+        param[:in] == :body
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
