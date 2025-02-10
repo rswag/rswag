@@ -9,8 +9,6 @@ module Rswag
 
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-        allow(config).to receive(:get_openapi_spec_version).and_return('2.0')
-        allow(config).to receive(:openapi_strict_schema_validation).and_return(openapi_strict_schema_validation)
         allow(config).to receive(:openapi_all_properties_required).and_return(openapi_all_properties_required)
         allow(config).to receive(:openapi_no_additional_properties).and_return(openapi_no_additional_properties)
       end
@@ -18,7 +16,6 @@ module Rswag
       let(:config) { double('config') }
       let(:openapi_spec) { {} }
       let(:example) { double('example') }
-      let(:openapi_strict_schema_validation) { false }
       let(:openapi_all_properties_required) { false }
       let(:openapi_no_additional_properties) { false }
       let(:schema) do
@@ -134,36 +131,6 @@ module Rswag
         end
 
         context "when response body does not have additional properties and missing properties" do
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.not_to raise_error }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -225,36 +192,6 @@ module Rswag
                   number: { type: :integer }
                 }
               }
-            end
-
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.not_to raise_error }
             end
 
             context 'with all properties required enabled' do
@@ -314,36 +251,6 @@ module Rswag
         context "when response body has additional properties" do
           before { response.body = '{"foo":"Some comment", "number": 3, "text":"bar"}' }
 
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.not_to raise_error }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.not_to raise_error }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -405,36 +312,6 @@ module Rswag
                   number: { type: :integer }
                 }
               }
-            end
-
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.not_to raise_error }
             end
 
             context 'with all properties required enabled' do
@@ -494,36 +371,6 @@ module Rswag
         context "when response body has missing properties" do
           before { response.body = '{"number": 3}' }
 
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
 
@@ -579,36 +426,6 @@ module Rswag
 
         context "when response body has missing properties and additional properties" do
           before { response.body = '{"foo":"Some comment", "text":"bar"}' }
-
-          context "with strict schema validation enabled" do
-            let(:openapi_strict_schema_validation) { true }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled" do
-            let(:openapi_strict_schema_validation) { false }
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation disabled in config but enabled in metadata" do
-            let(:openapi_strict_schema_validation) { false }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
-
-          context "with strict schema validation enabled in config but disabled in metadata" do
-            let(:openapi_strict_schema_validation) { true }
-            let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-            include_context 'with strict deprecation warning'
-
-            it { expect { call }.to raise_error /Expected response body/ }
-          end
 
           context 'with all properties required enabled' do
             let(:openapi_all_properties_required) { true }
@@ -673,36 +490,6 @@ module Rswag
               }
             end
 
-            context "with strict schema validation enabled" do
-              let(:openapi_strict_schema_validation) { true }
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation disabled" do
-              let(:openapi_strict_schema_validation) { false }
-
-              it { expect { call }.not_to raise_error }
-            end
-
-            context "with strict schema validation disabled in config but enabled in metadata" do
-              let(:openapi_strict_schema_validation) { false }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: true) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.to raise_error /Expected response body/ }
-            end
-
-            context "with strict schema validation enabled in config but disabled in metadata" do
-              let(:openapi_strict_schema_validation) { true }
-              let(:metadata) { super().merge(openapi_strict_schema_validation: false) }
-
-              include_context 'with strict deprecation warning'
-
-              it { expect { call }.not_to raise_error }
-            end
-
             context 'with all properties required enabled' do
               let(:openapi_all_properties_required) { true }
 
@@ -758,149 +545,107 @@ module Rswag
         end
 
         context 'referenced schemas' do
-          context 'swagger 2.0' do
+          context 'components/schemas' do
             before do
-              openapi_spec[:definitions] = {
-                'blog' => {
-                  type: :object,
-                  properties: { foo: { type: :string } },
-                  required: ['foo']
-                }
-              }
-              metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
-            end
-
-            it 'uses the referenced schema to validate the response body' do
-              expect { call }.to raise_error(/Expected response body/)
-            end
-          end
-
-          context 'openapi 3.0.1' do
-            context 'components/schemas' do
-              before do
-                allow(Rswag::Specs.deprecator).to receive(:warn)
-                allow(config).to receive(:get_openapi_spec_version).and_return('3.0.1')
-                openapi_spec[:components] = {
-                  schemas: {
-                    'blog' => {
-                      type: :object,
-                      properties: { foo: { type: :string } },
-                      required: ['foo']
-                    }
-                  }
-                }
-                metadata[:response][:schema] = { '$ref' => '#/components/schemas/blog' }
-              end
-
-              it 'uses the referenced schema to validate the response body' do
-                expect { call }.to raise_error(/Expected response body/)
-              end
-
-              context 'nullable referenced schema' do
-                let(:response) do
-                  OpenStruct.new(
-                    code: '200',
-                    headers: {
-                      'X-Rate-Limit-Limit' => '10',
-                      'X-Cursor' => 'test_cursor',
-                      'X-Per-Page' => 25
-                    },
-                    body: '{ "blog": null }'
-                  )
-                end
-
-                before do
-                  metadata[:response][:schema] = {
-                    properties: { blog: { '$ref' => '#/components/schema/blog' } },
-                    required: ['blog']
-                  }
-                end
-
-                context 'using x-nullable attribute' do
-                  before do
-                    metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
-                  end
-
-                  context 'response matches metadata' do
-                    it { expect { call }.to_not raise_error }
-                  end
-                end
-
-                context 'using nullable attribute' do
-                  before do
-                    metadata[:response][:schema][:properties][:blog]['nullable'] = true
-                  end
-
-                  context 'response matches metadata' do
-                    it { expect { call }.to_not raise_error }
-                  end
-                end
-              end
-
-              context 'nullable oneOf with referenced schema' do
-                let(:response) do
-                  OpenStruct.new(
-                    code: '200',
-                    headers: {
-                      'X-Rate-Limit-Limit' => '10',
-                      'X-Cursor' => 'test_cursor',
-                      'X-Per-Page' => 25
-                    },
-                    body: '{ "blog": null }'
-                  )
-                end
-
-                before do
-                  metadata[:response][:schema] = {
-                    properties: {
-                      blog: {
-                        oneOf: [{ '$ref' => '#/components/schema/blog' }]
-                      }
-                    },
-                    required: ['blog']
-                  }
-                end
-
-                context 'using x-nullable attribute' do
-                  before do
-                    metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
-                  end
-
-                  context 'response matches metadata' do
-                    it { expect { call }.to_not raise_error }
-                  end
-                end
-
-                context 'using nullable attribute' do
-                  before do
-                    metadata[:response][:schema][:properties][:blog]['nullable'] = true
-                  end
-
-                  context 'response matches metadata' do
-                    it { expect { call }.to_not raise_error }
-                  end
-                end
-              end
-            end
-
-            context 'deprecated definitions' do
-              before do
-                allow(Rswag::Specs.deprecator).to receive(:warn)
-                allow(config).to receive(:get_openapi_spec_version).and_return('3.0.1')
-                openapi_spec[:definitions] = {
+              openapi_spec[:components] = {
+                schemas: {
                   'blog' => {
                     type: :object,
                     properties: { foo: { type: :string } },
                     required: ['foo']
                   }
                 }
-                metadata[:response][:schema] = { '$ref' => '#/definitions/blog' }
+              }
+              metadata[:response][:schema] = { '$ref' => '#/components/schemas/blog' }
+            end
+
+            it 'uses the referenced schema to validate the response body' do
+              expect { call }.to raise_error(/Expected response body/)
+            end
+
+            context 'nullable referenced schema' do
+              let(:response) do
+                OpenStruct.new(
+                  code: '200',
+                  headers: {
+                    'X-Rate-Limit-Limit' => '10',
+                    'X-Cursor' => 'test_cursor',
+                    'X-Per-Page' => 25
+                  },
+                  body: '{ "blog": null }'
+                )
               end
 
-              it 'warns the user to upgrade' do
-                expect { call }.to raise_error(/Expected response body/)
-                expect(Rswag::Specs.deprecator).to have_received(:warn)
-                  .with('Rswag::Specs: WARNING: definitions is replaced in OpenAPI3! Rename to components/schemas (in swagger_helper.rb)')
+              before do
+                metadata[:response][:schema] = {
+                  properties: { blog: { '$ref' => '#/components/schema/blog' } },
+                  required: ['blog']
+                }
+              end
+
+              context 'using x-nullable attribute' do
+                before do
+                  metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
+                end
+
+                context 'response matches metadata' do
+                  it { expect { call }.to_not raise_error }
+                end
+              end
+
+              context 'using nullable attribute' do
+                before do
+                  metadata[:response][:schema][:properties][:blog]['nullable'] = true
+                end
+
+                context 'response matches metadata' do
+                  it { expect { call }.to_not raise_error }
+                end
+              end
+            end
+
+            context 'nullable oneOf with referenced schema' do
+              let(:response) do
+                OpenStruct.new(
+                  code: '200',
+                  headers: {
+                    'X-Rate-Limit-Limit' => '10',
+                    'X-Cursor' => 'test_cursor',
+                    'X-Per-Page' => 25
+                  },
+                  body: '{ "blog": null }'
+                )
+              end
+
+              before do
+                metadata[:response][:schema] = {
+                  properties: {
+                    blog: {
+                      oneOf: [{ '$ref' => '#/components/schema/blog' }]
+                    }
+                  },
+                  required: ['blog']
+                }
+              end
+
+              context 'using x-nullable attribute' do
+                before do
+                  metadata[:response][:schema][:properties][:blog]['x-nullable'] = true
+                end
+
+                context 'response matches metadata' do
+                  it { expect { call }.to_not raise_error }
+                end
+              end
+
+              context 'using nullable attribute' do
+                before do
+                  metadata[:response][:schema][:properties][:blog]['nullable'] = true
+                end
+
+                context 'response matches metadata' do
+                  it { expect { call }.to_not raise_error }
+                end
               end
             end
           end

@@ -9,13 +9,13 @@ module Rswag
 
       def openapi_root
         @openapi_root ||=
-          @rspec_config.openapi_root || raise(ConfigurationError, 'No openapi_root provided. See swagger_helper.rb')
+          @rspec_config.openapi_root || raise(ConfigurationError, 'No openapi_root provided. See openapi_helper.rb')
       end
 
       def openapi_specs
         @openapi_specs ||= begin
           if @rspec_config.openapi_specs.nil? || @rspec_config.openapi_specs.empty?
-            raise ConfigurationError, 'No openapi_specs defined. See swagger_helper.rb'
+            raise ConfigurationError, 'No openapi_specs defined. See openapi_helper.rb'
           end
 
           @rspec_config.openapi_specs
@@ -24,8 +24,8 @@ module Rswag
 
       def rswag_dry_run
         @rswag_dry_run ||= begin
-          if ENV.key?('SWAGGER_DRY_RUN') || ENV.key?('RSWAG_DRY_RUN')
-            @rspec_config.rswag_dry_run = ENV['SWAGGER_DRY_RUN'] == '1' || ENV['RSWAG_DRY_RUN'] == '1'
+          if ENV.key?('RSWAG_DRY_RUN')
+            @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1'
           end
 
           @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
@@ -51,15 +51,6 @@ module Rswag
         raise ConfigurationError, "Unknown openapi_spec '#{name}'" unless openapi_specs[name]
 
         openapi_specs[name]
-      end
-
-      def get_openapi_spec_version(name)
-        doc = get_openapi_spec(name)
-        doc[:openapi] || doc[:swagger]
-      end
-
-      def openapi_strict_schema_validation
-        @rspec_config.openapi_strict_schema_validation || false
       end
 
       def openapi_all_properties_required

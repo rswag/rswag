@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ['domaindrivendev@gmail.com']
   s.homepage    = 'https://github.com/rswag/rswag'
   s.summary     = 'OpenAPI (formerly named Swagger) tooling for Rails APIs'
-  s.description = 'Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests. OpenAPI 2 and 3 supported. More about the OpenAPI initiative here: http://spec.openapis.org/'
+  s.description = 'Generate beautiful API documentation, including a UI to explore and test operations, directly from your rspec integration tests. Currently only OpenAPI 3.0 is supported. More about the OpenAPI initiative here: http://spec.openapis.org/'
   s.license     = 'MIT'
 
   s.files = Dir['{lib}/**/*'] + [ 'MIT-LICENSE' ]
