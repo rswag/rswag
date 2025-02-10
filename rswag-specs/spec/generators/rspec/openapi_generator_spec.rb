@@ -43,7 +43,7 @@ module Rspec
     def fake_routes
       {
         '/posts/{post_id}/comments/{id}' => {
-          params: ['post_id', 'id'],
+          params: %w[post_id id],
           actions: {
             'get' => { summary: 'show comment' },
             'patch' => { summary: 'update_comments comment' }

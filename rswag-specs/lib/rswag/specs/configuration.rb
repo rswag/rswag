@@ -24,9 +24,7 @@ module Rswag
 
       def rswag_dry_run
         @rswag_dry_run ||= begin
-          if ENV.key?('RSWAG_DRY_RUN')
-            @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1'
-          end
+          @rspec_config.rswag_dry_run = ENV['RSWAG_DRY_RUN'] == '1' if ENV.key?('RSWAG_DRY_RUN')
 
           @rspec_config.rswag_dry_run.nil? || @rspec_config.rswag_dry_run
         end
@@ -38,7 +36,7 @@ module Rswag
             @rspec_config.openapi_format = :json
           end
 
-          unless [:json, :yaml].include?(@rspec_config.openapi_format)
+          unless %i[json yaml].include?(@rspec_config.openapi_format)
             raise ConfigurationError, "Unknown openapi_format '#{@rspec_config.openapi_format}'"
           end
 

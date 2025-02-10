@@ -2,7 +2,7 @@
 
 require 'simplecov'
 
-RSpec.configure do |config|
+RSpec.configure do |_config|
   SimpleCov.start do
     enable_coverage :branch
     primary_coverage :branch

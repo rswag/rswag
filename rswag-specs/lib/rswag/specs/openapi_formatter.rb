@@ -23,7 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        raise ConfigurationError, "Unsupported OpenAPI version" unless doc_version(openapi_spec).start_with?('3')
+        raise ConfigurationError, 'Unsupported OpenAPI version' unless doc_version(openapi_spec).start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -161,7 +161,6 @@ module Rswag
         parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
       end
 
-
       def set_parameter_schema(parameter)
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
@@ -182,7 +181,9 @@ module Rswag
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
-        raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
+        unless mime_list
+          raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content'
+        end
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
@@ -208,6 +209,7 @@ module Rswag
 
       def add_request_body(endpoint)
         return if endpoint.dig(:requestBody, :content)
+
         endpoint[:requestBody] = { content: {} }
       end
 
@@ -246,8 +248,9 @@ module Rswag
 
       def set_mime_encoding(mime_config, parameter)
         return unless parameter[:encoding]
+
         encoding = parameter[:encoding].dup
-        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
         mime_config[:encoding] ||= {}
         mime_config[:encoding][parameter[:name]] = encoding
       end
@@ -255,6 +258,7 @@ module Rswag
       def set_mime_examples(mime_config, endpoint)
         examples = endpoint[:request_examples]
         return unless examples
+
         examples.each do |example|
           mime_config[:examples] ||= {}
           mime_config[:examples][example[:name]] = {

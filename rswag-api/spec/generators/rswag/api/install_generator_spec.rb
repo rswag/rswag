@@ -1,17 +1,17 @@
+# frozen_string_literal: true
+
 require 'generator_spec'
 require 'generators/rswag/api/install/install_generator'
 
-
 module Rswag
   module Api
-
     describe InstallGenerator do
       include GeneratorSpec::TestCase
-      destination File.expand_path('../tmp', __FILE__)
+      destination File.expand_path('tmp', __dir__)
 
       before(:all) do
         prepare_destination
-        fixtures_dir = File.expand_path('../fixtures', __FILE__)
+        fixtures_dir = File.expand_path('fixtures', __dir__)
         FileUtils.cp_r("#{fixtures_dir}/config", destination_root)
 
         run_generator
@@ -23,4 +23,3 @@ module Rswag
     end
   end
 end
-

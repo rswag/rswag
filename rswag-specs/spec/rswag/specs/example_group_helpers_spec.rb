@@ -62,12 +62,12 @@ module Rswag
 
         it "adds to the 'operation' metadata" do
           expect(api_metadata[:operation]).to match(
-            tags: ['Blogs', 'Admin'],
+            tags: %w[Blogs Admin],
             description: 'Some description',
             operationId: 'createBlog',
             consumes: ['application/json', 'application/xml'],
             produces: ['application/json', 'application/xml'],
-            schemes: ['http', 'https'],
+            schemes: %w[http https],
             deprecated: true,
             security: { api_key: [] }
           )
@@ -149,36 +149,35 @@ module Rswag
       end
 
       describe '#request_body_example(value:, summary: nil, name: nil)' do
-        context "when adding one example" do
-          before { subject.request_body_example(value: value)}
+        context 'when adding one example' do
+          before { subject.request_body_example(value: value) }
           let(:api_metadata) { { operation: {} } }
           let(:value) { { field: 'A', another_field: 'B' } }
 
-          it "assigns the example to the metadata" do
+          it 'assigns the example to the metadata' do
             expect(api_metadata[:operation][:request_examples].length()).to eq(1)
             expect(api_metadata[:operation][:request_examples][0]).to eq({ value: value, name: 0 })
           end
         end
 
-        context "when adding multiple examples with additional information" do
-          before {
+        context 'when adding multiple examples with additional information' do
+          before do
             subject.request_body_example(value: example_one)
             subject.request_body_example(value: example_two, name: example_two_name, summary: example_two_summary)
-          }
+          end
           let(:api_metadata) { { operation: {} } }
           let(:example_one) { { field: 'A', another_field: 'B' } }
           let(:example_two) { { field: 'B', another_field: 'C' } }
           let(:example_two_name) { 'example_two' }
           let(:example_two_summary) { 'An example description' }
 
-          it "assigns all examples to the metadata" do
+          it 'assigns all examples to the metadata' do
             expect(api_metadata[:operation][:request_examples].length()).to eq(2)
             expect(api_metadata[:operation][:request_examples][0]).to eq({ value: example_one, name: 0 })
             expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name, summary: example_two_summary })
           end
         end
       end
-
 
       describe '#examples(example)' do
         let(:mime) { 'application/json' }
@@ -208,8 +207,8 @@ module Rswag
 
       describe '#example(single)' do
         let(:mime) { 'application/json' }
-        let(:summary) { "this is a summary"}
-        let(:description) { "this is an example description "}
+        let(:summary) { 'this is a summary' }
+        let(:description) { 'this is an example description ' }
         let(:json_example) do
           {
               foo: 'bar'
@@ -236,28 +235,28 @@ module Rswag
         end
       end
 
-      describe "#run_test!" do
-        let(:api_metadata) {
+      describe '#run_test!' do
+        let(:api_metadata) do
           {
             response: {
-              code: "200"
+              code: '200'
             }
           }
-        }
+        end
 
         before do
           allow(subject).to receive(:before)
         end
 
-        it "executes a specification" do
-          expected_spec_description = "returns a 200 response"
+        it 'executes a specification' do
+          expected_spec_description = 'returns a 200 response'
           expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
           subject.run_test!
         end
 
-        context "when options[:description] is passed" do
-          it "executes a specification described with passed description" do
-            expected_spec_description = "returns a 200 response - with a custom description"
+        context 'when options[:description] is passed' do
+          it 'executes a specification described with passed description' do
+            expected_spec_description = 'returns a 200 response - with a custom description'
             expect(subject).to receive(:it).with(expected_spec_description, rswag: true)
             subject.run_test!(expected_spec_description)
           end

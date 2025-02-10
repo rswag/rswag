@@ -1,4 +1,6 @@
-migration_class = if Gem::Version.new(Rails.version) >= Gem::Version.new("5.0")
+# frozen_string_literal: true
+
+migration_class = if Gem::Version.new(Rails.version) >= Gem::Version.new('5.0')
                     ActiveRecord::Migration[4.2]
                   else
                     ActiveRecord::Migration

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StubsController < ApplicationController
   def index
     render plain: 'OK'
