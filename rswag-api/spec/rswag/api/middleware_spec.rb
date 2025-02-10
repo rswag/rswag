@@ -23,7 +23,7 @@ describe Rswag::Api::Middleware do
       }
     end
 
-    context 'given a path that maps to an existing openapi file' do
+    context 'when given a path that maps to an existing openapi file' do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
       it 'returns a 200 status' do
@@ -37,7 +37,7 @@ describe Rswag::Api::Middleware do
         expect(response[2].join).to include('"title":"API V1"')
       end
 
-      context 'configured with a Pathname similar to `Rails.root.join("openapi")`' do
+      context 'when configured with a Pathname similar to `Rails.root.join("openapi")`' do
         let(:openapi_root_pathname) { Pathname.new(openapi_root) }
 
         before { config.openapi_root = openapi_root_pathname }
@@ -49,64 +49,54 @@ describe Rswag::Api::Middleware do
       end
     end
 
-    context 'when openapi_headers is configured' do
+    context 'when openapi_headers are configured in the env' do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
-      context 'replacing the default content type header' do
+      context 'with a default openapi content type header' do
         before do
           config.openapi_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
         end
 
-        it 'returns a 200 status' do
+        it 'returns a 200 status with the header applied to the response' do
           expect(response.length).to be(3)
           expect(response.first).to eql('200')
-        end
-
-        it 'applies the headers to the response' do
           expect(response[1]).to include('Content-Type' => 'application/json; charset=UTF-8')
         end
       end
 
-      context 'adding an additional header' do
+      context 'when adding an additional header' do
         before do
           config.openapi_headers = { 'Access-Control-Allow-Origin' => '*' }
         end
 
-        it 'returns a 200 status' do
+        it 'applies the new header while retaining the other original headers' do
           expect(response.length).to be(3)
           expect(response.first).to eql('200')
-        end
-
-        it 'applies the headers to the response' do
-          expect(response[1]).to include('Access-Control-Allow-Origin' => '*')
-        end
-
-        it 'keeps the default header' do
-          expect(response[1]).to include('Content-Type' => 'application/json')
+          expect(response[1]).to include('Access-Control-Allow-Origin' => '*', 'Content-Type' => 'application/json')
         end
       end
     end
 
-    context "given a path that doesn't map to any openapi file" do
+    context "when given a path that doesn't map to any openapi file" do
       let(:env) { env_defaults.merge('PATH_INFO' => 'foobar.json') }
 
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end
 
-      it 'delegates to the next middleware' do
+      it 'delegates error handling to the next middleware' do
         expect(response).to include('500')
       end
     end
 
-    context 'Disallow path traversing on path info' do
+    context 'when attempting to use path traversing on path info' do
       let(:env) { env_defaults.merge('PATH_INFO' => '../traverse-secret.yml') }
 
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end
 
-      it 'delegates to the next middleware' do
+      it 'errors out and delegates error handling to the next middleware' do
         expect(response).to include('500')
       end
     end
@@ -128,7 +118,7 @@ describe Rswag::Api::Middleware do
       end
     end
 
-    context 'when a openapi_filter is configured' do
+    context 'when an openapi_filter is configured' do
       before do
         config.openapi_filter = ->(openapi, env) { openapi['host'] = env['HTTP_HOST'] }
       end

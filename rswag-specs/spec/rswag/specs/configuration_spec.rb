@@ -29,11 +29,11 @@ RSpec.describe Rswag::Specs::Configuration do
   describe '#openapi_root' do
     let(:response) { subject.openapi_root }
 
-    context 'provided in rspec config' do
+    context 'when provided in rspec config' do
       it { expect(response).to eq('foobar') }
     end
 
-    context 'not provided' do
+    context 'when not provided' do
       let(:openapi_root) { nil }
 
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
@@ -43,17 +43,17 @@ RSpec.describe Rswag::Specs::Configuration do
   describe '#openapi_specs' do
     let(:response) { subject.openapi_specs }
 
-    context 'provided in rspec config' do
+    context 'when provided in rspec config' do
       it { expect(response).to be_an_instance_of(Hash) }
     end
 
-    context 'not provided' do
+    context 'when not provided' do
       let(:openapi_specs) { nil }
 
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
     end
 
-    context 'provided but empty' do
+    context 'when provided but empty' do
       let(:openapi_specs) { {} }
 
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
@@ -63,17 +63,17 @@ RSpec.describe Rswag::Specs::Configuration do
   describe '#openapi_format' do
     let(:response) { subject.openapi_format }
 
-    context 'provided in rspec config' do
+    context 'when provided in rspec config' do
       it { expect(response).to be_an_instance_of(Symbol) }
     end
 
-    context 'unsupported format provided' do
+    context 'when an unsupported format is provided' do
       let(:openapi_format) { :xml }
 
       it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
     end
 
-    context 'not provided' do
+    context 'when not provided' do
       let(:openapi_format) { nil }
 
       it { expect(response).to eq(:json) }
@@ -89,7 +89,7 @@ RSpec.describe Rswag::Specs::Configuration do
       it { expect(response).to be(true) }
     end
 
-    context 'when environment variable is provided' do
+    context 'when the environment variable is provided' do
       context 'when set to 0' do
         it 'returns false' do
           ClimateControl.modify RSWAG_DRY_RUN: '0' do
@@ -117,7 +117,7 @@ RSpec.describe Rswag::Specs::Configuration do
   describe '#get_openapi_spec(tag=nil)' do
     let(:openapi_spec) { subject.get_openapi_spec(tag) }
 
-    context 'no tag provided' do
+    context 'when no tag is provided' do
       let(:tag) { nil }
 
       it 'returns the first doc in rspec config' do
@@ -125,8 +125,8 @@ RSpec.describe Rswag::Specs::Configuration do
       end
     end
 
-    context 'tag provided' do
-      context 'matching doc' do
+    context 'when the tag is provided' do
+      context 'with a matching doc' do
         let(:tag) { 'v2/openapi.json' }
 
         it 'returns the matching doc in rspec config' do
@@ -134,7 +134,7 @@ RSpec.describe Rswag::Specs::Configuration do
         end
       end
 
-      context 'no matching doc' do
+      context 'with no matching doc' do
         let(:tag) { 'foobar' }
 
         it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }

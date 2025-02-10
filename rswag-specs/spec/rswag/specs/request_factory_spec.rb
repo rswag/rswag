@@ -33,7 +33,7 @@ module Rswag
           expect(request[:path]).to eq('/blogs')
         end
 
-        context "'path' parameters" do
+        context 'when using path parameters' do
           before do
             metadata[:path_item][:template] = '/blogs/{blog_id}/comments/{id}'
             metadata[:operation][:parameters] = [
@@ -42,13 +42,13 @@ module Rswag
             ]
           end
 
-          context 'when `name` parameter key is required, but not defined within example group' do
+          context 'when the parameter key is required, but not defined within example group' do
             it 'explicitly warns user about missing parameter, instead of giving generic error' do
               expect { request[:path] }.to raise_error(/parameter key present, but not defined/)
             end
           end
 
-          context 'when `name` is defined' do
+          context 'when the parameter is defined' do
             before do
               example.request_params['blog_id'] = 1
               example.request_params['id'] = 2
@@ -60,7 +60,7 @@ module Rswag
           end
         end
 
-        context "'query' parameters" do
+        context 'when using simple query parameters' do
           before do
             metadata[:operation][:parameters] = [
               { name: 'q1', in: :query, schema: { type: :string } },
@@ -77,7 +77,7 @@ module Rswag
             expect(request[:path]).to eq('/blogs?q1=foo&q2=bar&falsey=false')
           end
 
-          context 'when `type` parameter key is present' do
+          context 'when a `type` parameter key is present' do
             before do
               metadata[:operation][:parameters] = [
                 { name: 'q1', in: :query, type: :string }
@@ -91,45 +91,62 @@ module Rswag
           end
         end
 
-        context "'query' parameter of format 'datetime'" do
-          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
+        context 'when using a `datetime` query parameter' do
+          before { example.request_params['date_time'] = date_time }
 
-          before do
-            metadata[:operation][:parameters] = [
-              { name: 'date_time', in: :query, schema: { type: :string, format: :datetime } }
-            ]
-            example.request_params['date_time'] = date_time
-          end
+          context 'with an OAS2 spec' do
+            before do
+              metadata[:operation][:parameters] = [
+                { name: 'date_time', in: :query, schema: { type: :string, format: :datetime } }
+              ]
+            end
 
-          it 'formats the datetime properly' do
-            expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
-          end
+            context 'with the value provided by DateTime#to_s' do
+              let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
 
-          context 'iso8601 format' do
-            let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+              it 'formats the datetime properly' do
+                expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+              end
+            end
 
-            it 'is also formatted properly' do
-              expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+            context 'with the value provided by DateTime#iso8601' do
+              let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+
+              it 'is also formatted properly' do
+                expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+              end
             end
           end
 
-          context 'openapi spec >= 3.0.0' do
+          context 'with an OAS3.0 spec' do
             let(:openapi_spec) { { swagger: '3.0' } }
+            let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
 
             before do
-              allow(example).to receive(:date_time).and_return(date_time)
-            end
-
-            it 'formats the datetime properly when type is defined in schema' do
               metadata[:operation][:parameters] = [
                 { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime }
               ]
-              expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+            end
+
+            context 'with the value provided by DateTime#to_s' do
+              let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
+
+              it 'formats the datetime properly' do
+                expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+              end
+            end
+
+            context 'with the value provided by DateTime#iso8601' do
+              let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+
+              it 'is also formatted properly' do
+                expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
+              end
             end
           end
         end
 
-        context "'query' parameters of type 'object'" do
+        context 'when using an `object` query parameter' do
           let(:things) { { 'foo': 'bar' } }
           let(:openapi_spec) { { openapi: '3.0' } }
 
@@ -145,7 +162,7 @@ module Rswag
             example.request_params['things'] = things
           end
 
-          context 'deepObject' do
+          context 'with the `style: deepObject`' do
             let(:style) { :deepObject }
             let(:explode) { true }
 
@@ -154,7 +171,7 @@ module Rswag
             end
           end
 
-          context 'deepObject with nested objects' do
+          context 'with the `style: deepObject` and nested objects' do
             let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
@@ -164,7 +181,7 @@ module Rswag
             end
           end
 
-          context 'form explode=false' do
+          context 'with the `style: form` and `explode: false`' do
             let(:style) { :form }
             let(:explode) { false }
 
@@ -173,7 +190,7 @@ module Rswag
             end
           end
 
-          context 'form explode=true' do
+          context 'with the `style: form` and `explode: true`' do
             let(:style) { :form }
             let(:explode) { true }
 
@@ -182,7 +199,7 @@ module Rswag
             end
           end
 
-          context 'form explode=true with nesting and uri encodable output' do
+          context 'with the `style: form`, `explode: false`, and unusual but uri-encodable characters' do
             let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
@@ -193,7 +210,7 @@ module Rswag
           end
         end
 
-        context "'query' parameters of type 'array'" do
+        context 'when using an `array` query parameter' do
           let(:id) { [3, 4, 5] }
           let(:openapi_spec) { { openapi: '3.0' } }
 
@@ -209,68 +226,62 @@ module Rswag
             example.request_params['id'] = id
           end
 
-          context 'form' do
+          context 'with the `style: form` and `exploded: true`' do
             let(:style) { :form }
+            let(:explode) { true }
 
-            context 'exploded' do
-              let(:explode) { true }
-
-              it 'formats as exploded form' do
-                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
-              end
-            end
-
-            context 'not exploded' do
-              let(:explode) { false }
-
-              it 'formats as unexploded form' do
-                expect(request[:path]).to eq('/blogs?id=3,4,5')
-              end
+            it 'formats as exploded form' do
+              expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
             end
           end
 
-          context 'spaceDelimited' do
+          context 'with the `style: form` and `exploded: false`' do
+            let(:style) { :form }
+            let(:explode) { false }
+
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?id=3,4,5')
+            end
+          end
+
+          context 'with `style: spaceDelimited` and `exploded: true`' do
             let(:style) { :spaceDelimited }
+            let(:explode) { true }
 
-            context 'exploded' do
-              let(:explode) { true }
-
-              it 'formats as exploded form' do
-                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
-              end
-            end
-
-            context 'not exploded' do
-              let(:explode) { false }
-
-              it 'formats as unexploded form' do
-                expect(request[:path]).to eq('/blogs?id=3%204%205')
-              end
+            it 'formats as exploded form' do
+              expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
             end
           end
 
-          context 'pipeDelimited' do
-            let(:style) { :pipeDelimited }
+          context 'with `style: spaceDelimited` and `exploded: false`' do
+            let(:style) { :spaceDelimited }
+            let(:explode) { false }
 
-            context 'exploded' do
-              let(:explode) { true }
-
-              it 'formats as exploded form' do
-                expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
-              end
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?id=3%204%205')
             end
+          end
 
-            context 'not exploded' do
-              let(:explode) { false }
+          context 'with `style: pipeDelimited` and `exploded: true`' do
+            let(:style) { :pipeDelimited }
+            let(:explode) { true }
 
-              it 'formats as unexploded form' do
-                expect(request[:path]).to eq('/blogs?id=3|4|5')
-              end
+            it 'formats as exploded form' do
+              expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
+            end
+          end
+
+          context 'with `style: pipeDelimited` and `exploded: false`' do
+            let(:style) { :pipeDelimited }
+            let(:explode) { false }
+
+            it 'formats as unexploded form' do
+              expect(request[:path]).to eq('/blogs?id=3|4|5')
             end
           end
         end
 
-        context "'query' parameters with schema reference" do
+        context 'when using query parameters from a referenced schema' do
           let(:things) { 'foo' }
           let(:openapi_spec) { { openapi: '3.0' } }
 
@@ -289,7 +300,7 @@ module Rswag
           end
         end
 
-        context "'header' parameters" do
+        context 'when using header parameters' do
           before do
             metadata[:operation][:parameters] = [
               { name: 'Api-Key', in: :header, schema: { type: :string } },
@@ -304,7 +315,7 @@ module Rswag
           end
         end
 
-        context 'optional parameters not provided' do
+        context 'when optional parameters are not provided' do
           before do
             metadata[:operation][:parameters] = [
               { name: 'q1', in: :query, schema: { type: :string }, required: false },
@@ -312,34 +323,34 @@ module Rswag
             ]
           end
 
-          it 'builds request hash without them' do
+          it 'builds the request hash without them' do
             expect(request[:path]).to eq('/blogs')
             expect(request[:headers]).to eq({})
           end
         end
 
-        context 'consumes content' do
+        context 'when using `consumes` metadata' do
           before do
             metadata[:operation][:consumes] = ['application/json', 'application/xml']
           end
 
-          context "no 'Content-Type' provided" do
-            it "sets 'CONTENT_TYPE' header to first in list" do
+          context 'with no `Content-Type` provided by the request' do
+            it 'sets `CONTENT_TYPE` header to first in list' do
               expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/json')
             end
           end
 
-          context "explicit 'Content-Type' provided" do
+          context 'with a `Content-Type` explicitly provided by the request' do
             before do
               example.request_headers['Content-Type'] = 'application/xml'
             end
 
-            it "sets 'CONTENT_TYPE' header to example value" do
+            it 'sets `CONTENT_TYPE` header to the spec value' do
               expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
             end
           end
 
-          context 'JSON payload' do
+          context 'with a JSON payload' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
               example.request_params['comment'] = { text: 'Some comment' }
@@ -350,7 +361,7 @@ module Rswag
             end
           end
 
-          context 'JSON:API payload' do
+          context 'with a JSON:API payload' do
             before do
               metadata[:operation][:consumes] = 'application/vnd.api+json'
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
@@ -362,7 +373,7 @@ module Rswag
             end
           end
 
-          context 'missing body parameter' do
+          context 'with a missing body parameter' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
             end
@@ -374,7 +385,7 @@ module Rswag
             end
           end
 
-          context 'form payload' do
+          context 'with a form payload' do
             before do
               metadata[:operation][:consumes] = ['multipart/form-data']
               metadata[:operation][:parameters] = [
@@ -385,7 +396,7 @@ module Rswag
               example.request_params['f2'] = 'bar blah'
             end
 
-            it 'sets payload to hash of names and example values' do
+            it 'sets the payload to hash of names and example values' do
               expect(request[:payload]).to eq(
                 'f1' => 'foo blah',
                 'f2' => 'bar blah'
@@ -393,7 +404,7 @@ module Rswag
             end
           end
 
-          context 'plain text payload' do
+          context 'with a plain text payload' do
             before do
               metadata[:operation][:consumes] = ['text/plain']
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'string' } }]
@@ -406,51 +417,51 @@ module Rswag
           end
         end
 
-        context 'produces content' do
+        context 'when using `produces` metadata' do
           before do
             metadata[:operation][:produces] = ['application/json', 'application/xml']
           end
 
-          context "no 'Accept' value provided" do
+          context 'with no `Accept` provided by the request' do
             it "sets 'HTTP_ACCEPT' header to first in list" do
               expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/json')
             end
           end
 
-          context "explicit 'Accept' value provided" do
+          context 'with `Accept` explicitly provided by the request' do
             before do
               example.request_headers['Accept'] = 'application/xml'
             end
 
-            it "sets 'HTTP_ACCEPT' header to example value" do
+            it "sets 'HTTP_ACCEPT' header to the request value" do
               expect(request[:headers]).to eq('HTTP_ACCEPT' => 'application/xml')
             end
           end
         end
 
-        context 'host header' do
-          context "explicit 'Host' value provided" do
+        context 'when using `host` metadata' do
+          context 'with `Host` set in the schema' do
             before do
               metadata[:operation][:host] = 'swagger.io'
             end
 
-            it "sets 'Host' header" do
+            it "sets 'Host' header to the schema value" do
               expect(request[:headers]).to eq('HTTP_HOST' => 'swagger.io')
             end
           end
 
-          context "no 'Host' value provided" do
+          context 'with no `Host` set in the schema' do
             before do
               metadata[:operation][:host] = nil
             end
 
-            it "does not set 'Host' header" do
+            it 'does not set `Host` header' do
               expect(request[:headers]).to eq({})
             end
           end
         end
 
-        context 'basic auth' do
+        context 'when using basic auth' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
 
           before do
@@ -459,19 +470,19 @@ module Rswag
             example.request_headers['Authorization'] = 'Basic foobar'
           end
 
-          it "sets 'HTTP_AUTHORIZATION' header to example value" do
+          it "sets 'HTTP_AUTHORIZATION' header to the spec value" do
             expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
           end
         end
 
-        context 'apiKey' do
+        context 'when using apiKey auth' do
           before do
             openapi_spec[:components] =
               { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: key_location } } }
             metadata[:operation][:security] = [api_key: []]
           end
 
-          context 'in query' do
+          context 'with `key_location: query`' do
             let(:key_location) { :query }
 
             it 'adds name and example value to the query string' do
@@ -480,35 +491,33 @@ module Rswag
             end
           end
 
-          context 'in header' do
+          context 'with `key_location: header`' do
             let(:key_location) { :header }
 
             it 'adds name and example value to the headers' do
               example.request_headers['api_key'] = 'foobar'
               expect(request[:headers]).to eq('api_key' => 'foobar')
             end
-          end
 
-          context 'in header with auth param already added' do
-            let(:key_location) { :header }
+            context 'when the auth param has already been added to the schema' do
+              before do
+                metadata[:operation][:parameters] = [
+                  { name: 'q1', in: :query, schema: { type: :string } },
+                  { name: 'api_key', in: :header, schema: { type: :string } }
+                ]
+                example.request_params['q1'] = 'foo'
+                example.request_headers['api_key'] = 'foobar'
+              end
 
-            before do
-              metadata[:operation][:parameters] = [
-                { name: 'q1', in: :query, schema: { type: :string } },
-                { name: 'api_key', in: :header, schema: { type: :string } }
-              ]
-              example.request_params['q1'] = 'foo'
-              example.request_headers['api_key'] = 'foobar'
-            end
-
-            it 'adds authorization parameter only once' do
-              expect(request[:headers]).to eq('api_key' => 'foobar')
-              expect(metadata[:operation][:parameters].size).to eq 2
+              it 'does not add in a duplicate authorization header' do
+                expect(request[:headers]).to eq('api_key' => 'foobar')
+                expect(metadata[:operation][:parameters].size).to eq 2
+              end
             end
           end
         end
 
-        context 'oauth2' do
+        context 'when using oauth2 auth' do
           before do
             openapi_spec[:components] =
               { securitySchemes: { oauth2: { type: :oauth2, flows: { implicit: { scopes: ['read:blogs'] } } } } }
@@ -521,7 +530,7 @@ module Rswag
           end
         end
 
-        context 'paired security requirements' do
+        context 'when using two different security schemes' do
           before do
             openapi_spec[:components] = {
               securitySchemes: {
@@ -541,13 +550,13 @@ module Rswag
             example.request_params['api_key'] = 'foobar'
           end
 
-          it 'sets both params to example values' do
+          it 'sets both params to values defined in the spec' do
             expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
             expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end
 
-        context 'path-level parameters' do
+        context 'when using both operation and path-level parameters' do
           before do
             metadata[:operation][:parameters] = [{ name: 'q1', in: :query, schema: { type: :string } }]
             metadata[:path_item][:parameters] = [{ name: 'q2', in: :query, schema: { type: :string } }]
@@ -560,7 +569,7 @@ module Rswag
           end
         end
 
-        context 'referenced parameters' do
+        context 'when using parameters from a referenced schema' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
 
           before do
@@ -576,7 +585,7 @@ module Rswag
           end
         end
 
-        context 'base path' do
+        context 'when using the schema to describe the host' do
           before do
             openapi_spec[:servers] = [{
               url: '{protocol}://{defaultHost}',
@@ -596,22 +605,22 @@ module Rswag
           end
         end
 
-        context 'global consumes' do
+        context 'when using global `consumes` in the schema' do
           before { openapi_spec[:consumes] = ['application/xml'] }
 
-          it "defaults 'CONTENT_TYPE' to global value(s)" do
+          it "defaults the request 'CONTENT_TYPE' to the global value(s)" do
             expect(request[:headers]).to eq('CONTENT_TYPE' => 'application/xml')
           end
         end
 
-        context 'global security requirements' do
+        context 'when using global security requirements' do
           before do
             openapi_spec[:components] = { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: :query } } }
             openapi_spec[:security] = [api_key: []]
             example.request_params['api_key'] = 'foobar'
           end
 
-          it 'applies the scheme by default' do
+          it 'applies the scheme to the request by default' do
             expect(request[:path]).to eq('/blogs?api_key=foobar')
           end
         end

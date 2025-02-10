@@ -99,7 +99,7 @@ module Rswag
           end
         end
 
-        context "'path' parameter" do
+        context "when defined as a 'path' parameter" do
           before { subject.parameter(name: :id, in: :path) }
 
           let(:api_metadata) { { operation: {} } }
