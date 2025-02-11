@@ -68,16 +68,6 @@ RSpec/AnyInstance:
   Exclude:
     - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
 
-# Offense count: 6
-RSpec/BeforeAfterAll:
-  Exclude:
-    - "rswag-api/spec/generators/rswag/api/install_generator_spec.rb"
-    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
-    - "rswag-specs/spec/generators/rswag/specs/install_generator_spec.rb"
-    - "rswag-ui/spec/generators/rswag/ui/custom_generator_spec.rb"
-    - "rswag-ui/spec/generators/rswag/ui/install_generator_spec.rb"
-    - "rswag/spec/generators/rswag/specs/install_generator_spec.rb"
-
 # Offense count: 19
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:

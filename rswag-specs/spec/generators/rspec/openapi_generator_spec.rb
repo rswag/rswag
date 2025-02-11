@@ -9,7 +9,7 @@ module Rspec
     include GeneratorSpec::TestCase
     destination Dir.mktmpdir
 
-    before(:all) do
+    before(:all) do # rubocop:disable RSpec/BeforeAfterAll # single-time setup for necessary files
       prepare_destination
       fixtures_dir = File.expand_path('fixtures', __dir__)
       FileUtils.cp_r("#{fixtures_dir}/spec", destination_root)
