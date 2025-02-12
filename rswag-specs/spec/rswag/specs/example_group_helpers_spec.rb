@@ -205,7 +205,7 @@ module Rswag
           expect(api_metadata[:response][:content]).to match(
             mime => {
               examples: {
-                example_0: {
+                example_0: { # rubocop:disable Naming/VariableNumber
                   value: json_example
                 }
               }
