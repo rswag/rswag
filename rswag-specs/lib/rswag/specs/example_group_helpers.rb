@@ -5,15 +5,15 @@ require 'active_support'
 module Rswag
   module Specs
     module ExampleGroupHelpers
-      def path(template, metadata = {}, &block)
+      def path(template, *tags, **metadata, &block)
         metadata[:path_item] = { template: template }
-        describe(template, metadata, &block)
+        describe(template, *tags, **metadata, &block)
       end
 
       [:get, :post, :patch, :put, :delete, :head, :options, :trace].each do |verb|
-        define_method(verb) do |summary, **metadata, &block|
+        define_method(verb) do |summary, *tags, **metadata, &block|
           api_metadata = { operation: { verb: verb, summary: summary } }.deep_merge(metadata)
-          describe(verb, **api_metadata, &block)
+          describe(verb, *tags, **api_metadata, &block)
         end
       end
 
@@ -64,9 +64,9 @@ module Rswag
         end
       end
 
-      def response(code, description, metadata = {}, &block)
+      def response(code, description, *tags, **metadata, &block)
         metadata[:response] = { code: code, description: description }
-        context(description, metadata, &block)
+        context(description, *tags, **metadata, &block)
       end
 
       def schema(value)
