@@ -43,17 +43,6 @@ Naming/AccessorMethodName:
   Exclude:
     - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
 
-# Offense count: 4
-# Configuration parameters: ExpectMatchingDefinition, CheckDefinitionPathHierarchy, CheckDefinitionPathHierarchyRoots, Regex, IgnoreExecutableScripts, AllowedAcronyms.
-# CheckDefinitionPathHierarchyRoots: lib, spec, test, src
-# AllowedAcronyms: CLI, DSL, ACL, API, ASCII, CPU, CSS, DNS, EOF, GUID, HTML, HTTP, HTTPS, ID, IP, JSON, LHS, QPS, RAM, RHS, RPC, SLA, SMTP, SQL, SSH, TCP, TLS, TTL, UDP, UI, UID, UUID, URI, URL, UTF8, VM, XML, XMPP, XSRF, XSS
-Naming/FileName:
-  Exclude:
-    - "rswag-specs/lib/tasks/rswag-specs_tasks.rake"
-    - "rswag-ui/lib/tasks/rswag-ui_tasks.rake"
-    - "test-app/config/initializers/rswag-api.rb"
-    - "test-app/config/initializers/rswag-ui.rb"
-
 # Offense count: 2
 RSpec/AnyInstance:
   Exclude:
