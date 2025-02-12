@@ -17,25 +17,23 @@ RSpec.describe Rswag::Ui::Configuration do
       end
     end
 
-    context 'when specified' do
-      context 'when set to true' do
-        it 'returns true' do
-          configuration = described_class.new
-          configuration.basic_auth_enabled = true
-          basic_auth_enabled = configuration.basic_auth_enabled
+    context 'when specified as true' do
+      it 'returns true' do
+        configuration = described_class.new
+        configuration.basic_auth_enabled = true
+        basic_auth_enabled = configuration.basic_auth_enabled
 
-          expect(basic_auth_enabled).to be(true)
-        end
+        expect(basic_auth_enabled).to be(true)
       end
+    end
 
-      context 'when set to false' do
-        it 'returns false' do
-          configuration = described_class.new
-          configuration.basic_auth_enabled = false
-          basic_auth_enabled = configuration.basic_auth_enabled
+    context 'when specified to false' do
+      it 'returns false' do
+        configuration = described_class.new
+        configuration.basic_auth_enabled = false
+        basic_auth_enabled = configuration.basic_auth_enabled
 
-          expect(basic_auth_enabled).to be(false)
-        end
+        expect(basic_auth_enabled).to be(false)
       end
     end
   end

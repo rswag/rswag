@@ -36,44 +36,45 @@ describe Rswag::Api::Middleware do
         expect(response[1]).to include('Content-Type' => 'application/json')
         expect(response[2].join).to include('"title":"API V1"')
       end
+    end
 
-      context 'when configured with a Pathname similar to `Rails.root.join("openapi")`' do
-        let(:openapi_root_pathname) { Pathname.new(openapi_root) }
+    context 'when configured with a Pathname similar to `Rails.root.join("openapi")`' do
+      let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
+      let(:openapi_root_pathname) { Pathname.new(openapi_root) }
 
-        before { config.openapi_root = openapi_root_pathname }
+      before { config.openapi_root = openapi_root_pathname }
 
-        it 'returns a 200 status', :aggregate_failures do
-          expect(response.length).to be(3)
-          expect(response.first).to eql('200')
-        end
+      it 'returns a 200 status', :aggregate_failures do
+        expect(response.length).to be(3)
+        expect(response.first).to eql('200')
       end
     end
 
-    context 'when openapi_headers are configured in the env' do
+    context 'when openapi_headers are configured in the env with a different content type header' do
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
-      context 'with a default openapi content type header' do
-        before do
-          config.openapi_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
-        end
-
-        it 'returns a 200 status with the header applied to the response', :aggregate_failures do
-          expect(response.length).to be(3)
-          expect(response.first).to eql('200')
-          expect(response[1]).to include('Content-Type' => 'application/json; charset=UTF-8')
-        end
+      before do
+        config.openapi_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
       end
 
-      context 'when adding an additional header' do
-        before do
-          config.openapi_headers = { 'Access-Control-Allow-Origin' => '*' }
-        end
+      it 'returns a 200 status with the header applied to the response', :aggregate_failures do
+        expect(response.length).to be(3)
+        expect(response.first).to eql('200')
+        expect(response[1]).to include('Content-Type' => 'application/json; charset=UTF-8')
+      end
+    end
 
-        it 'applies the new header while retaining the other original headers', :aggregate_failures do
-          expect(response.length).to be(3)
-          expect(response.first).to eql('200')
-          expect(response[1]).to include('Access-Control-Allow-Origin' => '*', 'Content-Type' => 'application/json')
-        end
+    context 'when openapi_headers are configured in the env with an additional header' do
+      let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
+
+      before do
+        config.openapi_headers = { 'Access-Control-Allow-Origin' => '*' }
+      end
+
+      it 'applies the new header while retaining the other original headers', :aggregate_failures do
+        expect(response.length).to be(3)
+        expect(response.first).to eql('200')
+        expect(response[1]).to include('Access-Control-Allow-Origin' => '*', 'Content-Type' => 'application/json')
       end
     end
 

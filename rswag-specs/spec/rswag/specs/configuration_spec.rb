@@ -89,20 +89,18 @@ RSpec.describe Rswag::Specs::Configuration do
       it { expect(response).to be(true) }
     end
 
-    context 'when the environment variable is provided' do
-      context 'when set to 0' do
-        it 'returns false' do
-          ClimateControl.modify RSWAG_DRY_RUN: '0' do
-            expect(response).to be(false)
-          end
+    context 'when the environment variable is set to 0' do
+      it 'returns false' do
+        ClimateControl.modify RSWAG_DRY_RUN: '0' do
+          expect(response).to be(false)
         end
       end
+    end
 
-      context 'when set to 1' do
-        it 'returns true' do
-          ClimateControl.modify RSWAG_DRY_RUN: '1' do
-            expect(response).to be(true)
-          end
+    context 'when the environment variable is set to 1' do
+      it 'returns true' do
+        ClimateControl.modify RSWAG_DRY_RUN: '1' do
+          expect(response).to be(true)
         end
       end
     end
@@ -125,20 +123,18 @@ RSpec.describe Rswag::Specs::Configuration do
       end
     end
 
-    context 'when the tag is provided' do
-      context 'with a matching doc' do
-        let(:tag) { 'v2/openapi.json' }
+    context 'when the tag is provided with a matching doc' do
+      let(:tag) { 'v2/openapi.json' }
 
-        it 'returns the matching doc in rspec config' do
-          expect(openapi_spec).to match hash_including(info: { title: 'v2' })
-        end
+      it 'returns the matching doc in rspec config' do
+        expect(openapi_spec).to match hash_including(info: { title: 'v2' })
       end
+    end
 
-      context 'with no matching doc' do
-        let(:tag) { 'foobar' }
+    context 'when the tag is provided with no matching doc' do
+      let(:tag) { 'foobar' }
 
-        it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
-      end
+      it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
     end
   end
 
