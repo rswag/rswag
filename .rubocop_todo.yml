@@ -83,10 +83,6 @@ RSpec/MessageChain:
   Exclude:
     - "rswag-specs/spec/rswag/route_parser_spec.rb"
 
-# Offense count: 25
-RSpec/MultipleExpectations:
-  Max: 3
-
 # Offense count: 164
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:

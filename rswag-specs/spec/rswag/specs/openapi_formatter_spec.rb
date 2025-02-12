@@ -103,7 +103,7 @@ module Rswag
         end
 
         context 'with default format' do
-          it 'writes the openapi_spec(s) to file' do
+          it 'writes the openapi_spec(s) to file', :aggregate_failures do
             expect(File).to exist("#{openapi_root}/v1/openapi.json")
             expect(File).to exist("#{openapi_root}/v2/openapi.json")
             expect { JSON.parse(File.read("#{openapi_root}/v2/openapi.json")) }.not_to raise_error
@@ -113,7 +113,7 @@ module Rswag
         context 'with yaml format' do
           let(:openapi_format) { :yaml }
 
-          it 'writes the openapi_spec(s) as yaml' do
+          it 'writes the openapi_spec(s) as yaml', :aggregate_failures do
             expect(File).to exist("#{openapi_root}/v1/openapi.json")
             expect { JSON.parse(File.read("#{openapi_root}/v1/openapi.json")) }.to raise_error(JSON::ParserError)
             # Psych::DisallowedClass would be raised if we do not pre-process ruby symbols
@@ -157,26 +157,24 @@ module Rswag
           end
 
           it 'params in: :formData appear in requestBody' do
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:parameters]).to eql([{ in: :headers, name: 'Accept',
-                                                                                  schema: { type: :string } }])
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:requestBody]).to eql(
-              content: {
-                'application/xml' => { schema: { foo: :bar } },
-                'application/json' => { schema: { foo: :bar } }
+            expect(doc_for_api_v2[:paths]['/path/'][:get]).to include(
+              parameters: [{ in: :headers, name: 'Accept', schema: { type: :string } }],
+              requestBody: {
+                content: {
+                  'application/xml' => { schema: { foo: :bar } },
+                  'application/json' => { schema: { foo: :bar } }
+                }
               }
             )
           end
 
           it 'adds security to operation' do
-            expect(doc_for_api_v2[:paths]['/path/'][:get][:security]).to eql([
-                                                                               {
-                                                                                 my_auth: [],
-                                                                                 oauth2_with_scopes: %i[scope1 scope2]
-                                                                               },
-                                                                               {
-                                                                                 auth_with_this: []
-                                                                               }
-                                                                             ])
+            expect(doc_for_api_v2[:paths]['/path/'][:get][:security]).to eql(
+              [
+                { my_auth: [], oauth2_with_scopes: %i[scope1 scope2] },
+                { auth_with_this: [] }
+              ]
+            )
           end
         end
 
@@ -234,29 +232,29 @@ module Rswag
           end
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers, name: 'Accept' }])
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
-              content: {
-                'multipart/form-data' => { schema: { type: :string } }
-              }
+            expect(doc_for_api_v2[:paths]['/path/'][:post]).to include(
+              parameters: [{ in: :headers, name: 'Accept' }],
+              requestBody: { content: { 'multipart/form-data' => { schema: { type: :string } } } }
             )
           end
 
           it 'supports legacy body parameters' do
-            expect(doc_for_api_v2[:paths]['/support_legacy_body/'][:post][:parameters]).to eql([])
-            expect(doc_for_api_v2[:paths]['/support_legacy_body/'][:post][:requestBody]).to eql(
-              content: {
-                'application/json' => { schema: { type: :object } }
-              },
-              required: true
+            expect(doc_for_api_v2[:paths]['/support_legacy_body/'][:post]).to include(
+              parameters: [],
+              requestBody: {
+                content: { 'application/json' => { schema: { type: :object } } },
+                required: true
+              }
             )
           end
 
           it 'supports legacy body parameters with name' do
-            expect(doc_for_api_v2[:paths]['/support_legacy_body_param_with_name/'][:post][:parameters]).to eql([])
-            expect(doc_for_api_v2[:paths]['/support_legacy_body_param_with_name/'][:post][:requestBody]).to eql(
-              content: { 'application/json' => { schema: { '$ref': '#/components/schemas/BlogPost' } } },
-              required: true
+            expect(doc_for_api_v2[:paths]['/support_legacy_body_param_with_name/'][:post]).to include(
+              parameters: [],
+              requestBody: {
+                content: { 'application/json' => { schema: { '$ref': '#/components/schemas/BlogPost' } } },
+                required: true
+              }
             )
           end
         end
@@ -473,36 +471,33 @@ module Rswag
           end
 
           it 'duplicates params in: :formData to requestBody from consumes list' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
-            request_body = {
-              content: {
-                'multipart/form-data' => {
-                  schema: {
-                    type: :object,
-                    properties: {
-                      file: {
-                        description: 'the actual file with appropriate content type',
-                        format: :binary,
-                        type: :string
+            expect(doc_for_api_v2[:paths]['/path/'][:post]).to include(
+              parameters: [{ in: :headers }],
+              requestBody: {
+                content: {
+                  'multipart/form-data' => {
+                    schema: {
+                      type: :object,
+                      properties: {
+                        file: {
+                          description: 'the actual file with appropriate content type',
+                          format: :binary,
+                          type: :string
+                        },
+                        scheduled_for: {
+                          description: 'a datetime string in ISO 8601 format',
+                          format: 'date-time',
+                          type: :string
+                        }
                       },
-                      scheduled_for: {
-                        description: 'a datetime string in ISO 8601 format',
-                        format: 'date-time',
-                        type: :string
-                      }
+                      required: ['file']
                     },
-                    required: ['file']
-                  },
-                  encoding: {
-                    file: {
-                      contentType: 'text/csv,application/json'
-                    }
+                    encoding: { file: { contentType: 'text/csv,application/json' } }
                   }
-                }
-              },
-              required: true
-            }
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(request_body)
+                },
+                required: true
+              }
+            )
           end
 
           context 'with a requestBody schema defined by reference' do
@@ -633,23 +628,21 @@ module Rswag
           end
 
           it 'creates requestBody examples' do
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:parameters]).to eql([{ in: :headers }])
-            expect(doc_for_api_v2[:paths]['/path/'][:post][:requestBody]).to eql(
-              content: {
-                'application/json' => {
-                  schema: { '$ref': '#/components/schemas/BlogPost' },
-                  examples: {
-                    'basic' => {
-                      value: {
-                        some_field: 'Foo'
+            expect(doc_for_api_v2[:paths]['/path/'][:post]).to include(
+              parameters: [{ in: :headers }],
+              requestBody: {
+                content: {
+                  'application/json' => {
+                    schema: { '$ref': '#/components/schemas/BlogPost' },
+                    examples: {
+                      'basic' => {
+                        value: { some_field: 'Foo' },
+                        summary: 'An example'
                       },
-                      summary: 'An example'
-                    },
-                    'another_basic' => {
-                      value: {
-                        some_field: 'Bar'
-                      },
-                      summary: 'Retrieve Nested Paths'
+                      'another_basic' => {
+                        value: { some_field: 'Bar' },
+                        summary: 'Retrieve Nested Paths'
+                      }
                     }
                   }
                 }

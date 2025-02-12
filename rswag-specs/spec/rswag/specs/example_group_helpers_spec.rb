@@ -162,8 +162,7 @@ module Rswag
           let(:value) { { field: 'A', another_field: 'B' } }
 
           it 'assigns the example to the metadata' do
-            expect(api_metadata[:operation][:request_examples].length).to eq(1)
-            expect(api_metadata[:operation][:request_examples][0]).to eq({ value: value, name: 0 })
+            expect(api_metadata[:operation][:request_examples]).to eq([{ value: value, name: 0 }])
           end
         end
 
@@ -180,10 +179,11 @@ module Rswag
           let(:example_two_summary) { 'An example description' }
 
           it 'assigns all examples to the metadata' do
-            expect(api_metadata[:operation][:request_examples].length).to eq(2)
-            expect(api_metadata[:operation][:request_examples][0]).to eq({ value: example_one, name: 0 })
-            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name,
-                                                                           summary: example_two_summary })
+            expect(api_metadata[:operation][:request_examples]).to have_attributes(
+              length: 2,
+              first: { value: example_one, name: 0 },
+              second: { value: example_two, name: example_two_name, summary: example_two_summary }
+            )
           end
         end
       end

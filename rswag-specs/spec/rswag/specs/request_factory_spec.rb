@@ -29,8 +29,7 @@ module Rswag
         let(:request) { subject.build_request }
 
         it 'builds request hash for given example' do
-          expect(request[:verb]).to eq(:get)
-          expect(request[:path]).to eq('/blogs')
+          expect(request).to include(verb: :get, path: '/blogs')
         end
 
         context 'when using path parameters' do
@@ -324,8 +323,7 @@ module Rswag
           end
 
           it 'builds the request hash without them' do
-            expect(request[:path]).to eq('/blogs')
-            expect(request[:headers]).to eq({})
+            expect(request).to include(path: '/blogs', headers: {})
           end
         end
 
@@ -509,7 +507,7 @@ module Rswag
                 example.request_headers['api_key'] = 'foobar'
               end
 
-              it 'does not add in a duplicate authorization header' do
+              it 'does not add in a duplicate authorization header', :aggregate_failures do
                 expect(request[:headers]).to eq('api_key' => 'foobar')
                 expect(metadata[:operation][:parameters].size).to eq 2
               end
@@ -551,8 +549,8 @@ module Rswag
           end
 
           it 'sets both params to values defined in the spec' do
-            expect(request[:headers]).to eq('HTTP_AUTHORIZATION' => 'Basic foobar')
-            expect(request[:path]).to eq('/blogs?api_key=foobar')
+            expect(request).to include(headers: { 'HTTP_AUTHORIZATION' => 'Basic foobar' },
+                                       path: '/blogs?api_key=foobar')
           end
         end
 
