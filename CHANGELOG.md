@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Dropped using #send (https://github.com/rswag/rswag/pull/396)
+- Fixed handling of tags in rspec contexts/tests (https://github.com/rswag/rswag/pull/825)
 
 ### Added
 
