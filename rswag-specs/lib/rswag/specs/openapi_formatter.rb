@@ -146,7 +146,7 @@ module Rswag
 
         # Parse any parameters
         parameters.each do |parameter|
-          set_parameter_schema(parameter)
+          add_to_schema(parameter)
           convert_file_parameter(parameter)
           parse_enum(parameter)
         end
@@ -161,7 +161,7 @@ module Rswag
         parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
       end
 
-      def set_parameter_schema(parameter)
+      def add_to_schema(parameter)
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
         parameter[:schema] ||= {}

@@ -38,11 +38,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 14
 
-# Offense count: 1
-Naming/AccessorMethodName:
-  Exclude:
-    - "rswag-specs/lib/rswag/specs/openapi_formatter.rb"
-
 # Offense count: 2
 RSpec/AnyInstance:
   Exclude:
