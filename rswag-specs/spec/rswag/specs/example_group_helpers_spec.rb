@@ -5,22 +5,22 @@ require 'rswag/specs/example_group_helpers'
 module Rswag
   module Specs
     RSpec.describe ExampleGroupHelpers do
-      subject { double('example_group') }
+      subject(:mock_example_group) { double('example_group') }
 
       before do
-        subject.extend described_class
-        allow(subject).to receive(:describe)
-        allow(subject).to receive(:context)
-        allow(subject).to receive(:metadata).and_return(api_metadata)
+        mock_example_group.extend described_class
+        allow(mock_example_group).to receive(:describe)
+        allow(mock_example_group).to receive(:context)
+        allow(mock_example_group).to receive(:metadata).and_return(api_metadata)
       end
 
       let(:api_metadata) { {} }
 
       describe '#path(path)' do
-        before { subject.path('/blogs') }
+        before { mock_example_group.path('/blogs') }
 
         it "delegates to 'describe' with 'path' metadata" do
-          expect(subject).to have_received(:describe).with(
+          expect(mock_example_group).to have_received(:describe).with(
             '/blogs', path_item: { template: '/blogs' }
           )
         end
@@ -28,20 +28,20 @@ module Rswag
 
       describe '#get|post|patch|put|delete|head|options|trace(verb, summary)' do
         context 'when called without keyword arguments' do
-          before { subject.post('Creates a blog') }
+          before { mock_example_group.post('Creates a blog') }
 
           it "delegates to 'describe' with 'operation' metadata" do
-            expect(subject).to have_received(:describe).with(
+            expect(mock_example_group).to have_received(:describe).with(
               :post, operation: { verb: :post, summary: 'Creates a blog' }
             )
           end
         end
 
         context 'when called with keyword arguments' do
-          before { subject.post('Creates a blog', foo: 'bar') }
+          before { mock_example_group.post('Creates a blog', foo: 'bar') }
 
           it "delegates to 'describe' with 'operation' metadata and provided metadata" do
-            expect(subject).to have_received(:describe).with(
+            expect(mock_example_group).to have_received(:describe).with(
               :post, operation: { verb: :post, summary: 'Creates a blog' }, foo: 'bar'
             )
           end
@@ -50,14 +50,14 @@ module Rswag
 
       describe '#tags|description|operationId|consumes|produces|schemes|deprecated|security(value)' do
         before do
-          subject.tags('Blogs', 'Admin')
-          subject.description('Some description')
-          subject.operationId('createBlog')
-          subject.consumes('application/json', 'application/xml')
-          subject.produces('application/json', 'application/xml')
-          subject.schemes('http', 'https')
-          subject.deprecated(true)
-          subject.security(api_key: [])
+          mock_example_group.tags('Blogs', 'Admin')
+          mock_example_group.description('Some description')
+          mock_example_group.operationId('createBlog')
+          mock_example_group.consumes('application/json', 'application/xml')
+          mock_example_group.produces('application/json', 'application/xml')
+          mock_example_group.schemes('http', 'https')
+          mock_example_group.deprecated(true)
+          mock_example_group.security(api_key: [])
         end
 
         let(:api_metadata) { { operation: {} } }
@@ -78,7 +78,7 @@ module Rswag
 
       describe '#parameter(attributes)' do
         context "when called at the 'path' level" do
-          before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          before { mock_example_group.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
           let(:api_metadata) { { path_item: {} } } # i.e. operation not defined yet
 
           it "adds to the 'path_item parameters' metadata" do
@@ -89,7 +89,7 @@ module Rswag
         end
 
         context "when called at the 'operation' level" do
-          before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
+          before { mock_example_group.parameter(name: :blog, in: :body, schema: { type: 'object' }) }
           let(:api_metadata) { { path_item: {}, operation: {} } } # i.e. operation defined
 
           it "adds to the 'operation parameters' metadata" do
@@ -100,7 +100,7 @@ module Rswag
         end
 
         context "when defined as a 'path' parameter" do
-          before { subject.parameter(name: :id, in: :path) }
+          before { mock_example_group.parameter(name: :id, in: :path) }
 
           let(:api_metadata) { { operation: {} } }
 
@@ -112,7 +112,7 @@ module Rswag
         end
 
         context "when 'in' parameter key is not defined" do
-          before { subject.parameter(name: :id) }
+          before { mock_example_group.parameter(name: :id) }
 
           let(:api_metadata) { { operation: {} } }
 
@@ -123,17 +123,17 @@ module Rswag
       end
 
       describe '#response(code, description)' do
-        before { subject.response('201', 'success') }
+        before { mock_example_group.response('201', 'success') }
 
         it "delegates to 'context' with 'response' metadata" do
-          expect(subject).to have_received(:context).with(
+          expect(mock_example_group).to have_received(:context).with(
             'success', response: { code: '201', description: 'success' }
           )
         end
       end
 
       describe '#schema(value)' do
-        before { subject.schema(type: 'object') }
+        before { mock_example_group.schema(type: 'object') }
 
         let(:api_metadata) { { response: {} } }
 
@@ -143,7 +143,7 @@ module Rswag
       end
 
       describe '#header(name, attributes)' do
-        before { subject.header('Date', type: 'string') }
+        before { mock_example_group.header('Date', type: 'string') }
 
         let(:api_metadata) { { response: {} } }
 
@@ -156,7 +156,7 @@ module Rswag
 
       describe '#request_body_example(value:, summary: nil, name: nil)' do
         context 'when adding one example' do
-          before { subject.request_body_example(value: value) }
+          before { mock_example_group.request_body_example(value: value) }
 
           let(:api_metadata) { { operation: {} } }
           let(:value) { { field: 'A', another_field: 'B' } }
@@ -168,8 +168,10 @@ module Rswag
 
         context 'when adding multiple examples with additional information' do
           before do
-            subject.request_body_example(value: example_one)
-            subject.request_body_example(value: example_two, name: example_two_name, summary: example_two_summary)
+            mock_example_group.request_body_example(value: example_one)
+            mock_example_group.request_body_example(value: example_two,
+                                                    name: example_two_name,
+                                                    summary: example_two_summary)
           end
 
           let(:api_metadata) { { operation: {} } }
@@ -198,7 +200,7 @@ module Rswag
         let(:api_metadata) { { response: {} } }
 
         before do
-          subject.examples(mime => json_example)
+          mock_example_group.examples(mime => json_example)
         end
 
         it "adds to the 'response examples' metadata" do
@@ -226,7 +228,7 @@ module Rswag
         let(:api_metadata) { { response: {} } }
 
         before do
-          subject.example(mime, :example_key, json_example, summary, description)
+          mock_example_group.example(mime, :example_key, json_example, summary, description)
         end
 
         it "adds to the 'response examples' metadata" do
@@ -254,21 +256,21 @@ module Rswag
         end
 
         before do
-          allow(subject).to receive(:before)
-          allow(subject).to receive(:it)
+          allow(mock_example_group).to receive(:before)
+          allow(mock_example_group).to receive(:it)
         end
 
         it 'executes a specification' do
           expected_spec_description = 'returns a 200 response'
-          subject.run_test!
-          expect(subject).to have_received(:it).with(expected_spec_description, rswag: true)
+          mock_example_group.run_test!
+          expect(mock_example_group).to have_received(:it).with(expected_spec_description, rswag: true)
         end
 
         context 'when options[:description] is passed' do
           it 'executes a specification described with passed description' do
             expected_spec_description = 'returns a 200 response - with a custom description'
-            subject.run_test!(expected_spec_description)
-            expect(subject).to have_received(:it).with(expected_spec_description, rswag: true)
+            mock_example_group.run_test!(expected_spec_description)
+            expect(mock_example_group).to have_received(:it).with(expected_spec_description, rswag: true)
           end
         end
       end

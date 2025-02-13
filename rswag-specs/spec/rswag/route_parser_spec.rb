@@ -2,7 +2,7 @@
 
 RSpec.describe Rswag::RouteParser do
   describe '#routes' do
-    subject { described_class.new(controller) }
+    subject(:described_instance) { described_class.new(controller) }
 
     let(:controller) { 'api/v1/posts' }
 
@@ -45,7 +45,7 @@ RSpec.describe Rswag::RouteParser do
     end
 
     it 'returns correct routes' do
-      expect(subject.routes).to eq(expectation)
+      expect(described_instance.routes).to eq(expectation)
     end
   end
 end

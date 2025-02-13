@@ -66,16 +66,6 @@ RSpec/MetadataStyle:
 RSpec/MultipleMemoizedHelpers:
   Max: 9
 
-# Offense count: 49
-# Configuration parameters: EnforcedStyle, IgnoreSharedExamples.
-# SupportedStyles: always, named_only
-RSpec/NamedSubject:
-  Exclude:
-    - "rswag-specs/spec/rswag/route_parser_spec.rb"
-    - "rswag-specs/spec/rswag/specs/example_group_helpers_spec.rb"
-    - "rswag-specs/spec/rswag/specs/example_helpers_spec.rb"
-    - "rswag-specs/spec/rswag/specs/openapi_formatter_spec.rb"
-
 # Offense count: 12
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:

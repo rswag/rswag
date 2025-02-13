@@ -6,7 +6,7 @@ require 'ostruct'
 module Rswag
   module Specs
     RSpec.describe OpenapiFormatter do
-      subject { described_class.new(output, config) }
+      subject(:described_instance) { described_class.new(output, config) }
 
       # Mock out some infrastructure
       before do
@@ -20,7 +20,7 @@ module Rswag
       describe '#example_group_finished(notification)' do
         before do
           allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-          subject.example_group_finished(notification)
+          described_instance.example_group_finished(notification)
         end
 
         let(:request_examples) { nil }
@@ -89,7 +89,7 @@ module Rswag
             },
             openapi_format: openapi_format
           )
-          subject.stop(notification)
+          described_instance.stop(notification)
         end
 
         let(:doc_for_api_v1) { { info: { version: 'v1' } } }
