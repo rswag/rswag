@@ -15,9 +15,8 @@ module Rswag
         )
       end
 
-      let(:config) { double('config') }
+      let(:config) { instance_double(::Rswag::Specs::Configuration) }
       let(:openapi_spec) { {} }
-      let(:example) { double('example') }
       let(:openapi_all_properties_required) { false }
       let(:openapi_no_additional_properties) { false }
       let(:schema) do

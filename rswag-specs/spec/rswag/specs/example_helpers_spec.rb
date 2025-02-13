@@ -14,7 +14,7 @@ module Rswag
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
       end
 
-      let(:config) { double('config') }
+      let(:config) { instance_double(::Rswag::Specs::Configuration) }
       let(:openapi_spec) do
         {
           openapi: '3.0',

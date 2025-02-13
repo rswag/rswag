@@ -5,7 +5,7 @@ require 'rswag/specs/example_group_helpers'
 module Rswag
   module Specs
     RSpec.describe ExampleGroupHelpers do
-      subject(:mock_example_group) { double('example_group') }
+      subject(:mock_example_group) { Struct.new(:foo).new }
 
       before do
         mock_example_group.extend described_class

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'action_dispatch'
+
 RSpec.describe Rswag::RouteParser do
   describe '#routes' do
     subject(:described_instance) { described_class.new(controller) }
@@ -8,19 +10,22 @@ RSpec.describe Rswag::RouteParser do
 
     let(:routes) do
       [
-        double(
+        instance_double(
+          ActionDispatch::Journey::Route,
           defaults: {
             controller: controller
           },
-          path: double(
-            spec: double(
+          path: instance_double(
+            ActionDispatch::Journey::Path::Pattern,
+            spec: instance_double(
+              ActionDispatch::Journey::Parser,
               to_s: '/api/v1/posts/:id(.:format)'
             )
           ),
           verb: 'GET',
           requirements: {
             action: 'show',
-            controller: 'api/v1/posts'
+            controller: controller
           },
           segments: %w[id format]
         )

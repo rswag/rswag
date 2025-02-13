@@ -10,11 +10,12 @@ module Rswag
 
       # Mock out some infrastructure
       before do
+        allow(output).to receive(:puts).and_return(nil)
         allow(config).to receive(:openapi_root).and_return(openapi_root)
       end
 
-      let(:config) { double('config') }
-      let(:output) { double('output').as_null_object }
+      let(:config) { instance_double(::Rswag::Specs::Configuration) }
+      let(:output) { instance_double(::StringIO) }
       let(:openapi_root) { File.expand_path('tmp/openapi', __dir__) }
 
       describe '#example_group_finished(notification)' do
@@ -89,14 +90,12 @@ module Rswag
             },
             openapi_format: openapi_format
           )
-          described_instance.stop(notification)
+          described_instance.stop
         end
 
         let(:doc_for_api_v1) { { info: { version: 'v1' } } }
         let(:doc_for_api_v2) { { info: { version: 'v2' } } }
         let(:openapi_format) { :json }
-
-        let(:notification) { double('notification') }
 
         after do
           FileUtils.rm_r(openapi_root) if File.exist?(openapi_root)
