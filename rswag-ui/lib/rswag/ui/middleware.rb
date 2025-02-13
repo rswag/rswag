@@ -1,7 +1,7 @@
 module Rswag
   module Ui
     class Middleware < Rack::Static
-      CONTENT_SECURITY_POLICY_HEADER = if Gem::Version.new(Rack::RELEASE) < Gem::Version.new("3")
+      CONTENT_SECURITY_POLICY_HEADER = if Gem::Version.new(Rack.release) < Gem::Version.new("3")
         'Content-Security-Policy'
       else
         'content-security-policy'
