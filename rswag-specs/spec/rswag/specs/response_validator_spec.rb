@@ -81,16 +81,18 @@ module Rswag
         end
 
         context 'response matches metadata' do
-          it { expect { call }.to_not raise_error }
+          it { expect { call }.not_to raise_error }
         end
 
         context 'response code differs from metadata' do
           before { response.code = '400' }
+
           it { expect { call }.to raise_error(/Expected response code/) }
         end
 
         context 'response headers differ from metadata' do
           before { response.headers = {} }
+
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
@@ -101,7 +103,8 @@ module Rswag
               'X-Per-Page' => 25
             }
           end
-          it { expect { call }.to_not raise_error }
+
+          it { expect { call }.not_to raise_error }
         end
 
         context 'response headers include nullable header' do
@@ -112,7 +115,8 @@ module Rswag
               'X-Per-Page' => nil
             }
           end
-          it { expect { call }.to_not raise_error }
+
+          it { expect { call }.not_to raise_error }
         end
 
         context 'response headers missing nullable header' do
@@ -122,11 +126,13 @@ module Rswag
               'X-Cursor' => 'test_cursor'
             }
           end
+
           it { expect { call }.to raise_error(/Expected response header/) }
         end
 
         context 'response body differs from metadata' do
           before { response.body = '{"foo":"Some comment"}' }
+
           it { expect { call }.to raise_error(/Expected response body/) }
         end
 
@@ -589,7 +595,7 @@ module Rswag
                 end
 
                 context 'response matches metadata' do
-                  it { expect { call }.to_not raise_error }
+                  it { expect { call }.not_to raise_error }
                 end
               end
 
@@ -599,7 +605,7 @@ module Rswag
                 end
 
                 context 'response matches metadata' do
-                  it { expect { call }.to_not raise_error }
+                  it { expect { call }.not_to raise_error }
                 end
               end
             end
@@ -634,7 +640,7 @@ module Rswag
                 end
 
                 context 'response matches metadata' do
-                  it { expect { call }.to_not raise_error }
+                  it { expect { call }.not_to raise_error }
                 end
               end
 
@@ -644,7 +650,7 @@ module Rswag
                 end
 
                 context 'response matches metadata' do
-                  it { expect { call }.to_not raise_error }
+                  it { expect { call }.not_to raise_error }
                 end
               end
             end

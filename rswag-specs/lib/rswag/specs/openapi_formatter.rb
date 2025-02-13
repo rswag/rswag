@@ -72,13 +72,13 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k, _v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k, _v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end
@@ -166,9 +166,11 @@ module Rswag
         # and simply mark the parameter as required, which will be processed later.
         parameter[:schema] ||= {}
         if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
-          parameter[:required] = parameter[:schema].delete(:required)
+          parameter[:required] =
+            parameter[:schema].delete(:required)
         end
-        #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
+        #  Also parameters currently can be defined with a datatype (`type:`)
+        #  but this should be in `schema:` in the output.
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
 
@@ -182,7 +184,8 @@ module Rswag
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
         unless mime_list
-          raise ConfigurationError, 'A body or form data parameters are specified without a Media Type for the content'
+          raise ConfigurationError,
+                'A body or form data parameters are specified without a Media Type for the content'
         end
 
         # Only add requestBody if there are any body parameters and not already defined
@@ -279,7 +282,7 @@ module Rswag
 
       def generate_enum_description(param, enum)
         enum_description = "#{param[:description]}:\n "
-        enum.each do |k,v|
+        enum.each do |k, v|
           enum_description += "* `#{k}` #{v}\n "
         end
         enum_description

@@ -40,7 +40,7 @@ module Rswag
       private
 
       def parse_file(filename)
-        if /\.ya?ml$/ === filename
+        if /\.ya?ml$/.match?(filename)
           load_yaml(filename)
         else
           load_json(filename)
@@ -56,7 +56,7 @@ module Rswag
       end
 
       def unload_openapi(filename, openapi)
-        if /\.ya?ml$/ === filename
+        if /\.ya?ml$/.match?(filename)
           YAML.dump(openapi)
         else
           JSON.dump(openapi)

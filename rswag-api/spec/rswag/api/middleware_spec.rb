@@ -6,13 +6,13 @@ require 'rswag/api/middleware'
 require 'rswag/api/configuration'
 
 describe Rswag::Api::Middleware do
+  subject { described_class.new(app, config) }
+
   let(:app) { double('app') }
   let(:openapi_root) { File.expand_path('fixtures/openapi', __dir__) }
   let(:config) do
     Rswag::Api::Configuration.new.tap { |c| c.openapi_root = openapi_root }
   end
-
-  subject { described_class.new(app, config) }
 
   describe '#call(env)' do
     let(:response) { subject.call(env) }
@@ -56,6 +56,7 @@ describe Rswag::Api::Middleware do
         before do
           config.openapi_headers = { 'Content-Type' => 'application/json; charset=UTF-8' }
         end
+
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
           expect(response.first).to eql('200')
@@ -70,6 +71,7 @@ describe Rswag::Api::Middleware do
         before do
           config.openapi_headers = { 'Access-Control-Allow-Origin' => '*' }
         end
+
         it 'returns a 200 status' do
           expect(response.length).to eql(3)
           expect(response.first).to eql('200')
@@ -87,6 +89,7 @@ describe Rswag::Api::Middleware do
 
     context "given a path that doesn't map to any openapi file" do
       let(:env) { env_defaults.merge('PATH_INFO' => 'foobar.json') }
+
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end
@@ -98,6 +101,7 @@ describe Rswag::Api::Middleware do
 
     context 'Disallow path traversing on path info' do
       let(:env) { env_defaults.merge('PATH_INFO' => '../traverse-secret.yml') }
+
       before do
         allow(app).to receive(:call).and_return(['500', {}, []])
       end
@@ -145,6 +149,7 @@ describe Rswag::Api::Middleware do
       before do
         config.openapi_filter = ->(openapi, env) { openapi['host'] = env['HTTP_HOST'] }
       end
+
       let(:env) { env_defaults.merge('PATH_INFO' => 'v1/openapi.json') }
 
       it 'applies the filter prior to serialization' do

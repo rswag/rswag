@@ -13,6 +13,7 @@ module Rswag
         allow(subject).to receive(:context)
         allow(subject).to receive(:metadata).and_return(api_metadata)
       end
+
       let(:api_metadata) { {} }
 
       describe '#path(path)' do
@@ -58,6 +59,7 @@ module Rswag
           subject.deprecated(true)
           subject.security(api_key: [])
         end
+
         let(:api_metadata) { { operation: {} } }
 
         it "adds to the 'operation' metadata" do
@@ -99,6 +101,7 @@ module Rswag
 
         context "'path' parameter" do
           before { subject.parameter(name: :id, in: :path) }
+
           let(:api_metadata) { { operation: {} } }
 
           it "automatically sets the 'required' flag" do
@@ -110,6 +113,7 @@ module Rswag
 
         context "when 'in' parameter key is not defined" do
           before { subject.parameter(name: :id) }
+
           let(:api_metadata) { { operation: {} } }
 
           it "does not require the 'in' parameter key" do
@@ -130,6 +134,7 @@ module Rswag
 
       describe '#schema(value)' do
         before { subject.schema(type: 'object') }
+
         let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response' metadata" do
@@ -139,6 +144,7 @@ module Rswag
 
       describe '#header(name, attributes)' do
         before { subject.header('Date', type: 'string') }
+
         let(:api_metadata) { { response: {} } }
 
         it "adds to the 'response headers' metadata" do
@@ -151,11 +157,12 @@ module Rswag
       describe '#request_body_example(value:, summary: nil, name: nil)' do
         context 'when adding one example' do
           before { subject.request_body_example(value: value) }
+
           let(:api_metadata) { { operation: {} } }
           let(:value) { { field: 'A', another_field: 'B' } }
 
           it 'assigns the example to the metadata' do
-            expect(api_metadata[:operation][:request_examples].length()).to eq(1)
+            expect(api_metadata[:operation][:request_examples].length).to eq(1)
             expect(api_metadata[:operation][:request_examples][0]).to eq({ value: value, name: 0 })
           end
         end
@@ -165,6 +172,7 @@ module Rswag
             subject.request_body_example(value: example_one)
             subject.request_body_example(value: example_two, name: example_two_name, summary: example_two_summary)
           end
+
           let(:api_metadata) { { operation: {} } }
           let(:example_one) { { field: 'A', another_field: 'B' } }
           let(:example_two) { { field: 'B', another_field: 'C' } }
@@ -172,9 +180,10 @@ module Rswag
           let(:example_two_summary) { 'An example description' }
 
           it 'assigns all examples to the metadata' do
-            expect(api_metadata[:operation][:request_examples].length()).to eq(2)
+            expect(api_metadata[:operation][:request_examples].length).to eq(2)
             expect(api_metadata[:operation][:request_examples][0]).to eq({ value: example_one, name: 0 })
-            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name, summary: example_two_summary })
+            expect(api_metadata[:operation][:request_examples][1]).to eq({ value: example_two, name: example_two_name,
+                                                                           summary: example_two_summary })
           end
         end
       end
@@ -183,7 +192,7 @@ module Rswag
         let(:mime) { 'application/json' }
         let(:json_example) do
           {
-              foo: 'bar'
+            foo: 'bar'
           }
         end
         let(:api_metadata) { { response: {} } }
@@ -211,7 +220,7 @@ module Rswag
         let(:description) { 'this is an example description ' }
         let(:json_example) do
           {
-              foo: 'bar'
+            foo: 'bar'
           }
         end
         let(:api_metadata) { { response: {} } }

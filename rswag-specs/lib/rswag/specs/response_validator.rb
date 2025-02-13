@@ -42,11 +42,13 @@ module Rswag
           is_required = required_attribute.nil? ? true : required_attribute
 
           if !headers.include?(name.to_s) && is_required
-            raise UnexpectedResponse, "Expected response header #{name} to be present"
+            raise UnexpectedResponse,
+                  "Expected response header #{name} to be present"
           end
 
           if headers.include?(name.to_s) && headers[name.to_s].nil? && !is_nullable
-            raise UnexpectedResponse, "Expected response header #{name} to not be null"
+            raise UnexpectedResponse,
+                  "Expected response header #{name} to not be null"
           end
         end
       end
@@ -72,8 +74,10 @@ module Rswag
       end
 
       def validation_options_from(metadata)
-        all_properties_required = metadata.fetch(:openapi_all_properties_required, @config.openapi_all_properties_required)
-        no_additional_properties = metadata.fetch(:openapi_no_additional_properties, @config.openapi_no_additional_properties)
+        all_properties_required = metadata.fetch(:openapi_all_properties_required,
+                                                 @config.openapi_all_properties_required)
+        no_additional_properties = metadata.fetch(:openapi_no_additional_properties,
+                                                  @config.openapi_no_additional_properties)
 
         {
           allPropertiesRequired: all_properties_required,
