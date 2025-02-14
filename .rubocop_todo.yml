@@ -36,14 +36,6 @@ Metrics/PerceivedComplexity:
 RSpec/ExampleLength:
   Max: 27
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: hash, symbol
-RSpec/MetadataStyle:
-  Exclude:
-    - "test-app/spec/integration/blogs_spec.rb"
-
 # Offense count: 153
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:

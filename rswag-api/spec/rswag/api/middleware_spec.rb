@@ -2,13 +2,14 @@
 
 require 'spec_helper'
 
+require 'rails/application'
 require 'rswag/api/middleware'
 require 'rswag/api/configuration'
 
 describe Rswag::Api::Middleware do
   subject { described_class.new(app, config) }
 
-  let(:app) { double('app') }
+  let(:app) { instance_double(Rails::Application) }
   let(:openapi_root) { File.expand_path('fixtures/openapi', __dir__) }
   let(:config) do
     Rswag::Api::Configuration.new.tap { |c| c.openapi_root = openapi_root }
