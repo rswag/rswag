@@ -31,11 +31,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 14
 
-# Offense count: 2
-RSpec/AnyInstance:
-  Exclude:
-    - "rswag-specs/spec/generators/rspec/openapi_generator_spec.rb"
-
 # Offense count: 20
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:

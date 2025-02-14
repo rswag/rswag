@@ -16,7 +16,9 @@ module Rspec
     end
 
     it 'installs the openapi_helper for rspec' do
-      allow_any_instance_of(Rswag::RouteParser).to receive(:routes).and_return(fake_routes)
+      allow(Rswag::RouteParser).to receive_messages(
+        new: instance_double(Rswag::RouteParser, routes: fake_routes)
+      )
       run_generator ['Posts::CommentsController']
 
       assert_file('spec/requests/posts/comments_spec.rb') do |content|
@@ -26,7 +28,9 @@ module Rspec
     end
 
     it 'generates spec file for a controller in a defined directory' do
-      allow_any_instance_of(Rswag::RouteParser).to receive(:routes).and_return(fake_routes)
+      allow(Rswag::RouteParser).to receive_messages(
+        new: instance_double(Rswag::RouteParser, routes: fake_routes)
+      )
       run_generator %w[Posts::CommentsController --spec_path=integration]
 
       assert_file('spec/integration/posts/comments_spec.rb') do |content|
