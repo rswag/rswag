@@ -10,7 +10,7 @@ module Rswag
       ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
       def initialize(output, config = Rswag::Specs.config)
-        @output = output
+        super(output)
         @config = config
 
         @output.puts 'Generating OpenAPI spec...'

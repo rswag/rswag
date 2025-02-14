@@ -252,6 +252,7 @@ module Rswag
       attr_reader :body_param
 
       def initialize(body_param)
+        super()
         @body_param = body_param
       end
 
