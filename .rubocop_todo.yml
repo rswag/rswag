@@ -31,11 +31,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 14
 
-# Offense count: 20
-# Configuration parameters: CountAsOne.
-RSpec/ExampleLength:
-  Max: 27
-
 # Offense count: 153
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:

@@ -9,12 +9,14 @@ module Rswag
       include GeneratorSpec::TestCase
       destination File.expand_path('tmp', __dir__)
 
-      it 'installs the necessary files' do
+      before do
         prepare_destination
         fixtures_dir = File.expand_path('fixtures', __dir__)
         FileUtils.cp_r("#{fixtures_dir}/config", destination_root)
         FileUtils.cp_r("#{fixtures_dir}/spec", destination_root)
+      end
 
+      it 'installs the necessary files' do
         run_generator
 
         assert_file('spec/openapi_helper.rb')
