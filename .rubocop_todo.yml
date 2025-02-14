@@ -41,11 +41,6 @@ RSpec/AnyInstance:
 RSpec/ExampleLength:
   Max: 27
 
-# Offense count: 1
-RSpec/MessageChain:
-  Exclude:
-    - "rswag-specs/spec/rswag/route_parser_spec.rb"
-
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle.

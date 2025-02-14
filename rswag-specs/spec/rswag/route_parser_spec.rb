@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'action_dispatch'
+require 'rails/application'
 
 RSpec.describe Rswag::RouteParser do
   describe '#routes' do
@@ -46,7 +47,15 @@ RSpec.describe Rswag::RouteParser do
     end
 
     before do
-      allow(::Rails).to receive_message_chain('application.routes.routes') { routes }
+      allow(::Rails).to receive_messages(
+        application: instance_double(
+          ::Rails::Application,
+          routes: instance_double(
+            ::Rails::Engine::LazyRouteSet,
+            routes: routes
+          )
+        )
+      )
     end
 
     it 'returns correct routes' do
