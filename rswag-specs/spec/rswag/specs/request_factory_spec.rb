@@ -6,27 +6,16 @@ require 'rswag/specs/request_factory'
 
 module Rswag
   module Specs
-    MockExample = Struct.new(:request_headers, :request_params)
-
     RSpec.describe RequestFactory do
-      subject { described_class.new(metadata, example, config) }
-
-      before do
-        allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
-      end
-
-      let(:config) { instance_double(::Rswag::Specs::Configuration) }
-      let(:example) { MockExample.new({}, {}) }
-      let(:metadata) do
-        {
-          path_item: { template: '/blogs' },
-          operation: { verb: :get }
-        }
-      end
+      let(:example) { Struct.new(:request_headers, :request_params).new({}, {}) }
+      let(:metadata) { { path_item: { template: '/blogs' }, operation: { verb: :get } } }
       let(:openapi_spec) { { openapi: '3.0' } }
 
       describe '#build_request' do
-        let(:request) { subject.build_request }
+        subject(:request) do
+          config = instance_double(::Rswag::Specs::Configuration, get_openapi_spec: openapi_spec)
+          described_class.new(metadata, example, config).build_request
+        end
 
         it 'builds request hash for given example' do
           expect(request).to include(verb: :get, path: '/blogs')
@@ -146,7 +135,6 @@ module Rswag
         end
 
         context 'when using an `object` query parameter' do
-          let(:things) { { 'foo': 'bar' } }
           let(:openapi_spec) { { openapi: '3.0' } }
 
           before do
@@ -158,7 +146,7 @@ module Rswag
                 schema: { type: :object, additionalProperties: { type: :string } }
               }
             ]
-            example.request_params['things'] = things
+            example.request_params['things'] = { 'foo': 'bar' }
           end
 
           context 'with the `style: deepObject`' do
@@ -171,9 +159,10 @@ module Rswag
           end
 
           context 'with the `style: deepObject` and nested objects' do
-            let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
+
+            before { example.request_params['things'] = { 'foo': { 'bar': 'baz' } } }
 
             it 'formats as deep object' do
               expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
@@ -199,9 +188,10 @@ module Rswag
           end
 
           context 'with the `style: form`, `explode: false`, and unusual but uri-encodable characters' do
-            let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
+
+            before { example.request_params['things'] = { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
 
             it 'formats as an exploded form' do
               expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
@@ -210,7 +200,6 @@ module Rswag
         end
 
         context 'when using an `array` query parameter' do
-          let(:id) { [3, 4, 5] }
           let(:openapi_spec) { { openapi: '3.0' } }
 
           before do
@@ -222,7 +211,7 @@ module Rswag
                 schema: { type: :array, items: { type: :integer } }
               }
             ]
-            example.request_params['id'] = id
+            example.request_params['id'] = [3, 4, 5]
           end
 
           context 'with the `style: form` and `exploded: true`' do
@@ -281,7 +270,6 @@ module Rswag
         end
 
         context 'when using query parameters from a referenced schema' do
-          let(:things) { 'foo' }
           let(:openapi_spec) { { openapi: '3.0' } }
 
           before do
@@ -291,7 +279,7 @@ module Rswag
                 schema: { '$ref' => '#/components/schemas/FooType' }
               }
             ]
-            example.request_params['things'] = things
+            example.request_params['things'] = 'foo'
           end
 
           it 'builds the query string' do

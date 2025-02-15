@@ -31,11 +31,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 14
 
-# Offense count: 153
-# Configuration parameters: AllowSubject.
-RSpec/MultipleMemoizedHelpers:
-  Max: 9
-
 # Offense count: 47
 # Configuration parameters: AllowedConstants.
 Style/Documentation:

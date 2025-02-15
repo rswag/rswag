@@ -5,31 +5,16 @@ require 'rswag/specs/response_validator'
 module Rswag
   module Specs
     RSpec.describe ResponseValidator do
-      subject { described_class.new(config) }
-
-      before do
-        allow(config).to receive_messages(
-          get_openapi_spec: openapi_spec,
+      let(:config) do
+        instance_double(
+          ::Rswag::Specs::Configuration,
+          get_openapi_spec: {},
           openapi_all_properties_required: openapi_all_properties_required,
           openapi_no_additional_properties: openapi_no_additional_properties
         )
       end
-
-      let(:config) { instance_double(::Rswag::Specs::Configuration) }
-      let(:openapi_spec) { {} }
       let(:openapi_all_properties_required) { false }
       let(:openapi_no_additional_properties) { false }
-      let(:schema) do
-        {
-          type: :object,
-          properties: {
-            text: { type: :string },
-            number: { type: :integer }
-          },
-          required: %w[text number]
-        }
-      end
-
       let(:metadata) do
         {
           response: {
@@ -49,13 +34,21 @@ module Rswag
                 }
               }
             },
-            schema: { **schema }
+            schema: {
+              type: :object,
+              properties: {
+                text: { type: :string },
+                number: { type: :integer }
+              },
+              required: %w[text number]
+            }
           }
         }
       end
 
       describe '#validate!(metadata, response)' do
-        let(:call) { subject.validate!(metadata, response) }
+        subject(:call) { described_class.new(config).validate!(metadata, response) }
+
         let(:response) do
           OpenStruct.new(
             code: '200',
@@ -189,15 +182,7 @@ module Rswag
           end
 
           context 'when the schema properties are not explicitly listed as required' do
-            let(:schema) do
-              {
-                type: :object,
-                properties: {
-                  text: { type: :string },
-                  number: { type: :integer }
-                }
-              }
-            end
+            before { metadata[:response][:schema].delete(:required) }
 
             context 'with global `openapi_all_properties_required: true`' do
               let(:openapi_all_properties_required) { true }
@@ -309,15 +294,7 @@ module Rswag
           end
 
           context 'when the schema properties are not explicitly listed as required' do
-            let(:schema) do
-              {
-                type: :object,
-                properties: {
-                  text: { type: :string },
-                  number: { type: :integer }
-                }
-              }
-            end
+            before { metadata[:response][:schema].delete(:required) }
 
             context 'with global `openapi_all_properties_required: true`' do
               let(:openapi_all_properties_required) { true }
@@ -485,15 +462,7 @@ module Rswag
           end
 
           context 'when the schema properties are not explicitly listed as required' do
-            let(:schema) do
-              {
-                type: :object,
-                properties: {
-                  text: { type: :string },
-                  number: { type: :integer }
-                }
-              }
-            end
+            before { metadata[:response][:schema].delete(:required) }
 
             context 'with global `openapi_all_properties_required: true`' do
               let(:openapi_all_properties_required) { true }
@@ -551,15 +520,17 @@ module Rswag
 
         context 'when using schemas referenced from `components/schemas`' do
           before do
-            openapi_spec[:components] = {
-              schemas: {
-                'blog' => {
-                  type: :object,
-                  properties: { foo: { type: :string } },
-                  required: ['foo']
+            allow(config).to receive(:get_openapi_spec).and_return(
+              components: {
+                schemas: {
+                  'blog' => {
+                    type: :object,
+                    properties: { foo: { type: :string } },
+                    required: ['foo']
+                  }
                 }
               }
-            }
+            )
             metadata[:response][:schema] = { '$ref' => '#/components/schemas/blog' }
           end
 
