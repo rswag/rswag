@@ -32,16 +32,14 @@ module Rswag
       end
 
       def validate_headers!(metadata, headers)
-        header_schemas = metadata[:response][:headers] || {}
-        header_schemas.each do |name, user_definition|
+        (metadata[:response][:headers] || {}).each do |name, user_definition|
           header_definition = { schema: { nullable: false }, required: true }.deep_merge(user_definition)
 
-          if !headers.include?(name.to_s) && header_definition[:required]
-            raise UnexpectedResponse, "Expected response header #{name} to be present"
-          end
-
-          if headers.include?(name.to_s) && headers[name.to_s].nil? && !header_definition[:schema][:nullable]
+          if headers.fetch(name.to_s, 'N/A').nil? && !header_definition[:schema][:nullable]
             raise UnexpectedResponse, "Expected response header #{name} to not be null"
+          end
+          if headers.exclude?(name.to_s) && header_definition[:required]
+            raise UnexpectedResponse, "Expected response header #{name} to be present"
           end
         end
       end

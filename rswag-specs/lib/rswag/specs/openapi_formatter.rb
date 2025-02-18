@@ -105,11 +105,13 @@ module Rswag
 
       def upgrade_request_type!(metadata)
         # No deprecation here as it seems valid to allow type as a shorthand
-        operation_nodes = metadata[:operation][:parameters] || []
-        path_nodes = metadata[:path_item][:parameters] || []
-        header_node = metadata[:response][:headers] || {}
+        nodes = [
+          *metadata[:operation][:parameters],
+          *metadata[:path_item][:parameters],
+          *metadata[:response][:headers]&.values
+        ]
 
-        (operation_nodes + path_nodes + header_node.values).each do |node|
+        nodes.each do |node|
           if node && node[:type] && node[:schema].nil?
             node[:schema] = { type: node[:type] }
             node.delete(:type)
