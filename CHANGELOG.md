@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
+- Add `ostruct` dependency in gemspec to prepare for Ruby 3.5 (https://github.com/rswag/rswag/pull/826)
+
 ## Fixed
 
 ## [2.16.0] - 2024-11-13
