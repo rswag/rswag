@@ -5,6 +5,10 @@ require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
 
+# TODO: Move the validation & inserting of defaults to its own section
+# Right now everything is intermingled so everything is checking for nils and missing keys
+# maybe another class so we can do stuff like `@request_schema.path` & `@request_schema.headers`?
+
 module Rswag
   module Specs
     class RequestFactory # rubocop:disable Metrics/ClassLength
@@ -12,6 +16,12 @@ module Rswag
         form: ',',
         spaceDelimited: '%20',
         pipeDelimited: '|'
+      }.freeze
+      RACK_FORMATTED_HEADER_KEYS = {
+        'Accept' => 'HTTP_ACCEPT',
+        'Content-Type' => 'CONTENT_TYPE',
+        'Authorization' => 'HTTP_AUTHORIZATION',
+        'Host' => 'HTTP_HOST'
       }.freeze
       attr_accessor :example, :metadata, :params, :headers
 
@@ -29,7 +39,7 @@ module Rswag
 
         {}.tap do |request|
           add_verb(request, metadata)
-          add_path(request, metadata, openapi_spec, parameters, example)
+          add_path(request, metadata, openapi_spec, parameters)
           add_headers(request, metadata, openapi_spec, parameters, example)
           add_payload(request, parameters, example)
         end
@@ -46,11 +56,7 @@ module Rswag
         (operation_params + path_item_params + security_params)
           .map { |p| p['$ref'] ? resolve_parameter(p['$ref'], openapi_spec) : p }
           .uniq { |p| p[:name] }
-          .reject do |p|
-            p[:required] == false &&
-              !headers.key?(p[:name]) &&
-              !params.key?(p[:name])
-          end
+          .reject { |p| p[:required] == false && !headers.key?(p[:name]) && !params.key?(p[:name]) }
       end
 
       def derive_security_params(metadata, openapi_spec)
@@ -100,106 +106,62 @@ module Rswag
         URI(base_path).path
       end
 
-      def add_path(request, metadata, openapi_spec, parameters, _example)
+      def add_path(request, metadata, openapi_spec, parameters)
         template = base_path_from_servers(openapi_spec) + metadata[:path_item][:template]
 
-        request[:path] = template.tap do |path_template|
-          parameters.select { |p| p[:in] == :path }.each do |p|
-            begin
-              param_value = params.fetch(p[:name].to_s).to_s
-            rescue KeyError
-              raise ArgumentError, ("`#{p[:name]}`" \
-                'parameter key present, but not defined within example group' \
-                '(i. e `it` or `let` block)')
-            end
-            path_template.gsub!("{#{p[:name]}}", param_value)
-          end
-
-          parameters.select { |p| p[:in] == :query && params.key?(p[:name]) }.each_with_index do |p, i|
-            path_template.concat(i.zero? ? '?' : '&')
-            path_template.concat(build_query_string_part(p, params.fetch(p[:name]), openapi_spec))
-          end
+        parameters.select { |p| p[:in] == :path }.each do |p|
+          template.gsub!("{#{p[:name]}}", params.fetch(p[:name].to_s).to_s)
+        rescue KeyError
+          raise ArgumentError, ("`#{p[:name]}`" \
+            'parameter key present, but not defined within example group (i. e `it` or `let` block)')
         end
+
+        query_strings = parameters.select { |p| p[:in] == :query && params.key?(p[:name]) }
+                                  .filter_map { |p| build_query_string_part(p, params[p[:name]]) }
+        request[:path] = query_strings.any? ? "#{template}?#{query_strings.join('&')}" : template
       end
 
-      def build_query_string_part(param, value, _openapi_spec)
+      def build_query_string_part(param, value) # rubocop:todo Metrics/MethodLength
         raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
-
-        name = param[:name]
-        escaped_name = CGI.escape(name.to_s)
-
         # NOTE: https://swagger.io/docs/specification/serialization/
         return unless param[:schema]
 
+        escaped_name = CGI.escape(param[:name].to_s)
         style = param[:style]&.to_sym || :form
         explode = param[:explode].nil? ? true : param[:explode]
         type = param.dig(:schema, :type)&.to_sym
 
-        case type
-        when :object
-          case style
-          when :deepObject
-            { name => value }.to_query
-          when :form
-            return value.to_query if explode
-
-            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
-
-          end
-        when :array
-          case explode
-          when true
-            value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
-          else
-            separator = STYLE_SEPARATORS[style]
-            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
-          end
-        else
-          "#{escaped_name}=#{CGI.escape(value.to_s)}"
+        case [type, style, explode]
+        in [:object, :deepObject, _] then { param[:name] => value }.to_query
+        in [:object, :form, true] then value.to_query
+        in [:object, :form, _] then "#{escaped_name}=#{escaped_array(value).join(',')}"
+        in [:array, _, true] then escaped_array(value).map { |v| "#{escaped_name}=#{v}" }.join('&')
+        in [:array, _, _] then "#{escaped_name}=#{escaped_array(value).join(STYLE_SEPARATORS[style])}"
+        else "#{escaped_name}=#{CGI.escape(value.to_s)}"
         end
       end
 
+      def escaped_array(value) = value.to_a.flatten.map { |v| CGI.escape(v.to_s) }
+
       def add_headers(request, metadata, openapi_spec, parameters, example)
-        tuples = parameters
-                 .select { |p| p[:in] == :header }
-                 .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
+        tuples = parameters.filter_map { |p| [p[:name], headers.fetch(p[:name]).to_s] if p[:in] == :header }
 
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
-        if produces
-          accept = headers.fetch('Accept', produces.first)
-          tuples << ['Accept', accept]
-        end
+        tuples << ['Accept', headers.fetch('Accept', produces.first)] if produces
 
         # Content-Type header
         consumes = metadata[:operation][:consumes] || openapi_spec[:consumes]
-        if consumes
-          content_type = headers.fetch('Content-Type', consumes.first)
-          tuples << ['Content-Type', content_type]
-        end
+        tuples << ['Content-Type', headers.fetch('Content-Type', consumes.first)] if consumes
 
         # Host header
         host = metadata[:operation][:host] || openapi_spec[:host]
-        if host.present?
-          host = example.respond_to?(:Host) ? example.send(:Host) : host
-          tuples << ['Host', host]
-        end
+        tuples << ['Host', example.try(:Host) || host] if host.present?
 
         # Rails test infrastructure requires rack-formatted headers
-        rack_formatted_tuples = tuples.map do |pair|
-          [
-            case pair[0]
-            when 'Accept' then 'HTTP_ACCEPT'
-            when 'Content-Type' then 'CONTENT_TYPE'
-            when 'Authorization' then 'HTTP_AUTHORIZATION'
-            when 'Host' then 'HTTP_HOST'
-            else pair[0]
-            end,
-            pair[1]
-          ]
+        request[:headers] = tuples.each_with_object({}) do |pair, headers|
+          headers[RACK_FORMATTED_HEADER_KEYS.fetch(pair[0], pair[0])] = pair[1]
         end
-
-        request[:headers] = Hash[rack_formatted_tuples]
       end
 
       def add_payload(request, parameters, example)

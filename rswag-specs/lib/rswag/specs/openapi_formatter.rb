@@ -67,18 +67,15 @@ module Rswag
       end
 
       def metadata_to_openapi(metadata)
-        response_code = metadata[:response][:code]
         response = metadata[:response].reject { |k, _v| k == :code }
-
-        verb = metadata[:operation][:verb]
         operation = metadata[:operation]
                     .reject { |k, _v| k == :verb }
-                    .merge(responses: { response_code => response })
+                    .merge(responses: { metadata[:response][:code] => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
                     .reject { |k, _v| k == :template }
-                    .merge(verb => operation)
+                    .merge(metadata[:operation][:verb] => operation)
 
         { paths: { path_template => path_item } }
       end
@@ -156,22 +153,17 @@ module Rswag
           parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
           parameters.delete(parameter) # "consume" parameters that will end up in response body
         end
-
-        # Remove blank schemas - todo: refactor to not add in the first place
-        parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
       end
 
       def add_to_schema(parameter)
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
-        parameter[:schema] ||= {}
-        if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
-          parameter[:required] =
-            parameter[:schema].delete(:required)
-        end
+        schema = parameter[:schema] || {}
+        parameter[:required] = schema.delete(:required) if schema[:required] == true
         #  Also parameters currently can be defined with a datatype (`type:`)
         #  but this should be in `schema:` in the output.
-        parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
+        schema[:type] = parameter.delete(:type) if parameter.key?(:type)
+        parameter[:schema] = schema if schema.present?
       end
 
       def parameter_in_form_data_or_body?(param)
@@ -182,7 +174,7 @@ module Rswag
         param[:in] == :body
       end
 
-      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
+      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list) # rubocop:todo Metrics/MethodLength
         unless mime_list
           raise ConfigurationError,
                 'A body or form data parameters are specified without a Media Type for the content'
@@ -234,7 +226,7 @@ module Rswag
       end
 
       def convert_file_parameter(parameter)
-        return unless parameter[:schema][:type] == :file
+        return unless parameter.dig(:schema, :type) == :file
 
         parameter[:schema][:type] = :string
         parameter[:schema][:format] = :binary

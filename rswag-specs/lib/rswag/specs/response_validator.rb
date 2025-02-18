@@ -33,35 +33,25 @@ module Rswag
 
       def validate_headers!(metadata, headers)
         header_schemas = metadata[:response][:headers] || {}
-        expected = header_schemas.keys
-        expected.each do |name|
-          nullable_attribute = header_schemas.dig(name.to_s, :schema, :nullable)
-          required_attribute = header_schemas.dig(name.to_s, :required)
+        header_schemas.each do |name, user_definition|
+          header_definition = { schema: { nullable: false }, required: true }.deep_merge(user_definition)
 
-          is_nullable = nullable_attribute.nil? ? false : nullable_attribute
-          is_required = required_attribute.nil? ? true : required_attribute
-
-          if !headers.include?(name.to_s) && is_required
-            raise UnexpectedResponse,
-                  "Expected response header #{name} to be present"
+          if !headers.include?(name.to_s) && header_definition[:required]
+            raise UnexpectedResponse, "Expected response header #{name} to be present"
           end
 
-          if headers.include?(name.to_s) && headers[name.to_s].nil? && !is_nullable
-            raise UnexpectedResponse,
-                  "Expected response header #{name} to not be null"
+          if headers.include?(name.to_s) && headers[name.to_s].nil? && !header_definition[:schema][:nullable]
+            raise UnexpectedResponse, "Expected response header #{name} to not be null"
           end
         end
       end
 
       def validate_body!(metadata, openapi_spec, body)
-        response_schema = metadata[:response][:schema]
-        return if response_schema.nil?
+        return if metadata[:response][:schema].nil?
 
-        schemas = { components: openapi_spec[:components] }
-
-        validation_schema = response_schema
+        validation_schema = metadata[:response][:schema]
                             .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
-                            .merge(schemas)
+                            .merge(components: openapi_spec[:components])
 
         validation_options = validation_options_from(metadata)
 

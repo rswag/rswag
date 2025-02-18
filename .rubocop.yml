@@ -25,6 +25,13 @@ AllCops:
     - "rswag-specs/lib/generators/rspec/templates/*" # invalid syntax due to being templates
     - vendor/bundle/**/* # https://github.com/rubocop/rubocop/issues/9832
 
+Metrics/MethodLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
 Naming/FileName:
   Exclude: # Exclude filenames that are meant to match the gem names
     - "rswag-specs/lib/tasks/rswag-specs_tasks.rake"
@@ -37,7 +44,11 @@ RSpec/DescribeClass:
     - "test-app/spec/rake/*" # specs for rake tasks so this rule does not apply
 
 RSpec/ExampleLength:
-  CountAsOne: ["array", "hash", "heredoc", "method_call"]
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
 
 RSpec/IndexedLet:
   AllowedPatterns:
