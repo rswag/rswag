@@ -93,21 +93,11 @@ module Rswag
       def example(mime, name, value, summary = nil, description = nil)
         # Todo - move initialization of metadata somewhere else.
         metadata[:response][:content] = {} if metadata[:response][:content].blank?
+        metadata[:response][:content][mime] = { examples: {} } if metadata[:response][:content][mime].blank?
 
-        if metadata[:response][:content][mime].blank?
-          metadata[:response][:content][mime] = {}
-          metadata[:response][:content][mime][:examples] = {}
-        end
-
-        example_object = {
-          value: value,
-          summary: summary,
-          description: description
-        }.select { |_, v| v.present? }
+        example_object = { value: value, summary: summary, description: description }.select { |_, v| v.present? }
         # TODO, issue a warning if example is being overridden with the same key
-        metadata[:response][:content][mime][:examples].merge!(
-          { name.to_sym => example_object }
-        )
+        metadata[:response][:content][mime][:examples].merge!(name.to_sym => example_object)
       end
 
       #

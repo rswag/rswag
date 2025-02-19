@@ -1,4 +1,6 @@
 inherit_from: .rubocop_todo.yml
+inherit_gem:
+  rswag-specs: .rubocop_rspec_alias_config.yml
 
 # The behavior of RuboCop can be controlled via the .rubocop.yml
 # configuration file. It makes it possible to enable/disable
@@ -23,6 +25,35 @@ AllCops:
     - "rswag-specs/lib/generators/rspec/templates/*" # invalid syntax due to being templates
     - vendor/bundle/**/* # https://github.com/rubocop/rubocop/issues/9832
 
-Style/NumericLiterals:
+Metrics/MethodLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+Naming/FileName:
+  Exclude: # Exclude filenames that are meant to match the gem names
+    - "rswag-specs/lib/tasks/rswag-specs_tasks.rake"
+    - "rswag-ui/lib/tasks/rswag-ui_tasks.rake"
+    - "test-app/config/initializers/rswag-api.rb"
+    - "test-app/config/initializers/rswag-ui.rb"
+
+RSpec/DescribeClass:
   Exclude:
-    - "**/db/schema.rb" # version is split by date portions eg. 2016_02_18_212104
+    - "test-app/spec/rake/*" # specs for rake tasks so this rule does not apply
+
+RSpec/ExampleLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+RSpec/IndexedLet:
+  AllowedPatterns:
+    - !ruby/regexp /.+_v\d+$/ # eg. openapi_v3
+
+Style/NumericLiterals:
+  AllowedPatterns:
+    - !ruby/regexp /\d{4}_\d{2}_\d{2}_\d{6}/ # date-numbers; eg. 2016_02_18_212104

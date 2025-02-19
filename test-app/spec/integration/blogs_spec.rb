@@ -14,6 +14,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       produces 'application/json'
 
       let(:request_params) { { 'blog' => { title: 'foo', content: 'bar', status: 'published' } } }
+
       parameter name: :blog, in: :body, schema: {
         type: :object,
         required: true
@@ -90,6 +91,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '406', 'unsupported accept header' do
         let(:request_headers) { { 'Accept' => 'application/foo' } }
+
         run_test!
       end
     end
@@ -152,14 +154,14 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
           thumbnail: 'legacy-thumbnail.png'
         }
 
-        example 'application/json', :blog_example_1, {
+        example 'application/json', :blog_example1, {
           id: 1,
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
           thumbnail: 'thumbnail.png'
         }, 'Summary of the example', 'A longer description of a fine blog post about a wonderful universe!'
 
-        example 'application/json', :blog_example_2, {
+        example 'application/json', :blog_example2, {
           id: 1,
           title: 'Another fine example!',
           content: 'Oh... what a fine example this is, indeed, a fine example!',
@@ -179,10 +181,11 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '404', 'blog not found' do
         let(:request_params) { { 'id' => 'invalid' } }
+
         run_test!
       end
 
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
+      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do # rubocop:disable RSpec/MetadataStyle
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -190,7 +193,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
         run_test!
       end
 
-      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
+      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do # rubocop:disable RSpec/MetadataStyle
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -227,6 +230,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
 
       response '200', 'blog updated' do
         let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
+
         run_test!
       end
     end
