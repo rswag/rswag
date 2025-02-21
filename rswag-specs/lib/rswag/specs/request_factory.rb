@@ -166,12 +166,12 @@ module Rswag
       end
 
       def build_payload(request, parameters, example)
-        content_type = request[:headers]['CONTENT_TYPE']
-        return if content_type.nil?
-
-        if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
+        case request[:headers]['CONTENT_TYPE']
+        when nil
+          nil
+        when 'application/x-www-form-urlencoded', 'multipart/form-data'
           build_form_payload(parameters, example)
-        elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
+        when %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
           build_json_payload(parameters, example)
         else
           build_raw_payload(parameters, example)
