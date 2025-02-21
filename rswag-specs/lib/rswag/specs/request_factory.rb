@@ -194,10 +194,6 @@ module Rswag
       rescue KeyError
         raise(MissingParameterError, body_param[:name])
       end
-
-      def doc_version(doc)
-        doc[:openapi]
-      end
     end
 
     class MissingParameterError < StandardError

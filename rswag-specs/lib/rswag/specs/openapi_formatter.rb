@@ -23,7 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        raise ConfigurationError, 'Unsupported OpenAPI version' unless doc_version(openapi_spec).start_with?('3')
+        raise ConfigurationError, 'Unsupported OpenAPI version' unless openapi_spec[:openapi].start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -78,10 +78,6 @@ module Rswag
                     .merge(metadata[:operation][:verb] => operation)
 
         { paths: { path_template => path_item } }
-      end
-
-      def doc_version(doc)
-        doc[:openapi]
       end
 
       def upgrade_response_produces!(openapi_spec, metadata)
