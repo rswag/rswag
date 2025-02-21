@@ -41,11 +41,11 @@ module Rswag
 
         parameter_groups = parameters.group_by { |p| p[:in] }.reverse_merge(EMPTY_PARAMETER_GROUPS)
         {}.tap do |request|
-          add_verb(request, metadata)
+          request[:verb] = metadata[:operation][:verb]
           request[:path] = build_path_string(metadata, openapi_spec, parameter_groups[:path]) +
                            build_query_string(parameter_groups[:query])
-          add_headers(request, metadata, openapi_spec, parameter_groups[:header], example)
-          add_payload(request, parameters, example)
+          request[:headers] = build_headers(metadata, openapi_spec, parameter_groups[:header], example)
+          request[:payload] = build_payload(request, parameters, example)
         end
       end
 
@@ -95,10 +95,6 @@ module Rswag
       def definition_version(openapi_spec)
         components = openapi_spec[:components] || {}
         components[:parameters]
-      end
-
-      def add_verb(request, metadata)
-        request[:verb] = metadata[:operation][:verb]
       end
 
       def base_path_from_servers(openapi_spec, use_server = :default)
@@ -155,7 +151,7 @@ module Rswag
         end
       end
 
-      def add_headers(request, metadata, openapi_spec, header_parameters, example)
+      def build_headers(metadata, openapi_spec, header_parameters, example)
         combined = openapi_spec.merge(metadata[:operation])
 
         tuples = header_parameters.filter_map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
@@ -164,22 +160,22 @@ module Rswag
         tuples << ['Host', example.try(:Host) || combined[:host]] if combined[:host].present?
 
         # Rails test infrastructure requires rack-formatted headers
-        request[:headers] = tuples.each_with_object({}) do |pair, headers|
+        tuples.each_with_object({}) do |pair, headers|
           headers[RACK_FORMATTED_HEADER_KEYS.fetch(pair[0], pair[0])] = pair[1]
         end
       end
 
-      def add_payload(request, parameters, example)
+      def build_payload(request, parameters, example)
         content_type = request[:headers]['CONTENT_TYPE']
         return if content_type.nil?
 
-        request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
-                              build_form_payload(parameters, example)
-                            elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
-                              build_json_payload(parameters, example)
-                            else
-                              build_raw_payload(parameters, example)
-                            end
+        if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
+          build_form_payload(parameters, example)
+        elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
+          build_json_payload(parameters, example)
+        else
+          build_raw_payload(parameters, example)
+        end
       end
 
       def build_form_payload(parameters, _example)
