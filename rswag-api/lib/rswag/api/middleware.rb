@@ -20,39 +20,23 @@ module Rswag
         return @app.call(env) unless filename.start_with? openapi_root.to_s
         return @app.call(env) unless env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
 
-        openapi = parse_file(filename)
-        @config.openapi_filter&.call(openapi, env)
+        body = with_config_file(filename) do |openapi|
+          @config.openapi_filter&.call(openapi, env)
+        end
         mime = Rack::Mime.mime_type(::File.extname(env['PATH_INFO']), 'text/plain')
         headers = { 'Content-Type' => mime }.merge(@config.openapi_headers || {})
-        body = unload_openapi(filename, openapi)
 
         ['200', headers, [body]]
       end
 
       private
 
-      def parse_file(filename)
-        if /\.ya?ml$/.match?(filename)
-          load_yaml(filename)
-        else
-          load_json(filename)
-        end
-      end
-
-      def load_yaml(filename)
-        YAML.safe_load(File.read(filename))
-      end
-
-      def load_json(filename)
-        JSON.parse(File.read(filename))
-      end
-
-      def unload_openapi(filename, openapi)
-        if /\.ya?ml$/.match?(filename)
-          YAML.dump(openapi)
-        else
-          JSON.dump(openapi)
-        end
+      def with_config_file(filename)
+        is_yaml = /\.ya?ml$/.match?(filename)
+        file = File.read(filename)
+        config = is_yaml ? YAML.safe_load(file) : JSON.parse(file)
+        yield(config)
+        is_yaml ? YAML.dump(config) : JSON.dump(config)
       end
     end
   end
