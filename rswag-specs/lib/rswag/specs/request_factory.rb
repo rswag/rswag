@@ -172,7 +172,7 @@ module Rswag
         when 'application/x-www-form-urlencoded', 'multipart/form-data'
           build_form_payload(parameters, example)
         when %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
-          build_json_payload(parameters, example)
+          build_raw_payload(parameters, example)&.to_json
         else
           build_raw_payload(parameters, example)
         end
@@ -183,27 +183,16 @@ module Rswag
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
-        tuples = parameters
-                 .select { |p| p[:in] == :formData }
-                 .map { |p| [p[:name], params.fetch(p[:name])] }
-        Hash[tuples]
+        parameters
+          .select { |p| p[:in] == :formData }
+          .each_with_object({}) { |p, payload| payload[p[:name]] = params.fetch(p[:name]) }
       end
 
       def build_raw_payload(parameters, _example)
-        body_param = parameters.find { |p| p[:in] == :body }
-        return nil unless body_param
-
-        begin
-          json_payload = params.fetch(body_param[:name].to_s)
-        rescue KeyError
-          raise(MissingParameterError, body_param[:name])
-        end
-
-        json_payload
-      end
-
-      def build_json_payload(parameters, example)
-        build_raw_payload(parameters, example)&.to_json
+        body_param = parameters.find { |p| p[:in] == :body } || return
+        params.fetch(body_param[:name].to_s)
+      rescue KeyError
+        raise(MissingParameterError, body_param[:name])
       end
 
       def doc_version(doc)
