@@ -6,6 +6,7 @@ require 'active_support/core_ext/hash/conversions'
 require 'json'
 
 require_relative './query_parameter'
+require_relative './path_parameter'
 
 # TODO: Move the validation & inserting of defaults to its own section
 # Right now everything is intermingled so everything is checking for nils and missing keys
@@ -99,12 +100,8 @@ module Rswag
 
       def build_path_string(metadata, openapi_spec, path_parameters)
         template = base_path_from_servers(openapi_spec) + metadata[:path_item][:template]
-
         path_parameters.each_with_object(template) do |p, path|
-          path.gsub!("{#{p[:name]}}", params.fetch(p[:name].to_s).to_s)
-        rescue KeyError
-          raise ArgumentError, ("`#{p[:name]}`" \
-            'parameter key present, but not defined within example group (i. e `it` or `let` block)')
+          PathParameter.new(p, params[p[:name]]).sub_into_template!(path)
         end
       end
 
