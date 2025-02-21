@@ -5,6 +5,8 @@ require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
 
+require_relative './query_parameter'
+
 # TODO: Move the validation & inserting of defaults to its own section
 # Right now everything is intermingled so everything is checking for nils and missing keys
 # maybe another class so we can do stuff like `@request_schema.path` & `@request_schema.headers`?
@@ -12,12 +14,6 @@ require 'json'
 module Rswag
   module Specs
     class RequestFactory # rubocop:disable Metrics/ClassLength
-      CLEAN_PARAM = Struct.new(:escaped_array, :escaped_value, :escaped_name, :explode, :schema, :style, :type)
-      STYLE_SEPARATORS = {
-        form: ',',
-        spaceDelimited: '%20',
-        pipeDelimited: '|'
-      }.freeze
       RACK_FORMATTED_HEADER_KEYS = {
         'Accept' => 'HTTP_ACCEPT',
         'Content-Type' => 'CONTENT_TYPE',
@@ -113,36 +109,8 @@ module Rswag
       end
 
       def build_query_string(query_parameters)
-        query_strings = query_parameters.select { |p| params.key?(p[:name]) }
-                                        .filter_map { |p| build_query_string_part(p, params[p[:name]]) }
+        query_strings = query_parameters.filter_map { |p| QueryParameter.new(p, params[p[:name]]).to_query }
         query_strings.any? ? "?#{query_strings.join('&')}" : ''
-      end
-
-      def cleaned_param(param, value)
-        raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
-
-        CLEAN_PARAM.new(
-          escaped_array: (value.to_a.flatten.map { |v| CGI.escape(v.to_s) } if value.respond_to?(:to_a)),
-          escaped_name: CGI.escape(param[:name].to_s),
-          escaped_value: CGI.escape(value.to_s),
-          explode: param[:explode].nil? ? true : param[:explode],
-          schema: param[:schema],
-          style: param[:style].try(:to_sym) || :form,
-          type: param[:schema][:type]&.to_sym
-        )
-      end
-
-      def build_query_string_part(param, value)
-        # NOTE: https://swagger.io/docs/specification/serialization/
-        case p = cleaned_param(param, value)
-        in { schema: nil } then nil
-        in { type: :object, style: :deepObject } then { param[:name] => value }.to_query
-        in { type: :object, style: :form, explode: true } then value.to_query
-        in { type: :array, explode: true } then p.escaped_array.map { |v| "#{p.escaped_name}=#{v}" }.join('&')
-        in { type: :object, style: :form } | { type: :array }
-          "#{p.escaped_name}=#{p.escaped_array.join(STYLE_SEPARATORS[p.style])}"
-        else "#{p.escaped_name}=#{p.escaped_value}"
-        end
       end
 
       def build_headers(metadata, openapi_spec, header_parameters, example)
