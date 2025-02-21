@@ -67,7 +67,7 @@ module Rswag
       def derive_security_params(metadata, openapi_spec)
         requirements = metadata[:operation][:security] || openapi_spec[:security] || []
         scheme_names = requirements.flat_map(&:keys)
-        schemes = security_version(scheme_names, openapi_spec)
+        schemes = (openapi_spec.dig(:components, :securitySchemes) || {}).slice(*scheme_names).values
 
         schemes.map do |scheme|
           param = scheme[:type] == :apiKey ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
@@ -75,26 +75,12 @@ module Rswag
         end
       end
 
-      def security_version(scheme_names, openapi_spec)
-        components = openapi_spec[:components] || {}
-        (components[:securitySchemes] || {}).slice(*scheme_names).values
-      end
-
       def resolve_parameter(ref, openapi_spec)
-        key = key_version(ref, openapi_spec)
-        definitions = definition_version(openapi_spec)
-        raise "Referenced parameter '#{ref}' must be defined" unless definitions && definitions[key]
+        key_version = ref.sub('#/components/parameters/', '').to_sym
+        definitions = (openapi_spec[:components] || {})[:parameters]
+        raise "Referenced parameter '#{ref}' must be defined" unless definitions&.dig(key_version)
 
-        definitions[key]
-      end
-
-      def key_version(ref, _openapi_spec)
-        ref.sub('#/components/parameters/', '').to_sym
-      end
-
-      def definition_version(openapi_spec)
-        components = openapi_spec[:components] || {}
-        components[:parameters]
+        definitions[key_version]
       end
 
       def base_path_from_servers(openapi_spec, use_server = :default)
