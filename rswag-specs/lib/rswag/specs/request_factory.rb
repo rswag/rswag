@@ -38,15 +38,23 @@ module Rswag
       def build_request
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
         parameters = expand_parameters(metadata, openapi_spec, example)
-
         parameter_groups = parameters.group_by { |p| p[:in] }.reverse_merge(EMPTY_PARAMETER_GROUPS)
-        {}.tap do |request|
-          request[:verb] = metadata[:operation][:verb]
-          request[:path] = build_path_string(metadata, openapi_spec, parameter_groups[:path]) +
-                           build_query_string(parameter_groups[:query])
-          request[:headers] = build_headers(metadata, openapi_spec, parameter_groups[:header], example)
-          request[:payload] = build_payload(request, parameters, example)
-        end
+        request = {
+          verb: metadata[:operation][:verb],
+          path: build_path_string(metadata, openapi_spec, parameter_groups[:path]) +
+                build_query_string(parameter_groups[:query]),
+          headers: build_headers(metadata, openapi_spec, parameter_groups[:header], example)
+        }
+        request[:payload] = case request[:headers]['CONTENT_TYPE']
+                            when nil then nil
+                            when 'application/x-www-form-urlencoded', 'multipart/form-data'
+                              build_form_payload(parameter_groups[:formData])
+                            when %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
+                              build_raw_payload(parameter_groups[:body])&.to_json
+                            else
+                              build_raw_payload(parameter_groups[:body])
+                            end
+        request
       end
 
       private
@@ -151,31 +159,17 @@ module Rswag
         end
       end
 
-      def build_payload(request, parameters, example)
-        case request[:headers]['CONTENT_TYPE']
-        when nil
-          nil
-        when 'application/x-www-form-urlencoded', 'multipart/form-data'
-          build_form_payload(parameters, example)
-        when %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}
-          build_raw_payload(parameters, example)&.to_json
-        else
-          build_raw_payload(parameters, example)
-        end
-      end
-
-      def build_form_payload(parameters, _example)
+      def build_form_payload(form_parameters)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
-        parameters
-          .select { |p| p[:in] == :formData }
+        form_parameters
           .each_with_object({}) { |p, payload| payload[p[:name]] = params.fetch(p[:name]) }
       end
 
-      def build_raw_payload(parameters, _example)
-        body_param = parameters.find { |p| p[:in] == :body } || return
+      def build_raw_payload(body_parameters)
+        body_param = body_parameters.first || return
         params.fetch(body_param[:name].to_s)
       rescue KeyError
         raise(MissingParameterError, body_param[:name])
