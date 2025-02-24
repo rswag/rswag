@@ -234,10 +234,7 @@ module Rswag
       end
 
       def set_mime_examples(mime_config, endpoint)
-        examples = endpoint[:request_examples]
-        return unless examples
-
-        examples.each do |example|
+        endpoint[:request_examples]&.each do |example|
           mime_config[:examples] ||= {}
           mime_config[:examples][example[:name]] = {
             summary: example[:summary] || endpoint[:summary],
