@@ -126,8 +126,7 @@ module Rswag
       def parse_parameters(doc)
         doc[:paths]&.each_pair do |_k, path|
           path.each_pair do |_verb, endpoint|
-            is_hash = endpoint.is_a?(Hash)
-            if is_hash && endpoint[:parameters]
+            if endpoint.is_a?(Hash) && endpoint[:parameters]
               mime_list = endpoint[:consumes] || doc[:consumes]
               parse_endpoint(endpoint, mime_list)
             end
