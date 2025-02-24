@@ -6,7 +6,7 @@ module Rswag
   module Specs
     class PathParameter
       def initialize(definition, value)
-        unless value.present?
+        if value.blank?
           raise ArgumentError, "`#{definition[:name]}`" \
             'parameter key present, but not defined within example group (i. e `it` or `let` block)'
         end
