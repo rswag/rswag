@@ -9,6 +9,8 @@ module Rswag
     class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter # rubocop:disable Metrics/ClassLength
       ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
+      INVALID_OPERATION_KEYS = %i[consumes produces request_examples].freeze
+
       def initialize(output, config = Rswag::Specs.config)
         super(output)
         @config = config
@@ -107,22 +109,13 @@ module Rswag
         end
       end
 
-      def remove_invalid_operation_keys!(value)
-        return unless value.is_a?(Hash)
-
-        value.delete(:consumes) if value[:consumes]
-        value.delete(:produces) if value[:produces]
-        value.delete(:request_examples) if value[:request_examples]
-      end
-
       def parse_parameters(doc)
         doc[:paths]&.each_pair do |_k, path|
           path.each_pair do |_verb, endpoint|
-            if endpoint.is_a?(Hash) && endpoint[:parameters]
-              mime_list = endpoint[:consumes] || doc[:consumes]
-              parse_endpoint(endpoint, mime_list)
-            end
-            remove_invalid_operation_keys!(endpoint)
+            next unless endpoint.is_a?(Hash)
+
+            parse_endpoint(endpoint, endpoint[:consumes] || doc[:consumes]) if endpoint[:parameters]
+            INVALID_OPERATION_KEYS.each { |k| endpoint.delete(k) }
           end
         end
       end
