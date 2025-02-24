@@ -171,7 +171,7 @@ module Rswag
         end
 
         # Only add requestBody if there are any body parameters and not already defined
-        add_request_body(endpoint)
+        endpoint[:requestBody] = { content: {} } unless endpoint.dig(:requestBody, :content)
 
         # If a description is provided for the parameter, it should be moved to the schema description
         desc = parameter.delete(:description)
@@ -190,12 +190,6 @@ module Rswag
           set_mime_examples(mime_config, endpoint)
           set_request_body_required(mime_config, endpoint, parameter)
         end
-      end
-
-      def add_request_body(endpoint)
-        return if endpoint.dig(:requestBody, :content)
-
-        endpoint[:requestBody] = { content: {} }
       end
 
       def set_request_body_required(mime_config, endpoint, parameter)
