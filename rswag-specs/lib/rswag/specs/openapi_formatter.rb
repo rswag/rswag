@@ -165,11 +165,7 @@ module Rswag
       end
 
       def parameter_in_form_data_or_body?(param)
-        param[:in] == :formData || parameter_in_body?(param)
-      end
-
-      def parameter_in_body?(param)
-        param[:in] == :body
+        %i[formData body].include?(param[:in])
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list) # rubocop:todo Metrics/MethodLength
@@ -213,7 +209,7 @@ module Rswag
         # you could have optional body, but if body is provided then some properties are required.
         endpoint[:requestBody][:required] = true
 
-        return if parameter_in_body?(parameter)
+        return if parameter[:in] == :body
 
         if parameter[:name]
           mime_config[:schema][:required] ||= []
@@ -230,7 +226,7 @@ module Rswag
       end
 
       def set_mime_config(mime_config, parameter)
-        schema_with_form_properties = parameter[:name] && !parameter_in_body?(parameter)
+        schema_with_form_properties = parameter[:name] && parameter[:in] != :body
         mime_config[:schema] ||= schema_with_form_properties ? { type: :object, properties: {} } : parameter[:schema]
         return unless schema_with_form_properties
 
