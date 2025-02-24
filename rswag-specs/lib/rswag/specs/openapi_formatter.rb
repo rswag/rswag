@@ -3,6 +3,7 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'rspec/core/formatters/base_text_formatter'
 require 'openapi_helper'
+require_relative './mime_config'
 
 module Rswag
   module Specs
@@ -148,7 +149,7 @@ module Rswag
         parameter[:schema] = schema if schema.present?
       end
 
-      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list) # rubocop:todo Metrics/MethodLength
+      def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
         unless mime_list
           raise ConfigurationError,
                 'A body or form data parameters are specified without a Media Type for the content'
@@ -161,68 +162,13 @@ module Rswag
         desc = parameter.delete(:description)
         parameter[:schema][:description] = desc if desc
 
-        mime_list.each do |mime|
-          endpoint[:requestBody][:content][mime] ||= {}
-          mime_config = endpoint[:requestBody][:content][mime]
-
-          # Only parse parameters if there has not already been a reference object set. Ie if a `in: :body` parameter
-          # has been seen already `schema` is defined, or if formData is being used then ensure we have a `properties`
-          # key in schema.
-          next unless mime_config[:schema].nil? || mime_config.dig(:schema, :properties)
-
-          set_mime_config(mime_config, parameter)
-          set_mime_examples(mime_config, endpoint)
-          set_request_body_required(mime_config, endpoint, parameter)
-        end
-      end
-
-      def set_request_body_required(mime_config, endpoint, parameter)
-        return unless parameter[:required]
-
-        # FIXME: If any are `required` then the body is set to `required` but this assumption may not hold in reality as
-        # you could have optional body, but if body is provided then some properties are required.
-        endpoint[:requestBody][:required] = true
-
-        return if parameter[:in] == :body
-
-        if parameter[:name]
-          mime_config[:schema][:required] ||= []
-          mime_config[:schema][:required] << parameter[:name].to_s
-        else
-          mime_config[:schema][:required] = true
-        end
+        mime_list.each { |mime| MimeConfig.new(endpoint, mime, parameter).prepare }
       end
 
       def convert_file_parameter(parameter)
         return unless parameter.dig(:schema, :type) == :file
 
         parameter[:schema].merge!(type: :string, format: :binary)
-      end
-
-      def set_mime_config(mime_config, parameter)
-        schema_with_form_properties = parameter[:name] && parameter[:in] != :body
-        mime_config[:schema] ||= schema_with_form_properties ? { type: :object, properties: {} } : parameter[:schema]
-        return unless schema_with_form_properties
-
-        mime_config[:schema][:properties][parameter[:name]] = parameter[:schema]
-        set_mime_encoding(mime_config, parameter)
-      end
-
-      def set_mime_encoding(mime_config, parameter)
-        encoding = parameter[:encoding].dup || return
-        encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
-        mime_config[:encoding] ||= {}
-        mime_config[:encoding][parameter[:name]] = encoding
-      end
-
-      def set_mime_examples(mime_config, endpoint)
-        endpoint[:request_examples]&.each do |example|
-          mime_config[:examples] ||= {}
-          mime_config[:examples][example[:name]] = {
-            summary: example[:summary] || endpoint[:summary],
-            value: example[:value]
-          }
-        end
       end
 
       def parse_enum(parameter)
