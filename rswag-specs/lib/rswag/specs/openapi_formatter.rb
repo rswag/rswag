@@ -226,8 +226,7 @@ module Rswag
       def convert_file_parameter(parameter)
         return unless parameter.dig(:schema, :type) == :file
 
-        parameter[:schema][:type] = :string
-        parameter[:schema][:format] = :binary
+        parameter[:schema].merge!(type: :string, format: :binary)
       end
 
       def set_mime_config(mime_config, parameter)
