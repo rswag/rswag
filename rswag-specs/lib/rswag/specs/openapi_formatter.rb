@@ -147,7 +147,7 @@ module Rswag
         end
 
         # Parse parameters that are body parameters:
-        parameters.select { |p| parameter_in_form_data_or_body?(p) }.each do |parameter|
+        parameters.select { |p| %i[formData body].include?(p[:in]) }.each do |parameter|
           parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
           parameters.delete(parameter) # "consume" parameters that will end up in response body
         end
@@ -162,10 +162,6 @@ module Rswag
         #  but this should be in `schema:` in the output.
         schema[:type] = parameter.delete(:type) if parameter.key?(:type)
         parameter[:schema] = schema if schema.present?
-      end
-
-      def parameter_in_form_data_or_body?(param)
-        %i[formData body].include?(param[:in])
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list) # rubocop:todo Metrics/MethodLength
