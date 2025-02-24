@@ -108,10 +108,7 @@ module Rswag
         ]
 
         nodes.each do |node|
-          if node && node[:type] && node[:schema].nil?
-            node[:schema] = { type: node[:type] }
-            node.delete(:type)
-          end
+          node[:schema] ||= { type: node.delete(:type) } if node&.dig(:type)
         end
       end
 
