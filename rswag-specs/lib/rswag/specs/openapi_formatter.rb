@@ -271,11 +271,8 @@ module Rswag
       end
 
       def generate_enum_description(param, enum)
-        enum_description = "#{param[:description]}:\n "
-        enum.each do |k, v|
-          enum_description += "* `#{k}` #{v}\n "
-        end
-        enum_description
+        enum_descriptions = enum.map { |k, v| "* `#{k}` #{v}" }
+        ["#{param[:description]}:", enum_descriptions, ''].join("\n ")
       end
     end
   end
