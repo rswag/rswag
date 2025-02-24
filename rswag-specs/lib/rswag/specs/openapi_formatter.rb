@@ -209,9 +209,7 @@ module Rswag
       end
 
       def set_mime_encoding(mime_config, parameter)
-        return unless parameter[:encoding]
-
-        encoding = parameter[:encoding].dup
+        encoding = parameter[:encoding].dup || return
         encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
         mime_config[:encoding] ||= {}
         mime_config[:encoding][parameter[:name]] = encoding
@@ -228,9 +226,7 @@ module Rswag
       end
 
       def parse_enum(parameter)
-        return unless parameter.key?(:enum)
-
-        enum = parameter.delete(:enum)
+        enum = parameter.delete(:enum) || return
         parameter[:schema] ||= {}
         parameter[:schema][:enum] = enum.is_a?(Hash) ? enum.keys.map(&:to_s) : enum
         parameter[:description] = generate_enum_description(parameter, enum) if enum.is_a?(Hash)
