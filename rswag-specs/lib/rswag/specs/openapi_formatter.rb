@@ -54,16 +54,11 @@ module Rswag
 
       def pretty_generate(doc)
         if @config.openapi_format == :yaml
-          clean_doc = yaml_prepare(doc)
+          clean_doc = JSON.parse(JSON.pretty_generate(doc))
           YAML.dump(clean_doc)
         else # config errors are thrown in 'def openapi_format', no throw needed here
           JSON.pretty_generate(doc)
         end
-      end
-
-      def yaml_prepare(doc)
-        json_doc = JSON.pretty_generate(doc)
-        JSON.parse(json_doc)
       end
 
       def metadata_to_openapi(metadata)
