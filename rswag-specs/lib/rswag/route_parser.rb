@@ -9,9 +9,9 @@ module Rswag
     end
 
     def routes
-      ::Rails.application.routes.routes.select do |route|
-        route.defaults[:controller] == controller
-      end.each_with_object({}) do |route, tree|
+      ::Rails.application.routes.routes.each_with_object({}) do |route, tree|
+        return tree unless route.defaults[:controller] == controller
+
         path = path_from(route)
         verb = verb_from(route)
         tree[path] ||= { params: params_from(route), actions: {} }

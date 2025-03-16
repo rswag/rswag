@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{lib}/**/*'] + %w[MIT-LICENSE Rakefile]
 
+  s.required_ruby_version = '>= 3.0'
+
   s.add_dependency 'activesupport', '>= 5.2', '< 8.1'
   s.add_dependency 'railties', '>= 5.2', '< 8.1'
 

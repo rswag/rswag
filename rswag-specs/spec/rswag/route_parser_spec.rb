@@ -1,26 +1,32 @@
 # frozen_string_literal: true
 
+require 'action_dispatch'
+require 'rails/application'
+
 RSpec.describe Rswag::RouteParser do
   describe '#routes' do
-    subject { described_class.new(controller) }
+    subject(:described_instance) { described_class.new(controller) }
 
     let(:controller) { 'api/v1/posts' }
 
     let(:routes) do
       [
-        double(
+        instance_double(
+          ActionDispatch::Journey::Route,
           defaults: {
             controller: controller
           },
-          path: double(
-            spec: double(
+          path: instance_double(
+            ActionDispatch::Journey::Path::Pattern,
+            spec: instance_double(
+              ActionDispatch::Journey::Parser,
               to_s: '/api/v1/posts/:id(.:format)'
             )
           ),
           verb: 'GET',
           requirements: {
             action: 'show',
-            controller: 'api/v1/posts'
+            controller: controller
           },
           segments: %w[id format]
         )
@@ -41,11 +47,19 @@ RSpec.describe Rswag::RouteParser do
     end
 
     before do
-      allow(::Rails).to receive_message_chain('application.routes.routes') { routes }
+      allow(::Rails).to receive_messages(
+        application: instance_double(
+          ::Rails::Application,
+          routes: instance_double(
+            ::Rails::Engine::LazyRouteSet,
+            routes: routes
+          )
+        )
+      )
     end
 
     it 'returns correct routes' do
-      expect(subject.routes).to eq(expectation)
+      expect(described_instance.routes).to eq(expectation)
     end
   end
 end
