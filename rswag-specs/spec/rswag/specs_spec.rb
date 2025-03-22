@@ -11,17 +11,6 @@ RSpec.describe Rswag::Specs do
     it 'defines openapi settings' do
       expect { rspec_config.openapi_root = 'foobar' }.not_to raise_error
     end
-
-    it 'defines deprecated swagger settings' do
-      allow(Rswag::Specs.deprecator).to receive(:warn)
-      rspec_config.swagger_root = 'foobar'
-      expect(rspec_config.openapi_root).to eq('foobar')
-      expect(Rswag::Specs.deprecator).to(
-        have_received(:warn)
-          .with('swagger_root= is deprecated and will be removed from rswag-specs 3.0 (use openapi_root= instead)',
-                any_args)
-      )
-    end
   end
 
   describe '::config' do

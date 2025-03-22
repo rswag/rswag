@@ -17,8 +17,8 @@ module Rswag
         run_generator
       end
 
-      it 'installs the swagger_helper for rspec' do
-        assert_file('spec/swagger_helper.rb')
+      it 'installs the openapi_helper for rspec' do
+        assert_file('spec/openapi_helper.rb')
       end
     end
   end
