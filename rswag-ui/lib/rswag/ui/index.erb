@@ -26,10 +26,28 @@
       margin:0;
       background: #fafafa;
     }
+
+    form {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 
 <body>
+
+<h1 style="text-align: center;">Login</h1>
+<form action="/login" method="post">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required><br><br>
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required><br><br>
+  <input type="submit" value="Login">
+</form>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="position:absolute;width:0;height:0">
   <defs>
