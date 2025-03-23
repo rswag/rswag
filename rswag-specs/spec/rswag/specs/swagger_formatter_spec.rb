@@ -267,6 +267,56 @@ module Rswag
             )
           end
         end
+
+        context "with n openapi_specs" do
+          context 'with the document tag set to anything but false' do
+            let(:openapi_spec) { [{ swagger: '2.0' }, { swagger: '2.0' }] }
+            # anything works, including its absence when specifying responses.
+            let(:document) { nil }
+
+            it 'converts to swagger and merges into the corresponding swagger doc' do
+              expect(openapi_spec[0]).to match(
+                swagger: '2.0',
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ type: :string }],
+                    post: {
+                      parameters: [{ type: :string }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          description: 'blog created',
+                          headers: { type: :string },
+                          schema: { '$ref' => '#/definitions/blog' }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+
+              expect(openapi_spec[1]).to match(
+                swagger: '2.0',
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ type: :string }],
+                    post: {
+                      parameters: [{ type: :string }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '201' => {
+                          description: 'blog created',
+                          headers: { type: :string },
+                          schema: { '$ref' => '#/definitions/blog' }
+                        }
+                      }
+                    }
+                  }
+                }
+              )
+            end
+          end
+        end
       end
 
       describe '#stop' do
@@ -372,7 +422,7 @@ module Rswag
             })
           end
         end
-        
+
         context 'with enum parameters' do
           let(:doc_2) do
             {
@@ -401,14 +451,14 @@ module Rswag
           it 'writes the enum description' do
             expect(doc_2[:paths]['/path/'][:get][:parameters]).to match(
               [{
-                in: :query, 
-                name: :foo, 
+                in: :query,
+                name: :foo,
                 enum: {
-                  bar: "list bars", 
+                  bar: "list bars",
                   baz: "lists people named baz"
-                  }, 
+                  },
                   description: "get by foo:\n * `bar` list bars\n * `baz` lists people named baz\n "
-              }]            
+              }]
             )
           end
         end

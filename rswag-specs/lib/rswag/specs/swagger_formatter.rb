@@ -30,8 +30,9 @@ module Rswag
         return if metadata[:document] == false
         return unless metadata.key?(:response)
 
-        swagger_doc = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
+        swagger_docs = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
 
+        swagger_doc = swagger_docs.is_a?(Array) ? swagger_docs.first : swagger_docs
         unless doc_version(swagger_doc).start_with?('2')
           # This is called multiple times per file!
           # metadata[:operation] is also re-used between examples within file
@@ -42,13 +43,23 @@ module Rswag
           upgrade_response_produces!(swagger_doc, metadata)
         end
 
+        if swagger_docs.is_a?(Array)
+          swagger_docs.each do |doc|
+            merge_docs!(doc, metadata)
+          end
+        else
+          merge_docs!(swagger_doc, metadata)
+        end
+      end
+
+      def merge_docs!(swagger_doc, metadata)
         swagger_doc.deep_merge!(metadata_to_swagger(metadata))
       end
 
       def stop(_notification = nil)
         @config.openapi_specs.each do |url_path, doc|
           unless doc_version(doc).start_with?('2')
-            doc[:paths]&.each_pair do |_k, v|
+            doc[:paths]&.each_pair do |k, v|
               v.each_pair do |_verb, value|
                 is_hash = value.is_a?(Hash)
                 if is_hash && value[:parameters]
@@ -79,6 +90,7 @@ module Rswag
                     enum_param[:description] = generate_enum_description(enum_param)
                   end
 
+                  value[:parameters] = value[:parameters].dup
                   value[:parameters].reject! { |p| p[:in] == :body || p[:in] == :formData }
                 end
                 remove_invalid_operation_keys!(value)

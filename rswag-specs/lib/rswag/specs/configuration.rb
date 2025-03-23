@@ -48,13 +48,23 @@ module Rswag
 
       def get_openapi_spec(name)
         return openapi_specs.values.first if name.nil?
+        if name.is_a?(Array)
+          name.map do |n|
+            return_openapi_spec(n)
+          end
+        else
+          return_openapi_spec(name)
+        end
+      end
+
+      def return_openapi_spec(name)
         raise ConfigurationError, "Unknown openapi_spec '#{name}'" unless openapi_specs[name]
 
         openapi_specs[name]
       end
 
-      def get_openapi_spec_version(name)
-        doc = get_openapi_spec(name)
+      def get_openapi_spec_version(doc)
+        doc = doc.is_a?(Hash) ? doc : get_openapi_spec(doc)
         doc[:openapi] || doc[:swagger]
       end
 

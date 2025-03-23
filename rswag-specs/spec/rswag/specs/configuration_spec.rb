@@ -149,6 +149,15 @@ RSpec.describe Rswag::Specs::Configuration do
         end
       end
 
+      context 'is an array' do
+        let(:tag) { ['v1/swagger.json', 'v2/swagger.json'] }
+
+        it 'returns the matching doc in rspec config' do
+          expect(openapi_spec.first).to match hash_including(info: { title: 'v1' })
+          expect(openapi_spec.second).to match hash_including(info: { title: 'v2' })
+        end
+      end
+
       context 'no matching doc' do
         let(:tag) { 'foobar' }
         it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
@@ -171,6 +180,14 @@ RSpec.describe Rswag::Specs::Configuration do
       context 'with no matching doc' do
         let(:tag) { 'foobar' }
         it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
+      end
+    end
+
+    context 'when doc provided' do
+      let(:tag) { openapi_specs['v2/swagger.json'] }
+
+      it "returns the version" do
+        expect(response).to eq('3.0.0')
       end
     end
 
