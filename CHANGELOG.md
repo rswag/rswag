@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Added
 
+- Add support for Ruby 3.4.
+
 ## Changed
 
 ## Fixed
+
+- Force version of concurrent-ruby for rails version >= 6 and <= 7.2
+- Force version of rubygems for ruby version == 3.0
 
 ## [2.16.0] - 2024-11-13
 

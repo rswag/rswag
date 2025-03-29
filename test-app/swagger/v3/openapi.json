@@ -28,9 +28,7 @@
         "tags": [
           "Media Types"
         ],
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
