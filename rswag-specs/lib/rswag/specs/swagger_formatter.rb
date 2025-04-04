@@ -2,7 +2,6 @@
 
 require 'active_support/core_ext/hash/deep_merge'
 require 'rspec/core/formatters/base_text_formatter'
-require 'swagger_helper'
 
 module Rswag
   module Specs

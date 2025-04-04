@@ -93,6 +93,15 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     RAILS_ENV=test rails g rswag:specs:install
     ```
 
+    And require `swagger_helper` in `spec_helper.rb`
+
+    ```ruby
+    # spec/spec_helper.rb
+    require 'swagger_helper'
+
+    ...
+    ```
+
 3. Create an integration spec to describe and test your API.
 There is also a generator which can help get you started `rails generate rspec:swagger API::MyController`
 
