@@ -26,7 +26,7 @@ module Rswag
           body = unload_openapi(filename, openapi)
 
           return [
-            '200',
+            200,
             headers,
             [body]
           ]
