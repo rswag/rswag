@@ -14,9 +14,7 @@
         "operationId": "testBasicAuth",
         "security": [
           {
-            "basic_auth": [
-
-            ]
+            "basic_auth": []
           }
         ],
         "responses": {
@@ -38,9 +36,7 @@
         "operationId": "testApiKey",
         "security": [
           {
-            "api_key": [
-
-            ]
+            "api_key": []
           }
         ],
         "responses": {
@@ -86,12 +82,8 @@
         "operationId": "testBasicAndApiKey",
         "security": [
           {
-            "basic_auth": [
-
-            ],
-            "api_key": [
-
-            ]
+            "basic_auth": [],
+            "api_key": []
           }
         ],
         "responses": {
@@ -112,9 +104,7 @@
         ],
         "description": "Creates a new blog from provided data",
         "operationId": "createBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "blog created",
@@ -207,9 +197,7 @@
         ],
         "description": "Creates a flexible blog from provided data",
         "operationId": "createFlexibleBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "flexible blog created",
@@ -345,9 +333,7 @@
         ],
         "description": "Upload a thumbnail for specific blog by id",
         "operationId": "uploadThumbnailBlog",
-        "parameters": [
-
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "blog updated"
