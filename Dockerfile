@@ -1,5 +1,5 @@
-FROM ruby:2.7
-ENV RAILS_VERSION 7.0.3.1
+FROM ruby:3.0
+ENV RAILS_VERSION 7.0.4.3
 
 RUN apt-get update -qq && apt-get install -y nodejs npm
 # Bugfix for https://github.com/rubyjs/mini_racer/issues/220#issuecomment-1010724771

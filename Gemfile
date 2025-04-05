@@ -18,19 +18,12 @@ when  6
   gem 'sqlite3', '~> 1.4'
 when 7
   gem 'sqlite3', '~> 1.4'
-  
-  if rails_version.segments[1] < 2
-    gem 'concurrent-ruby', '< 1.3.5'
-  end
+  gem 'concurrent-ruby', '< 1.3.5' if rails_version.segments[1] < 2
 when 8
   gem 'sqlite3', '~> 2.2'
 end
 
-case RUBY_VERSION.split('.').first
-when '3'
-  gem 'net-smtp', require: false
-end
-
+gem 'net-smtp', require: false
 gem 'rswag-api', path: './rswag-api'
 gem 'rswag-ui', path: './rswag-ui'
 

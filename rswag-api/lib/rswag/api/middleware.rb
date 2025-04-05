@@ -19,11 +19,11 @@ module Rswag
         return @app.call(env) unless filename.start_with? openapi_root.to_s
 
         if env['REQUEST_METHOD'] == 'GET' && File.file?(filename)
-          swagger = parse_file(filename)
-          @config.swagger_filter.call(swagger, env) unless @config.swagger_filter.nil?
+          openapi = parse_file(filename)
+          @config.openapi_filter.call(openapi, env) unless @config.openapi_filter.nil?
           mime = Rack::Mime.mime_type(::File.extname(path), 'text/plain')
-          headers = { 'Content-Type' => mime }.merge(@config.swagger_headers || {})
-          body = unload_swagger(filename, swagger)
+          headers = { 'Content-Type' => mime }.merge(@config.openapi_headers || {})
+          body = unload_openapi(filename, openapi)
 
           return [
             '200',
@@ -53,11 +53,11 @@ module Rswag
         JSON.parse(File.read(filename))
       end
 
-      def unload_swagger(filename, swagger)
+      def unload_openapi(filename, openapi)
         if /\.ya?ml$/ === filename
-          YAML.dump(swagger)
+          YAML.dump(openapi)
         else
-          JSON.dump(swagger)
+          JSON.dump(openapi)
         end
       end
     end

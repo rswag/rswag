@@ -8,5 +8,5 @@ TestApp::Application.load_tasks
 
 RSpec::Core::RakeTask.new('swaggerize') do |t|
   t.pattern = 'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
-  t.rspec_opts = [ '--format Rswag::Specs::SwaggerFormatter', '--order defined' ]
+  t.rspec_opts = [ '--format Rswag::Specs::OpenapiFormatter', '--order defined' ]
 end

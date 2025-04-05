@@ -49,6 +49,30 @@
         }
       }
     },
+    "/auth-tests/bearer": {
+      "post": {
+        "summary": "Authenticates with an api key",
+        "tags": [
+          "Auth Tests"
+        ],
+        "operationId": "testBearerToken",
+        "security": [
+          {
+            "bearer": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valid credentials"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
     "/auth-tests/basic-and-api-key": {
       "post": {
         "summary": "Authenticates with basic auth and api key",
@@ -83,7 +107,14 @@
         "parameters": [],
         "responses": {
           "201": {
-            "description": "blog created"
+            "description": "blog created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/blog"
+                }
+              }
+            }
           },
           "422": {
             "description": "invalid request",
@@ -100,10 +131,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/blog"
+                "type": "object"
               }
             }
-          }
+          },
+          "required": true
         }
       },
       "get": {
@@ -124,12 +156,17 @@
           {
             "name": "status",
             "in": "query",
-            "enum": {
-              "draft": "Retrieves draft blogs",
-              "published": "Retrieves published blogs",
-              "archived": "Retrieves archived blogs"
+            "schema": {
+              "type": "string",
+              "items": {
+                "enum": {
+                  "draft": "Retrieves draft blogs",
+                  "published": "Retrieves published blogs",
+                  "archived": "Retrieves archived blogs"
+                }
+              }
             },
-            "description": "Filter by status:\n * `draft` Retrieves draft blogs\n * `published` Retrieves published blogs\n * `archived` Retrieves archived blogs\n "
+            "description": "Filter by status"
           }
         ],
         "responses": {
@@ -186,10 +223,10 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/definitions/blog"
+                    "$ref": "#/components/schemas/blog"
                   },
                   {
-                    "$ref": "#/definitions/flexible_blog"
+                    "$ref": "#/components/schemas/flexible_blog"
                   }
                 ]
               }
@@ -203,10 +240,10 @@
         {
           "name": "id",
           "in": "path",
-          "required": true,
           "schema": {
             "type": "string"
-          }
+          },
+          "required": true
         }
       ],
       "get": {
@@ -221,13 +258,19 @@
             "description": "blog found - openapi_no_additional_properties = true",
             "headers": {
               "ETag": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               },
               "Last-Modified": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               },
               "Cache-Control": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               }
             },
             "content": {
@@ -277,10 +320,10 @@
         {
           "name": "id",
           "in": "path",
-          "required": true,
           "schema": {
             "type": "string"
-          }
+          },
+          "required": true
         }
       ],
       "put": {
@@ -300,12 +343,21 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "type": "file"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The content of the blog thumbnail"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
               }
             }
           },
-          "required": true,
-          "description": "The content of the blog thumbnail"
+          "required": true
         }
       }
     }
@@ -324,17 +376,6 @@
     }
   ],
   "components": {
-    "securitySchemes": {
-      "basic_auth": {
-        "type": "http",
-        "scheme": "basic"
-      },
-      "api_key": {
-        "type": "apiKey",
-        "name": "api_key",
-        "in": "query"
-      }
-    },
     "schemas": {
       "errors_object": {
         "type": "object",
@@ -398,6 +439,21 @@
           "id",
           "headline"
         ]
+      }
+    },
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "query"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

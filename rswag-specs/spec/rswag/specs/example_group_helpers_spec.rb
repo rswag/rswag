@@ -237,7 +237,6 @@ module Rswag
       end
 
       describe "#run_test!" do
-        let(:rspec_version) { 3 }
         let(:api_metadata) {
           {
             response: {
@@ -247,7 +246,6 @@ module Rswag
         }
 
         before do
-          stub_const("RSPEC_VERSION", rspec_version)
           allow(subject).to receive(:before)
         end
 

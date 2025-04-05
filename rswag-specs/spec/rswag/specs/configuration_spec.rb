@@ -10,7 +10,6 @@ RSpec.describe Rswag::Specs::Configuration do
     OpenStruct.new(
       openapi_root: openapi_root, openapi_specs: openapi_specs,
       openapi_format: openapi_format, rswag_dry_run: rswag_dry_run,
-      openapi_strict_schema_validation: openapi_strict_schema_validation,
       openapi_all_properties_required: openapi_all_properties_required,
       openapi_no_additional_properties: openapi_no_additional_properties
     )
@@ -18,13 +17,12 @@ RSpec.describe Rswag::Specs::Configuration do
   let(:openapi_root) { 'foobar' }
   let(:openapi_specs) do
     {
-      'v1/swagger.json' => { swagger: '2.0.0', info: { title: 'v1' } },
-      'v2/swagger.json' => { openapi: '3.0.0', info: { title: 'v2' } }
+      'v1/openapi.json' => { openapi: '3.0.0', info: { title: 'v1' } },
+      'v2/openapi.json' => { openapi: '3.0.1', info: { title: 'v2' } }
     }
   end
   let(:openapi_format) { :yaml }
   let(:rswag_dry_run) { nil }
-  let(:openapi_strict_schema_validation) { nil }
   let(:openapi_all_properties_required) { nil }
   let(:openapi_no_additional_properties) { nil }
 
@@ -105,24 +103,6 @@ RSpec.describe Rswag::Specs::Configuration do
       end
     end
 
-    context 'when deprecated environment variable is provided' do
-      context 'when set to 0' do
-        it 'returns false' do
-          ClimateControl.modify SWAGGER_DRY_RUN: '0' do
-            expect(response).to eq(false)
-          end
-        end
-      end
-
-      context 'when set to 1' do
-        it 'returns true' do
-          ClimateControl.modify SWAGGER_DRY_RUN: '1' do
-            expect(response).to eq(true)
-          end
-        end
-      end
-    end
-
     context 'when provided in rspec config' do
       let(:rswag_dry_run) { false }
       it { expect(response).to eq(false) }
@@ -142,7 +122,7 @@ RSpec.describe Rswag::Specs::Configuration do
 
     context 'tag provided' do
       context 'matching doc' do
-        let(:tag) { 'v2/swagger.json' }
+        let(:tag) { 'v2/openapi.json' }
 
         it 'returns the matching doc in rspec config' do
           expect(openapi_spec).to match hash_including(info: { title: 'v2' })
@@ -153,47 +133,6 @@ RSpec.describe Rswag::Specs::Configuration do
         let(:tag) { 'foobar' }
         it { expect { openapi_spec }.to raise_error Rswag::Specs::ConfigurationError }
       end
-    end
-  end
-
-  describe '#get_openapi_spec_version' do
-    let(:response) { subject.get_openapi_spec_version(tag) }
-
-    context 'when tag provided' do
-      context 'with matching doc' do
-        let(:tag) { 'v2/swagger.json' }
-
-        it 'returns the matching version in rspec config' do
-          expect(response).to eq('3.0.0')
-        end
-      end
-
-      context 'with no matching doc' do
-        let(:tag) { 'foobar' }
-        it { expect { response }.to raise_error Rswag::Specs::ConfigurationError }
-      end
-    end
-
-    context 'when no tag provided' do
-      let(:tag) { nil }
-
-      it 'returns the first version in rspec config' do
-        expect(response).to eq('2.0.0')
-      end
-    end
-  end
-
-  describe '#openapi_strict_schema_validation' do
-    let(:response) { subject.openapi_strict_schema_validation }
-
-    context 'when not provided' do
-      let(:openapi_strict_schema_validation) { nil }
-      it { expect(response).to eq(false) }
-    end
-
-    context 'when provided in rspec config' do
-      let(:openapi_strict_schema_validation) { true }
-      it { expect(response).to eq(true) }
     end
   end
 
