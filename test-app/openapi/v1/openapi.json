@@ -58,9 +58,7 @@
         "operationId": "testBearerToken",
         "security": [
           {
-            "bearer": [
-
-            ]
+            "bearer": []
           }
         ],
         "responses": {
