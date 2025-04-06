@@ -224,7 +224,7 @@ module Rswag
       end
 
       def build_raw_payload(parameters, example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
+        body_param = parameters.detect { |p| p[:in] == :body }
         return nil unless body_param
 
         begin
