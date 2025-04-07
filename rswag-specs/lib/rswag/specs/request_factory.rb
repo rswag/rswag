@@ -127,7 +127,7 @@ module Rswag
         return unless param[:schema]
 
         style = param[:style]&.to_sym || :form
-        explode = param[:explode].nil? ? true : param[:explode]
+        explode = param[:explode].nil? || param[:explode]
         type = param.dig(:schema, :type)&.to_sym
 
         case type

@@ -39,7 +39,7 @@ module Rswag
           required_attribute = header_schemas.dig(name.to_s, :required)
 
           is_nullable = nullable_attribute.nil? ? false : nullable_attribute
-          is_required = required_attribute.nil? ? true : required_attribute
+          is_required = required_attribute.nil? || required_attribute
 
           if !headers.include?(name.to_s) && is_required
             raise UnexpectedResponse,
