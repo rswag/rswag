@@ -18,8 +18,8 @@ when  6
   gem 'concurrent-ruby', '< 1.3.5'
   gem 'sqlite3', '~> 1.4'
 when 7
-  gem 'sqlite3', '~> 1.4'
   gem 'concurrent-ruby', '< 1.3.5' if rails_version.segments[1] < 2
+  gem 'sqlite3', '~> 1.4'
 when 8
   gem 'sqlite3', '~> 2.2'
 end
