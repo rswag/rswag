@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.feature 'swagger-ui', :js do
-  scenario 'browsing api-docs' do
+  scenario 'browsing api-docs', :aggregate_failures do
     skip "Needs work to run on others' machines"
     visit '/api-docs'
 

@@ -28,7 +28,7 @@ class BlogsController < ApplicationController
 
   # Put /blogs/1
   def upload
-    @blog = Blog.find_by_id(params[:id])
+    @blog = Blog.find_by(id: params[:id])
     return head :not_found if @blog.nil?
 
     @blog.thumbnail = save_uploaded_file params[:file]
@@ -45,7 +45,7 @@ class BlogsController < ApplicationController
 
   # GET /blogs/1
   def show
-    @blog = Blog.find_by_id(params[:id])
+    @blog = Blog.find_by(id: params[:id])
 
     fresh_when(@blog)
     return unless stale?(@blog)

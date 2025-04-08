@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Blog < ActiveRecord::Base
+class Blog < ApplicationRecord
   validates :content, presence: true
 
   alias_attribute :headline, :title
