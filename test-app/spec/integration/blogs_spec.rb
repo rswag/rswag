@@ -182,7 +182,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
         run_test!
       end
 
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do  # rubocop:disable RSpec/MetadataStyle
+      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -190,7 +190,7 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
         run_test!
       end
 
-      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do  # rubocop:disable RSpec/MetadataStyle
+      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
