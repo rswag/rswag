@@ -284,6 +284,13 @@ end
 
 You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
+```ruby
+      response '200', 'blog found', :openapi_no_additional_properties do
+```
+```ruby
+      response '200', 'blog found', openapi_no_additional_properties: true do
+```
+
 #### All required properties
 If you want to disallow missing required properties in response body, you can set the `openapi_all_properties_required` option to true:
 **Important** it will allow the additional properties
@@ -296,6 +303,13 @@ end
 ```
 
 You can set similarly the option per individual example as shown in Strict (deprecated) sections.
+
+```ruby
+      response '200', 'blog found', :openapi_all_properties_required do
+```
+```ruby
+      response '200', 'blog found', openapi_all_properties_required: true do
+```
 
 ### Null Values ###
 
