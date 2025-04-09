@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "active_support"
+
+require 'active_support'
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/hash/conversions'
 require 'json'
@@ -31,7 +32,7 @@ module Rswag
 
       private
 
-      def expand_parameters(metadata, openapi_spec, example)
+      def expand_parameters(metadata, openapi_spec, _example)
         operation_params = metadata[:operation][:parameters] || []
         path_item_params = metadata[:path_item][:parameters] || []
         security_params = derive_security_params(metadata, openapi_spec)
@@ -53,7 +54,7 @@ module Rswag
         schemes = security_version(scheme_names, openapi_spec)
 
         schemes.map do |scheme|
-          param = (scheme[:type] == :apiKey) ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
+          param = scheme[:type] == :apiKey ? scheme.slice(:name, :in) : { name: 'Authorization', in: :header }
           param.merge(schema: { type: :string }, required: requirements.one?)
         end
       end
@@ -71,7 +72,7 @@ module Rswag
         definitions[key]
       end
 
-      def key_version(ref, openapi_spec)
+      def key_version(ref, _openapi_spec)
         ref.sub('#/components/parameters/', '').to_sym
       end
 
@@ -86,14 +87,15 @@ module Rswag
 
       def base_path_from_servers(openapi_spec, use_server = :default)
         return '' if openapi_spec[:servers].nil? || openapi_spec[:servers].empty?
+
         server = openapi_spec[:servers].first
         variables = {}
-        server.fetch(:variables, {}).each_pair { |k,v| variables[k] = v[use_server] }
-        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[$1.to_sym] }
+        server.fetch(:variables, {}).each_pair { |k, v| variables[k] = v[use_server] }
+        base_path = server[:url].gsub(/\{(.*?)\}/) { variables[::Regexp.last_match(1).to_sym] }
         URI(base_path).path
       end
 
-      def add_path(request, metadata, openapi_spec, parameters, example)
+      def add_path(request, metadata, openapi_spec, parameters, _example)
         template = base_path_from_servers(openapi_spec) + metadata[:path_item][:template]
 
         request[:path] = template.tap do |path_template|
@@ -101,9 +103,9 @@ module Rswag
             begin
               param_value = params.fetch(p[:name].to_s).to_s
             rescue KeyError
-              raise ArgumentError.new("`#{p[:name]}`" \
-                "parameter key present, but not defined within example group" \
-                "(i. e `it` or `let` block)")
+              raise ArgumentError, ("`#{p[:name]}`" \
+                'parameter key present, but not defined within example group' \
+                '(i. e `it` or `let` block)')
             end
             path_template.gsub!("{#{p[:name]}}", param_value)
           end
@@ -115,56 +117,56 @@ module Rswag
         end
       end
 
-      def build_query_string_part(param, value, openapi_spec)
-        raise ArgumentError.new("'type' is not supported field for Parameter") unless param[:type].nil?
+      def build_query_string_part(param, value, _openapi_spec)
+        raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
+
         name = param[:name]
         escaped_name = CGI.escape(name.to_s)
 
         # NOTE: https://swagger.io/docs/specification/serialization/
-        if param[:schema]
-          style = param[:style]&.to_sym || :form
-          explode = param[:explode].nil? ? true : param[:explode]
-          type = param.dig(:schema, :type)&.to_sym
+        return unless param[:schema]
 
-          case type
-          when :object
-            case style
-            when :deepObject
-              return { name => value }.to_query
-            when :form
-              if explode
-                return value.to_query
-              else
-                return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(',')
-              end
-            end
-          when :array
-            case explode
-            when true
-              return value.to_a.flatten.map{|v| "#{escaped_name}=#{CGI.escape(v.to_s)}"}.join('&')
-            else
-              separator = case style
-                          when :form then ','
-                          when :spaceDelimited then '%20'
-                          when :pipeDelimited then '|'
-                          end
-              return "#{escaped_name}=" + value.to_a.flatten.map{|v| CGI.escape(v.to_s) }.join(separator)
-            end
-          else
-            return "#{escaped_name}=#{CGI.escape(value.to_s)}"
+        style = param[:style]&.to_sym || :form
+        explode = param[:explode].nil? || param[:explode]
+        type = param.dig(:schema, :type)&.to_sym
+
+        case type
+        when :object
+          case style
+          when :deepObject
+            { name => value }.to_query
+          when :form
+            return value.to_query if explode
+
+            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
+
           end
+        when :array
+          case explode
+          when true
+            value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
+          else
+            separator = case style
+                        when :form then ','
+                        when :spaceDelimited then '%20'
+                        when :pipeDelimited then '|'
+                        end
+            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
+          end
+        else
+          "#{escaped_name}=#{CGI.escape(value.to_s)}"
         end
       end
 
       def add_headers(request, metadata, openapi_spec, parameters, example)
         tuples = parameters
-          .select { |p| p[:in] == :header }
-          .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
+                 .select { |p| p[:in] == :header }
+                 .map { |p| [p[:name], headers.fetch(p[:name]).to_s] }
 
         # Accept header
         produces = metadata[:operation][:produces] || openapi_spec[:produces]
         if produces
-          accept = headers.fetch("Accept", produces.first)
+          accept = headers.fetch('Accept', produces.first)
           tuples << ['Accept', accept]
         end
 
@@ -178,7 +180,7 @@ module Rswag
         # Host header
         host = metadata[:operation][:host] || openapi_spec[:host]
         if host.present?
-          host = example.respond_to?(:'Host') ? example.send(:'Host') : host
+          host = example.respond_to?(:Host) ? example.send(:Host) : host
           tuples << ['Host', host]
         end
 
@@ -186,11 +188,11 @@ module Rswag
         rack_formatted_tuples = tuples.map do |pair|
           [
             case pair[0]
-              when 'Accept' then 'HTTP_ACCEPT'
-              when 'Content-Type' then 'CONTENT_TYPE'
-              when 'Authorization' then 'HTTP_AUTHORIZATION'
-              when 'Host' then 'HTTP_HOST'
-              else pair[0]
+            when 'Accept' then 'HTTP_ACCEPT'
+            when 'Content-Type' then 'CONTENT_TYPE'
+            when 'Authorization' then 'HTTP_AUTHORIZATION'
+            when 'Host' then 'HTTP_HOST'
+            else pair[0]
             end,
             pair[1]
           ]
@@ -205,26 +207,26 @@ module Rswag
 
         request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
                               build_form_payload(parameters, example)
-                            elsif content_type =~ /\Aapplication\/([0-9A-Za-z._-]+\+json\z|json\z)/
+                            elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)
                             end
       end
 
-      def build_form_payload(parameters, example)
+      def build_form_payload(parameters, _example)
         # See http://seejohncode.com/2012/04/29/quick-tip-testing-multipart-uploads-with-rspec/
         # Rather that serializing with the appropriate encoding (e.g. multipart/form-data),
         # Rails test infrastructure allows us to send the values directly as a hash
         # PROS: simple to implement, CONS: serialization/deserialization is bypassed in test
         tuples = parameters
-          .select { |p| p[:in] == :formData }
-          .map { |p| [p[:name], params.fetch(p[:name])] }
+                 .select { |p| p[:in] == :formData }
+                 .map { |p| [p[:name], params.fetch(p[:name])] }
         Hash[tuples]
       end
 
-      def build_raw_payload(parameters, example)
-        body_param = parameters.select { |p| p[:in] == :body }.first
+      def build_raw_payload(parameters, _example)
+        body_param = parameters.find { |p| p[:in] == :body }
         return nil unless body_param
 
         begin
@@ -262,7 +264,6 @@ module Rswag
               let(:#{body_param}) {}
         MSG
       end
-
     end
   end
 end

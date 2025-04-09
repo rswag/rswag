@@ -23,7 +23,7 @@ module Rswag
         return unless metadata.key?(:response)
 
         openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
-        raise ConfigurationError, "Unsupported OpenAPI version" unless doc_version(openapi_spec).start_with?('3')
+        raise ConfigurationError, 'Unsupported OpenAPI version' unless doc_version(openapi_spec).start_with?('3')
 
         # This is called multiple times per file!
         # metadata[:operation] is also re-used between examples within file
@@ -72,13 +72,13 @@ module Rswag
 
         verb = metadata[:operation][:verb]
         operation = metadata[:operation]
-          .reject { |k, _v| k == :verb }
-          .merge(responses: { response_code => response })
+                    .reject { |k, _v| k == :verb }
+                    .merge(responses: { response_code => response })
 
         path_template = metadata[:path_item][:template]
         path_item = metadata[:path_item]
-          .reject { |k, _v| k == :template }
-          .merge(verb => operation)
+                    .reject { |k, _v| k == :template }
+                    .merge(verb => operation)
 
         { paths: { path_template => path_item } }
       end
@@ -161,15 +161,16 @@ module Rswag
         parameters.each { |p| p.delete(:schema) if p[:schema].blank? }
       end
 
-
       def set_parameter_schema(parameter)
         # It might be that the schema has a required attribute as a boolean, but it must be an array, hence remove it
         # and simply mark the parameter as required, which will be processed later.
         parameter[:schema] ||= {}
         if parameter[:schema].key?(:required) && parameter[:schema][:required] == true
-          parameter[:required] = parameter[:schema].delete(:required)
+          parameter[:required] =
+            parameter[:schema].delete(:required)
         end
-        #  Also parameters currently can be defined with a datatype (`type:`) but this should be in `schema:` in the output.
+        #  Also parameters currently can be defined with a datatype (`type:`)
+        #  but this should be in `schema:` in the output.
         parameter[:schema][:type] = parameter.delete(:type) if parameter.key?(:type)
       end
 
@@ -182,7 +183,10 @@ module Rswag
       end
 
       def parse_form_data_or_body_parameter(endpoint, parameter, mime_list)
-        raise ConfigurationError, "A body or form data parameters are specified without a Media Type for the content" unless mime_list
+        unless mime_list
+          raise ConfigurationError,
+                'A body or form data parameters are specified without a Media Type for the content'
+        end
 
         # Only add requestBody if there are any body parameters and not already defined
         add_request_body(endpoint)
@@ -208,6 +212,7 @@ module Rswag
 
       def add_request_body(endpoint)
         return if endpoint.dig(:requestBody, :content)
+
         endpoint[:requestBody] = { content: {} }
       end
 
@@ -246,8 +251,9 @@ module Rswag
 
       def set_mime_encoding(mime_config, parameter)
         return unless parameter[:encoding]
+
         encoding = parameter[:encoding].dup
-        encoding[:contentType] = encoding[:contentType].join(",") if encoding[:contentType].is_a?(Array)
+        encoding[:contentType] = encoding[:contentType].join(',') if encoding[:contentType].is_a?(Array)
         mime_config[:encoding] ||= {}
         mime_config[:encoding][parameter[:name]] = encoding
       end
@@ -255,6 +261,7 @@ module Rswag
       def set_mime_examples(mime_config, endpoint)
         examples = endpoint[:request_examples]
         return unless examples
+
         examples.each do |example|
           mime_config[:examples] ||= {}
           mime_config[:examples][example[:name]] = {
@@ -275,7 +282,7 @@ module Rswag
 
       def generate_enum_description(param, enum)
         enum_description = "#{param[:description]}:\n "
-        enum.each do |k,v|
+        enum.each do |k, v|
           enum_description += "* `#{k}` #{v}\n "
         end
         enum_description

@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.feature 'swagger-ui', js: true do
-
+RSpec.feature 'swagger-ui', :js do
   scenario 'browsing api-docs' do
     skip "Needs work to run on others' machines"
     visit '/api-docs'

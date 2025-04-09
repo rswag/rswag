@@ -57,6 +57,6 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.after(:suite) do
-    File.delete("#{Rails.root}/tmp/thumbnail.png") if File.file?("#{Rails.root}/tmp/thumbnail.png")
+    File.delete(Rails.root.join('tmp/thumbnail.png').to_s) if File.file?(Rails.root.join('tmp/thumbnail.png').to_s)
   end
 end

@@ -2,7 +2,7 @@
 
 require 'openapi_helper'
 
-RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json' do
+RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request do
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do
       tags 'Auth Tests'
@@ -10,12 +10,12 @@ RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json'
       security [basic_auth: []]
 
       response '204', 'Valid credentials' do
-        let(:request_headers) { { "Authorization" => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_headers) { { "Authorization" => "Basic #{::Base64.strict_encode64('foo:bar')}" } }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('foo:bar')}" } }
         run_test!
       end
     end
@@ -28,12 +28,12 @@ RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json'
       security [api_key: []]
 
       response '204', 'Valid credentials' do
-        let(:request_params) { { "api_key" => 'foobar' } }
+        let(:request_params) { { 'api_key' => 'foobar' } }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_params) { { "api_key" => 'barFoo' } }
+        let(:request_params) { { 'api_key' => 'barFoo' } }
         run_test!
       end
     end
@@ -64,14 +64,14 @@ RSpec.describe 'Auth Tests API', type: :request, openapi_spec: 'v1/openapi.json'
       security [{ basic_auth: [], api_key: [] }]
 
       response '204', 'Valid credentials' do
-        let(:request_headers) { { "Authorization" => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
-        let(:request_params) { { "api_key" => 'foobar' } }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
+        let(:request_params) { { 'api_key' => 'foobar' } }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_headers) { { "Authorization" => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
-        let(:request_params) { { "api_key" => 'barFoo' } }
+        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
+        let(:request_params) { { 'api_key' => 'barFoo' } }
         run_test!
       end
     end

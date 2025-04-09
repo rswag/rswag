@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/ui/configuration'
 
 require_relative '../../spec_helper'

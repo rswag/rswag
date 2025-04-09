@@ -10,14 +10,14 @@ module Rswag
         describe(template, *tags, **metadata, &block)
       end
 
-      [:get, :post, :patch, :put, :delete, :head, :options, :trace].each do |verb|
+      %i[get post patch put delete head options trace].each do |verb|
         define_method(verb) do |summary, *tags, **metadata, &block|
           api_metadata = { operation: { verb: verb, summary: summary } }.deep_merge(metadata)
           describe(verb, *tags, **api_metadata, &block)
         end
       end
 
-      [:operationId, :deprecated, :security].each do |attr_name|
+      %i[operationId deprecated security].each do |attr_name|
         define_method(attr_name) do |value|
           metadata[:operation][attr_name] = value
         end
@@ -33,16 +33,14 @@ module Rswag
       end
 
       # These are array properties - note the splat operator
-      [:tags, :consumes, :produces, :schemes].each do |attr_name|
+      %i[tags consumes produces schemes].each do |attr_name|
         define_method(attr_name) do |*value|
           metadata[:operation][attr_name] = value
         end
       end
 
       def parameter(attributes)
-        if attributes[:in] && attributes[:in].to_sym == :path
-          attributes[:required] = true
-        end
+        attributes[:required] = true if attributes[:in] && attributes[:in].to_sym == :path
 
         if metadata.key?(:operation)
           metadata[:operation][:parameters] ||= []
@@ -54,14 +52,15 @@ module Rswag
       end
 
       def request_body_example(value:, summary: nil, name: nil)
-        if metadata.key?(:operation)
-          metadata[:operation][:request_examples] ||= []
-          example = { value: value }
-          example[:summary] = summary if summary
-          # We need the examples to have a unique name for a set of examples, so just make the name the length if one isn't provided.
-          example[:name] = name || metadata[:operation][:request_examples].length()
-          metadata[:operation][:request_examples] << example
-        end
+        return unless metadata.key?(:operation)
+
+        metadata[:operation][:request_examples] ||= []
+        example = { value: value }
+        example[:summary] = summary if summary
+        # We need the examples to have a unique name for a set of examples,
+        # so just make the name the length if one isn't provided.
+        example[:name] = name || metadata[:operation][:request_examples].length
+        metadata[:operation][:request_examples] << example
       end
 
       def response(code, description, *tags, **metadata, &block)
@@ -84,17 +83,16 @@ module Rswag
       # rspec-core ExampleGroup
       def examples(examples = nil)
         return super() if examples.nil?
+
         # should we add a deprecation warning?
         examples.each_with_index do |(mime, example_object), index|
           example(mime, "example_#{index}", example_object)
         end
       end
 
-      def example(mime, name, value, summary=nil, description=nil)
+      def example(mime, name, value, summary = nil, description = nil)
         # Todo - move initialization of metadata somewhere else.
-        if metadata[:response][:content].blank?
-          metadata[:response][:content] = {}
-        end
+        metadata[:response][:content] = {} if metadata[:response][:content].blank?
 
         if metadata[:response][:content][mime].blank?
           metadata[:response][:content][mime] = {}

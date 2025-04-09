@@ -12,9 +12,8 @@ module Rswag
       before do
         allow(config).to receive(:get_openapi_spec).and_return(openapi_spec)
       end
+
       let(:config) { double('config') }
-      let(:openapi_spec) { { openapi: '3.0' } }
-      MockExample = Struct.new(:request_headers, :request_params)
       let(:example) { MockExample.new({}, {}) }
       let(:metadata) do
         {
@@ -22,6 +21,9 @@ module Rswag
           operation: { verb: :get }
         }
       end
+      let(:openapi_spec) { { openapi: '3.0' } }
+
+      MockExample = Struct.new(:request_headers, :request_params)
 
       describe '#build_request' do
         let(:request) { subject.build_request }
@@ -64,11 +66,11 @@ module Rswag
               { name: 'q1', in: :query, schema: { type: :string } },
               { name: 'q2', in: :query, schema: { type: :string } },
               { name: 'q3', in: :query, schema: { type: :string } },
-              { name: 'falsey', in: :query, schema: { type: :boolean } },
+              { name: 'falsey', in: :query, schema: { type: :boolean } }
             ]
-            example.request_params["q1"] = 'foo'
-            example.request_params["q2"] = 'bar'
-            example.request_params["falsey"] = false
+            example.request_params['q1'] = 'foo'
+            example.request_params['q2'] = 'bar'
+            example.request_params['falsey'] = false
           end
 
           it 'builds the query string from example values' do
@@ -78,20 +80,19 @@ module Rswag
           context 'when `type` parameter key is present' do
             before do
               metadata[:operation][:parameters] = [
-                { name: 'q1', in: :query, type: :string },
+                { name: 'q1', in: :query, type: :string }
               ]
-              example.request_params["q1"] = 'baz'
+              example.request_params['q1'] = 'baz'
             end
 
             it 'warns user about unsupported parameter' do
               expect { request[:path] }.to raise_error(/'type' is not supported field for Parameter/)
             end
           end
-
         end
 
         context "'query' parameter of format 'datetime'" do
-          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s  }
+          let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').to_s }
 
           before do
             metadata[:operation][:parameters] = [
@@ -104,8 +105,9 @@ module Rswag
             expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
           end
 
-          context "iso8601 format" do
+          context 'iso8601 format' do
             let(:date_time) { DateTime.new(2001, 2, 3, 4, 5, 6, '-7').iso8601 }
+
             it 'is also formatted properly' do
               expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
             end
@@ -113,13 +115,14 @@ module Rswag
 
           context 'openapi spec >= 3.0.0' do
             let(:openapi_spec) { { swagger: '3.0' } }
+
             before do
               allow(example).to receive(:date_time).and_return(date_time)
             end
 
             it 'formats the datetime properly when type is defined in schema' do
               metadata[:operation][:parameters] = [
-                { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime, }
+                { name: 'date_time', in: :query, schema: { type: :string }, format: :datetime }
               ]
               expect(request[:path]).to eq('/blogs?date_time=2001-02-03T04%3A05%3A06-07%3A00')
             end
@@ -127,7 +130,7 @@ module Rswag
         end
 
         context "'query' parameters of type 'object'" do
-          let(:things) { {'foo': 'bar'} }
+          let(:things) { { 'foo': 'bar' } }
           let(:openapi_spec) { { openapi: '3.0' } }
 
           before do
@@ -139,21 +142,23 @@ module Rswag
                 schema: { type: :object, additionalProperties: { type: :string } }
               }
             ]
-            example.request_params["things"] = things
+            example.request_params['things'] = things
           end
 
           context 'deepObject' do
             let(:style) { :deepObject }
             let(:explode) { true }
+
             it 'formats as deep object' do
               expect(request[:path]).to eq('/blogs?things%5Bfoo%5D=bar')
             end
           end
 
           context 'deepObject with nested objects' do
-            let(:things) { {'foo': { 'bar': 'baz' }} }
+            let(:things) { { 'foo': { 'bar': 'baz' } } }
             let(:style) { :deepObject }
             let(:explode) { true }
+
             it 'formats as deep object' do
               expect(request[:path]).to eq('/blogs?things%5Bfoo%5D%5Bbar%5D=baz')
             end
@@ -162,6 +167,7 @@ module Rswag
           context 'form explode=false' do
             let(:style) { :form }
             let(:explode) { false }
+
             it 'formats as unexploded form' do
               expect(request[:path]).to eq('/blogs?things=foo,bar')
             end
@@ -170,15 +176,17 @@ module Rswag
           context 'form explode=true' do
             let(:style) { :form }
             let(:explode) { true }
+
             it 'formats as an exploded form' do
               expect(request[:path]).to eq('/blogs?foo=bar')
             end
           end
 
           context 'form explode=true with nesting and uri encodable output' do
-            let(:things) { {'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y'} }
+            let(:things) { { 'foo': { 'bar': 'baz' }, 'fo&b': 'x[]?y' } }
             let(:style) { :form }
             let(:explode) { true }
+
             it 'formats as an exploded form' do
               expect(request[:path]).to eq('/blogs?fo%26b=x%5B%5D%3Fy&foo%5Bbar%5D=baz')
             end
@@ -203,8 +211,10 @@ module Rswag
 
           context 'form' do
             let(:style) { :form }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -212,16 +222,19 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3,4,5')
               end
             end
           end
 
-          context "spaceDelimited" do
+          context 'spaceDelimited' do
             let(:style) { :spaceDelimited }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -229,16 +242,19 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3%204%205')
               end
             end
           end
 
-          context "pipeDelimited" do
+          context 'pipeDelimited' do
             let(:style) { :pipeDelimited }
+
             context 'exploded' do
               let(:explode) { true }
+
               it 'formats as exploded form' do
                 expect(request[:path]).to eq('/blogs?id=3&id=4&id=5')
               end
@@ -246,6 +262,7 @@ module Rswag
 
             context 'not exploded' do
               let(:explode) { false }
+
               it 'formats as unexploded form' do
                 expect(request[:path]).to eq('/blogs?id=3|4|5')
               end
@@ -278,8 +295,8 @@ module Rswag
               { name: 'Api-Key', in: :header, schema: { type: :string } },
               { name: 'Token', in: :header, schema: { type: :string } }
             ]
-            example.request_headers["Api-Key"] = 'foobar'
-            example.request_headers["Token"] = 'my_token'
+            example.request_headers['Api-Key'] = 'foobar'
+            example.request_headers['Token'] = 'my_token'
           end
 
           it 'adds names and example values to headers' do
@@ -314,7 +331,7 @@ module Rswag
 
           context "explicit 'Content-Type' provided" do
             before do
-              example.request_headers["Content-Type"] = 'application/xml'
+              example.request_headers['Content-Type'] = 'application/xml'
             end
 
             it "sets 'CONTENT_TYPE' header to example value" do
@@ -325,7 +342,7 @@ module Rswag
           context 'JSON payload' do
             before do
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              example.request_params["comment"] = { text: 'Some comment' }
+              example.request_params['comment'] = { text: 'Some comment' }
             end
 
             it "serializes first 'body' parameter to JSON string" do
@@ -337,7 +354,7 @@ module Rswag
             before do
               metadata[:operation][:consumes] = 'application/vnd.api+json'
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
-              example.request_params["comment"] = {text: 'Some comment'}
+              example.request_params['comment'] = { text: 'Some comment' }
             end
 
             it "serializes first 'body' parameter to JSON object" do
@@ -364,8 +381,8 @@ module Rswag
                 { name: 'f1', in: :formData, schema: { type: :string } },
                 { name: 'f2', in: :formData, schema: { type: :string } }
               ]
-              example.request_params["f1"] = 'foo blah'
-              example.request_params["f2"] = 'bar blah'
+              example.request_params['f1'] = 'foo blah'
+              example.request_params['f2'] = 'bar blah'
             end
 
             it 'sets payload to hash of names and example values' do
@@ -380,7 +397,7 @@ module Rswag
             before do
               metadata[:operation][:consumes] = ['text/plain']
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'string' } }]
-              example.request_params["comment"] = 'plain text comment'
+              example.request_params['comment'] = 'plain text comment'
             end
 
             it 'keeps payload as a raw string data' do
@@ -402,7 +419,7 @@ module Rswag
 
           context "explicit 'Accept' value provided" do
             before do
-              example.request_headers["Accept"] = 'application/xml'
+              example.request_headers['Accept'] = 'application/xml'
             end
 
             it "sets 'HTTP_ACCEPT' header to example value" do
@@ -435,10 +452,11 @@ module Rswag
 
         context 'basic auth' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
+
           before do
             openapi_spec[:components] = { securitySchemes: { basic: { type: :basic } } }
             metadata[:operation][:security] = [basic: []]
-            example.request_headers["Authorization"] = 'Basic foobar'
+            example.request_headers['Authorization'] = 'Basic foobar'
           end
 
           it "sets 'HTTP_AUTHORIZATION' header to example value" do
@@ -448,7 +466,8 @@ module Rswag
 
         context 'apiKey' do
           before do
-            openapi_spec[:components] = { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: key_location } } }
+            openapi_spec[:components] =
+              { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: key_location } } }
             metadata[:operation][:security] = [api_key: []]
           end
 
@@ -456,7 +475,7 @@ module Rswag
             let(:key_location) { :query }
 
             it 'adds name and example value to the query string' do
-              example.request_params["api_key"] = 'foobar'
+              example.request_params['api_key'] = 'foobar'
               expect(request[:path]).to eq('/blogs?api_key=foobar')
             end
           end
@@ -465,20 +484,21 @@ module Rswag
             let(:key_location) { :header }
 
             it 'adds name and example value to the headers' do
-              example.request_headers["api_key"] = 'foobar'
+              example.request_headers['api_key'] = 'foobar'
               expect(request[:headers]).to eq('api_key' => 'foobar')
             end
           end
 
           context 'in header with auth param already added' do
             let(:key_location) { :header }
+
             before do
               metadata[:operation][:parameters] = [
                 { name: 'q1', in: :query, schema: { type: :string } },
                 { name: 'api_key', in: :header, schema: { type: :string } }
               ]
-              example.request_params["q1"] = 'foo'
-              example.request_headers["api_key"] = 'foobar'
+              example.request_params['q1'] = 'foo'
+              example.request_headers['api_key'] = 'foobar'
             end
 
             it 'adds authorization parameter only once' do
@@ -490,9 +510,10 @@ module Rswag
 
         context 'oauth2' do
           before do
-            openapi_spec[:components] = { securitySchemes: { oauth2: { type: :oauth2, flows: { implicit: { scopes: ['read:blogs'] } } } } }
+            openapi_spec[:components] =
+              { securitySchemes: { oauth2: { type: :oauth2, flows: { implicit: { scopes: ['read:blogs'] } } } } }
             metadata[:operation][:security] = [oauth2: ['read:blogs']]
-            example.request_headers["Authorization"] = 'Bearer foobar'
+            example.request_headers['Authorization'] = 'Bearer foobar'
           end
 
           it "sets 'HTTP_AUTHORIZATION' header to example value" do
@@ -516,8 +537,8 @@ module Rswag
               }
             }
             metadata[:operation][:security] = [{ basic: [], api_key: [] }]
-            example.request_headers["Authorization"] = 'Basic foobar'
-            example.request_params["api_key"] = 'foobar'
+            example.request_headers['Authorization'] = 'Basic foobar'
+            example.request_params['api_key'] = 'foobar'
           end
 
           it 'sets both params to example values' do
@@ -530,8 +551,8 @@ module Rswag
           before do
             metadata[:operation][:parameters] = [{ name: 'q1', in: :query, schema: { type: :string } }]
             metadata[:path_item][:parameters] = [{ name: 'q2', in: :query, schema: { type: :string } }]
-            example.request_params["q1"] = 'foo'
-            example.request_params["q2"] = 'bar'
+            example.request_params['q1'] = 'foo'
+            example.request_params['q2'] = 'bar'
           end
 
           it 'populates operation and path level parameters' do
@@ -541,11 +562,13 @@ module Rswag
 
         context 'referenced parameters' do
           let(:openapi_spec) { { openapi: '3.0.1' } }
+
           before do
             openapi_spec[:components] = {
-              parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } } }
+              parameters: { q1: { name: 'q1', in: :query, schema: { type: :string } } }
+            }
             metadata[:operation][:parameters] = [{ '$ref' => '#/components/parameters/q1' }]
-            example.request_params["q1"] = 'foo'
+            example.request_params['q1'] = 'foo'
           end
 
           it 'uses the referenced metadata to build the request' do
@@ -556,13 +579,13 @@ module Rswag
         context 'base path' do
           before do
             openapi_spec[:servers] = [{
-              :url => "{protocol}://{defaultHost}",
-              :variables => {
-                :protocol => {
-                  :default => :https
+              url: '{protocol}://{defaultHost}',
+              variables: {
+                protocol: {
+                  default: :https
                 },
-                :defaultHost => {
-                  :default => "www.example.com"
+                defaultHost: {
+                  default: 'www.example.com'
                 }
               }
             }]
@@ -585,7 +608,7 @@ module Rswag
           before do
             openapi_spec[:components] = { securitySchemes: { api_key: { type: :apiKey, name: 'api_key', in: :query } } }
             openapi_spec[:security] = [api_key: []]
-            example.request_params["api_key"] = 'foobar'
+            example.request_params['api_key'] = 'foobar'
           end
 
           it 'applies the scheme by default' do

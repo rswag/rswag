@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'openapi_helper'
 
-RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
+RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
   let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
 
   path '/blogs' do
@@ -11,7 +13,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       consumes 'application/json'
       produces 'application/json'
 
-      let(:request_params) { { "blog" => { title: 'foo', content: 'bar', status: 'published' } } }
+      let(:request_params) { { 'blog' => { title: 'foo', content: 'bar', status: 'published' } } }
       parameter name: :blog, in: :body, schema: {
         type: :object,
         required: true
@@ -22,15 +24,15 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         run_test!
       end
 
-      response "422", "invalid request" do
+      response '422', 'invalid request' do
         schema '$ref' => '#/components/schemas/errors_object'
 
-        let(:request_params) { { "blog" => { title: 'foo' } } }
+        let(:request_params) { { 'blog' => { title: 'foo' } } }
 
         run_test!
 
         # Example to show custom specification description
-        run_test!("returns a 422 response - with error for missing content") do |response|
+        run_test!('returns a 422 response - with error for missing content') do |response|
           expect(response.body).to include("can't be blank")
         end
       end
@@ -41,13 +43,14 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       description 'Searches blogs by keywords'
       operationId 'searchBlogs'
       produces 'application/json'
-      parameter name: "keywords", in: :query, schema: { type: 'string' }
-      parameter name: "status",
+      parameter name: 'keywords', in: :query, schema: { type: 'string' }
+      parameter name: 'status',
                 in: :query,
                 schema: {
                   type: :string,
-                  items:  {
-                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs', 'archived': 'Retrieves archived blogs' },
+                  items: {
+                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs',
+                            'archived': 'Retrieves archived blogs' }
                   }
                 },
                 description: 'Filter by status'
@@ -56,10 +59,12 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         Blog.create(title: 'foo', content: 'hello world', status: :published)
       end
 
-      let(:request_params) { {
-        "keywords" => 'foo bar',
-        "status" => 'published'
-       } }
+      let(:request_params) do
+        {
+          'keywords' => 'foo bar',
+          'status' => 'published'
+        }
+      end
 
       response '200', 'success' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
@@ -72,9 +77,11 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       response '200', 'no content' do
         schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
 
-        let(:request_params) { {
-          "status" => 'invalid'
-         } }
+        let(:request_params) do
+          {
+            'status' => 'invalid'
+          }
+        end
 
         run_test! do
           expect(JSON.parse(response.body).size).to eq(0)
@@ -96,14 +103,14 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       consumes 'application/json'
       produces 'application/json'
 
-      parameter name: "flexible_blog", in: :body, schema: {
+      parameter name: 'flexible_blog', in: :body, schema: {
         oneOf: [
           { '$ref' => '#/components/schemas/blog' },
           { '$ref' => '#/components/schemas/flexible_blog' }
         ]
       }
 
-      let(:request_params) { { "flexible_blog" => { blog: { headline: 'my headline', text: 'my text' } } } }
+      let(:request_params) { { 'flexible_blog' => { blog: { headline: 'my headline', text: 'my text' } } } }
 
       response '201', 'flexible blog created' do
         schema oneOf: [
@@ -118,9 +125,11 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   path '/blogs/{id}' do
     parameter name: 'id', in: :path, schema: { type: :string }
 
-    let(:request_params) { {
-      "id" => blog.id
-    } }
+    let(:request_params) do
+      {
+        'id' => blog.id
+      }
+    end
 
     get 'Retrieves a blog' do
       tags 'Blogs'
@@ -135,7 +144,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
 
         schema '$ref' => '#/components/schemas/blog'
 
-        #Legacy
+        # Legacy
         examples 'application/json' => {
           id: 1,
           title: 'Hello legacy world!',
@@ -148,7 +157,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
           thumbnail: 'thumbnail.png'
-        }, "Summary of the example", "A longer description of a fine blog post about a wonderful universe!"
+        }, 'Summary of the example', 'A longer description of a fine blog post about a wonderful universe!'
 
         example 'application/json', :blog_example_2, {
           id: 1,
@@ -169,11 +178,11 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       end
 
       response '404', 'blog not found' do
-        let(:request_params) { { "id" => 'invalid' } }
+        let(:request_params) { { 'id' => 'invalid' } }
         run_test!
       end
 
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do  # rubocop:disable RSpec/MetadataStyle
+      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -181,7 +190,7 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
         run_test!
       end
 
-      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do  # rubocop:disable RSpec/MetadataStyle
+      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
         schema '$ref' => '#/components/schemas/blog'
 
         let(:id) { blog.id }
@@ -208,14 +217,16 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
   end
 
   path '/blogs/{id}/upload' do
-    parameter name: "id", in: :path, schema: { type: :string }
+    parameter name: 'id', in: :path, schema: { type: :string }
 
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
-    let(:request_params) { {
-      "id" => blog.id,
-      "blog" => blog,
-      "file" => file
-    } }
+    let(:request_params) do
+      {
+        'id' => blog.id,
+        'blog' => blog,
+        'file' => file
+      }
+    end
 
     put 'Uploads a blog thumbnail' do
       tags 'Blogs'
@@ -223,15 +234,15 @@ RSpec.describe 'Blogs API', type: :request, openapi_spec: 'v1/openapi.json' do
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
       parameter(
-        name: "file",
-        description: "The content of the blog thumbnail",
+        name: 'file',
+        description: 'The content of the blog thumbnail',
         in: :formData,
         schema: { type: :file },
         required: true
       )
 
       response '200', 'blog updated' do
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
         run_test!
       end
     end

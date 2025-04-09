@@ -1,12 +1,14 @@
 #!/usr/bin/env rake
+# frozen_string_literal: true
+
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
-require File.expand_path('../config/application', __FILE__)
+require File.expand_path('config/application', __dir__)
 
 TestApp::Application.load_tasks
 
 RSpec::Core::RakeTask.new('swaggerize') do |t|
   t.pattern = 'spec/requests/**/*_spec.rb, spec/api/**/*_spec.rb, spec/integration/**/*_spec.rb'
-  t.rspec_opts = [ '--format Rswag::Specs::OpenapiFormatter', '--order defined' ]
+  t.rspec_opts = ['--format Rswag::Specs::OpenapiFormatter', '--order defined']
 end

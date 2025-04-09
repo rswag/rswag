@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rswag/ui/middleware'
 require 'rswag/ui/basic_auth'
 
@@ -18,7 +20,7 @@ module Rswag
       end
 
       rake_tasks do
-        load File.expand_path('../../../tasks/rswag-ui_tasks.rake', __FILE__)
+        load File.expand_path('../../tasks/rswag-ui_tasks.rake', __dir__)
       end
     end
   end
