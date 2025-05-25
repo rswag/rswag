@@ -7,23 +7,14 @@ module Rswag
   module Specs
     module ExampleHelpers
       def submit_request(metadata)
-        request = RequestFactory.new.build_request(metadata, self)
+        request = RequestFactory.new(metadata, self).build_request
 
-        if RAILS_VERSION < 5
-          send(
-            request[:verb],
-            request[:path],
-            request[:payload],
-            request[:headers]
-          )
-        else
-          send(
-            request[:verb],
-            request[:path],
-            params: request[:payload],
-            headers: request[:headers]
-          )
-        end
+        send(
+          request[:verb],
+          request[:path],
+          params: request[:payload],
+          headers: request[:headers]
+        )
       end
 
       def assert_response_matches_metadata(metadata)

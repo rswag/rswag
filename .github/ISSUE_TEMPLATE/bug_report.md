@@ -29,6 +29,5 @@ The version of are you using for:
 * Ruby:
 
 ## Relates to which version of OAS (OpenAPI Specification)
-- [ ] OAS2
 - [ ] OAS3
 - [ ] OAS3.1
