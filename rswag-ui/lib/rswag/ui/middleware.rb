@@ -15,7 +15,7 @@ module Rswag
         end
 
         if index_path?(env)
-          return [200, { 'Content-Type' => 'text/html', 'Content-Security-Policy' => csp },
+          return [200, { 'Content-Type' => 'text/html', ActionDispatch::Constants::CONTENT_SECURITY_POLICY => csp },
                   [render_template]]
         end
 
