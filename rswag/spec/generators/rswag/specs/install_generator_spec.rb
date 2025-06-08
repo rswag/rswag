@@ -5,14 +5,13 @@ require 'generators/rswag/install/install_generator'
 
 module Rswag
   module Specs
-
     describe InstallGenerator do
       include GeneratorSpec::TestCase
-      destination File.expand_path('../tmp', __FILE__)
+      destination File.expand_path('tmp', __dir__)
 
       before(:all) do
         prepare_destination
-        fixtures_dir = File.expand_path('../fixtures', __FILE__)
+        fixtures_dir = File.expand_path('fixtures', __dir__)
         FileUtils.cp_r("#{fixtures_dir}/config", destination_root)
         FileUtils.cp_r("#{fixtures_dir}/spec", destination_root)
 
@@ -20,7 +19,7 @@ module Rswag
       end
 
       it 'installs spec helper rswag-specs' do
-        assert_file('spec/swagger_helper.rb')
+        assert_file('spec/openapi_helper.rb')
       end
 
       it 'installs initializer for rswag-api' do

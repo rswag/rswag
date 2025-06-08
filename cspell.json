@@ -12,6 +12,9 @@
       "pattern": "/[?&][a-zA-z0-9_|-]+=[a-zA-Z0-9_%-]*/g"
     }
   ],
+  "ignorePaths": [
+    ".rubocop_todo.yml"
+  ],
   "ignoreRegExpList": [
     "Url",
     "QueryParam"
@@ -21,6 +24,7 @@
     "appuser",
     "autoload",
     "autoloadable",
+    "BOOKOFGREG",
     "byebug",
     "cacher",
     "codegen",
@@ -28,6 +32,7 @@
     "datetime",
     "doctoc",
     "domaindrivendev",
+    "elif",
     "fdescribe",
     "fcontext",
     "jsmith",
@@ -43,6 +48,7 @@
     "rdoctask",
     "rswag",
     "rubygems",
+    "RUBYGEMS",
     "srand",
     "scrollbars",
     "stylesheet",

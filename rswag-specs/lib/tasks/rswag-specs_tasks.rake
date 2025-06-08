@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 
 namespace :rswag do
   namespace :specs do
-    desc 'Generate Swagger JSON files from integration specs'
+    desc 'Generate OpenAPI JSON files from integration specs'
     RSpec::Core::RakeTask.new('swaggerize') do |t|
       t.pattern = ENV.fetch(
         'PATTERN',
@@ -16,13 +16,12 @@ namespace :rswag do
         ''
       )
 
-      t.rspec_opts = [additional_rspec_opts]
+      t.rspec_opts = [
+        '--format Rswag::Specs::OpenapiFormatter',
+        '--order defined'
+      ] << additional_rspec_opts
 
-      if Rswag::Specs.config.rswag_dry_run
-        t.rspec_opts += ['--format Rswag::Specs::SwaggerFormatter', '--dry-run', '--order defined']
-      else
-        t.rspec_opts += ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
-      end
+      t.rspec_opts += ['--dry-run'] if Rswag::Specs.config.rswag_dry_run
     end
   end
 end

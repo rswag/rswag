@@ -4,7 +4,7 @@ require 'rswag/route_parser'
 require 'rails/generators'
 
 module Rspec
-  class SwaggerGenerator < ::Rails::Generators::NamedBase
+  class OpenapiGenerator < ::Rails::Generators::NamedBase
     source_root File.expand_path('templates', __dir__)
     class_option :spec_path, type: :string, default: 'requests'
 
