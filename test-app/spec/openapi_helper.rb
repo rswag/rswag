@@ -36,6 +36,16 @@ RSpec.configure do |config|
         }
       ],
       components: {
+        responses: {
+          BadRequest: {
+            description: 'Bad Request',
+            content: {
+              'application/json' => {
+                schema: { '$ref' => '#/components/schemas/errors_object' }
+              }
+            }
+          }
+        },
         schemas: {
           errors_object: {
             type: 'object',
