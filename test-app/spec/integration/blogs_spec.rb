@@ -36,6 +36,14 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
           expect(response.body).to include("can't be blank")
         end
       end
+
+      response '400', 'bad request' do
+        schema '$ref' => '#/components/responses/BadRequest'
+
+        let(:request_params) { { 'blog' => { title: '' } } }
+
+        run_test!
+      end
     end
 
     get 'Searches blogs' do
