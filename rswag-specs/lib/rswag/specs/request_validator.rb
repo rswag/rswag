@@ -13,14 +13,14 @@ module Rswag
       end
 
       def validate!(metadata, request_payload)
-        swagger_doc = @config.get_openapi_spec(metadata[:openapi_spec] || metadata[:swagger_doc])
+        openapi_spec = @config.get_openapi_spec(metadata[:openapi_spec])
 
-        validate_body!(metadata, swagger_doc, request_payload)
+        validate_body!(metadata, openapi_spec, request_payload)
       end
 
       private
 
-      def validate_body!(metadata, swagger_doc, body)
+      def validate_body!(metadata, openapi_spec, body)
         # Finding the first one for now, but need to see what happens if we
         # have more than one.
         body_parameter = metadata[:operation][:parameters].find { |p| p[:in] == :body }
@@ -28,8 +28,7 @@ module Rswag
 
         return if request_schema.nil?
 
-        version = @config.get_openapi_spec_version(metadata[:openapi_spec] || metadata[:swagger_doc])
-        schemas = definitions_or_component_schemas(swagger_doc, version)
+        schemas = { components: openapi_spec[:components] }
 
         validation_schema = request_schema
                             .merge('$schema' => 'http://tempuri.org/rswag/specs/extended_schema')
@@ -46,23 +45,12 @@ module Rswag
       end
 
       def validation_options_from(metadata)
-        is_strict = @config.openapi_strict_schema_validation
-
-        if metadata.key?(:swagger_strict_schema_validation)
-          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
-          is_strict = !!metadata[:swagger_strict_schema_validation]
-        elsif metadata.key?(:openapi_strict_schema_validation)
-          Rswag::Specs.deprecator.warn('Rswag::Specs: WARNING: This option will be removed in v3.0 please use openapi_all_properties_required and openapi_no_additional_properties set to true')
-          is_strict = !!metadata[:openapi_strict_schema_validation]
-        end
-
         all_properties_required = metadata.fetch(:openapi_all_properties_required,
                                                  @config.openapi_all_properties_required)
         no_additional_properties = metadata.fetch(:openapi_no_additional_properties,
                                                   @config.openapi_no_additional_properties)
 
         {
-          strict: is_strict,
           allPropertiesRequired: all_properties_required,
           noAdditionalProperties: no_additional_properties
         }
