@@ -7,10 +7,14 @@ require 'rswag/specs/request_validator'
 module Rswag
   module Specs
     module ExampleHelpers
-      def submit_request(metadata)
+      def submit_request(metadata, config = ::Rswag::Specs.config)
         request = RequestFactory.new(metadata, self).build_request
 
-        RequestValidator.new.validate!(metadata, request[:payload]) if (200..299).include? metadata[:response][:code]
+        validate_request_body = metadata.fetch(:validate_request_body,
+                                               config.validate_request_body)
+        if (200..299).cover?(metadata[:response][:code]) && validate_request_body
+          RequestValidator.new.validate!(metadata, request[:payload])
+        end
 
         send(
           request[:verb],
