@@ -43,7 +43,7 @@ module Rswag
       end
 
       def csp
-        <<~POLICY.tr "\n", ' '
+        <<~POLICY.tr("\n", ' ').rstrip
           default-src 'self';
           img-src 'self' data: https://validator.swagger.io;
           font-src 'self' https://fonts.gstatic.com;
