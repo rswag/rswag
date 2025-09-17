@@ -10,10 +10,12 @@ module Rswag
   module Specs
     # Extend RSpec with a swagger-based DSL
     ::RSpec.configure do |c|
-      c.add_setting :swagger_root
-      c.add_setting :swagger_docs
-      c.add_setting :swagger_dry_run
-      c.add_setting :swagger_format
+      c.add_setting :openapi_root
+      c.add_setting :openapi_specs
+      c.add_setting :rswag_dry_run
+      c.add_setting :openapi_format, default: :json
+      c.add_setting :openapi_all_properties_required
+      c.add_setting :openapi_no_additional_properties
       c.extend ExampleGroupHelpers, type: :request
       c.include ExampleHelpers, type: :request
     end
@@ -21,9 +23,5 @@ module Rswag
     def self.config
       @config ||= Configuration.new(RSpec.configuration)
     end
-
-    # Support Rails 3+ and RSpec 2+ (sigh!)
-    RAILS_VERSION = Rails::VERSION::MAJOR
-    RSPEC_VERSION = RSpec::Core::Version::STRING.split('.').first.to_i
   end
 end

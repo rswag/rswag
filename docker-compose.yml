@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  test-app: &base-test
+    container_name: rswag
+    image: rswag
+    ports:
+      - 3000:3000
+    build:
+      context: .
+    volumes:
+       - .:/rswag
+  test:
+    <<: *base-test
+    command: sh -c 'cd .. && ./ci/test.sh'
