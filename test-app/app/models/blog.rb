@@ -9,9 +9,9 @@ class Blog < ActiveRecord::Base
   # Rails 7.0 introduced new syntax to define enums.
   # See https://github.com/rails/rails/pull/50987
   if Gem::Version.new(Rails.version) >= Gem::Version.new('7.0')
-    enum :status, %i[draft published archived]
+    enum :status, { draft: 0, published: 1, archived: 2 }
   else
-    enum status: %i[draft published archived]
+    enum status: { draft: 0, published: 1, archived: 2 }
   end
 
   def as_json(_options)

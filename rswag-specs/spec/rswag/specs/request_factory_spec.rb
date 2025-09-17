@@ -296,11 +296,12 @@ module Rswag
             metadata[:operation][:parameters] = [
               { name: 'things', in: :query, schema: { type: :array }, collectionFormat: collection_format }
             ]
-            allow(example).to receive(:things).and_return(['foo', 'bar'])
+            allow(example).to receive(:things).and_return(%w[foo bar])
           end
 
           context 'collectionFormat = csv' do
             let(:collection_format) { :csv }
+
             it 'formats as comma separated values' do
               expect(request[:path]).to eq('/blogs?things=foo,bar')
             end
@@ -308,6 +309,7 @@ module Rswag
 
           context 'collectionFormat = ssv' do
             let(:collection_format) { :ssv }
+
             it 'formats as space separated values' do
               expect(request[:path]).to eq('/blogs?things=foo bar')
             end
@@ -315,6 +317,7 @@ module Rswag
 
           context 'collectionFormat = tsv' do
             let(:collection_format) { :tsv }
+
             it 'formats as tab separated values' do
               expect(request[:path]).to eq('/blogs?things=foo\tbar')
             end
@@ -322,6 +325,7 @@ module Rswag
 
           context 'collectionFormat = pipes' do
             let(:collection_format) { :pipes }
+
             it 'formats as pipe separated values' do
               expect(request[:path]).to eq('/blogs?things=foo|bar')
             end
@@ -329,6 +333,7 @@ module Rswag
 
           context 'collectionFormat = multi' do
             let(:collection_format) { :multi }
+
             it 'formats as multiple parameter instances' do
               expect(request[:path]).to eq('/blogs?things=foo&things=bar')
             end
