@@ -1,0 +1,63 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "patterns": [
+    {
+      "name": "Url",
+      "pattern": "/\\b\\w+\\.(com|org)(\\/[\\w.-]+)*?/g"
+    },
+    {
+      "name": "QueryParam",
+      "pattern": "/[?&][a-zA-z0-9_|-]+=[a-zA-Z0-9_%-]*/g"
+    }
+  ],
+  "ignorePaths": [
+    ".rubocop_todo.yml"
+  ],
+  "ignoreRegExpList": [
+    "Url",
+    "QueryParam"
+  ],
+  "words": [
+    "actionpack",
+    "appuser",
+    "autoload",
+    "autoloadable",
+    "BOOKOFGREG",
+    "byebug",
+    "cacher",
+    "codegen",
+    "danielian",
+    "datetime",
+    "doctoc",
+    "domaindrivendev",
+    "elif",
+    "fdescribe",
+    "fcontext",
+    "jsmith",
+    "jspass",
+    "geckodriver",
+    "libv8",
+    "openapi",
+    "pathing",
+    "railtie",
+    "railties",
+    "Rakefile",
+    "rdoc",
+    "rdoctask",
+    "rswag",
+    "rubygems",
+    "RUBYGEMS",
+    "srand",
+    "scrollbars",
+    "stylesheet",
+    "swaggerapi",
+    "swaggerize",
+    "tempuri",
+    "tmpdir",
+    "xlink",
+    "rubocop",
+    "RuboCop"
+  ]
+}
