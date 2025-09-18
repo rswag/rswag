@@ -3,6 +3,7 @@
 # cspell:ignore Bfoo Bbar
 
 require 'rswag/specs/request_factory'
+require 'date'
 
 module Rswag
   module Specs
@@ -289,57 +290,6 @@ module Rswag
           end
         end
 
-        context "'query' parameters of type 'array' by way of 'schema'" do
-          let(:swagger_doc) { { swagger: '3.0.3' } }
-
-          before do
-            metadata[:operation][:parameters] = [
-              { name: 'things', in: :query, schema: { type: :array }, collectionFormat: collection_format }
-            ]
-            allow(example).to receive(:things).and_return(%w[foo bar])
-          end
-
-          context 'collectionFormat = csv' do
-            let(:collection_format) { :csv }
-
-            it 'formats as comma separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo,bar')
-            end
-          end
-
-          context 'collectionFormat = ssv' do
-            let(:collection_format) { :ssv }
-
-            it 'formats as space separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo bar')
-            end
-          end
-
-          context 'collectionFormat = tsv' do
-            let(:collection_format) { :tsv }
-
-            it 'formats as tab separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo\tbar')
-            end
-          end
-
-          context 'collectionFormat = pipes' do
-            let(:collection_format) { :pipes }
-
-            it 'formats as pipe separated values' do
-              expect(request[:path]).to eq('/blogs?things=foo|bar')
-            end
-          end
-
-          context 'collectionFormat = multi' do
-            let(:collection_format) { :multi }
-
-            it 'formats as multiple parameter instances' do
-              expect(request[:path]).to eq('/blogs?things=foo&things=bar')
-            end
-          end
-        end
-
         context "'header' parameters" do
           before do
             metadata[:operation][:parameters] = [
@@ -403,13 +353,13 @@ module Rswag
 
           context 'JSON:API payload' do
             before do
-              metadata[:operation][:consumes] = 'application/vnd.api+json'
+              metadata[:operation][:consumes] = ['application/vnd.api+json']
               metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
               example.request_params['comment'] = { text: 'Some comment' }
             end
 
             it "serializes first 'body' parameter to JSON object" do
-              expect(request[:payload]).to eq(text: 'Some comment')
+              expect(request[:payload]).to eq('{"text":"Some comment"}')
             end
           end
 

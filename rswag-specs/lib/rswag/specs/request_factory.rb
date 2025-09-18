@@ -117,16 +117,7 @@ module Rswag
         end
       end
 
-      def param_is_array?(param)
-        param[:type]&.to_sym == :array || param.dig(:schema, :type)&.to_sym == :array
-      end
-
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
       def build_query_string_part(param, value, _openapi_spec)
-        name = param[:name]
-        type = param[:type] || param.dig(:schema, :type)
-        return "#{name}=#{value}" unless type&.to_sym == :array
-
         raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
 
         name = param[:name]
@@ -166,7 +157,6 @@ module Rswag
           "#{escaped_name}=#{CGI.escape(value.to_s)}"
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
       def add_headers(request, metadata, openapi_spec, parameters, example)
         tuples = parameters
