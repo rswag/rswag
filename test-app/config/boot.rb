@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
 require 'rubygems'
-gemfile = File.expand_path('../../Gemfile', __dir__)
+gemfile = File.expand_path('../../../Gemfile', __FILE__)
 
 if File.exist?(gemfile)
   ENV['BUNDLE_GEMFILE'] = gemfile
@@ -9,4 +7,4 @@ if File.exist?(gemfile)
   Bundler.setup
 end
 
-$LOAD_PATH.unshift File.expand_path('../../../lib', __dir__)
+$:.unshift File.expand_path('../../../../lib', __FILE__)

@@ -1,9 +1,11 @@
-# frozen_string_literal: true
+require 'swagger_helper'
 
-require 'openapi_helper'
+RSpec.describe 'Blogs API', type: :request, swagger_doc: 'v1/swagger.json' do
+  let(:api_key) { 'fake_key' }
 
-RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
-  let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
+  before do
+    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+  end
 
   path '/blogs' do
     post 'Creates a blog' do
@@ -12,27 +14,20 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       operationId 'createBlog'
       consumes 'application/json'
       produces 'application/json'
+      parameter name: :blog, in: :body, schema: { '$ref' => '#/definitions/blog' }
 
-      let(:request_params) { { 'blog' => { title: 'foo', content: 'bar', status: 'published' } } }
-      parameter name: :blog, in: :body, schema: {
-        type: :object,
-        required: true
-      }
+      let(:blog) { { title: 'foo', content: 'bar' } }
 
       response '201', 'blog created' do
-        schema '$ref' => '#/components/schemas/blog'
+        # schema '$ref' => '#/definitions/blog'
         run_test!
       end
 
       response '422', 'invalid request' do
-        schema '$ref' => '#/components/schemas/errors_object'
+        schema '$ref' => '#/definitions/errors_object'
 
-        let(:request_params) { { 'blog' => { title: 'foo' } } }
-
-        run_test!
-
-        # Example to show custom specification description
-        run_test!('returns a 422 response - with error for missing content') do |response|
+        let(:blog) { { title: 'foo' } }
+        run_test! do |response|
           expect(response.body).to include("can't be blank")
         end
       end
@@ -43,53 +38,16 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       description 'Searches blogs by keywords'
       operationId 'searchBlogs'
       produces 'application/json'
-      parameter name: 'keywords', in: :query, schema: { type: 'string' }
-      parameter name: 'status',
-                in: :query,
-                schema: {
-                  type: :string,
-                  items: {
-                    enum: { 'draft': 'Retrieves draft blogs', 'published': 'Retrieves published blogs',
-                            'archived': 'Retrieves archived blogs' }
-                  }
-                },
-                description: 'Filter by status'
+      parameter name: :keywords, in: :query, type: 'string'
 
-      before do
-        Blog.create(title: 'foo', content: 'hello world', status: :published)
-      end
-
-      let(:request_params) do
-        {
-          'keywords' => 'foo bar',
-          'status' => 'published'
-        }
-      end
+      let(:keywords) { 'foo bar' }
 
       response '200', 'success' do
-        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
-
-        run_test! do
-          expect(JSON.parse(response.body).size).to eq(1)
-        end
-      end
-
-      response '200', 'no content' do
-        schema type: 'array', items: { '$ref' => '#/components/schemas/blog' }
-
-        let(:request_params) do
-          {
-            'status' => 'invalid'
-          }
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body).size).to eq(0)
-        end
+        schema type: 'array', items: { '$ref' => '#/definitions/blog' }
       end
 
       response '406', 'unsupported accept header' do
-        let(:request_headers) { { 'Accept' => 'application/foo' } }
+        let(:'Accept') { 'application/foo' }
         run_test!
       end
     end
@@ -103,33 +61,27 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       consumes 'application/json'
       produces 'application/json'
 
-      parameter name: 'flexible_blog', in: :body, schema: {
+      parameter name: :flexible_blog, in: :body, schema: {
         oneOf: [
-          { '$ref' => '#/components/schemas/blog' },
-          { '$ref' => '#/components/schemas/flexible_blog' }
+          { '$ref' => '#/definitions/blog' },
+          { '$ref' => '#/definitions/flexible_blog' }
         ]
       }
 
-      let(:request_params) { { 'flexible_blog' => { blog: { headline: 'my headline', text: 'my text' } } } }
+      let(:flexible_blog) { { blog: { headline: 'my headline', text: 'my text' } } }
 
       response '201', 'flexible blog created' do
-        schema oneOf: [
-          { '$ref' => '#/components/schemas/blog' },
-          { '$ref' => '#/components/schemas/flexible_blog' }
-        ]
+        schema oneOf: [{ '$ref' => '#/definitions/blog' }, { '$ref' => '#/definitions/flexible_blog' }]
         run_test!
       end
     end
   end
 
   path '/blogs/{id}' do
-    parameter name: 'id', in: :path, schema: { type: :string }
+    parameter name: :id, in: :path, type: :string
 
-    let(:request_params) do
-      {
-        'id' => blog.id
-      }
-    end
+    let(:id) { blog.id }
+    let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
 
     get 'Retrieves a blog' do
       tags 'Blogs'
@@ -142,107 +94,41 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
         header 'Last-Modified', type: :string
         header 'Cache-Control', type: :string
 
-        schema '$ref' => '#/components/schemas/blog'
+        schema '$ref' => '#/definitions/blog'
 
-        # Legacy
         examples 'application/json' => {
-          id: 1,
-          title: 'Hello legacy world!',
-          content: 'Hello legacy world and hello universe. Thank you all very much!!!',
-          thumbnail: 'legacy-thumbnail.png'
-        }
-
-        example 'application/json', :blog_example_1, {
           id: 1,
           title: 'Hello world!',
           content: 'Hello world and hello universe. Thank you all very much!!!',
           thumbnail: 'thumbnail.png'
-        }, 'Summary of the example', 'A longer description of a fine blog post about a wonderful universe!'
-
-        example 'application/json', :blog_example_2, {
-          id: 1,
-          title: 'Another fine example!',
-          content: 'Oh... what a fine example this is, indeed, a fine example!',
-          thumbnail: 'thumbnail.png'
         }
 
+        let(:id) { blog.id }
         run_test!
-
-        context 'when openapi_all_properties_required is true' do
-          run_test!(openapi_all_properties_required: true)
-        end
-
-        context 'when openapi_no_additional_properties is true' do
-          run_test!(openapi_no_additional_properties: true)
-        end
       end
 
       response '404', 'blog not found' do
-        let(:request_params) { { 'id' => 'invalid' } }
-        run_test!
-      end
-
-      response '200', 'blog found - openapi_all_properties_required = true', openapi_all_properties_required: true do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
-        run_test!
-      end
-
-      response '200', 'blog found - openapi_no_additional_properties = true', openapi_no_additional_properties: true do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
-        run_test!
-      end
-
-      response '200', 'blog found - tagged openapi_all_properties_required', :openapi_all_properties_required do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
-        run_test!
-      end
-
-      response '200', 'blog found - tagged :openapi_no_additional_properties', :openapi_no_additional_properties do
-        schema '$ref' => '#/components/schemas/blog'
-
-        let(:id) { blog.id }
-
+        let(:id) { 'invalid' }
         run_test!
       end
     end
   end
 
   path '/blogs/{id}/upload' do
-    parameter name: 'id', in: :path, schema: { type: :string }
+    parameter name: :id, in: :path, type: :string
 
+    let(:id) { blog.id }
     let(:blog) { Blog.create(title: 'foo', content: 'bar') }
-    let(:request_params) do
-      {
-        'id' => blog.id,
-        'blog' => blog,
-        'file' => file
-      }
-    end
 
     put 'Uploads a blog thumbnail' do
       tags 'Blogs'
       description 'Upload a thumbnail for specific blog by id'
       operationId 'uploadThumbnailBlog'
       consumes 'multipart/form-data'
-      parameter(
-        name: 'file',
-        description: 'The content of the blog thumbnail',
-        in: :formData,
-        schema: { type: :file },
-        required: true
-      )
+      parameter name: :file, :in => :formData, :type => :file, required: true
 
       response '200', 'blog updated' do
-        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/thumbnail.png')) }
+        let(:file) { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/thumbnail.png")) }
         run_test!
       end
     end

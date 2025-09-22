@@ -1,11 +1,3 @@
----
-name: 🐛 Bug
-about: File a bug/issue with Rswag that is not working
-title: '[BUG] <title>'
-labels: Bug, Needs Triage
-assignees: ''
----
-
 ## Describe the bug
 A clear and concise description of what the bug is.
 
@@ -21,13 +13,5 @@ If applicable, add screenshots to help explain your problem.
 ## Additional context
 Add any other context about the problem here.
 
-## Dependency versions
-The version of are you using for:
-* Rswag:
-* RSpec:
-* Rails:
-* Ruby:
-
-## Relates to which version of OAS (OpenAPI Specification)
-- [ ] OAS3
-- [ ] OAS3.1
+## Rswag Version
+The version of rswag are you using.

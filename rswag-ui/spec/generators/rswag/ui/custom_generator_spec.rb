@@ -1,13 +1,12 @@
-# frozen_string_literal: true
-
 require 'generator_spec'
 require 'generators/rswag/ui/custom/custom_generator'
 
 module Rswag
   module Ui
+
     describe CustomGenerator do
       include GeneratorSpec::TestCase
-      destination File.expand_path('tmp', __dir__)
+      destination File.expand_path('../tmp', __FILE__)
 
       before(:all) do
         prepare_destination

@@ -1,8 +1,8 @@
 {
   "name": "rswag-ui",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "swagger-ui-dist": "5.20.6"
+    "swagger-ui-dist": "3.52.5"
   }
 }

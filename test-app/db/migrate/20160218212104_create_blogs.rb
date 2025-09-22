@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-migration_class = if Gem::Version.new(Rails.version) >= Gem::Version.new('5.0')
+migration_class = if Gem::Version.new(Rails.version) >= Gem::Version.new("5.0")
                     ActiveRecord::Migration[4.2]
                   else
                     ActiveRecord::Migration
@@ -12,7 +10,6 @@ class CreateBlogs < migration_class
       t.string :title
       t.text :content
       t.string :thumbnail
-      t.string :status
 
       t.timestamps
     end

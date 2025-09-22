@@ -1,0 +1,73 @@
+language: ruby
+
+dist: bionic
+services:
+  - xvfb
+
+rvm:
+  - 2.6.3
+
+env:
+  - RAILS_VERSION=6.0.0
+  - RAILS_VERSION=5.2.0
+
+addons:
+  apt:
+    packages:
+      - libqtwebkit-dev
+      - libqtwebkit4
+
+cache:
+  directories:
+    - /home/travis/.rvm/gems/ruby-2.6.3
+
+install: ./ci/build.sh
+
+script: ./ci/test.sh
+
+jobs:
+  include:
+    - stage: publish components
+      script: 'cd rswag-api'
+      if: tag IS present
+      deploy:
+        gemspec: rswag-api.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-specs'
+      if: tag IS present
+      deploy:
+        gemspec: rswag-specs.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish components
+      script: 'cd rswag-ui'
+      if: tag IS present
+      deploy:
+        gemspec: rswag-ui.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true
+
+    - stage: publish rswag
+      script: 'cd rswag'
+      if: tag IS present
+      deploy:
+        gemspec: rswag.gemspec
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        on:
+          branch: master
+          tags: true

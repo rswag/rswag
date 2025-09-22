@@ -1,4 +1,4 @@
-require 'openapi_helper'
+require 'swagger_helper'
 
 RSpec.describe '<%= controller_path %>', type: :request do
 <%  @routes.each do | template, path_item | %>

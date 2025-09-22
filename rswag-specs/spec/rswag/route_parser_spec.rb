@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe Rswag::RouteParser do
-  describe '#routes' do
+  describe "#routes" do
+    let(:controller) { "api/v1/posts" }
     subject { described_class.new(controller) }
-
-    let(:controller) { 'api/v1/posts' }
 
     let(:routes) do
       [
@@ -14,26 +13,26 @@ RSpec.describe Rswag::RouteParser do
           },
           path: double(
             spec: double(
-              to_s: '/api/v1/posts/:id(.:format)'
+              to_s: "/api/v1/posts/:id(.:format)"
             )
           ),
-          verb: 'GET',
+          verb: "GET",
           requirements: {
-            action: 'show',
-            controller: 'api/v1/posts'
+            action: "show",
+            controller: "api/v1/posts"
           },
-          segments: %w[id format]
-        )
+          segments: ["id", "format"]
+        )  
       ]
     end
 
     let(:expectation) do
       {
-        '/api/v1/posts/{id}' => {
-          params: ['id'],
+        "/api/v1/posts/{id}" => { 
+          params: ["id"],
           actions: {
-            'get' => {
-              summary: 'show post'
+            "get" => {
+              summary: "show post"
             }
           }
         }
@@ -41,10 +40,10 @@ RSpec.describe Rswag::RouteParser do
     end
 
     before do
-      allow(::Rails).to receive_message_chain('application.routes.routes') { routes }
+      allow(::Rails).to receive_message_chain("application.routes.routes") { routes }
     end
 
-    it 'returns correct routes' do
+    it "returns correct routes" do
       expect(subject.routes).to eq(expectation)
     end
   end

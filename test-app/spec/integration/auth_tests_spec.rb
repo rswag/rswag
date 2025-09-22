@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
-require 'openapi_helper'
+require 'swagger_helper'
 
-RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request do
+RSpec.describe 'Auth Tests API', type: :request, swagger_doc: 'v1/swagger.json' do
+  before do
+    allow(ActiveSupport::Deprecation).to receive(:warn) # Silence deprecation output from specs
+  end
+
   path '/auth-tests/basic' do
     post 'Authenticates with basic auth' do
       tags 'Auth Tests'
@@ -10,12 +14,12 @@ RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request
       security [basic_auth: []]
 
       response '204', 'Valid credentials' do
-        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('foo:bar')}" } }
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('foo:bar')}" }
         run_test!
       end
     end
@@ -28,30 +32,12 @@ RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request
       security [api_key: []]
 
       response '204', 'Valid credentials' do
-        let(:request_params) { { 'api_key' => 'foobar' } }
+        let(:api_key) { 'foobar' }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_params) { { 'api_key' => 'barFoo' } }
-        run_test!
-      end
-    end
-  end
-
-  path '/auth-tests/bearer' do
-    post 'Authenticates with an api key' do
-      tags 'Auth Tests'
-      operationId 'testBearerToken'
-      security [bearer: []]
-
-      response '204', 'Valid credentials' do
-        let(:request_headers) { { 'Authorization' => 'Bearer foobar' } }
-        run_test!
-      end
-
-      response '401', 'Invalid credentials' do
-        let(:request_headers) { { 'Authorization' => 'Bearer barFoo' } }
+        let(:api_key) { 'barfoo' }
         run_test!
       end
     end
@@ -64,14 +50,14 @@ RSpec.describe 'Auth Tests API', openapi_spec: 'v1/openapi.json', type: :request
       security [{ basic_auth: [], api_key: [] }]
 
       response '204', 'Valid credentials' do
-        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
-        let(:request_params) { { 'api_key' => 'foobar' } }
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
+        let(:api_key) { 'foobar' }
         run_test!
       end
 
       response '401', 'Invalid credentials' do
-        let(:request_headers) { { 'Authorization' => "Basic #{::Base64.strict_encode64('jsmith:jspass')}" } }
-        let(:request_params) { { 'api_key' => 'barFoo' } }
+        let(:Authorization) { "Basic #{::Base64.strict_encode64('jsmith:jspass')}" }
+        let(:api_key) { 'barfoo' }
         run_test!
       end
     end

@@ -1,9 +1,8 @@
-# frozen_string_literal: true
-
 namespace :rswag do
   namespace :ui do
+
     desc 'TODO'
-    task :copy_assets, [:dest] do |_t, args|
+    task :copy_assets, [ :dest ] do |t, args|
       dest = args[:dest]
       FileUtils.rm_r(dest, force: true)
       FileUtils.mkdir_p(dest)
