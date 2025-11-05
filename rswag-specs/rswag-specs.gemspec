@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{lib}/**/*'] + ['MIT-LICENSE', 'Rakefile', '.rubocop_rspec_alias_config.yml']
 
   s.add_dependency 'activesupport', '>= 5.2', '< 8.2'
-  s.add_dependency 'json-schema', '>= 2.2', '< 6.0'
+  s.add_dependency 'json-schema', '>= 2.2', '< 7.0'
   s.add_dependency 'railties', '>= 5.2', '< 8.2'
   s.add_dependency 'rspec-core', '>=2.14'
 
