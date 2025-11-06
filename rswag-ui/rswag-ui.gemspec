@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
 
   s.files = Dir.glob('{lib,node_modules}/**/*') + %w[MIT-LICENSE Rakefile]
 
-  s.add_dependency 'actionpack', '>= 5.2', '< 8.1'
-  s.add_dependency 'railties', '>= 5.2', '< 8.1'
+  s.add_dependency 'actionpack', '>= 5.2', '< 8.2'
+  s.add_dependency 'railties', '>= 5.2', '< 8.2'
 
   s.add_development_dependency 'simplecov', '=0.21.2'
 end
