@@ -60,6 +60,10 @@ module Rswag
       def openapi_no_additional_properties
         @rspec_config.openapi_no_additional_properties || false
       end
+
+      def validate_request_body
+        @rspec_config.validate_request_body || false
+      end
     end
 
     class ConfigurationError < StandardError; end
