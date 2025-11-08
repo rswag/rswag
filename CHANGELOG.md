@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Drop support for OpenAPI v2 (Swagger) (https://github.com/rswag/rswag/pull/574)
 - Drop Rspec V2 support (https://github.com/rswag/rswag/pull/636)
 - upgrade to ruby 3.0.6 and rails 7.0.4.3 in local dev (https://github.com/rswag/rswag/pull/625)
+- Update rails dependency in gemspec to support Rails 8.1 (https://github.com/rswag/rswag/pull/867)
+- Relax the dependency on json-schema to allow v6. (https://github.com/rswag/rswag/pull/867)
 
 ### Documentation
 
