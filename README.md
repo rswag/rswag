@@ -178,6 +178,11 @@ This will create the spec file _spec/integration/blogs_spec.rb_
     RAILS_ENV=test rails rswag
     ```
 
+    Rswag is actually an Rspec formatter, so if you want to autogenerate the JSON file every time you run your tests, you can specify it in your command line or `.rspec` file:
+    ```
+    --format Rswag::Specs::SwaggerFormatter
+    ```
+
 5. Spin up your app and check out the awesome, auto-generated docs at _/api-docs_!
 
 ## The rspec DSL ##
