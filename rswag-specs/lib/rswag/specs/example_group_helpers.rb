@@ -129,7 +129,7 @@ module Rswag
         end
 
         it description, *args, **options do |example|
-          assert_response_matches_metadata(example.metadata, &block)
+          assert_response_matches_metadata(example.metadata)
           example.instance_exec(response, &block) if block_given?
         end
       end
