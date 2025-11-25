@@ -91,7 +91,15 @@ module Rswag
         # Accept header
         mime_list = Array(metadata[:operation][:produces] || openapi_spec[:produces])
         target_node = metadata[:response]
-        upgrade_content!(mime_list, target_node)
+        schema = target_node[:schema]
+
+        if schema.is_a?(Hash) && schema['$ref']&.start_with?('#/components/responses/')
+          # Response component reference - use $ref directly
+          target_node.replace(schema.merge(code: target_node[:code]))
+        else
+          upgrade_content!(mime_list, target_node)
+        end
+
         metadata[:response].delete(:schema)
       end
 

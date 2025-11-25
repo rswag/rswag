@@ -80,6 +80,37 @@ module Rswag
             )
           end
         end
+
+        context 'with response component reference' do
+          let(:openapi_spec) { { openapi: '3.0' } }
+          let(:document) { nil }
+          let(:response_metadata) do
+            { code: '400', description: 'Bad Request',
+              schema: { '$ref' => '#/components/responses/BadRequest' } }
+          end
+
+          it 'generates direct response reference without content wrapper' do
+            expect(openapi_spec).to match(
+              {
+                openapi: '3.0',
+                paths: {
+                  '/blogs' => {
+                    parameters: [{ schema: { type: :string } }],
+                    post: {
+                      parameters: [{ schema: { type: :string } }],
+                      summary: 'Creates a blog',
+                      responses: {
+                        '400' => {
+                          '$ref' => '#/components/responses/BadRequest'
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            )
+          end
+        end
       end
 
       describe '#stop' do
