@@ -16,6 +16,7 @@ module Rswag
       c.add_setting :openapi_format, default: :json
       c.add_setting :openapi_all_properties_required
       c.add_setting :openapi_no_additional_properties
+      c.add_setting :validate_request_body
       c.extend ExampleGroupHelpers, type: :request
       c.include ExampleHelpers, type: :request
     end
