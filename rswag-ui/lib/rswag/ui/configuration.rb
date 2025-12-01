@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
 require 'rack'
 
 module Rswag

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rswag/specs/openapi_formatter'
-require 'ostruct'
 
 module Rswag
   module Specs
