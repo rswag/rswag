@@ -284,9 +284,13 @@ end
 
 You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
+Note: The following syntax is supported only in rswag-specs >= 3.0.0.pre:
+
 ```ruby
       response '200', 'blog found', :openapi_no_additional_properties do
 ```
+For rswag-specs versions < 3.0.0, metadata must be passed as a hash:
+
 ```ruby
       response '200', 'blog found', openapi_no_additional_properties: true do
 ```
@@ -304,9 +308,13 @@ end
 
 You can set similarly the option per individual example as shown in Strict (deprecated) sections.
 
+Note: The following syntax is supported only in rswag-specs >= 3.0.0.pre:
+
 ```ruby
       response '200', 'blog found', :openapi_all_properties_required do
 ```
+For rswag-specs versions < 3.0.0, metadata must be passed as a hash:
+
 ```ruby
       response '200', 'blog found', openapi_all_properties_required: true do
 ```
