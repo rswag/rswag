@@ -552,6 +552,149 @@ module Rswag
           end
         end
 
+        context 'when schema uses readOnly and writeOnly properties' do
+          let(:schema) do
+            {
+              type: :object,
+              properties: {
+                id: { type: :integer, readOnly: true },
+                password: { type: :string, writeOnly: true }
+              },
+              required: %w[id password]
+            }
+          end
+
+          context 'when the response includes readOnly and omits writeOnly' do
+            let(:response) do
+              Response.new(
+                code: '200',
+                headers: {
+                  'X-Rate-Limit-Limit' => '10',
+                  'X-Cursor' => 'test_cursor',
+                  'X-Per-Page' => 25
+                },
+                body: '{"id":1}'
+              )
+            end
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'when the response omits a required readOnly property' do
+            let(:response) do
+              Response.new(
+                code: '200',
+                headers: {
+                  'X-Rate-Limit-Limit' => '10',
+                  'X-Cursor' => 'test_cursor',
+                  'X-Per-Page' => 25
+                },
+                body: '{}'
+              )
+            end
+
+            it { expect { call }.to raise_error(/Expected response body/) }
+          end
+
+          context 'when the response includes a writeOnly property' do
+            let(:response) do
+              Response.new(
+                code: '200',
+                headers: {
+                  'X-Rate-Limit-Limit' => '10',
+                  'X-Cursor' => 'test_cursor',
+                  'X-Per-Page' => 25
+                },
+                body: '{"id":1,"password":"secret"}'
+              )
+            end
+
+            it { expect { call }.not_to raise_error }
+          end
+        end
+
+        context 'when all properties are required for response validation' do
+          let(:openapi_all_properties_required) { true }
+          let(:schema) do
+            {
+              type: :object,
+              properties: {
+                id: { type: :integer, readOnly: true },
+                password: { type: :string, writeOnly: true }
+              }
+            }
+          end
+
+          context 'when the response includes readOnly and omits writeOnly' do
+            let(:response) do
+              Response.new(
+                code: '200',
+                headers: {
+                  'X-Rate-Limit-Limit' => '10',
+                  'X-Cursor' => 'test_cursor',
+                  'X-Per-Page' => 25
+                },
+                body: '{"id":1}'
+              )
+            end
+
+            it { expect { call }.not_to raise_error }
+          end
+
+          context 'when the response omits a readOnly property' do
+            let(:response) do
+              Response.new(
+                code: '200',
+                headers: {
+                  'X-Rate-Limit-Limit' => '10',
+                  'X-Cursor' => 'test_cursor',
+                  'X-Per-Page' => 25
+                },
+                body: '{}'
+              )
+            end
+
+            it { expect { call }.to raise_error(/Expected response body/) }
+          end
+        end
+
+        context 'when a referenced schema uses readOnly and writeOnly properties' do
+          let(:openapi_spec) do
+            {
+              components: {
+                schemas: {
+                  'User' => {
+                    type: :object,
+                    properties: {
+                      id: { type: :integer, readOnly: true },
+                      password: { type: :string, writeOnly: true }
+                    },
+                    required: %w[id password]
+                  }
+                }
+              }
+            }
+          end
+
+          before do
+            metadata[:response][:schema] = { '$ref' => '#/components/schemas/User' }
+          end
+
+          let(:response) do
+            Response.new(
+              code: '200',
+              headers: {
+                'X-Rate-Limit-Limit' => '10',
+                'X-Cursor' => 'test_cursor',
+                'X-Per-Page' => 25
+              },
+              body: '{"id":1}'
+            )
+          end
+
+          it { expect { call }.not_to raise_error }
+        end
+
         context 'referenced schemas' do
           context 'components/schemas' do
             before do
