@@ -165,6 +165,30 @@
               }
             },
             "description": "Filter by status"
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "description": "JSON-encoded filter object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "date_from": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Filter blogs created from this date"
+                    },
+                    "date_to": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Filter blogs created up to this date"
+                    }
+                  }
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -253,7 +277,7 @@
         "operationId": "getBlog",
         "responses": {
           "200": {
-            "description": "blog found - openapi_no_additional_properties = true",
+            "description": "blog found - tagged :openapi_no_additional_properties",
             "headers": {
               "ETag": {
                 "schema": {

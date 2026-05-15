@@ -120,41 +120,54 @@ module Rswag
       def build_query_string_part(param, value, _openapi_spec)
         raise ArgumentError, "'type' is not supported field for Parameter" unless param[:type].nil?
 
-        name = param[:name]
-        escaped_name = CGI.escape(name.to_s)
+        name = param[:name].to_s
 
-        # NOTE: https://swagger.io/docs/specification/serialization/
+        # NOTE: OpenAPI 3.0+ allows nesting schema under a content key. Having 'application/json'
+        # content type on query parameters allows for a JSON-formatted query parameter.
+        # See: https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content
+        content = (param[:content] || {}).transform_keys(&:to_sym)
+        return { name => value.to_json }.to_query if content.dig(:'application/json', :schema)
         return unless param[:schema]
 
+        # NOTE: https://swagger.io/docs/specification/serialization/
         style = param[:style]&.to_sym || :form
         explode = param[:explode].nil? || param[:explode]
         type = param.dig(:schema, :type)&.to_sym
 
         case type
         when :object
-          case style
-          when :deepObject
-            { name => value }.to_query
-          when :form
-            return value.to_query if explode
-
-            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
-
-          end
+          serialize_object_query_param(name, value, style, explode)
         when :array
-          case explode
-          when true
-            value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
-          else
-            separator = case style
-                        when :form then ','
-                        when :spaceDelimited then '%20'
-                        when :pipeDelimited then '|'
-                        end
-            "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
-          end
+          serialize_array_query_param(name, value, style, explode)
         else
-          "#{escaped_name}=#{CGI.escape(value.to_s)}"
+          "#{CGI.escape(name)}=#{CGI.escape(value.to_s)}"
+        end
+      end
+
+      def serialize_object_query_param(name, value, style, explode)
+        case style
+        when :deepObject
+          { name => value }.to_query
+        when :form
+          return value.to_query if explode
+
+          escaped_name = CGI.escape(name.to_s)
+          "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(',')
+        end
+      end
+
+      def serialize_array_query_param(name, value, style, explode)
+        escaped_name = CGI.escape(name.to_s)
+
+        if explode
+          value.to_a.flatten.map { |v| "#{escaped_name}=#{CGI.escape(v.to_s)}" }.join('&')
+        else
+          separator = case style
+                      when :form then ','
+                      when :spaceDelimited then '%20'
+                      when :pipeDelimited then '|'
+                      end
+          "#{escaped_name}=" + value.to_a.flatten.map { |v| CGI.escape(v.to_s) }.join(separator)
         end
       end
 
