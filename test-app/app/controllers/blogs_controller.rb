@@ -35,6 +35,19 @@ class BlogsController < ApplicationController
     head @blog.save ? :ok : :unprocessable_entity
   end
 
+  def download
+    @blog = Blog.find_by_id(params[:id])
+
+    if @blog.nil?
+      head :not_found
+    elsif @blog.thumbnail.blank?
+      body = { errors: { messages: ['No thumbnail available for selected blog'] } }
+      render json: body, status: :unprocessable_entity
+    else
+      send_file File.join('public/uploads', @blog.thumbnail), filename: @blog.thumbnail, disposition: 'attachment'
+    end
+  end
+
   # GET /blogs
   def index
     @blogs = Blog.all

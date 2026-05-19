@@ -5,6 +5,7 @@ TestApp::Application.routes.draw do
   post '/blogs/alternate', to: 'blogs#alternate_create'
   resources :blogs
   put '/blogs/:id/upload', to: 'blogs#upload'
+  get '/blogs/:id/download', to: 'blogs#download'
 
   post 'auth-tests/basic', to: 'auth_tests#basic'
   post 'auth-tests/api-key', to: 'auth_tests#api_key'

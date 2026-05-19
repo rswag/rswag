@@ -33,9 +33,20 @@ module Rswag
       end
 
       # These are array properties - note the splat operator
-      %i[tags consumes produces schemes].each do |attr_name|
+      %i[tags consumes schemes].each do |attr_name|
         define_method(attr_name) do |*value|
           metadata[:operation][attr_name] = value
+        end
+      end
+
+      # `produces` can be scoped to a specific response when called inside a `response` block.
+      # In that case, store it on the response metadata rather than the shared operation metadata,
+      # so that different responses can declare different content types.
+      def produces(*value)
+        if metadata.key?(:response)
+          metadata[:response][:produces] = value
+        else
+          metadata[:operation][:produces] = value
         end
       end
 

@@ -247,4 +247,37 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       end
     end
   end
+
+  path '/blogs/{id}/download' do
+    get 'Downloads a blog thumbnail' do
+      parameter name: 'id', in: :path, schema: { type: :string }
+
+      let(:blog) { Blog.create(title: 'foo', content: 'bar', thumbnail: 'thumbnail.png') }
+      let(:request_params) { { 'id' => blog.id } }
+
+      response '200', 'thumbnail found' do
+        produces 'image/png'
+        schema type: :string, format: :binary
+
+        it 'returns the thumbnail file' do |example|
+          submit_request(example.metadata)
+          expect(response.headers['Content-Type']).to eq('image/png')
+          expect(response.body).not_to be_empty
+        end
+      end
+
+      response '404', 'blog not found' do
+        let(:request_params) { { 'id' => 'invalid' } }
+        run_test!
+      end
+
+      response '422', 'no thumbnail available' do
+        produces 'application/json'
+        schema '$ref' => '#/components/schemas/errors_object'
+        let(:blog) { Blog.create(title: 'foo', content: 'bar') }
+
+        run_test!
+      end
+    end
+  end
 end
