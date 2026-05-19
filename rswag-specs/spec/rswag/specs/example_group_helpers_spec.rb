@@ -76,6 +76,17 @@ module Rswag
         end
       end
 
+      describe '#produces(value) inside a response block' do
+        before { subject.produces('image/png') }
+
+        let(:api_metadata) { { operation: {}, response: { code: '200', description: 'thumbnail' } } }
+
+        it "adds to the 'response' metadata instead of 'operation'" do
+          expect(api_metadata[:response][:produces]).to eq(['image/png'])
+          expect(api_metadata[:operation][:produces]).to be_nil
+        end
+      end
+
       describe '#parameter(attributes)' do
         context "when called at the 'path' level" do
           before { subject.parameter(name: :blog, in: :body, schema: { type: 'object' }) }

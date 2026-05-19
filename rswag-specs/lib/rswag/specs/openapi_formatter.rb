@@ -6,7 +6,7 @@ require 'openapi_helper'
 
 module Rswag
   module Specs
-    class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter
+    class OpenapiFormatter < ::RSpec::Core::Formatters::BaseTextFormatter # rubocop:disable Metrics/ClassLength
       ::RSpec::Core::Formatters.register self, :example_group_finished, :stop
 
       def initialize(output, config = Rswag::Specs.config)
@@ -88,11 +88,17 @@ module Rswag
       end
 
       def upgrade_response_produces!(openapi_spec, metadata)
-        # Accept header
-        mime_list = Array(metadata[:operation][:produces] || openapi_spec[:produces])
+        # Response-level `produces` takes precedence over operation-level, allowing different
+        # responses within the same operation to declare distinct content types.
+        mime_list = Array(
+          metadata[:response][:produces] ||
+          metadata[:operation][:produces] ||
+          openapi_spec[:produces]
+        )
         target_node = metadata[:response]
         upgrade_content!(mime_list, target_node)
         metadata[:response].delete(:schema)
+        metadata[:response].delete(:produces)
       end
 
       def upgrade_content!(mime_list, target_node)

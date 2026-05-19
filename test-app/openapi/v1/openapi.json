@@ -253,7 +253,7 @@
         "operationId": "getBlog",
         "responses": {
           "200": {
-            "description": "blog found - openapi_no_additional_properties = true",
+            "description": "blog found - tagged :openapi_no_additional_properties",
             "headers": {
               "ETag": {
                 "schema": {
@@ -356,6 +356,47 @@
             }
           },
           "required": true
+        }
+      }
+    },
+    "/blogs/{id}/download": {
+      "get": {
+        "summary": "Downloads a blog thumbnail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "thumbnail found",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "blog not found"
+          },
+          "422": {
+            "description": "no thumbnail available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors_object"
+                }
+              }
+            }
+          }
         }
       }
     }

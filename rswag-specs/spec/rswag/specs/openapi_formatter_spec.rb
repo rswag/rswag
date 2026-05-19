@@ -80,6 +80,30 @@ module Rswag
             )
           end
         end
+
+        context 'with response-level produces' do
+          let(:openapi_spec) { { openapi: '3.0' } }
+          let(:document) { nil }
+          let(:response_metadata) do
+            {
+              code: '200',
+              description: 'thumbnail found',
+              produces: ['image/png'],
+              schema: { type: :string, format: :binary }
+            }
+          end
+
+          it 'uses response-level produces to set the content type key' do
+            expect(openapi_spec.dig(:paths, '/blogs', :post, :responses, '200', :content)).to eq(
+              'image/png' => { schema: { type: :string, format: :binary } }
+            )
+          end
+
+          it 'does not include produces or schema directly on the response node' do
+            response_node = openapi_spec.dig(:paths, '/blogs', :post, :responses, '200')
+            expect(response_node.keys).not_to include(:produces, :schema)
+          end
+        end
       end
 
       describe '#stop' do
