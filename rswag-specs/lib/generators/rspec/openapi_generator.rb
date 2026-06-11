@@ -13,7 +13,7 @@ module Rspec
     end
 
     def create_spec_file
-      template 'spec.rb', File.join('spec', options['spec_path'], "#{controller_path}_spec.rb")
+      template 'spec.rb.erb', File.join('spec', options['spec_path'], "#{controller_path}_spec.rb")
     end
 
     private
