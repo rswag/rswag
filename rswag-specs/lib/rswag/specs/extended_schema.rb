@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 require 'json-schema'
+require 'rswag/specs/openapi_oneof'
 
 module Rswag
   module Specs
     class ExtendedSchema < JSON::Schema::Draft4
       def initialize
         super
+        @attributes['oneOf'] = OpenAPIOneOfAttribute
         @uri = URI.parse('http://tempuri.org/rswag/specs/extended_schema')
         @names = ['http://tempuri.org/rswag/specs/extended_schema']
       end
