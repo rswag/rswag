@@ -54,6 +54,28 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
                   }
                 },
                 description: 'Filter by status'
+      parameter name: 'filters',
+                in: :query,
+                description: 'JSON-encoded filter object',
+                content: {
+                  'application/json' => {
+                    schema: {
+                      type: :object,
+                      properties: {
+                        date_from: {
+                          type: :string,
+                          format: 'date',
+                          description: 'Filter blogs created from this date',
+                        },
+                        date_to: {
+                          type: :string,
+                          format: 'date',
+                          description: 'Filter blogs created up to this date',
+                        }
+                      }
+                    }
+                  }
+                }
 
       before do
         Blog.create(title: 'foo', content: 'hello world', status: :published)
@@ -62,7 +84,11 @@ RSpec.describe 'Blogs API', openapi_spec: 'v1/openapi.json', type: :request do
       let(:request_params) do
         {
           'keywords' => 'foo bar',
-          'status' => 'published'
+          'status' => 'published',
+          'filters' => {
+            'date_from' => 1.day.ago.to_date.to_s,
+            'date_to' => Time.current.to_date.to_s
+          }
         }
       end
 

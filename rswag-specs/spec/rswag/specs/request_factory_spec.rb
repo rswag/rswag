@@ -193,6 +193,31 @@ module Rswag
           end
         end
 
+        context "'query' parameter with content: application/json" do
+          let(:openapi_spec) { { openapi: '3.0' } }
+          let(:filters) do
+            { date_from: '2026-04-01' }
+          end
+
+          before do
+            metadata[:operation][:parameters] = [
+              {
+                name: 'filters', in: :query,
+                content: {
+                  'application/json' => {
+                    schema: { type: :object, properties: { date_from: { type: :string } } }
+                  }
+                }
+              }
+            ]
+            example.request_params['filters'] = filters
+          end
+
+          it 'JSON-encodes and percent-encodes the value' do
+            expect(request[:path]).to eq('/blogs?filters=%7B%22date_from%22%3A%222026-04-01%22%7D')
+          end
+        end
+
         context "'query' parameters of type 'array'" do
           let(:id) { [3, 4, 5] }
           let(:openapi_spec) { { openapi: '3.0' } }

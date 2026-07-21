@@ -53,6 +53,13 @@ class BlogsController < ApplicationController
     @blogs = Blog.all
     @blogs = @blogs.where(status: params[:status]) if params[:status].present?
 
+    if search_filters[:date_from]
+      @blogs = @blogs.where(created_at: search_filters[:date_from]..)
+    end
+    if search_filters[:date_to]
+      @blogs = @blogs.where(created_at: ..search_filters[:date_to])
+    end
+
     respond_with @blogs
   end
 
@@ -69,6 +76,29 @@ class BlogsController < ApplicationController
   end
 
   private
+
+  def search_filters
+    return @search_filters if defined?(@search_filters)
+
+    @search_filters = begin
+                value = JSON.parse(params[:filters], symbolize_names: true)
+                value.is_a?(Hash) ? value : {}
+              rescue TypeError, JSON::ParserError
+                {}
+              end
+    @search_filters.each do |key, value|
+      next unless %i[date_from date_to].include?(key)
+
+      @search_filters[key] = begin
+                       value = Time.parse(value).utc
+                       value = value.beginning_of_day if key == :date_from
+                       value = value.end_of_day if key == :date_to
+                       value
+                     rescue ArgumentError
+                     end
+    end
+    @search_filters
+  end
 
   def save_uploaded_file(field)
     return if field.nil?
