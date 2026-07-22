@@ -348,6 +348,50 @@ module Rswag
             it "serializes first 'body' parameter to JSON string" do
               expect(request[:payload]).to eq('{"text":"Some comment"}')
             end
+
+            context 'when the request schema has a writeOnly property' do
+              before do
+                metadata[:operation][:parameters] = [
+                  {
+                    name: 'comment',
+                    in: :body,
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        password: { type: 'string', writeOnly: true }
+                      }
+                    }
+                  }
+                ]
+                example.request_params['comment'] = { password: 'secret' }
+              end
+
+              it 'keeps request payload serialization unchanged' do
+                expect(request[:payload]).to eq('{"password":"secret"}')
+              end
+            end
+
+            context 'when the request schema has a readOnly property' do
+              before do
+                metadata[:operation][:parameters] = [
+                  {
+                    name: 'comment',
+                    in: :body,
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'integer', readOnly: true }
+                      }
+                    }
+                  }
+                ]
+                example.request_params['comment'] = { id: 1 }
+              end
+
+              it 'keeps request payload serialization unchanged' do
+                expect(request[:payload]).to eq('{"id":1}')
+              end
+            end
           end
 
           context 'JSON:API payload' do
