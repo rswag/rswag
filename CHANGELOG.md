@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Fixed
 
+- Remove unused `ostruct` require from rswag-ui, so it loads on Ruby 4.0 (backport of https://github.com/rswag/rswag/pull/872)
+
 ## [2.17.0] - 2025-11-05
 
 ## Changed
