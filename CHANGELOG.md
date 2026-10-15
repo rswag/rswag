@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
+- Bump "swagger-ui-dist" to "5.33.2" in rswag-ui (https://github.com/rswag/rswag/pull/893)
+
 ## Fixed
 
 - Force version of concurrent-ruby for rails version >= 6 and <= 7.2
