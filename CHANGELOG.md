@@ -34,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
-- Bump "swagger-ui-dist" to "5.33.2" in rswag-ui, which adds Swagger UI's dark mode and its toggle in the top bar (https://github.com/rswag/rswag/issues/878)
+- Bump "swagger-ui-dist" to "5.33.2" in rswag-ui (https://github.com/rswag/rswag/pull/893)
 
 ## Fixed
 
