@@ -205,9 +205,12 @@ module Rswag
         content_type = request[:headers]['CONTENT_TYPE']
         return if content_type.nil?
 
-        request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(content_type)
+        # Ignore media type parameters such as `; charset=utf-8`
+        media_type = content_type.split(';').first.to_s.strip.downcase
+
+        request[:payload] = if ['application/x-www-form-urlencoded', 'multipart/form-data'].include?(media_type)
                               build_form_payload(parameters, example)
-                            elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(content_type)
+                            elsif %r{\Aapplication/([0-9A-Za-z._-]+\+json\z|json\z)}.match?(media_type)
                               build_json_payload(parameters, example)
                             else
                               build_raw_payload(parameters, example)

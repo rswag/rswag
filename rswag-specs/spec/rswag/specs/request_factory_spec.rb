@@ -350,6 +350,18 @@ module Rswag
             end
           end
 
+          context 'JSON payload with media type parameters' do
+            before do
+              metadata[:operation][:consumes] = ['application/json; charset=utf-8']
+              metadata[:operation][:parameters] = [{ name: 'comment', in: :body, schema: { type: 'object' } }]
+              example.request_params['comment'] = { text: 'Some comment' }
+            end
+
+            it "serializes first 'body' parameter to JSON string" do
+              expect(request[:payload]).to eq('{"text":"Some comment"}')
+            end
+          end
+
           context 'JSON:API payload' do
             before do
               metadata[:operation][:consumes] = 'application/vnd.api+json'
@@ -390,6 +402,18 @@ module Rswag
                 'f1' => 'foo blah',
                 'f2' => 'bar blah'
               )
+            end
+          end
+
+          context 'form payload with media type parameters' do
+            before do
+              metadata[:operation][:consumes] = ['application/x-www-form-urlencoded; charset=utf-8']
+              metadata[:operation][:parameters] = [{ name: 'f1', in: :formData, schema: { type: :string } }]
+              example.request_params['f1'] = 'foo blah'
+            end
+
+            it 'sets payload to hash of names and example values' do
+              expect(request[:payload]).to eq('f1' => 'foo blah')
             end
           end
 

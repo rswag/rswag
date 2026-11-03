@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Fixed
 
+- Serialize request payloads correctly when `consumes` includes media type parameters such as `; charset=utf-8`
 - Force version of concurrent-ruby for rails version >= 6 and <= 7.2
 - Force version of rubygems for ruby version == 3.0
 - Bump "swagger-ui-dist" to "5.20.6" in rswag-ui due to [CVE-2024-47764](https://github.com/advisories/GHSA-pxg6-pf52-xh8x), [CVE-2024-39338](https://github.com/advisories/GHSA-8hc4-vh64-cxmj), [CVE-2025-27152](https://github.com/advisories/GHSA-jr5f-v2jv-69x6)
